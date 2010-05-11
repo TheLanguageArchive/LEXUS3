@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<map:sitemap xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://apache.org/cocoon/sitemap/1.0 http://cocoon.apache.org/schema/sitemap/cocoon-sitemap-1.0.xsd"
+  xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+
+  <map:components>
+    <map:serializers>
+      <map:serializer name="text" mime-type="text/plain; charset=UTF-8"
+        src="org.apache.cocoon.serialization.TextSerializer">
+        <encoding>UTF-8</encoding>
+      </map:serializer>
+    </map:serializers>
+  </map:components>
+
+
+  <map:flow language="javascript">
+    <map:script src="flow/uploads.js"/>
+  </map:flow>
+
+
+  <map:pipelines>
+
+
+    <!-- 
+        Default URI redirects to index.html
+        -->
+    <map:pipeline>
+      <map:match pattern="">
+        <map:redirect-to uri="index.html"/>
+      </map:match>
+    </map:pipeline>
+
+
+    <map:pipeline>
+
+      <!-- 
+        No idea why this is necessary, i.e. what it is used for,
+        but it is a request from the client side so a response needs to be served.
+        It seems to be a static file.
+      -->
+      <map:match pattern="QueryBuilder/getConditions.json">
+        <map:act type="cauth-is-logged-in">
+          <map:parameter name="application" value="Lexus"/>
+          <map:read src="resource/external/getConditions.js"/>
+        </map:act>
+        <map:redirect-to uri="index.html"/>
+      </map:match>
+
+    </map:pipeline>
+
+
+    <!-- 
+        Authentication pipeline, uses Cocoon cauth
+        framework for authenticating users.
+        -->
+    <map:pipeline id="authentication">
+
+      <map:match pattern="signon.htm">
+        <!--
+            If the user is logged in then logout first,
+            then login again.
+            -->
+        <map:act type="cauth-is-logged-in">
+          <map:parameter name="application" value="Lexus"/>
+          <map:act type="cauth-logout">
+            <map:parameter name="application" value="Lexus"/>
+            <map:act type="cauth-login">
+              <map:parameter name="application" value="Lexus"/>
+              <map:parameter name="username" value="{request-param:username}"/>
+              <map:parameter name="password" value="{request-param:password}"/>
+              <map:redirect-to uri="Lexus.html"/>
+            </map:act>
+          </map:act>
+        </map:act>
+        <!-- 
+            Try to login using credentials given
+            -->
+        <map:act type="cauth-login">
+          <map:parameter name="application" value="Lexus"/>
+          <map:parameter name="username" value="{request-param:username}"/>
+          <map:parameter name="password" value="{request-param:password}"/>
+          <map:redirect-to uri="Lexus.html"/>
+        </map:act>
+        <!-- 
+            Login failed,redirect to start page
+            -->
+        <map:redirect-to uri="index.html"/>
+      </map:match>
+
+      <!-- 
+          Pipeline for authenticating a user
+          -->
+      <map:match pattern="lexus-authuser">
+        <map:generate
+          src="${exist.rest.endpoint}/db/lexus/users?_query=//user[account%20eq%20'{request-param:username}'%20and%20password%20eq%20'{request-param:password}']"/>
+        <!--<map:transform type="servletService">
+          <map:parameter name="service" value="servlet:back:/workspace/userLogin.xml?account={request-param:username}&amp;password={request-param:password}"/>
+        </map:transform>-->
+        <map:transform src="util/extractDataFromExistResponse.xslt"/>
+        <map:transform src="util/createAuthenticationDocument.xslt"/>
+        <map:serialize type="xml"/>
+      </map:match>
+      
+      <map:handle-errors when="always">
+          <map:read src="flexus/no-database.html"/>
+      </map:handle-errors>
+      
+    </map:pipeline>
+
+
+    <!-- 
+        Generate XML from the json in the request parameter
+        -->
+    <map:pipeline id="json">
+
+      <map:match pattern="json">
+        <map:generate type="json"/>
+        <map:serialize type="xml"/>
+      </map:match>
+
+    </map:pipeline>
+
+
+    <!--
+        Serve up all the content for the Flex UI.
+        -->
+    <map:pipeline id="flexus">
+
+      <!-- Serve the flexus files. -->
+      <map:match pattern="*.swf">
+        <map:act type="cauth-is-logged-in">
+          <map:parameter name="application" value="Lexus"/>
+          <map:read src="flexus/{../1}.swf"/>
+        </map:act>
+        <map:redirect-to uri="index.html"/>
+      </map:match>
+
+      <map:match pattern="Lexus.html">
+        <map:act type="cauth-is-logged-in">
+          <map:parameter name="application" value="Lexus"/>
+          <map:read src="flexus/Lexus.html"/>
+        </map:act>
+        <map:redirect-to uri="index.html"/>
+      </map:match>
+
+      <map:match pattern="aboutLexus.xml">
+        <map:read src="flexus/aboutLexus.xml"/>
+      </map:match>
+
+      <map:match pattern="*.html">
+        <map:read src="flexus/{1}.html"/>
+      </map:match>
+
+      <map:match pattern="bridge/*.js">
+        <map:read src="flexus/bridge/{1}.js"/>
+      </map:match>
+
+      <map:match pattern="*.js">
+        <map:read src="flexus/{1}.js"/>
+      </map:match>
+
+      <map:match pattern="history/*">
+        <map:read src="flexus/history/{1}"/>
+      </map:match>
+
+      <map:match pattern="styles/*">
+        <map:read src="flexus/styles/{1}"/>
+      </map:match>
+
+      <map:match pattern="images/*.png">
+        <map:read src="flexus/images/{1}.png"/>
+      </map:match>
+
+    </map:pipeline>
+
+
+
+    <!-- 
+        Put all the request info in XML
+        -->
+    <map:pipeline internal-only="true">
+
+      <map:match pattern="request">
+        <map:generate type="request"/>
+        <map:serialize type="xml"/>
+      </map:match>
+
+    </map:pipeline>
+
+
+
+    <!-- 
+        Generate XML for the current user.
+        -->
+    <map:pipeline internal-only="true">
+
+      <!-- Get 1 user -->
+      <map:match pattern="user">
+        <map:act type="cauth-is-logged-in">
+          <map:parameter name="application" value="Lexus"/>
+          <map:generate
+            src="${exist.rest.endpoint}/db/lexus/users?_query=//user[number(@id)%20eq%20{ID}]"/>
+          <map:transform src="util/extractDataFromExistResponse.xslt"/>
+          <map:serialize type="xml"/>
+        </map:act>
+      </map:match>
+
+      <map:handle-errors when="always">
+        <map:generate src="resource/internal/user-not-found.xml"/>
+        <map:serialize type="xml"/>
+      </map:handle-errors>
+
+    </map:pipeline>
+
+
+    <!-- 
+      Mount subsitemap for LexusLexicalEntryEditor and LexusWorkspaceEditor,
+        handle file uploads.
+        -->
+    <map:pipeline>
+
+      <map:match pattern="LexusLexicalEntryEditor/**">
+        <map:act type="cauth-is-logged-in">
+          <map:parameter name="application" value="Lexus"/>
+          <map:mount uri-prefix="LexusLexicalEntryEditor/" src="lexicon-editor/sitemap.xmap"/>
+        </map:act>
+        <map:redirect-to uri="index.html"/>
+      </map:match>
+      
+      <map:match pattern="LexusWorkspaceEditor/**">
+        <map:act type="cauth-is-logged-in">
+          <map:parameter name="application" value="Lexus"/>
+          <map:mount uri-prefix="LexusWorkspaceEditor/" src="workspace/sitemap.xmap"/>
+        </map:act>
+        <map:redirect-to uri="index.html"/>
+      </map:match>
+      
+      <map:match pattern="LexusSchemaEditor/**">
+        <map:act type="cauth-is-logged-in">
+          <map:parameter name="application" value="Lexus"/>
+          <map:mount uri-prefix="LexusSchemaEditor/" src="schema-editor/sitemap.xmap"/>
+        </map:act>
+        <map:redirect-to uri="index.html"/>
+      </map:match>
+      
+      <map:match pattern="StagingFileHandler/uploadFile.json">
+        <map:act type="cauth-is-logged-in">
+          <map:parameter name="application" value="Lexus"/>
+          <map:generate type="fileupload">
+            <map:parameter name="tmpdir" value="/tmp"/>
+          </map:generate>
+          <map:transform type="tee" src="debug-info/remove-me-2.xml"/>
+          <map:transform type="saxon" src="util/xml-to-json.xslt"/>
+          <map:transform type="tee" src="debug-info/remove-me-2.js"/>
+          <map:serialize type="text"/>
+        </map:act>
+        <map:generate type="fileupload">
+          <map:parameter name="tmpdir" value="/tmp/"/>
+        </map:generate>
+        <map:transform type="tee" src="debug-info/remove-me-2.xml"/>
+        <map:transform type="saxon" src="util/xml-to-json.xslt"/>
+        <map:transform type="tee" src="debug-info/remove-me-2.js"/>
+        <map:serialize type="text"/>
+        <!--<map:redirect-to uri="index.html"/>-->
+      </map:match>
+
+    </map:pipeline>
+
+  </map:pipelines>
+
+</map:sitemap>

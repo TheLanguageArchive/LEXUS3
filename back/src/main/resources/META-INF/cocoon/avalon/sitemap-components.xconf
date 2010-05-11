@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map:components xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+    <map:transformers>
+        <map:transformer name="rest" src="org.apache.cocoon.transformation.RESTTransformer">
+            <authentication><username>admin</username><password>boe</password></authentication><!--
+            <map:parameter name="username" value="admin"/>
+            <map:parameter name="password" value="boe"/>-->
+        </map:transformer>
+        <map:transformer name="saxon" src="org.apache.cocoon.transformation.TraxTransformer">
+            <xslt-processor-role>saxon</xslt-processor-role>
+        </map:transformer>
+    </map:transformers>
+</map:components>

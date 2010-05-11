@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<map:sitemap xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://apache.org/cocoon/sitemap/1.0 http://cocoon.apache.org/schema/sitemap/cocoon-sitemap-1.0.xsd"
+  xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+
+
+  <map:pipelines>
+
+
+    <map:pipeline id="workspace">
+
+
+      <!-- 
+        Get queries
+      -->
+      <map:match pattern="loadWSQueries.json">
+        <map:generate src="cocoon:/getQueries"/>
+        <map:transform type="saxon" src="queries/queries-2-JSON.xslt"/>
+        <map:serialize type="json"/>
+      </map:match>
+
+      <map:match pattern="getQueries">
+        <map:aggregate element="data">
+          <map:part src="cocoon://request"/>
+          <map:part src="cocoon://user"/>
+        </map:aggregate>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:back:/workspace/getQueries.xml"/>
+        </map:transform>
+        <map:serialize type="xml"/>
+      </map:match>
+
+
+      <!-- 
+          Main workspace data
+          -->
+      <map:match pattern="getPage.json">
+        <map:generate src="cocoon:/getPage"/>
+        <map:transform type="saxon" src="getPage/page-2-JSON.xslt"/>
+        <map:serialize type="json"/>
+      </map:match>
+
+      <map:match pattern="getPage">
+        <map:aggregate element="data">
+          <map:part src="cocoon://request"/>
+          <map:part src="cocoon://user"/>
+        </map:aggregate>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:back:/workspace/getPage.xml"/>
+        </map:transform>
+        <map:serialize type="xml"/>
+      </map:match>
+
+
+      <!-- 
+          Get user profiles
+          -->
+      <map:match pattern="getProfiles.json">
+        <map:generate src="cocoon:/getProfiles"/>
+        <map:transform type="saxon" src="getProfiles/profiles-2-JSON.xslt"/>
+        <map:serialize type="json"/>
+      </map:match>
+
+      <map:match pattern="getProfiles">
+        <map:aggregate element="data">
+          <map:part src="cocoon://request"/>
+          <map:part src="cocoon://user"/>
+        </map:aggregate>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:back:/workspace/getProfiles.xml"/>
+        </map:transform>
+        <map:serialize type="xml"/>
+      </map:match>
+
+      <map:match pattern="*SortOrder**">
+        <map:mount uri-prefix="" src="sortOrders/sitemap.xmap"/>
+      </map:match>
+
+
+      <!-- 
+        Get users
+      -->
+      <map:match pattern="getUsers.json">
+        <map:generate src="cocoon:/getUsers"/>
+        <map:transform type="saxon" src="getUsers/users-2-JSON.xslt"/>
+        <map:serialize type="json"/>
+      </map:match>
+
+      <map:match pattern="getUsers">
+        <map:aggregate element="data">
+          <map:part src="cocoon://request"/>
+          <map:part src="cocoon://user"/>
+        </map:aggregate>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:back:/workspace/getUsers.xml"/>
+        </map:transform>
+        <map:serialize type="xml"/>
+      </map:match>
+
+
+      <!-- 
+        Save a lexicon, just the name and description.
+      -->
+      <map:match pattern="saveLexicon.json">
+        <map:generate src="cocoon:/saveLexicon"/>
+        <map:transform type="saxon" src="lexicon/savedLexicon-2-JSON.xslt"/>
+        <map:serialize type="json"/>
+      </map:match>
+
+      <map:match pattern="saveLexicon">
+        <map:aggregate element="data">
+          <map:part src="cocoon://json"/>
+          <map:part src="cocoon://user"/>
+        </map:aggregate>
+        <map:transform type="saxon" src="lexicon/prepareSaveLexicon.xslt"/>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:back:/workspace/saveLexicon.xml"/>
+        </map:transform>
+        <map:serialize type="xml"/>
+      </map:match>
+      
+      <!-- 
+        Create lexicon.
+        {
+        "id": "EACB869B-B032-F91F-3565-263BEFDC4D73",
+        "requester": "workspace",
+        "parameters":         {
+        "name": "sortorder name",
+        "description": "sortorder description"
+        }
+      -->
+      <map:match pattern="createLexicon.json">
+        <map:aggregate element="data">
+          <map:part src="cocoon://json"/>
+          <map:part src="cocoon://user"/>
+        </map:aggregate>
+        <map:transform type="tee" src="debug-info/remove-me-pre.xml"/>
+        <map:transform type="saxon" src="lexicon/prepareCreateLexicon.xslt"/>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:back:/workspace/createLexicon.xml"/>
+        </map:transform>
+        <map:transform type="tee" src="debug-info/remove-me-post.xml"/>
+        <map:transform type="saxon" src="lexicon/savedLexicon-2-JSON.xslt"/>
+        <map:serialize type="json"/>
+      </map:match>
+
+
+
+      <map:match pattern="importToolboxLexicon.json/*/*">
+        <map:aggregate element="data">
+          <map:part src="cocoon:/createXMLFromToolbox/{1}/{2}"/>
+          <map:part src="cocoon://user"/>
+        </map:aggregate>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:back:/workspace/import/addLexicon.xml"/>
+        </map:transform>
+        <map:serialize type="xml"/>
+      </map:match>
+
+      <map:match pattern="createXMLFromToolbox/*/*">
+        <map:aggregate element="toolbox-import">
+          <map:part src="cocoon:/toolbox.typ.xml/{1}"/>
+          <map:part src="cocoon:/toolbox.data.xml/{2}"/>
+        </map:aggregate>
+        <!-- Some markers are not defined (really!), remove them -->
+        <map:transform type="saxon" src="toolbox/import/convert/remove-undefined-markers.xslt"/>
+        <!-- Empty markers that are not parents sometimes prevent data-category elements from ending up in the right parent element -->
+        <map:transform type="saxon" src="toolbox/import/convert/remove-empty-markers.xslt"/>
+        <!-- Parents may be missing, add them (Just one 'layer' of parent element is added!) -->
+        <map:transform type="saxon" src="toolbox/import/convert/add-missing-parents.xslt"/>
+        <!-- Create lexical entries -->
+        <map:transform type="saxon" src="toolbox/import/convert/create-lexicalEntries-import.xslt"/>
+        <!-- Clean up DCs that were added as parents -->
+        <map:transform type="saxon" src="toolbox/import/convert/remove-added-dcs.xslt"/>
+        <!-- Components that have no data-category elements with a @value beneath them are removed -->
+        <map:transform type="saxon" src="toolbox/import/convert/remove-empty-components.xslt"/>
+        <map:serialize type="xml"/>
+      </map:match>
+
+      <map:match pattern="toolbox.typ.xml/*">
+        <map:generate type="text" src="/tmp/{1}"/>
+        <map:transform type="lexer" src="toolbox/import/toolbox_typ/toolbox.lex"/>
+        <map:transform type="saxon" src="toolbox/import/toolbox_typ/post-lexer.xslt"/>
+        <map:transform type="parser" src="toolbox/import/toolbox_typ/toolbox.grm"/>
+        <map:transform type="saxon" src="toolbox/import/toolbox_typ/post-parser.xslt"/>
+        <map:transform type="saxon" src="toolbox/import/toolbox_typ/create-lexicalEntry-schema.xslt"/>
+        <map:serialize type="xml"/>
+      </map:match>
+
+      <map:match pattern="toolbox.data.xml/*">
+        <map:generate type="text" src="/tmp/{1}"/>
+        <map:transform type="lexer" src="toolbox/import/toolbox_data/toolbox.lex"/>
+        <map:transform type="saxon" src="toolbox/import/toolbox_data/post-lexer.xslt"/>
+        <map:transform type="parser" src="toolbox/import/toolbox_data/toolbox.grm"/>
+        <map:transform type="saxon" src="toolbox/import/toolbox_data/post-parser.xslt"/>
+        <map:serialize type="xml"/>
+      </map:match>
+
+    </map:pipeline>
+
+  </map:pipelines>
+
+</map:sitemap>

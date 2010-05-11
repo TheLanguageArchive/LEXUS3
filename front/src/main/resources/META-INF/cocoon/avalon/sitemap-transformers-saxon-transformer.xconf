@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map:components xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+    
+    <map:generators default="file">
+        <map:generator name="text" src="org.apache.cocoon.generation.TextGenerator"
+            logger="sitemap.generator.textgenerator"/>
+    </map:generators>
+    
+    <map:transformers>
+        <map:transformer name="saxon" src="org.apache.cocoon.transformation.TraxTransformer">
+            <xslt-processor-role>saxon</xslt-processor-role>
+        </map:transformer>
+        <map:transformer name="tee" src="org.apache.cocoon.transformation.alternative.TeeTransformer">
+            <command>less %s</command>
+        </map:transformer>
+        <map:transformer name="lexer" src="org.apache.cocoon.transformation.LexicalTransformer"
+            logger="sitemap.transformer.lexer"/>
+        <map:transformer name="parser" src="org.apache.cocoon.transformation.ParserTransformer"
+            logger="sitemap.transformer.parser"/>
+    </map:transformers>
+</map:components>

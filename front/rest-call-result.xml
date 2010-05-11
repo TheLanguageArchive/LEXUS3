@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<result xmlns:rest="http://org.apache.cocoon.transformation/rest/1.0" xmlns:exist="http://exist.sourceforge.net/NS/exist">
+        <results>
+            <startLetter/>
+            <lexicon id="uuid:724702f9-33c5-4334-8458-2b1d8c2528a5">
+                <meta>
+                    <owner ref="1"/>
+                    <users>
+                        <user ref="1">
+                            <permissions>
+                                <lexicon>
+                                    <read>true</read>
+                                    <write>true</write>
+                                </lexicon>
+                            </permissions>
+                        </user>
+                    </users>
+                    <schema>
+                        <component id="uuid:724702f9-33c5-4334-8458-2b1d8c2528a5" version="1" description="The container for all the lexical entries of a source language within the database. A Lexicon must contain at least one lexical entry" name="lexicon" mandatory="true" multiple="false" type="Lexicon" note="">
+                            <content>
+                                <component id="uuid:0b84939e-632c-4818-95cc-4a2cc4757337" version="1" description="lexiconInformation" name="lexicon-information" mandatory="true" multiple="false" note="">
+                                    <content/>
+                                </component>
+                                <component id="uuid:20a74dc4-1866-4683-8e13-255c42a1335a" version="1" description="lexical-entry" name="lexical-entry" mandatory="true" multiple="true" type="lexical-entry" note="">
+                                    <content>
+                                        <component id="uuid:97b00ebf-e21f-4646-a7d9-59101ad35d9e" version="1" description="Form" name="form" mandatory="true" multiple="false" type="form" note="">
+                                            <content/>
+                                        </component>
+                                        <component id="uuid:4f895063-631d-4e25-868c-951f3e43f655" version="1" description="Sense" name="sense" mandatory="true" multiple="false" type="sense" note="">
+                                            <content/>
+                                        </component>
+                                    </content>
+                                </component>
+                            </content>
+                        </component>
+                    </schema>
+                </meta>
+            </lexicon>
+            <lexical-entries/>
+            <startPage>0</startPage>
+        </results>
+        <lexica>
+            <lexicon id="uuid:724702f9-33c5-4334-8458-2b1d8c2528a5">
+                <meta>
+                    <owner ref="1"/>
+                    <users>
+                        <user ref="1">
+                            <permissions>
+                                <lexicon>
+                                    <read>true</read>
+                                    <write>true</write>
+                                </lexicon>
+                            </permissions>
+                        </user>
+                    </users>
+                    <schema>
+                        <component id="uuid:724702f9-33c5-4334-8458-2b1d8c2528a5" version="1" description="The container for all the lexical entries of a source language within the database. A Lexicon must contain at least one lexical entry" name="lexicon" mandatory="true" multiple="false" type="Lexicon" note="">
+                            <content>
+                                <component id="uuid:0b84939e-632c-4818-95cc-4a2cc4757337" version="1" description="lexiconInformation" name="lexicon-information" mandatory="true" multiple="false" note="">
+                                    <content/>
+                                </component>
+                                <component id="uuid:20a74dc4-1866-4683-8e13-255c42a1335a" version="1" description="lexical-entry" name="lexical-entry" mandatory="true" multiple="true" type="lexical-entry" note="">
+                                    <content>
+                                        <component id="uuid:97b00ebf-e21f-4646-a7d9-59101ad35d9e" version="1" description="Form" name="form" mandatory="true" multiple="false" type="form" note="">
+                                            <content/>
+                                        </component>
+                                        <component id="uuid:4f895063-631d-4e25-868c-951f3e43f655" version="1" description="Sense" name="sense" mandatory="true" multiple="false" type="sense" note="">
+                                            <content/>
+                                        </component>
+                                    </content>
+                                </component>
+                            </content>
+                        </component>
+                    </schema>
+                </meta>
+                <size>0</size>
+            </lexicon>
+        </lexica>
+        <startLetters/>
+        <queries/>
+        <schema/>
+    </result>

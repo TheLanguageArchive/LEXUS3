@@ -1,0 +1,134 @@
+<html>
+<head>
+<title>LEXUS</title>
+
+<link rel="stylesheet" type="text/css" href="styles/ConventionsLana.css"/>
+<script type="text/javascript">
+//    <![CDATA[
+    message="LEXUS &#160;lexical &#160;resource &#160;&#160;&#160;&#160;&#160;&#160;&#160;tool"
+pos=0
+maxlength=message.length+1
+
+function writemsg()
+{
+	if( pos ==0){
+		var banner = document.getElementById("banner");
+		if( banner.style.filter){
+			banner.style.filter = "revealTrans(Duration=15,Transition=12)";
+			banner.filters[0].Apply();
+			banner.style.visibility = "visible";
+			banner.filters[0].Play();
+		}
+
+	}
+	if (pos < maxlength)
+	{
+		txt=message.substring(0, pos)
+		document.getElementById("banner").innerHTML=txt
+		// alert(message.substring(++pos, 0));
+		while (message.substring(pos+1, pos+7) == '&#160;') {pos += 6;}
+		++pos;
+		timer=setTimeout("writemsg()", 25)
+	}
+}
+function stoptimer()
+{
+clearTimeout(timer)
+}
+function setFocus(){
+var userField = document.getElementById('user');
+userField.focus();
+}
+//]]>
+</script>
+
+
+<style type="text/css">
+    
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: white;
+    background-image:url('images/LEXUS_IKON.png');
+    background-repeat:no-repeat;
+}
+
+
+h1 {
+    color: white;
+}
+    
+.banner{
+
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 60px;
+	font-style: bold;
+	color: white;
+	position:absolute;
+	top:130;
+	left:95;
+	width:200;
+	height:500;
+	text-shadow: #000 0px 0px 5px;
+}
+.register{
+	color:white;
+	font-size:100%;
+	text-decoration: none;
+}
+.register:hover{
+	color:white;
+	font-size:150%;
+	text-decoration: none;
+}
+
+.info {
+    position:absolute;
+    left:630;
+    top:300;
+    width:400;
+    font-size:10pt;
+    color: white;
+    text-shadow: white 0px 0px 20px;
+    text-align: center;
+}
+
+.fieldlabel2 {
+    color: white;
+    font-size: 10pt;
+    text-align: right;
+}
+
+</style>
+
+</head>
+
+<body onload="setFocus();writemsg()" onunload="stoptimer()">
+
+<div id="banner" class="banner"></div>
+
+<form action="signon.htm" method="post">
+
+<table border="0" style="position:absolute;left:700;top:134">
+<tr>
+    <td class='fieldlabel2'><span>Username</span></td>
+<td><input id='user' type="text" name="username"/></td>
+</tr>
+<tr>
+    <td class='fieldlabel2'><span>Password</span></td>
+<td><input type="password" name="password"/></td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td><input type="submit" name="update" value="Login" />
+</td>
+</tr>
+</table>
+</form>
+
+<div class="info">
+<b><i>The recommended minimum screen resolution is 1280 x 1024.
+<br/>
+On lower resolutions information may not display properly.</i></b>
+</div>
+</body>
+</html>

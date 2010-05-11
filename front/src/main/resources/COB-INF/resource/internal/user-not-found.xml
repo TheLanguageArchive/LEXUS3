@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lexus:error id="LEX001" xmlns:lexus="http://www.mpi.nl/lat/lexus">
+    <lexus:message lang="en">User unknown</lexus:message>
+</lexus:error>
