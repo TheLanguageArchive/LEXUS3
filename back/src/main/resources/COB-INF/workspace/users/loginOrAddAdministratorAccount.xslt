@@ -22,7 +22,7 @@
                     <text>
                         <xsl:call-template name="declare-namespace"/>
                         
-                        let $user := collection('<xsl:value-of select="$dbpath"/>/users')/user[account eq '<xsl:value-of select="/login/account"/>'][password eq '<xsl:value-of select="/login/password"/>']
+                        let $user := collection('<xsl:value-of select="$dbpath"/>/users')/user[account eq '<xsl:value-of select="/login/username"/>'][password eq '<xsl:value-of select="/login/password"/>']
                         return
                             if ($user)
                             then
