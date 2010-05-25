@@ -35,6 +35,12 @@
         <map:transform type="saxon" src="sortOrders-2-JSON.xslt"/>
         <map:serialize type="json" />
       </map:match>
+      
+      <map:match pattern="getSortOrders.json">
+        <map:generate src="cocoon:/getSortOrders"/>
+        <map:transform type="saxon" src="sortOrders-2-JSON.xslt"/>
+        <map:serialize type="json" />
+      </map:match>
 
       <map:match pattern="getSortOrders">
         <map:aggregate element="data">
