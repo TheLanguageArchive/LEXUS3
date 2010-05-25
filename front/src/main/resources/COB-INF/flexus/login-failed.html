@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>LEXUS</title>
+
+<link rel=stylesheet type="text/css" href="styles/ConventionsLana.css">
+<script type="text/javascript">
+message="LEXUS lexical resource tool"
+pos=0
+maxlength=message.length+1
+
+function writemsg()
+{
+	if( pos ==0){
+		var banner = document.getElementById("banner");
+		if( banner.style.filter){
+			banner.style.filter = "revealTrans(Duration=15,Transition=12)";
+			banner.filters[0].Apply();
+			banner.style.visibility = "visible";
+			banner.filters[0].Play();
+		}
+
+	}
+	if (pos<maxlength)
+	{
+		txt=message.substring(pos,0)
+		document.getElementById("banner").innerHTML=txt
+		pos++
+		timer=setTimeout("writemsg()", 15)
+	}
+}
+function stoptimer()
+{
+clearTimeout(timer)
+}
+</script>
+
+
+<style>
+    
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: white;
+    background-image:url('images/LEXUS_IKON.png');
+    background-repeat:no-repeat;
+}
+
+a, a:hover, a:visited, a:active {
+    color:white;
+    font-size:100%;
+    text-decoration: none;
+}
+
+.banner{
+	font-size: 60px;
+	font-style: bold;
+	position:absolute;
+	top:130;
+	left:95;
+	width:200;
+	height:500;
+}
+.register{
+	color:white;
+	font-size:100%;
+	text-decoration: none;
+}
+.register:hover{
+	color:white;
+	font-size:150%;
+	text-decoration: none;
+}
+.warning {
+color:yellow; line-height:200%;
+font-family:sans-serif;
+}
+</style>
+
+</head>
+
+<body onload="writemsg()" onunload="stoptimer()">
+
+<div align="center" valign="center" id="banner" class="banner"></div>
+    
+    <div border="0" style="position:absolute;left:675;top:140; width:300px; "><div class="warning">Login failed.
+                <br/></div>
+        <div style="text-align: right">Click <a href="index.html">here</a> to try again</div>
+    </div>
+
+</body>
+</html>
