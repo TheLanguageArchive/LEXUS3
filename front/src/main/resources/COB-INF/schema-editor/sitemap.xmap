@@ -30,7 +30,9 @@
           -->
       <map:match pattern="getSchema.json">
         <map:generate src="cocoon:/getSchema"/>
+        <map:transform type="tee" src="debug-info/remove-me-pre.xml"/>
         <map:transform type="saxon" src="getSchema/schema-2-JSON.xslt"/>
+        <map:transform type="tee" src="debug-info/remove-me-post.xml"/>
         <map:serialize type="json"/>
       </map:match>
 

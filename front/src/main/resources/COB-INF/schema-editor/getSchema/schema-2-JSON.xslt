@@ -133,7 +133,9 @@
         </object>
     </xsl:template>
 
-    <xsl:template match="/result/users"/>
+    <xsl:template match="/result/schema">
+        <object k
+    </xsl:template>
 
 
     <xsl:template match="@* | node()"/>
