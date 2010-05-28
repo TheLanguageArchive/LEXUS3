@@ -56,13 +56,13 @@
                 <xsl:value-of select="@id"/>
             </string>
             <string key="name">
-                <xsl:value-of select="lexicon-information/data[@lexus-id = 'lexicon-name']"/>
+                <xsl:value-of select="../lexus/meta/name"/>
             </string>
             <string key="description">
-                <xsl:value-of select="lexicon-information/data[@lexus-id = 'lexicon-description']"/>
+                <xsl:value-of select="../lexus/meta/description"/>
             </string>
             <string key="note">
-                <xsl:value-of select="lexicon-information/data[@lexus-id = 'lexicon-note']"/>
+                <xsl:value-of select="../lexus/meta/note"/>
             </string>
             <xsl:choose>
                 <xsl:when test="../lexus/meta/owner[@ref eq $userId]">
@@ -108,13 +108,13 @@
                 <xsl:value-of select="$id"/>
             </string>
             <string key="name">
-                <xsl:value-of select="//result/users/user[@id eq $id]/name"/>
+                <xsl:value-of select="/result/users/user[@id eq $id]/name"/>
             </string>
             <number key="accesslevel">
-                <xsl:value-of select="//result/users/user[@id eq $id]/accesslevel"/>
+                <xsl:value-of select="/result/users/user[@id eq $id]/accesslevel"/>
             </number>
             <xsl:choose>
-                <xsl:when test="number(//result/users/user[@id=$id]/accesslevel) eq 30">
+                <xsl:when test="number(/result/users/user[@id=$id]/accesslevel) eq 30">
                     <true key="administrator"/>
                 </xsl:when>
                 <xsl:otherwise>

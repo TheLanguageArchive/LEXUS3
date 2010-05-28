@@ -31,33 +31,29 @@
     <xsl:variable name="form-id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
     <xsl:variable name="sense-id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
 
-    <xsl:template match="/">
-        <create-lexicon>
-            <lexicon id="{$id}" version="1">
-                <lexicon-information schema-id="{$lexicon-information-id}" version="1">
-                    <data schema-id="{$lexicon-name-id}" name="Lexicon name" lexus-id="lexicon-name"
-                        version="1">
-                        <xsl:value-of select="/data/json/parameters/name"/>
-                    </data>
-                    <data schema-id="{$lexicon-description-id}" name="Lexicon description"
-                        lexus-id="lexicon-description" version="1">
-                        <xsl:value-of select="/data/json/parameters/description"/>
-                    </data>
-                    <data schema-id="{$lexicon-note-id}" name="Lexicon note" lexus-id="lexicon-note"
-                        version="1">
-                        <xsl:value-of select="/data/json/parameters/note"/>
-                    </data>
-                </lexicon-information>
-                <lexical-entry schema-id="{$lexical-entry-id}" version="1">
-                    <form schema-id="{$form-id}" version="1"/>
-                    <sense schema-id="{$sense-id}" version="1"/>
+    <xsl:template match="/data">
+        <data>
+            <lexicon id="{$id}">
+                <lexicon-information schema-id="{$lexicon-information-id}"/> 
+                <lexical-entry schema-id="{$lexical-entry-id}">
+                    <form schema-id="{$form-id}"/>
+                    <sense schema-id="{$sense-id}"/>
                 </lexical-entry>
             </lexicon>
             <lexus id="{$id}">
                 <meta>
-                    <owner ref="{data/user/@id}"/>
+                    <name>
+                        <xsl:value-of select="json/parameters/name"/>
+                    </name>
+                    <description>
+                        <xsl:value-of select="json/parameters/description"/>
+                    </description>
+                    <note>
+                        <xsl:value-of select="json/parameters/note"/>
+                    </note>
+                    <owner ref="{user/@id}"/>
                     <users>
-                        <user ref="{data/user/@id}">
+                        <user ref="{user/@id}">
                             <permissions>
                                 <read>true</read>
                                 <write>true</write>
@@ -65,54 +61,13 @@
                         </user>
                     </users>
                     <schema>
-                        <!-- 
-                            "min": 1,
-                            "adminInfo": null,
-                            "id": "MmM5MDk5OWMyODVkODE4MzAxMjg1ZGU0M2U4YTAwMDE=",
-                            "max": 1,
-                            "description": "The container for all the lexical entries of a source language within the database. A Lexicon must contain at least one lexical entry",
-                            "name": "lexicon",
-                            "parent": null,
-                            "type": "Lexicon",
-                            "note": null,
-                            "style": null,
-                            "children":                 [
-                            {
-                            "min": 0,
-                            "max": null,
-                            "sortOrder": null,
-                            "parent": "MmM5MDkwYzMyNjIzMGViZDAxMjYyN2ZiMDhjZDAwMDg=",
-                            "DCRReference": "lx",
-                            "type": "data category",
-                            "id": "MmM5MDkwYzMyNjIzMGViZDAxMjYyN2ZiMDhkYjAwYTg=",
-                            "adminInfo": null,
-                            "valuedomain": [],
-                            "description": "The Record marker for each record in a lexical entry. It contains the lexeme or headword (which is commonly mono-morphemic). Since such a lexeme form is often not accessible for vernacular speakers if printed, use the \\lc field to provide a more readable form for vernacular speakers.",
-                            "DCR": "user defined",
-                            "name": "Lexeme",
-                            "note": null,
-                            "style": null
-                            }
-                        -->
                         <component id="{$id}"
                             description="The container for all the lexical entries of a source language within the database. A Lexicon must contain at least one lexical entry"
                             name="Lexicon" mandatory="true" multiple="false" type="lexicon">
                             <component id="{$lexicon-information-id}"
                                 description="Contains administrative information and other general attributes"
                                 name="Lexicon Information" type="lexicon-information"
-                                mandatory="true" multiple="false">
-                                <component id="{$lexicon-name-id}" description="Name of the lexicon"
-                                    name="Lexicon name" type="data" mandatory="true"
-                                    lexus-id="lexicon-name" multiple="false"/>
-                                <component id="{$lexicon-description-id}"
-                                    description="Description of the lexicon"
-                                    lexus-id="lexicon-description" name="Lexicon description"
-                                    type="data" mandatory="true" multiple="false"/>
-                                <component id="{$lexicon-note-id}"
-                                    description="Note for the lexicon" lexus-id="lexicon-note"
-                                    name="Lexicon note" type="data" mandatory="false"
-                                    multiple="false"/>
-                            </component>
+                                mandatory="true" multiple="false"> </component>
                             <component id="{$lexical-entry-id}"
                                 description="Represents a word, a multi-word expression, or an affix in a given language"
                                 name="lexical-entry" mandatory="true" multiple="true"
@@ -129,10 +84,11 @@
                 </meta>
             </lexus>
             <log id="{$id}">
-                <entry type="create" date-time="{current-dateTime()}" user="{data/user/@id}"
+                <entry type="create-lexicon" date-time="{current-dateTime()}" user="{data/user/@id}"
                     username="{data/user/name}"/>
             </log>
-        </create-lexicon>
+            <xsl:copy-of select="user"/>
+        </data>
     </xsl:template>
 
 </xsl:stylesheet>

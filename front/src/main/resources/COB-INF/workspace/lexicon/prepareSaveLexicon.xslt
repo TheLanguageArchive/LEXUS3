@@ -14,9 +14,12 @@
     </xsl:template>
 
     <xsl:template match="json">
-        <lexicon>
-            <xsl:apply-templates select="parameters/*"/>
+        <lexus>
+            <xsl:copy-of select="parameters/id"/>
             <meta>
+                <name><xsl:value-of select="parameters/name"/></name>
+                <description><xsl:value-of select="parameters/description"/></description>
+                <note><xsl:value-of select="parameters/note"/></note>
                 <users>
                     <xsl:for-each-group group-by="id"
                         select="parameters//readers | parameters//writers">
@@ -33,7 +36,7 @@
                     </xsl:for-each-group>
                 </users>
             </meta>
-        </lexicon>
+        </lexus>
     </xsl:template>
 
     <!-- 

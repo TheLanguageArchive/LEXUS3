@@ -63,13 +63,13 @@
                 <xsl:value-of select="@id"/>
             </string>
             <string key="name">
-                <xsl:value-of select="lexicon-information/data[@lexus-id = 'lexicon-name']"/>
+                <xsl:value-of select="meta/name"/>
             </string>
             <string key="description">
-                <xsl:value-of select="lexicon-information/data[@lexus-id = 'lexicon-description']"/>
+                <xsl:value-of select="meta/description"/>
             </string>
             <string key="note">
-                <xsl:value-of select="lexicon-information/data[@lexus-id = 'lexicon-note']"/>
+                <xsl:value-of select="meta/note"/>
             </string>
             <xsl:choose>
                 <xsl:when test="meta/owner[@ref eq $userId]">
