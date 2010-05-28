@@ -9,11 +9,31 @@
     -->
     <xsl:template match="/">
         <authentication>
-            <ID><xsl:value-of select="/user/@id"/></ID>
+            <ID>
+                <xsl:value-of select="/user/@id"/>
+            </ID>
             <data>
-                <xsl:copy-of select="/"/>
+                <user-id>
+                    <xsl:value-of select="/user/@id"/>
+                </user-id>
+                <xsl:apply-templates select="/user/account | /user/name | /user/accesslevel "/>
             </data>
         </authentication>
     </xsl:template>
 
+    <xsl:template match="account">
+        <user-account>
+            <xsl:value-of select="."/>
+        </user-account>
+    </xsl:template>
+    <xsl:template match="name">
+        <user-name>
+            <xsl:value-of select="."/>
+        </user-name>
+    </xsl:template>
+    <xsl:template match="accesslevel">
+        <user-accesslevel>
+            <xsl:value-of select="."/>
+        </user-accesslevel>
+    </xsl:template>
 </xsl:stylesheet>
