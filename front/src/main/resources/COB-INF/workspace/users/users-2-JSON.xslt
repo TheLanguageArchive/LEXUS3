@@ -49,7 +49,6 @@
             <number key="accesslevel"><xsl:value-of select="accesslevel"/></number>
             <string key="administrator"><xsl:value-of select="administrator"/></string>
             <string key="account"><xsl:value-of select="account"/></string>
-            <string key="password"></string>
         </object>
     </xsl:template>
 
