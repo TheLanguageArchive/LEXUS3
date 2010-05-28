@@ -103,13 +103,13 @@
         -->
         <map:redirect-to uri="index.html"/>
       </map:match>
-      
-      
+
+
       <map:handle-errors when="always">
         <map:read src="flexus/login-failed.html"/>
       </map:handle-errors>
     </map:pipeline>
-    
+
     <map:pipeline>
       <!-- 
           Pipeline for authenticating a user
@@ -120,9 +120,9 @@
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/workspace/userLogin.xml"/>
         </map:transform>
-        <map:transform type="tee" src="debug-info/remove-me-pre.xml"/>
+        <map:transform type="tee" src="debug-info/authentication-remove-me-pre.xml"/>
         <map:transform src="util/createAuthenticationDocument.xslt"/>
-        <map:transform type="tee" src="debug-info/remove-me-post.xml"/>
+        <map:transform type="tee" src="debug-info/authentication-remove-me-post.xml"/>
         <map:serialize type="xml"/>
       </map:match>
 
@@ -144,6 +144,52 @@
       </map:match>
 
     </map:pipeline>
+
+    <!-- 
+      Put all the request info in XML
+    -->
+    <map:pipeline internal-only="true">
+
+      <map:match pattern="request">
+        <map:generate type="request"/>
+        <map:serialize type="xml"/>
+      </map:match>
+
+    </map:pipeline>
+
+
+    <!-- 
+      Generate XML for the current user using
+      sitemap parameters (inserted into the 
+      sitemap by the authentication module
+      using the cauth-is-logged-in action).
+    -->
+    <map:pipeline internal-only="true">
+
+      <!-- Get 1 user -->
+      <map:match pattern="user">
+        <map:act type="cauth-is-logged-in">
+          <map:parameter name="application" value="Lexus"/>
+          <map:generate src="resource/internal/user.xml"/>
+          <!--          <map:transform type="tee" src="debug-info/session-remove-me-pre.xml"/>-->
+          <map:transform src="util/create-user-element.xslt">
+            <map:parameter name="id" value="{user-id}"/>
+            <map:parameter name="name" value="{user-name}"/>
+            <map:parameter name="account" value="{user-account}"/>
+            <map:parameter name="accesslevel" value="{user-accesslevel}"/>
+          </map:transform>
+          <!--          <map:transform type="tee" src="debug-info/session-remove-me-post.xml"/>-->
+          <map:serialize type="xml"/>
+        </map:act>
+      </map:match>
+
+      <map:handle-errors when="always">
+        <map:generate src="resource/internal/user-not-found.xml"/>
+        <map:serialize type="xml"/>
+      </map:handle-errors>
+
+    </map:pipeline>
+
 
 
     <!--
@@ -199,43 +245,6 @@
     </map:pipeline>
 
 
-
-    <!-- 
-        Put all the request info in XML
-        -->
-    <map:pipeline internal-only="true">
-
-      <map:match pattern="request">
-        <map:generate type="request"/>
-        <map:serialize type="xml"/>
-      </map:match>
-
-    </map:pipeline>
-
-
-
-    <!-- 
-        Generate XML for the current user.
-        -->
-    <map:pipeline internal-only="true">
-
-      <!-- Get 1 user -->
-      <map:match pattern="user">
-        <map:act type="cauth-is-logged-in">
-          <map:parameter name="application" value="Lexus"/>
-          <map:generate
-            src="${exist.rest.endpoint}/db/lexus/users?_query=//user[number(@id)%20eq%20{ID}]"/>
-          <map:transform src="util/extractDataFromExistResponse.xslt"/>
-          <map:serialize type="xml"/>
-        </map:act>
-      </map:match>
-
-      <map:handle-errors when="always">
-        <map:generate src="resource/internal/user-not-found.xml"/>
-        <map:serialize type="xml"/>
-      </map:handle-errors>
-
-    </map:pipeline>
 
 
     <!-- 
