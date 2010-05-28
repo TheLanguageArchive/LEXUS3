@@ -20,4 +20,12 @@
         };
     </xsl:template>
     
+    
+    <xsl:template name="permissions">
+        declare function lexus:canCreateUser($user as node())  as xs:boolean {
+            if ($user/accesslevel ge 30)
+                then true()
+                else false()
+        };
+    </xsl:template>
 </xsl:stylesheet>

@@ -65,7 +65,7 @@
     <dependency>
       <groupId>com.google.code</groupId>
       <artifactId>cocooncomponents</artifactId>
-      <version>1.0.3-SNAPSHOT</version>
+      <version>1.0.4-SNAPSHOT</version>
     </dependency>
   </dependencies>
 

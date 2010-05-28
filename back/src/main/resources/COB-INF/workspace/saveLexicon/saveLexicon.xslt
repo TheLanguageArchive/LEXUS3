@@ -39,12 +39,9 @@
                             let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>
                         
                             let $dummy := (
-                                update delete $lexicon/lexicon-information/feat[@name eq 'name'],
-                                update insert element feat { attribute name {'name'}, $newData/name/text()} into $lexicon/lexicon-information,
-                                update delete $lexicon/lexicon-information/feat[@name eq 'description'],
-                                update insert element feat {attribute name {'description'}, $newData/description/text()} into $lexicon/lexicon-information,
-                                update delete $lexicon/lexicon-information/feat[@name eq 'note'],
-                                update insert element feat { attribute name {'note'}, $newData/note/text()} into $lexicon/lexicon-information,
+                                update replace $lexus/meta/name with $newData/meta/name,
+                                update replace $lexus/meta/description with $newData/meta/description,
+                                update replace $lexus/meta/note with $newData/meta/note,
                                 update replace $lexus/meta/users with $newData/meta/users
                             )
                             
@@ -56,14 +53,14 @@
                                 element lexicon
                                     {$lexicon/@*,
                                     $lexicon/lexicon-information,
-                                    $lexus/meta,
                                     element size {count($lexicon/lexical-entry)}},
+                                $lexus,
                                 $user
                             }
                         };
 
                         let $userId := '<xsl:value-of select="/data/user/@id"/>'                        
-                        let $newData := <xsl:apply-templates select="/data/lexicon" mode="encoded"/>
+                        let $newData := <xsl:apply-templates select="/data/lexus" mode="encoded"/>
                         let $lexus := collection('<xsl:value-of select="$dbpath"/>/lexica')/lexus[@id eq $newData/id]
                         let $lexicon := collection('<xsl:value-of select="$dbpath"/>/lexica')/lexicon[@id eq $newData/id]
                         return if ($lexus/meta/users/user[@ref = $userId]/permissions/write eq "true")

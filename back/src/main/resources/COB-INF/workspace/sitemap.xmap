@@ -43,7 +43,6 @@
           <map:parameter name="password" value="${exist.rest.password}"/>
         </map:transform>
         <map:transform src="../util/extractDataFromExistResponse.xslt"/>
-        <map:transform type="tee" src="debug-info/remove-me-back.xml"/>
         <!--        <map:transform type="validate" src="getPage/getPage.xsd"/>-->
         <map:serialize type="xml"/>
       </map:match>
@@ -121,12 +120,32 @@
         <map:transform src="../util/extractDataFromExistResponse.xslt"/>
         <map:serialize type="xml"/>
       </map:match>
-
+      
+      <!-- 
+        Save user
+      -->
+      <map:match pattern="saveUser.xml">
+        <map:generate src="service-consumer:"/>
+        <map:transform type="tee" src="debug-info/back-remove-me-pre.xml"/>
+        <map:transform type="saxon" src="users/saveUser.xslt">
+          <map:parameter name="endpoint" value="${exist.rest.endpoint}"/>
+          <map:parameter name="dbpath" value="${exist.rest.db.path}"/>
+        </map:transform>
+        <!--<map:transform type="rest">
+          <map:parameter name="username" value="${exist.rest.username}"/>
+          <map:parameter name="password" value="${exist.rest.password}"/>
+        </map:transform>
+        <map:transform src="../util/extractDataFromExistResponse.xslt"/>-->
+        <map:transform type="tee" src="debug-info/back-remove-me-post.xml"/>
+        <map:serialize type="xml"/>
+      </map:match>
+      
       <!-- 
         Save lexicon metadata
       -->
       <map:match pattern="saveLexicon.xml">
         <map:generate src="service-consumer:"/>
+        <map:transform type="tee" src="debug-info/back-remove-me-pre.xml"/>
         <map:transform type="saxon" src="saveLexicon/saveLexicon.xslt">
           <map:parameter name="endpoint" value="${exist.rest.endpoint}"/>
           <map:parameter name="dbpath" value="${exist.rest.db.path}"/>
@@ -136,7 +155,7 @@
           <map:parameter name="password" value="${exist.rest.password}"/>
         </map:transform>
         <map:transform src="../util/extractDataFromExistResponse.xslt"/>
-        <!--        <map:transform type="tee" src="debug-info/remove-me.xml"/>-->
+        <map:transform type="tee" src="debug-info/back-remove-me-post.xml"/>
         <!--        <map:transform type="validate" src="saveLexicon/saveLexicon.xsd"/>-->
         <map:serialize type="xml"/>
       </map:match>
@@ -248,9 +267,11 @@
         <map:transform type="rest">
           <map:parameter name="username" value="${exist.rest.username}"/>
           <map:parameter name="password" value="${exist.rest.password}"/>
+          <map:parameter name="preemptive-authentication" value="true"/>
         </map:transform>
         <map:transform src="../util/extractDataFromExistResponse.xslt"/>
         <map:transform type="tee" src="debug-info/back-remove-me-post.xml"/>
+        <map:transform type="saxon" src="users/returnUserLoginInfo.xslt"/>
         <map:serialize type="xml"/>
       </map:match>
     </map:pipeline>

@@ -29,10 +29,9 @@
                                         $users,
                                         element lexica {
                                             for $lexicon in $lexica
-                                            order by $lexicon/lexicon-information/data[@lexus-id='lexicon-name']
+                                            order by $lexi[@id eq $lexicon/@id]/meta/name
                                                 return element lexicon
                                                     {$lexicon/@*,
-                                                    $lexicon/lexicon-information,
                                                     $lexi[@id eq $lexicon/@id]/meta,
                                                     element size {count($lexicon//lexical-entry)}}
                                         },
