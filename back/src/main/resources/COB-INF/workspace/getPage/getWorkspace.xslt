@@ -16,7 +16,8 @@
                 <query xmlns="http://exist.sourceforge.net/NS/exist">
                     <text>
                         <xsl:call-template name="declare-namespace"/>                        
-                        <xsl:call-template name="users"/>
+                        <xsl:call-template name="users"/>                      
+                        <xsl:call-template name="lexica"/>
                         
                         let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>
                         let $user-id := '<xsl:value-of select="/data/user/@id"/>'
@@ -27,14 +28,7 @@
                         return element result
                                     {
                                         $users,
-                                        element lexica {
-                                            for $lexicon in $lexica
-                                            order by $lexi[@id eq $lexicon/@id]/meta/name
-                                                return element lexicon
-                                                    {$lexicon/@*,
-                                                    $lexi[@id eq $lexicon/@id]/meta,
-                                                    element size {count($lexicon//lexical-entry)}}
-                                        },
+                                        lexus:lexica($lexica, $lexi),
                                         $user
                                     }
                     </text>

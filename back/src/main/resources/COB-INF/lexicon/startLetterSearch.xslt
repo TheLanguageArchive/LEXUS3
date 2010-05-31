@@ -5,19 +5,15 @@
         
         Input is:
         <data>
-            <json xmlns:json="http://apache.org/cocoon/json/1.0">
-                <id>AF836C97-5C1A-3DA6-00A2-3E4F31CCE5F4</id>
-                <requester>LexiconBrowser793</requester>
-                <parameters>
-                <lexicon>1</lexicon>
-                <refiner>
-                <startLetter/>
-                <pageSize>25</pageSize>
-                <startPage>0</startPage>
-                </refiner>
-                </parameters>
-            </json>
-            <user>...</user>
+        <search>
+        <lexicon>1</lexicon>
+        <refiner>
+        <startLetter/>
+        <pageSize>25</pageSize>
+        <startPage>0</startPage>
+        </refiner>
+        </search>
+        <user>...</user>
         </data>
         
         Generate the following information from the database:
@@ -121,48 +117,39 @@
                 <query xmlns="http://exist.sourceforge.net/NS/exist">
                     <text>
                         <xsl:call-template name="declare-namespace"/>                        
-                        <xsl:call-template name="users"/>
+                        <xsl:call-template name="users"/>                       
+                        <xsl:call-template name="lexicon"/>                       
+                        <xsl:call-template name="lexica"/>
                         
-                        let $json := <xsl:apply-templates select="/data/json" mode="encoded"/>
+                        let $search := <xsl:apply-templates select="/data/search" mode="encoded"/>
                         let $user-id := '<xsl:value-of select="/data/user/@id"/>'
-                        let $lexiconId := '<xsl:value-of select="/data/json/parameters/lexicon"/>'
+                        let $lexiconId := $search/lexicon
                         let $lexicon := collection('<xsl:value-of select="$dbpath"/>/lexica')/lexicon[@id = $lexiconId]
-                        let $startLetter := '<xsl:value-of select="/data/json/parameters/startLetter"/>'
-                        let $pageSize := number('<xsl:value-of select="/data/json/parameters/refiner/pageSize"/>')
-                        let $startPage := number('<xsl:value-of select="/data/json/parameters/refiner/startPage"/>')
+                        let $startLetter := $search/startLetter
+                        let $pageSize := number($search/refiner/pageSize)
+                        let $startPage := number($search//refiner/startPage)
                         let $lexi := collection('<xsl:value-of select="$dbpath"/>/lexica')/lexus[meta/users/user/@ref = $user-id]
                         let $lexica := collection('<xsl:value-of select="$dbpath"/>/lexica')/lexicon[@id = $lexi/@id]
-                        let $vicosURL := '<xsl:value-of select="/data/vicos/URL"/>'
                         
                         let $lexicalEntries := if ($startLetter ne '') 
-                                                   then $lexicon/lexical-entry[@start-letter eq $startLetter]
+                                                   then $lexicon/lexical-entry (: [@start-letter eq $startLetter] :)
                                                    else $lexicon/lexical-entry
                         let $startLetters := distinct-values($lexicalEntries/@start-letter)
                         let $queries := ()
                         let $schema := ()
                         
-                        return element result
-                                    {
-                                        element results {
-                                            element startLetter { $startLetter },
-                                            element lexicon { $lexicon/@*, $lexicon/lexicon-information, 
-                                            $lexi[@id eq $lexicon/@id]/meta },
-                                            element lexical-entries { $lexicalEntries[position() gt ($startPage * $pageSize)][position() le (($startPage + 1) * $pageSize)] },
-                                            element startPage { $startPage }
-                                        },
-                                        element lexica {
-                                            for $lexicon in $lexica
-                                                order by $lexicon/lexicon-information/feat[@name = "name"]
-                                                return element lexicon
-                                                    {$lexicon/@*,
-                                                    $lexicon/lexicon-information,
-                                                    $lexi[@id eq $lexicon/@id]/meta,
-                                                    element size {count($lexicon/lexical-entry)}}
-                                        },
-                                        element startLetters { $startLetters },
-                                        element queries { $queries },
-                                        element schema { $schema }
-                                    }
+                        return element result {
+                            element results {
+                                element startLetter { $startLetter },
+                                lexus:lexica($lexicon, $lexi),
+                                element lexical-entries { $lexicalEntries[position() gt ($startPage * $pageSize)][position() le (($startPage + 1) * $pageSize)] },
+                                element startPage { $startPage }
+                            },                                        
+                            lexus:lexica($lexica, $lexi),
+                            element startLetters { $startLetters },
+                            element queries { $queries },
+                            element schema { $schema }
+                        }
                     </text>
                     <properties>
                         <property name="pretty-print" value="no"/>
