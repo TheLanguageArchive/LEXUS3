@@ -128,10 +128,11 @@
             </goals>
             <configuration>
               <outputDirectory>${basedir}/src/main/resources/COB-INF/flexus</outputDirectory>
+              <overwrite>true</overwrite>
               <resources>
                 <resource>
-                  <directory>../../flexus/bin-debug</directory>
-                  <filtering>true</filtering>
+                  <directory>${basedir}/../../flexus/bin-debug</directory>
+                  <filtering>false</filtering>
                 </resource>
               </resources>
             </configuration>
