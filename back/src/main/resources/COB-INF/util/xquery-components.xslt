@@ -22,10 +22,40 @@
     
     
     <xsl:template name="permissions">
-        declare function lexus:canCreateUser($user as node())  as xs:boolean {
-            if ($user/accesslevel ge 30)
+        declare function lexus:canUpdateOrCreateUser($user as node()) as xs:boolean {
+            if (number($user/accesslevel) ge 30)
                 then true()
                 else false()
+        };
+    </xsl:template>
+
+    <!-- 
+        Return a list of lexica in the workspace, order by name.
+    -->
+    <xsl:template name="lexica">
+        declare function lexus:lexica($lexica as node()*, $lexi as node()*) as node()* {
+            element lexica {
+                for $lexicon in $lexica
+                    order by $lexi[@id eq $lexicon/@id]/meta/name
+                    return element lexicon {
+                        $lexicon/@*,
+                        $lexi[@id eq $lexicon/@id]/meta,
+                        element size {count($lexicon//lexical-entry)}
+                    }
+            }
+        };
+    </xsl:template>
+    
+    
+    <!-- 
+        Return a list of lexica in the workspace, order by name.
+    -->
+    <xsl:template name="lexicon">
+        declare function lexus:lexicon($lexicon as node(), $lexi as node()*) as node()* {
+            element lexicon {
+                $lexicon/@*,
+                $lexi[@id eq $lexicon/@id]/meta
+            }
         };
     </xsl:template>
 </xsl:stylesheet>
