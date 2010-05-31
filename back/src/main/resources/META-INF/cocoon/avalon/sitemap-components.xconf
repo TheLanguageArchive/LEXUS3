@@ -5,7 +5,7 @@
             <authentication>
                 <username>admin</username>
                 <password>boe</password>
-                <!--<preemptive-authentication>true</preemptive-authentication>-->
+                <preemptive-authentication>true</preemptive-authentication>
             </authentication>
         </map:transformer>
         <map:transformer name="saxon" src="org.apache.cocoon.transformation.TraxTransformer">
