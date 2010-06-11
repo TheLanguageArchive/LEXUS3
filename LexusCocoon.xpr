@@ -280,6 +280,66 @@
                         <String xml:space="preserve">scenarios.load.from.project</String>
                         <Boolean xml:space="preserve">true</Boolean>
                     </entry>
+                    <entry>
+                        <String xml:space="preserve">validation.scenario.associations</String>
+                        <scenarioAssociation-array>
+                            <scenarioAssociation>
+                                <field name="name">
+                                    <String xml:space="preserve">xquery-components</String>
+                                </field>
+                                <field name="type">
+                                    <String xml:space="preserve">text/xsl</String>
+                                </field>
+                                <field name="url">
+                                    <String xml:space="preserve">back/src/main/resources/COB-INF/util/xquery-components.xslt</String>
+                                </field>
+                            </scenarioAssociation>
+                        </scenarioAssociation-array>
+                    </entry>
+                    <entry>
+                        <String xml:space="preserve">validation.scenarios</String>
+                        <validationScenario-array>
+                            <validationScenario>
+                                <field name="pairs">
+                                    <list>
+                                    <validationUnit>
+                                    <field name="url">
+                                    <String xml:space="preserve">file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/back/src/main/resources/COB-INF/workspace/getPage/getWorkspace.xslt</String>
+                                    </field>
+                                    <field name="validationEngine">
+                                    <validationEngine>
+                                    <field name="engineType">
+                                    <String xml:space="preserve">&lt;Default engine&gt;</String>
+                                    </field>
+                                    <field
+                                    name="allowsAutomaticValidation">
+                                    <Boolean xml:space="preserve">true</Boolean>
+                                    </field>
+                                    </validationEngine>
+                                    </field>
+                                    <field
+                                    name="allowAutomaticValidation">
+                                    <Boolean xml:space="preserve">true</Boolean>
+                                    </field>
+                                    <field name="extensions">
+                                    <null/>
+                                    </field>
+                                    </validationUnit>
+                                    </list>
+                                </field>
+                                <field name="type">
+                                    <String xml:space="preserve">text/xsl</String>
+                                </field>
+                                <field name="name">
+                                    <String xml:space="preserve">xquery-components</String>
+                                </field>
+                            </validationScenario>
+                        </validationScenario-array>
+                    </entry>
+                    <entry>
+                        <String xml:space="preserve">validation.scenarios.load.from.project</String>
+                        <Boolean xml:space="preserve">true</Boolean>
+                    </entry>
                 </map>
             </serialized>
         </options>
