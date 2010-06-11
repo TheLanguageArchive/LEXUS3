@@ -21,11 +21,20 @@
     </xsl:template>
     
     
-    <xsl:template name="permissions">
+    <xsl:template name="user-permissions">
         declare function lexus:canUpdateOrCreateUser($user as node()) as xs:boolean {
             if (number($user/accesslevel) ge 30)
                 then true()
                 else false()
+        };
+    </xsl:template>
+    
+    
+    <xsl:template name="schema-permissions">
+        declare function lexus:canUpdateSchema($lexus as node(), $userId as xs:string) as xs:boolean {
+        if ($lexus/meta/users/user[@ref = $userId]/permissions/write eq "true")
+            then true()
+            else false()
         };
     </xsl:template>
 
@@ -57,5 +66,18 @@
                 $lexi[@id eq $lexicon/@id]/meta
             }
         };
+    </xsl:template>
+    
+    
+    <xsl:template name="log">
+        declare function lexus:log($lexiconId as xs:string, $type as xs:string, $userId as xs:string, $username as xs:string, $logEntry as node()*) {
+            let $log := collection('<xsl:value-of select="$dbpath"/>/lexica')/log[@id eq $lexiconId]
+            let $entry :=  element entry {
+                                attribute type {$type}, attribute date-time {current-dateTime()},
+                                attribute user {$userId}, attribute username {$username},
+                                $logEntry
+                           }
+            return update insert $entry into $log
+        };        
     </xsl:template>
 </xsl:stylesheet>
