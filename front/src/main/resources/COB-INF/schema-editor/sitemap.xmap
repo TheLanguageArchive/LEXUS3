@@ -41,12 +41,32 @@
           <map:part src="cocoon://json"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>
+        <map:transform type="saxon" src="getSchema/prepareGetSchema.xslt"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/schema-editor/getSchema.xml"/>
         </map:transform>
         <map:serialize type="xml"/>
       </map:match>
 
+
+
+      <!-- 
+        Save schema data
+      -->
+      <map:match pattern="saveSchema.json">
+        <map:aggregate element="data">
+          <map:part src="cocoon://json"/>
+          <map:part src="cocoon://user"/>
+        </map:aggregate>
+        <map:transform type="tee" src="debug-info/save-schema-remove-me-pre.xml"/>
+        <map:transform type="saxon" src="saveSchema/prepareSaveSchema.xslt"/>
+        <map:transform type="tee" src="debug-info/save-schema-remove-me-post.xml"/>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:back:/schema-editor/saveSchema.xml"/>
+        </map:transform>
+        <map:transform type="saxon" src="saveSchema/savedSchema-2-JSON.xslt"/>
+        <map:serialize type="json"/>
+      </map:match>
     </map:pipeline>
 
   </map:pipelines>

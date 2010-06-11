@@ -123,22 +123,323 @@
 -->
     <xsl:template match="/">
         <object>
-            <xsl:apply-templates/>
+            <xsl:apply-templates select="data/*"/>
         </object>
     </xsl:template>
 
-    <xsl:template match="/result">
+    <xsl:template match="result">
         <object key="result">
             <xsl:apply-templates/>
         </object>
     </xsl:template>
 
-    <xsl:template match="/result/schema">
-        <object k
+    <!-- 
+            Transform this:
+            <schema>
+            <component id="uuid:67a9c4d1-7fb1-4c4a-b3a8-c67a494e449a" description="The container for all the lexical entries of a source language within the database. A Lexicon must contain at least one lexical entry" name="Lexicon" mandatory="true" multiple="false" type="lexicon">
+            <component id="uuid:ef64b80b-5aad-4392-9265-296000ccd87b" description="Contains administrative information and other general attributes" name="Lexicon Information" type="lexicon-information" mandatory="true" multiple="false"/>
+            <component id="uuid:9e1dbc3c-55d1-4ba2-96b8-391f779a16ab" description="Represents a word, a multi-word expression, or an affix in a given language" name="lexical-entry" mandatory="true" multiple="true" type="lexical-entry">
+            <component id="uuid:6b9f1ff4-6349-4c08-96ad-d04d29533813" description="Represents one lexical variant of the written or spoken form of the lexical entry" name="Form" mandatory="true" multiple="false" type="form"/>
+            <component id="uuid:c27cd277-9852-4fd8-94bb-7909e25fdd8c" description="Contains attributes that describe meanings of a lexical entry" name="Sense" mandatory="true" multiple="false" type="sense"/>
+            </component>
+            </component>
+            </schema>
+            to this:
+            "mySchema":             [
+            {
+            "min": 0,
+            "max": null,
+            "sortOrder": null,
+            "parent": "MmM5MDk5ODQyNzFlMDBkYjAxMjcxZTAxN2VjNDAwNDA=",
+            "DCRReference": "xe",
+            "type": "data category",
+            "id": "MmM5MDk5ODQyNzFlMDBkYjAxMjcxZTAxN2VjNDAwNDI=",
+            "adminInfo": null,
+            "valuedomain": [],
+            "description": "This provides the English translation of the example sentence given in the \\xv field.",
+            "DCR": "user defined",
+            "name": "Example free trans. (E)",
+            "note": null
+            },
+        -->
+    <xsl:template match="schema">
+        <array key="schema">
+            <xsl:apply-templates select="component"/>
+        </array>
+    </xsl:template>
+
+    <!-- 
+            {
+            "min": 1,
+            "adminInfo": "to be filled out ",
+            "id": "MmM5MDkwYzEwOWZkM2U0ZDAxMDlmZDNmNDc2ZDAwMDY=",
+            "max": 1,
+            "description": null,
+            "name": "lexicon",
+            "parent": null,
+            "type": "Lexicon",
+            "note": null
+            }
+        -->
+    <xsl:template match="component[@type='Lexicon']" priority="1">
+        <object>
+            <string key="id">
+                <xsl:value-of select="@id"/>
+            </string>
+            <number key="min">1</number>
+            <number key="max">1</number>
+            <string key="adminInfo">
+                <xsl:value-of select="@admin-info"/>
+            </string>
+            <string key="description">
+                <xsl:value-of select="@description"/>
+            </string>
+            <string key="type">Lexicon</string>
+            <string key="name">lexicon</string>
+            <string key="parent">null</string>
+            <string key="note"/>
+            <xsl:if test="component">
+                <array key="children">
+                    <xsl:apply-templates select="component"/>
+                </array>
+            </xsl:if>
+        </object>
+    </xsl:template>
+
+    <!-- 
+            {
+            "min": 1,
+            "adminInfo": null,
+            "id": "MmM5MDkwYzEwOWZkM2U0ZDAxMDlmZDNmNDdhMzAwMGU=",
+            "max": 1,
+            "description": null,
+            "name": "lexiconInformation",
+            "parent": "MmM5MDkwYzEwOWZkM2U0ZDAxMDlmZDNmNDc2ZDAwMDY=",
+            "type": "component",
+            "note": null
+            }
+        -->
+    <xsl:template match="component[@type='LexiconInformation']" priority="1">
+        <object>
+            <string key="id">
+                <xsl:value-of select="@id"/>
+            </string>
+            <number key="min">1</number>
+            <number key="max">1</number>
+            <string key="adminInfo">
+                <xsl:value-of select="@admin-info"/>
+            </string>
+            <string key="description">
+                <xsl:value-of select="@description"/>
+            </string>
+            <string key="type">component</string>
+            <string key="name">lexiconInformation</string>
+            <string key="parent">
+                <xsl:value-of select="../@id"/>
+            </string>
+            <string key="note"/>
+            <xsl:if test="component">
+                <array key="children">
+                    <xsl:apply-templates select="component"/>
+                </array>
+            </xsl:if>
+        </object>
+    </xsl:template>
+
+    <!-- 
+            {
+            "min": 0,
+            "adminInfo": null,
+            "id": "MmM5MDkwYzEwOWZkM2U0ZDAxMDlmZDNmNDc2ZTAwMDg=",
+            "max": null,
+            "description": null,
+            "name": "lexicalEntry",
+            "parent": "MmM5MDkwYzEwOWZkM2U0ZDAxMDlmZDNmNDc2ZDAwMDY=",
+            "type": "LexicalEntry",
+            "note": null
+            }-->
+    <xsl:template match="component[@type='LexicalEntry']" priority="1">
+        <object>
+            <string key="id">
+                <xsl:value-of select="@id"/>
+            </string>
+            <number key="min">1</number>
+            <null key="max"/>
+            <string key="adminInfo">
+                <xsl:value-of select="@admin-info"/>
+            </string>
+            <string key="description">
+                <xsl:value-of select="@description"/>
+            </string>
+            <string key="type">LexicalEntry</string>
+            <string key="name">lexicalEntry</string>
+            <string key="parent">
+                <xsl:value-of select="../@id"/>
+            </string>
+            <string key="note"/>
+            <xsl:if test="component">
+                <array key="children">
+                    <xsl:apply-templates select="component"/>
+                </array>
+            </xsl:if>
+        </object>
+    </xsl:template>
+
+    <!-- 
+            {
+            "min": 0,
+            "max": null,
+            "sortOrder": null,
+            "parent": "MmM5MDk5ODQyNzFlMDBkYjAxMjcxZTAxN2VjNDAwNDA=",
+            "DCRReference": "xe",
+            "type": "data category",
+            "id": "MmM5MDk5ODQyNzFlMDBkYjAxMjcxZTAxN2VjNDAwNDI=",
+            "adminInfo": null,
+            "valuedomain": [],
+            "description": "This provides the English translation of the example sentence given in the \\xv field.",
+            "DCR": "user defined",
+            "name": "Example free trans. (E)",
+            "note": null
+            }
+        -->
+    <xsl:template match="component[@type eq'data category']">
+        <object>            
+            <number key="min">
+                <xsl:choose>
+                    <xsl:when test="@mandatory eq 'true'">
+                        <xsl:text>1</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>0</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </number>            
+            <xsl:choose>
+                <xsl:when test="@multiple eq 'false'">
+                    <number key="max"><xsl:text>1</xsl:text></number>
+                </xsl:when>
+                <xsl:otherwise><null key="max"/></xsl:otherwise>
+            </xsl:choose>
+            <string key="parent">
+                <xsl:value-of select="../@id"/>
+            </string>
+            <string key="type">data category</string>
+            <string key="name">
+                <xsl:value-of select="@name"/>
+            </string>
+            <string key="description">
+                <xsl:value-of select="@description"/>
+            </string>
+            <string key="DCR">
+                <xsl:value-of select="@dcr"/>
+            </string>
+            <string key="DCRReference">
+                <xsl:value-of select="@dcrReference"/>
+            </string>
+            <string key="sortOrder">
+                <xsl:value-of select="@sortOrder"/>
+            </string>
+            <string key="adminInfo">
+                <xsl:value-of select="@admin-info"/>
+            </string>
+            <array key="valuedomain">
+                <xsl:apply-templates select="valuedomain/domainvalue"/>
+            </array>
+        </object>
+    </xsl:template>
+    
+    <xsl:template match="domainvalue">
+        <object>
+            <string key="value">
+                <xsl:value-of select="."/>
+            </string>
+        </object>
+    </xsl:template>
+    
+    <xsl:template match="component[component]">
+        <object>
+            <number key="min">
+                <xsl:choose>
+                    <xsl:when test="@mandatory eq 'true'">
+                        <xsl:text>1</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>0</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </number>
+            <xsl:choose>
+                <xsl:when test="@multiple eq 'false'">
+                    <number key="max"><xsl:text>1</xsl:text></number>
+                </xsl:when>
+                <xsl:otherwise><null key="max"/></xsl:otherwise>
+            </xsl:choose>            
+            <string key="parent">
+                <xsl:value-of select="../@id"/>
+            </string>
+            <string key="type">component</string>
+            <string key="name">
+                <xsl:value-of select="@name"/>
+            </string>
+            <string key="description">
+                <xsl:value-of select="@description"/>
+            </string>
+            <string key="DCR">
+                <xsl:value-of select="@dcr"/>
+            </string>
+            <string key="DCRReference">
+                <xsl:value-of select="@dcrReference"/>
+            </string>
+            <string key="sortOrder">
+                <xsl:value-of select="@sortOrder"/>
+            </string>
+            <string key="adminInfo">
+                <xsl:value-of select="@admin-info"/>
+            </string>
+            <array key="children">
+                <xsl:apply-templates select="component"/>
+            </array>
+
+        </object>
+    </xsl:template>
+
+
+    <xsl:template match="lexicon">
+        <xsl:variable name="userId" select="/data/user/@id"/>
+        <object key="lexicon">
+            <string key="id">
+                <xsl:value-of select="@id"/>
+            </string>
+            <string key="name">
+                <xsl:value-of select="meta/name"/>
+            </string>
+            <string key="description">
+                <xsl:value-of select="meta/description"/>
+            </string>
+            <xsl:choose>
+                <xsl:when test="meta/owner[@ref eq $userId]">
+                    <false key="shared"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <true key="shared"/>
+                </xsl:otherwise>
+            </xsl:choose>
+            <number key="size">
+                <xsl:value-of select="size"/>
+            </number>
+            <xsl:choose>
+                <xsl:when test="meta/users/user[@ref = $userId][permissions/write eq 'true']">
+                    <true key="writable"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <false key="writable"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </object>
     </xsl:template>
 
 
     <xsl:template match="@* | node()"/>
-        
-    
+
+
 </xsl:stylesheet>
