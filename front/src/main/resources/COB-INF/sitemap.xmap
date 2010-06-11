@@ -65,6 +65,7 @@
     </map:pipeline>
 
 
+
     <!-- 
         Authentication pipeline, uses Cocoon cauth
         framework for authenticating users.
@@ -131,7 +132,18 @@
       </map:handle-errors>
 
     </map:pipeline>
-
+    
+    <map:pipeline>
+      
+      <!-- 
+        get user data
+      -->
+      <map:match pattern="getUserData.json">
+        <map:generate src="cocoon://user"/>
+        <map:transform type="saxon" src="stylesheets/getUserData-2-JSON.xslt"/>
+        <map:serialize type="json"/>
+      </map:match>
+    </map:pipeline>
 
     <!-- 
         Generate XML from the json in the request parameter
