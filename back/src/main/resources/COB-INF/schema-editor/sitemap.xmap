@@ -35,7 +35,7 @@
       <map:match pattern="getSchema.xml">
         <map:generate src="service-consumer:"/>
         <map:transform type="tee" src="debug-info/back-remove-me-pre.xml"/>
-        <map:transform type="saxon" src="getSchema/getSchema.xslt">
+        <map:transform type="saxon" src="getSchema.xslt">
           <map:parameter name="endpoint" value="${exist.rest.endpoint}"/>
           <map:parameter name="dbpath" value="${exist.rest.db.path}"/>
         </map:transform>
@@ -49,6 +49,25 @@
       </map:match>
 
 
+      <!-- 
+        Save schema.
+      -->
+      <map:match pattern="saveSchema.xml">
+        <map:generate src="service-consumer:"/>
+        <map:transform type="saxon" src="saveSchema.xslt">
+          <map:parameter name="endpoint" value="${exist.rest.endpoint}"/>
+          <map:parameter name="dbpath" value="${exist.rest.db.path}"/>
+        </map:transform>
+        <map:transform type="tee" src="debug-info/back-remove-me-pre.xml"/>
+        <map:transform type="rest">
+          <map:parameter name="username" value="${exist.rest.username}"/>
+          <map:parameter name="password" value="${exist.rest.password}"/>
+        </map:transform>
+        <map:transform src="../util/extractDataFromExistResponse.xslt"/>        
+        <map:transform type="tee" src="debug-info/back-remove-me-post.xml"/>
+        <map:serialize type="xml"/>
+      </map:match>
+      
     </map:pipeline>
 
 

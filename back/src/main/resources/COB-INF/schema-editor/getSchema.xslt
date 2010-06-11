@@ -4,8 +4,8 @@
     xmlns:lexus="http://www.mpi.nl/lexus/1.0"
     version="2.0">
     
-    <xsl:include href="../../util/identity.xslt"/>
-    <xsl:include href="../../util/xquery-components.xslt"/>
+    <xsl:include href="../util/identity.xslt"/>
+    <xsl:include href="../util/xquery-components.xslt"/>
     
     <xsl:param name="endpoint"/>
     <xsl:param name="dbpath"/>
