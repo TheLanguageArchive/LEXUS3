@@ -20,7 +20,7 @@
                     <text>
                         
                         <xsl:call-template name="declare-namespace"/>                        
-                        <xsl:call-template name="permissions"/>
+                        <xsl:call-template name="user-permissions"/>
                         
                         declare function lexus:updateUser($existingUser as node(), $newData as node()) as node() {
                             let $dummy := (
