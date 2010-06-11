@@ -301,7 +301,7 @@ public class JSONSerializer implements org.apache.cocoon.serialization.Serialize
                 if (!empty) {
                     throw new SAXException("true, false and null elements must be empty!");
                 }
-                write("true");
+                write("null");
                 return;
             } else {
                 throw new SAXException("Element name not one of object, array, number, string, false, true or null!");
