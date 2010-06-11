@@ -21,23 +21,23 @@
     <xsl:param name="dbpath"/>
 
     <xsl:variable name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
-    <xsl:variable name="lexicon-information-id"
+    <xsl:variable name="schema-lexicon-information-id"
         select="concat('uuid:',util:toString(util:randomUUID()))"/>
     <xsl:variable name="lexicon-name-id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
     <xsl:variable name="lexicon-description-id"
         select="concat('uuid:',util:toString(util:randomUUID()))"/>
     <xsl:variable name="lexicon-note-id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
-    <xsl:variable name="lexical-entry-id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
-    <xsl:variable name="form-id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
-    <xsl:variable name="sense-id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
+    <xsl:variable name="schema-lexical-entry-id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
+    <xsl:variable name="schema-form-id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
+    <xsl:variable name="schema-sense-id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
 
     <xsl:template match="/data">
         <data>
             <lexicon id="{$id}">
-                <lexicon-information schema-id="{$lexicon-information-id}"/> 
-                <lexical-entry schema-id="{$lexical-entry-id}">
-                    <form schema-id="{$form-id}"/>
-                    <sense schema-id="{$sense-id}"/>
+                <lexicon-information id="{concat('uuid:',util:toString(util:randomUUID()))}" schema-id="{$schema-lexicon-information-id}"/> 
+                <lexical-entry id="{concat('uuid:',util:toString(util:randomUUID()))}" schema-id="{$schema-lexical-entry-id}">
+                    <component id="{concat('uuid:',util:toString(util:randomUUID()))}" schema-id="{$schema-form-id}"/>
+                    <component id="{concat('uuid:',util:toString(util:randomUUID()))}" schema-id="{$schema-sense-id}"/>
                 </lexical-entry>
             </lexicon>
             <lexus id="{$id}">
@@ -63,21 +63,21 @@
                     <schema>
                         <component id="{$id}"
                             description="The container for all the lexical entries of a source language within the database. A Lexicon must contain at least one lexical entry"
-                            name="Lexicon" mandatory="true" multiple="false" type="lexicon">
-                            <component id="{$lexicon-information-id}"
+                            name="Lexicon" mandatory="true" multiple="false" type="Lexicon" admin-info="">
+                            <component id="{$schema-lexicon-information-id}"
                                 description="Contains administrative information and other general attributes"
-                                name="Lexicon Information" type="lexicon-information"
-                                mandatory="true" multiple="false"> </component>
-                            <component id="{$lexical-entry-id}"
+                                name="Lexicon Information" type="LexiconInformation"
+                                mandatory="true" multiple="false" admin-info=""/> 
+                            <component id="{$schema-lexical-entry-id}"
                                 description="Represents a word, a multi-word expression, or an affix in a given language"
-                                name="lexical-entry" mandatory="true" multiple="true"
-                                type="lexical-entry">
-                                <component id="{$form-id}"
+                                name="lexical entry" mandatory="true" multiple="true"
+                                type="LexicalEntry" admin-info="">
+                                <component id="{$schema-form-id}"
                                     description="Represents one lexical variant of the written or spoken form of the lexical entry"
-                                    name="Form" mandatory="true" multiple="false" type="form"/>
-                                <component id="{$sense-id}"
+                                    name="Form" mandatory="true" multiple="false" type="Form" admin-info=""/>
+                                <component id="{$schema-sense-id}"
                                     description="Contains attributes that describe meanings of a lexical entry"
-                                    name="Sense" mandatory="true" multiple="false" type="sense"/>
+                                    name="Sense" mandatory="true" multiple="false" type="Sense" admin-info=""/>
                             </component>
                         </component>
                     </schema>
