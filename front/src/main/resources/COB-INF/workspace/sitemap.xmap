@@ -52,7 +52,9 @@
           -->
       <map:match pattern="getPage.json">
         <map:generate src="cocoon:/getPage"/>
+        <map:transform type="tee" src="debug-info/remove-me-pre.xml"/>
         <map:transform type="saxon" src="getPage/page-2-JSON.xslt"/>
+        <map:transform type="tee" src="debug-info/remove-me-post.xml"/>
         <map:serialize type="json"/>
       </map:match>
 
@@ -61,11 +63,10 @@
           <map:part src="cocoon://json"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>
-        <map:transform type="tee" src="debug-info/remove-me-pre.xml"/>
+        <map:transform type="saxon" src="getPage/prepareGetPage.xslt"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/workspace/getPage.xml"/>
         </map:transform>
-        <map:transform type="tee" src="debug-info/remove-me-post.xml"/>
         <map:serialize type="xml"/>
       </map:match>
 
