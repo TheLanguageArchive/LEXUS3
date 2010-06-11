@@ -4,25 +4,26 @@
     xmlns:rest="http://org.apache.cocoon.transformation/rest/1.0"
     xmlns:exist="http://exist.sourceforge.net/NS/exist" version="2.0">
 
+    <xsl:import href="identity.xslt"/>
     <!-- 
         Extract data from the eXist response.
+        Throw an exception when an exception element is found in the stream.
     -->
-    <xsl:template match="/">
-        <xsl:choose>
-            <xsl:when test="//exception">
-                <xsl:message terminate="yes">
-                    <xsl:copy-of select="//exception"/>
-                </xsl:message>
-            </xsl:when>
-            <xsl:when test="//exist:result">
-                <xsl:copy-of select="//exist:result/*"/>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:message terminate="yes">
-                    <exception>unknown error during call to eXist backend [<xsl:value-of select="/"/>]</exception>
-                </xsl:message>
-            </xsl:otherwise>
-        </xsl:choose>
+    <xsl:template match="exception">
+        <xsl:message terminate="yes">
+            <xsl:copy-of select="//exception"/>
+        </xsl:message>
+    </xsl:template>
+    
+    <!-- 
+        Skip the rest:* stuff.
+        -->
+    <xsl:template match="rest:response">
+        <xsl:apply-templates select="rest:body/*"/>
+    </xsl:template>
+    
+    <xsl:template match="exist:result">
+        <xsl:copy-of select="*"/>
     </xsl:template>
 
 </xsl:stylesheet>
