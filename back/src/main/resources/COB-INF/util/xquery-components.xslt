@@ -23,23 +23,24 @@
     
     <xsl:template name="user-permissions">
         declare function lexus:canUpdateOrCreateUser($user as node()) as xs:boolean {
-            if (number($user/accesslevel) ge 30)
-                then true()
-                else false()
+            (number($user/accesslevel) ge 30)
+        };
+        
+        declare function lexus:isAdministrator($user as node()) as xs:boolean {
+            (number($user/accesslevel) ge 30)
         };
     </xsl:template>
     
     
     <xsl:template name="schema-permissions">
         declare function lexus:canUpdateSchema($lexus as node(), $userId as xs:string) as xs:boolean {
-        if ($lexus/meta/users/user[@ref = $userId]/permissions/write eq "true")
-            then true()
-            else false()
+            ($lexus/meta/users/user[@ref eq $userId]/permissions/write eq "true")
         };
     </xsl:template>
 
     <!-- 
-        Return a list of lexica in the workspace, order by name.
+        Given a list of lexus meta data nodes,
+        return the list of lexica with the same ids, order by name.
     -->
     <xsl:template name="lexica">
         declare function lexus:lexica($lexica as node()*, $lexi as node()*) as node()* {
@@ -49,15 +50,29 @@
                     return element lexicon {
                         $lexicon/@*,
                         $lexi[@id eq $lexicon/@id]/meta,
-                        element size {count($lexicon//lexical-entry)}
+                        element size {count($lexicon/lexical-entry)}
                     }
             }
+        };
+        
+        declare function lexus:lexica2($lexi as node()*) as node()* {
+            element lexica {
+                for $lex in $lexi
+                    let $lexicon := collection('<xsl:value-of select="$dbpath"/>/lexica')/lexicon[@id eq $lex/@id]
+                    order by $lex/meta/name
+                    return element lexicon {
+                        $lexicon/@*,
+                        $lex/meta,
+                        element size {count($lexicon/lexical-entry)
+                    }
+            }
+        }
         };
     </xsl:template>
     
     
     <!-- 
-        Return a list of lexica in the workspace, order by name.
+        Return a lexicon's attributes (id) and meta data.
     -->
     <xsl:template name="lexicon">
         declare function lexus:lexicon($lexicon as node(), $lexi as node()*) as node()* {

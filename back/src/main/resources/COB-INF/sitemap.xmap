@@ -24,6 +24,10 @@
 
     <map:pipeline>
       
+      <map:match pattern="import/**">
+        <map:mount uri-prefix="import/" src="import/sitemap.xmap"/>
+      </map:match>
+      
       <map:match pattern="lexicon/**">
         <map:mount uri-prefix="lexicon/" src="lexicon/sitemap.xmap"/>
       </map:match>

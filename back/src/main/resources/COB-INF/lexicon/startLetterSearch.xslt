@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:rest="http://org.apache.cocoon.transformation/rest/1.0" version="2.0">
+    xmlns:rest="http://org.apache.cocoon.transformation/rest/1.0"
+    xmlns:lexus="http://www.mpi.nl/lexus/1.0" version="2.0">
     <!--
         
         Input is:
@@ -110,7 +111,7 @@
     <xsl:param name="endpoint"/>
     <xsl:param name="dbpath"/>
 
-    <xsl:template match="/">
+    <xsl:template match="lexus:search">
         <rest:request target="{$endpoint}{$dbpath}/lexica" method="POST">
             <rest:header name="Content-Type" value="text/xml; charset=UTF-8"/>
             <rest:body>
@@ -121,10 +122,11 @@
                         <xsl:call-template name="lexicon"/>                       
                         <xsl:call-template name="lexica"/>
                         
-                        let $search := <xsl:apply-templates select="/data/search" mode="encoded"/>
+                        let $search := <xsl:apply-templates select="/data/lexus:search" mode="encoded"/>
                         let $user-id := '<xsl:value-of select="/data/user/@id"/>'
                         let $lexiconId := $search/lexicon
                         let $lexicon := collection('<xsl:value-of select="$dbpath"/>/lexica')/lexicon[@id = $lexiconId]
+                        let $lexus := collection('<xsl:value-of select="$dbpath"/>/lexica')/lexus[@id = $lexiconId]
                         let $startLetter := $search/startLetter
                         let $pageSize := number($search/refiner/pageSize)
                         let $startPage := number($search//refiner/startPage)
@@ -136,12 +138,12 @@
                                                    else $lexicon/lexical-entry
                         let $startLetters := distinct-values($lexicalEntries/@start-letter)
                         let $queries := ()
-                        let $schema := ()
+                        let $schema := $lexus/meta/schema
                         
                         return element result {
                             element results {
                                 element startLetter { $startLetter },
-                                lexus:lexica($lexicon, $lexi),
+                                lexus:lexicon($lexicon, $lexi),
                                 element lexical-entries { $lexicalEntries[position() gt ($startPage * $pageSize)][position() le (($startPage + 1) * $pageSize)] },
                                 element startPage { $startPage }
                             },                                        

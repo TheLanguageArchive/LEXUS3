@@ -13,6 +13,9 @@
         <map:transformer name="tee" src="org.apache.cocoon.transformation.alternative.TeeTransformer">
             <command>less %s</command>
         </map:transformer>
+        
+        <!--<map:transformer name="json" src="org.apache.cocoon.transformation.JSONTransformer"/>-->
+        
         <map:transformer name="lexer" src="org.apache.cocoon.transformation.LexicalTransformer"
             logger="sitemap.transformer.lexer"/>
         <map:transformer name="parser" src="org.apache.cocoon.transformation.ParserTransformer"

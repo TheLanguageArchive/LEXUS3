@@ -38,11 +38,14 @@
           <map:parameter name="endpoint" value="${exist.rest.endpoint}"/>
           <map:parameter name="dbpath" value="${exist.rest.db.path}"/>
         </map:transform>
+
+        <map:transform type="tee" src="debug-info/back-remove-me-pre.xml"/>
         <map:transform type="rest">
           <map:parameter name="username" value="${exist.rest.username}"/>
           <map:parameter name="password" value="${exist.rest.password}"/>
         </map:transform>
         <map:transform src="../util/extractDataFromExistResponse.xslt"/>
+        <map:transform type="tee" src="debug-info/back-remove-me-post.xml"/>
         <!--        <map:transform type="validate" src="getPage/getPage.xsd"/>-->
         <map:serialize type="xml"/>
       </map:match>
@@ -120,18 +123,16 @@
         <map:transform src="../util/extractDataFromExistResponse.xslt"/>
         <map:serialize type="xml"/>
       </map:match>
-      
+
       <!-- 
         Save user
       -->
       <map:match pattern="saveUser.xml">
         <map:generate src="service-consumer:"/>
-        <map:transform type="tee" src="debug-info/back-remove-me-pre.xml"/>
         <map:transform type="saxon" src="users/saveUser.xslt">
           <map:parameter name="endpoint" value="${exist.rest.endpoint}"/>
           <map:parameter name="dbpath" value="${exist.rest.db.path}"/>
         </map:transform>
-        <map:transform type="tee" src="debug-info/back-remove-me-post.xml"/>
         <map:transform type="rest">
           <map:parameter name="username" value="${exist.rest.username}"/>
           <map:parameter name="password" value="${exist.rest.password}"/>
@@ -139,7 +140,7 @@
         <map:transform src="../util/extractDataFromExistResponse.xslt"/>
         <map:serialize type="xml"/>
       </map:match>
-      
+
       <!-- 
         Save lexicon metadata
       -->
@@ -221,7 +222,7 @@
           <map:parameter name="endpoint" value="${exist.rest.endpoint}"/>
           <map:parameter name="dbpath" value="${exist.rest.db.path}"/>
         </map:transform>
-        <map:transform type="tee" src="pipeline-snapshot.xml"/>
+        <map:transform type="tee" src="debug-info/pipeline-snapshot.xml"/>
         <map:transform type="rest">
           <map:parameter name="username" value="${exist.rest.username}"/>
           <map:parameter name="password" value="${exist.rest.password}"/>
@@ -252,7 +253,7 @@
         <map:serialize type="xml"/>
       </map:match>
 
-    <!-- 
+      <!-- 
         Try to find the user and return the users' data.
         If a user can't be found and there are no users yet a
         new Administrator account is created and returned.

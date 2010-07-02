@@ -163,9 +163,9 @@
             },
         -->
     <xsl:template match="schema">
-        <array key="schema">
+<!--        <object key="schema">-->
             <xsl:apply-templates select="component"/>
-        </array>
+<!--        </object>-->
     </xsl:template>
 
     <!-- 
@@ -181,8 +181,8 @@
             "note": null
             }
         -->
-    <xsl:template match="component[@type='Lexicon']" priority="1">
-        <object>
+    <xsl:template match="component[@type='lexicon']" priority="10">
+        <object key="schema">
             <string key="id">
                 <xsl:value-of select="@id"/>
             </string>
@@ -196,7 +196,7 @@
             </string>
             <string key="type">Lexicon</string>
             <string key="name">lexicon</string>
-            <string key="parent">null</string>
+            <null key="parent"/>
             <string key="note"/>
             <xsl:if test="component">
                 <array key="children">
@@ -219,7 +219,7 @@
             "note": null
             }
         -->
-    <xsl:template match="component[@type='LexiconInformation']" priority="1">
+    <!--<xsl:template match="component[@type='lexicon-information']" priority="10">
         <object>
             <string key="id">
                 <xsl:value-of select="@id"/>
@@ -244,7 +244,7 @@
                 </array>
             </xsl:if>
         </object>
-    </xsl:template>
+    </xsl:template>-->
 
     <!-- 
             {
@@ -258,7 +258,7 @@
             "type": "LexicalEntry",
             "note": null
             }-->
-    <xsl:template match="component[@type='LexicalEntry']" priority="1">
+    <xsl:template match="component[@type='lexical-entry']" priority="10">
         <object>
             <string key="id">
                 <xsl:value-of select="@id"/>
@@ -302,7 +302,7 @@
             "note": null
             }
         -->
-    <xsl:template match="component[@type eq'data category']">
+    <xsl:template match="component[@type eq 'data-category']" priority="10">
         <object>            
             <number key="min">
                 <xsl:choose>
@@ -356,7 +356,7 @@
         </object>
     </xsl:template>
     
-    <xsl:template match="component[component]">
+    <xsl:template match="component[component]" priority="1">
         <object>
             <number key="min">
                 <xsl:choose>

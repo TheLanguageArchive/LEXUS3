@@ -91,8 +91,8 @@ public class JSONGenerator extends ServiceableGenerator {
         final AttributesImpl attr = new AttributesImpl();
 
         try {
-            getLogger().debug("JSON source =" + request.getParameter("request"));
-            JSONObject json = new JSONObject(request.getParameter("request"));
+            getLogger().debug("JSON source =" + request.getParameter(requestParameter));
+            JSONObject json = new JSONObject(request.getParameter(requestParameter));
             this.contentHandler.startDocument();
             this.contentHandler.startPrefixMapping(PREFIX, URI);
             toSAX(json, JSONnode, this.contentHandler);

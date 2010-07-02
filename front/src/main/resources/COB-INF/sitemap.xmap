@@ -70,7 +70,7 @@
         Authentication pipeline, uses Cocoon cauth
         framework for authenticating users.
         -->
-    <map:pipeline id="authentication">
+    <map:pipeline id="authentication" type="noncaching">
 
       <map:match pattern="signon.htm">
         <!--
@@ -118,12 +118,12 @@
       <map:match pattern="lexus-authuser">
         <map:generate type="request"/>
         <map:transform src="util/login.xslt"/>
+        <map:transform type="tee" src="debug-info/authentication-remove-me-pre.xml"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/workspace/userLogin.xml"/>
         </map:transform>
-        <map:transform type="tee" src="debug-info/authentication-remove-me-pre.xml"/>
-        <map:transform src="util/createAuthenticationDocument.xslt"/>
         <map:transform type="tee" src="debug-info/authentication-remove-me-post.xml"/>
+        <map:transform src="util/createAuthenticationDocument.xslt"/>
         <map:serialize type="xml"/>
       </map:match>
 
@@ -318,6 +318,14 @@
         <!--<map:redirect-to uri="index.html"/>-->
       </map:match>
 
+      <map:match pattern="import/**"><!--
+        <map:act type="cauth-is-logged-in">
+          <map:parameter name="application" value="Lexus"/>-->
+          <map:mount uri-prefix="import/" src="import/sitemap.xmap"/><!--
+        </map:act>
+        <map:redirect-to uri="index.html"/>-->
+      </map:match>
+            
     </map:pipeline>
 
   </map:pipelines>

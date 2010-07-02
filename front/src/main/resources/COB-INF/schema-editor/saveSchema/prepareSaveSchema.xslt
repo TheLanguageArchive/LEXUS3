@@ -46,14 +46,30 @@
     <xsl:include href="../../util/identity.xslt"/>
 
     <xsl:template match="json">
-        <lexus:save-schema>
-            <xsl:apply-templates select="parameters/schema/schema"/>
+        <lexus:save-schema id="{parameters/viewId}">
+            <xsl:apply-templates select="parameters/schema"/>
         </lexus:save-schema>
     </xsl:template>
 
     <xsl:template match="schema">
+        <xsl:variable name="type">
+            <xsl:choose>
+                <xsl:when test="type = 'Lexicon'">
+                    <xsl:text>lexicon</xsl:text>
+                </xsl:when>
+                <xsl:when test="type = 'LexicalEntry'">
+                    <xsl:text>lexical-entry</xsl:text>
+                </xsl:when>
+                <xsl:when test="type = 'data category'">
+                    <xsl:text>data-category</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="type"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
         <schema>
-            <component id="{id}" description="{description}" name="{name}" type="{type}"
+            <component id="{id}" description="{description}" name="{name}" type="{$type}" xtype="type"
                 mandatory="{if (number(min) gt 0) then 'true' else 'false'}"
                 multiple="{if (number(max) eq 1) then 'false' else 'true'}" note="{note}"
                 admin-info="{adminInfo}">
@@ -65,7 +81,23 @@
     <xsl:template match="children">
         <xsl:variable name="id"
             select="if (id) then id else concat('uuid:',util:toString(util:randomUUID()))"/>
-        <component id="{$id}" description="{description}" name="{name}" type="{type}"
+        <xsl:variable name="type">
+            <xsl:choose>
+                <xsl:when test="type = 'Lexicon'">
+                    <xsl:text>lexicon</xsl:text>
+                </xsl:when>
+                <xsl:when test="type = 'LexicalEntry'">
+                    <xsl:text>lexical-entry</xsl:text>
+                </xsl:when>
+                <xsl:when test="type = 'data category'">
+                    <xsl:text>data-category</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="type"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <component id="{$id}" description="{description}" name="{name}" type="{$type}" xtype="type"
             mandatory="{if (number(min) gt 0) then 'true' else 'false'}"
             multiple="{if (number(max) eq 1) then 'false' else 'true'}" note="{note}"
             admin-info="{adminInfo}">

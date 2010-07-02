@@ -200,7 +200,7 @@ public class JSONSerializer implements org.apache.cocoon.serialization.Serialize
                     break;
                 case STRING:
                     write("\"");
-                    write(currentText.toString());
+                    write(currentText.toString().replace("\\", "\\\\").replace("\"", "\\\""));
                     write("\"");
                     break;
                 // TRUE, FALSE und NULL treten nicht auf

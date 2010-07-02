@@ -49,7 +49,22 @@
         <map:serialize type="xml"/>
       </map:match>
 
-
+      <map:match pattern="getLexicalEntryData.xml">
+        <map:generate src="service-consumer:"/>
+        <map:transform type="saxon" src="getLexicalEntryData.xslt">
+          <map:parameter name="endpoint" value="${exist.rest.endpoint}"/>
+          <map:parameter name="dbpath" value="${exist.rest.db.path}"/>
+        </map:transform>
+<!--        <map:transform type="tee" src="debug-info/back-remove-me-pre.xml"/>-->
+        <map:transform type="rest">
+          <map:parameter name="username" value="${exist.rest.username}"/>
+          <map:parameter name="password" value="${exist.rest.password}"/>
+        </map:transform>
+        <map:transform src="../util/extractDataFromExistResponse.xslt"/>
+<!--        <map:transform type="tee" src="debug-info/back-remove-me-post.xml"/>-->
+        <!--        <map:transform type="validate" src="getLexicalEntryData.xsd"/>-->
+        <map:serialize type="xml"/>
+      </map:match>
 
     </map:pipeline>
 

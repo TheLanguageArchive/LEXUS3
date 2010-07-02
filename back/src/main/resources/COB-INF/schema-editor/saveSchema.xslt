@@ -23,19 +23,10 @@
                     
                         Save a schema.
                         
-                        Believe it or not, but we have to generate the whole shebang again!
-                        Schema, lexicon, userinformation and sortorders, everything is 
-                        serialised again in JSON!
-                        
-                        Brrr. So, we didn't choose XML because it used a few more bytes compared to JSON,
-                        but THEN we transfer all that stuff that is not needed in JSON. As a professional
-                        software developer I would have chosen XML and used a more modular commmunication model
-                        where we wouldn't have to transmit all that useless information with EVERY REQUEST.
-                        
                         I think all that is needed in a response here is 'success' or 'failure'. That will save
                         hundreds if not thousands of bytes and the client side will function just as well.
                     
-                        This is a typical response:
+                        This is a typical response િીદસ ૂપા દત્વોમકાલ્:
                         
                                                {
                                "id": "Mon Jun 07 09:14:16 CEST 2010",
@@ -1432,12 +1423,12 @@
 
                         let $userId := '<xsl:value-of select="/data/user/@id"/>'       
                         let $username := '<xsl:value-of select="/data/user/name"/>'       
-                        let $newData := <xsl:apply-templates select="/data/lexus:save-schema/schema" mode="encoded"/>
-                        let $lexus := collection('<xsl:value-of select="$dbpath"/>/lexica')/lexus[@id eq $newData/component[1]/@id]
+                        let $newData := <xsl:apply-templates select="/data/lexus:save-schema" mode="encoded"/>
+                        let $lexus := collection('<xsl:value-of select="$dbpath"/>/lexica')/lexus[@id eq $newData/@id]
                         return
                             if (lexus:canUpdateSchema($lexus, $userId))
-                                then let $returnValue := lexus:updateSchema($newData, $lexus)
-                                     let $dummy := lexus:log($lexus/@id, 'save-schema', $userId, $username, $newData)
+                                then let $returnValue := lexus:updateSchema($newData/schema, $lexus)
+                                     let $dummy := lexus:log($lexus/@id, 'save-schema', $userId, $username, $newData/schema)
                                      return $returnValue
                                 else element exception {attribute id {"LEX001"}, element message {concat("Permission denied, user '<xsl:value-of select="/data/user/name"/>' ('<xsl:value-of select="/data/user/account"/>', ",$userId, ") cannot update schema for lexicon '", $lexus/meta/name, "' (", $newData/component/@id)}}
                     </text>
