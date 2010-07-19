@@ -145,7 +145,7 @@ public class JSONSerializer implements org.apache.cocoon.serialization.Serialize
 
     public void startElement(String uri, String loc, String raw, Attributes a)
             throws SAXException {
-        // Logger.getLogger(JSONSerializer.class.getName()).log(Level.SEVERE, "startElement " + loc + ", stackSize="+objectStack.size());
+        // Logger.getLogger(JSONSerializer.class.getName()).log(Level.SEVERE, "startElement " + loc + ", key=" + a.getValue("key")+", stackSize="+objectStack.size());
         if (!loc.equals("object") && !loc.equals("array")
                 && !loc.equals("number") && !loc.equals("string")
                 && !loc.equals("false") && !loc.equals("true")
@@ -252,7 +252,7 @@ public class JSONSerializer implements org.apache.cocoon.serialization.Serialize
                 write(e.key);
                 write("\":");
             } else if (e.key == null && !objectStack.empty() && objectStack.peek().intValue() == OBJECT) {
-                throw new SAXException("key attribute for object member not given!");
+                throw new SAXException("key attribute for child of object not given: e.name="+e.name+", currentText=" + currentText);
             }
 
             startTagOpen = false;

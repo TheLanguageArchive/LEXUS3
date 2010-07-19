@@ -336,9 +336,7 @@
             <string key="DCRReference">
                 <xsl:value-of select="@dcrReference"/>
             </string>
-            <string key="sortOrder">
-                <xsl:value-of select="@sortOrder"/>
-            </string>
+            <xsl:call-template name="sort-order"><xsl:with-param name="sort-order" select="@sortOrder"/></xsl:call-template>
             <string key="adminInfo">
                 <xsl:value-of select="@admin-info"/>
             </string>
@@ -438,7 +436,20 @@
         </object>
     </xsl:template>
 
-
+    <xsl:template name="sort-order">
+        <xsl:param name="sort-order"/>
+        <xsl:choose>
+            <xsl:when test="$sort-order != ''">
+                <string key="sortOrder">
+                    <xsl:value-of select="@sortOrder"/>
+                </string>
+            </xsl:when>
+            <xsl:otherwise>
+                <null key="sortOrder"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
     <xsl:template match="@* | node()"/>
 
 

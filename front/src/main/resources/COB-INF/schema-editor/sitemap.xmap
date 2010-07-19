@@ -30,9 +30,9 @@
           -->
       <map:match pattern="getSchema.json">
         <map:generate src="cocoon:/getSchema"/>
-        <map:transform type="tee" src="debug-info/remove-me-pre.xml"/>
+        <map:transform type="tee" src="debug-info/front-pre.xml"/>
         <map:transform type="saxon" src="getSchema/schema-2-JSON.xslt"/>
-        <map:transform type="tee" src="debug-info/remove-me-post.xml"/>
+        <map:transform type="tee" src="debug-info/front-post.xml"/>
         <map:serialize type="json"/>
       </map:match>
 
@@ -58,9 +58,9 @@
           <map:part src="cocoon://json"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>
-        <map:transform type="tee" src="debug-info/save-schema-remove-me-pre.xml"/>
+        <map:transform type="tee" src="debug-info/save-schema-pre.xml"/>
         <map:transform type="saxon" src="saveSchema/prepareSaveSchema.xslt"/>
-        <map:transform type="tee" src="debug-info/save-schema-remove-me-post.xml"/>
+        <map:transform type="tee" src="debug-info/save-schema-post.xml"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/schema-editor/saveSchema.xml"/>
         </map:transform>

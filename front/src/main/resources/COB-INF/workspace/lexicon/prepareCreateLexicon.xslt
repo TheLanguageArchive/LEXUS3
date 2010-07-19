@@ -18,7 +18,7 @@
     -->
 
     <xsl:param name="endpoint"/>
-    <xsl:param name="dbpath"/>
+    <xsl:param name="users-collection"/>
 
     <xsl:variable name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
     <xsl:variable name="schema-lexicon-information-id"

@@ -5,7 +5,7 @@
 
     <xsl:include href="../stylesheets/lexicon.xslt"/>
     <xsl:include href="../stylesheets/schema.xslt"/>
-    
+
     <!-- 
         JSON to produce:
         
@@ -171,9 +171,12 @@
     <xsl:template match="results">
         <object key="myResult">
             <number key="total">
-                <xsl:value-of select="count(lexical-entries/lexical-entry)"/>
+                <xsl:value-of select="count"/>
             </number>
-            <xsl:apply-templates/>
+            <xsl:apply-templates select="startLetter, lexical-entries, startPage"/>
+            <xsl:apply-templates select="lexicon">
+                <xsl:with-param name="key" select="'lexicon'"/>
+            </xsl:apply-templates>
         </object>
         <xsl:apply-templates select="schema"/>
     </xsl:template>
@@ -183,7 +186,7 @@
             <xsl:value-of select="startLetter"/>
         </string>
     </xsl:template>
-    
+
     <xsl:template match="lexica">
         <array key="lexica">
             <xsl:apply-templates/>
@@ -192,7 +195,7 @@
 
     <xsl:template match="lexical-entries">
         <number key="count">
-            <xsl:value-of select="count(lexical-entry)"/>
+            <xsl:value-of select="../pageSize"/>
         </number>
         <array key="lexicalEntries">
             <xsl:apply-templates select="lexical-entry"/>
@@ -209,7 +212,9 @@
             </string>
             <object key="listView">
                 <string key="value">
-                    <xsl:value-of select="text()"/>
+                    <xsl:for-each select=".//data[1] | .//data[2]">
+                        <xsl:value-of select="."/>
+                    </xsl:for-each>
                 </string>
             </object>
             <string key="entryView">entryLayout.htm?id=<xsl:value-of select="@id"/></string>

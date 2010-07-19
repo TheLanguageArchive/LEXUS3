@@ -58,7 +58,7 @@
       -->
       <map:match pattern="saveSortOrder.json">
         <map:generate src="cocoon:/saveSortOrder"/>
-        <map:transform type="tee" src="debug-info/remove-me.xml"/>
+        <map:transform type="tee" src="debug-info/front-pre.xml"/>
         <map:transform type="saxon" src="savedSortOrder2JSON.xslt"/>
         <map:serialize type="json"/>
       </map:match>

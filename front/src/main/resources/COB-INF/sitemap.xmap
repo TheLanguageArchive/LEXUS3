@@ -118,11 +118,11 @@
       <map:match pattern="lexus-authuser">
         <map:generate type="request"/>
         <map:transform src="util/login.xslt"/>
-        <map:transform type="tee" src="debug-info/authentication-remove-me-pre.xml"/>
+        <map:transform type="tee" src="debug-info/authentication-pre.xml"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/workspace/userLogin.xml"/>
         </map:transform>
-        <map:transform type="tee" src="debug-info/authentication-remove-me-post.xml"/>
+        <map:transform type="tee" src="debug-info/authentication-post.xml"/>
         <map:transform src="util/createAuthenticationDocument.xslt"/>
         <map:serialize type="xml"/>
       </map:match>
@@ -183,14 +183,14 @@
         <map:act type="cauth-is-logged-in">
           <map:parameter name="application" value="Lexus"/>
           <map:generate src="resource/internal/user.xml"/>
-          <!--          <map:transform type="tee" src="debug-info/session-remove-me-pre.xml"/>-->
+          <!--          <map:transform type="tee" src="debug-info/session-front-pre.xml"/>-->
           <map:transform src="util/create-user-element.xslt">
             <map:parameter name="id" value="{user-id}"/>
             <map:parameter name="name" value="{user-name}"/>
             <map:parameter name="account" value="{user-account}"/>
             <map:parameter name="accesslevel" value="{user-accesslevel}"/>
           </map:transform>
-          <!--          <map:transform type="tee" src="debug-info/session-remove-me-post.xml"/>-->
+          <!--          <map:transform type="tee" src="debug-info/session-front-post.xml"/>-->
           <map:serialize type="xml"/>
         </map:act>
       </map:match>

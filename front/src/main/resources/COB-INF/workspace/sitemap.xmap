@@ -52,9 +52,9 @@
           -->
       <map:match pattern="getPage.json">
         <map:generate src="cocoon:/getPage"/>
-        <map:transform type="tee" src="debug-info/remove-me-pre.xml"/>
+        <map:transform type="tee" src="debug-info/front-pre.xml"/>
         <map:transform type="saxon" src="getPage/page-2-JSON.xslt"/>
-        <map:transform type="tee" src="debug-info/remove-me-post.xml"/>
+        <map:transform type="tee" src="debug-info/front-post.xml"/>
         <map:serialize type="json"/>
       </map:match>
 
@@ -130,12 +130,12 @@
           <map:part src="cocoon://json"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>
-        <map:transform type="tee" src="debug-info/remove-me-pre.xml"/>
+        <map:transform type="tee" src="debug-info/front-pre.xml"/>
         <map:transform type="saxon" src="users/prepareSaveUser.xslt"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/workspace/saveUser.xml"/>
         </map:transform>
-        <map:transform type="tee" src="debug-info/remove-me-post.xml"/>
+        <map:transform type="tee" src="debug-info/front-post.xml"/>
         <map:serialize type="xml"/>
       </map:match>
 
@@ -154,9 +154,9 @@
           <map:part src="cocoon://json"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>
-        <map:transform type="tee" src="debug-info/remove-me-pre.xml"/>
+        <map:transform type="tee" src="debug-info/front-pre.xml"/>
         <map:transform type="saxon" src="lexicon/prepareSaveLexicon.xslt"/>
-        <map:transform type="tee" src="debug-info/remove-me-post.xml"/>
+        <map:transform type="tee" src="debug-info/front-post.xml"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/workspace/saveLexicon.xml"/>
         </map:transform>
@@ -178,12 +178,12 @@
           <map:part src="cocoon://json"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>
-        <map:transform type="tee" src="debug-info/remove-me-pre.xml"/>
+        <map:transform type="tee" src="debug-info/front-pre.xml"/>
         <map:transform type="saxon" src="lexicon/prepareCreateLexicon.xslt"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/workspace/createLexicon.xml"/>
         </map:transform>
-        <map:transform type="tee" src="debug-info/remove-me-post.xml"/>
+        <map:transform type="tee" src="debug-info/front-post.xml"/>
         <map:transform type="saxon" src="lexicon/savedLexicon-2-JSON.xslt"/>
         <map:serialize type="json"/>
       </map:match>

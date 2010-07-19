@@ -2,8 +2,12 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0">
     
     <xsl:template match="lexicon" priority="1">
+        <xsl:param name="key" select="''"/>
         <xsl:variable name="userId" select="/data/user/@id"/>
         <object>
+            <xsl:if test="$key != ''">
+                <xsl:attribute name="key" select="$key"/>
+            </xsl:if>
             <string key="id">
                 <xsl:value-of select="@id"/>
             </string>

@@ -31,10 +31,10 @@
       -->
       <map:match pattern="startLetterSearch.json">
         <map:generate src="cocoon:/startLetterSearch"/>
-        <map:transform type="tee" src="debug-info/remove-me-pre.xml"/>
+        <map:transform type="tee" src="debug-info/front-pre.xml"/>
         <map:transform type="saxon" src="startLetterSearchResult-2-JSON.xslt"/>
-        <map:transform type="tee" src="debug-info/remove-me-post.xml"/>
-        <map:serialize type="xml"/>
+        <map:transform type="tee" src="debug-info/front-post.xml"/>
+        <map:serialize type="json"/>
       </map:match>
 
       <map:match pattern="startLetterSearch">

@@ -72,7 +72,7 @@
             <component id="{id}" description="{description}" name="{name}" type="{$type}" xtype="type"
                 mandatory="{if (number(min) gt 0) then 'true' else 'false'}"
                 multiple="{if (number(max) eq 1) then 'false' else 'true'}" note="{note}"
-                admin-info="{adminInfo}">
+                admin-info="{adminInfo}" sort-order="{sortOrder/id}">
                 <xsl:apply-templates select="children/children"/>
             </component>
         </schema>
@@ -100,7 +100,7 @@
         <component id="{$id}" description="{description}" name="{name}" type="{$type}" xtype="type"
             mandatory="{if (number(min) gt 0) then 'true' else 'false'}"
             multiple="{if (number(max) eq 1) then 'false' else 'true'}" note="{note}"
-            admin-info="{adminInfo}">
+            admin-info="{adminInfo}" sort-order="{sortOrder/id}">
             <xsl:choose>
                 <xsl:when test="children/children">
                     <xsl:apply-templates select="children/children"/>
