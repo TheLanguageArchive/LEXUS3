@@ -57,16 +57,29 @@
         
         declare function lexus:lexica2($lexi as node()*) as node()* {
             element lexica {
-                for $lex in $lexi
-                    let $lexicon := collection('<xsl:value-of select="$dbpath"/>/lexica')/lexicon[@id eq $lex/@id]
-                    order by $lex/meta/name
+            for $lexicon in collection('<xsl:value-of select="$lexica-collection"/>')/lexicon[@id = $lexi/@id]
+                    order by $lexi[@id eq $lexicon/@id]/meta/name
                     return element lexicon {
                         $lexicon/@*,
-                        $lex/meta,
+                        element meta { $lexi[@id eq $lexicon/@id]/meta/*[local-name() ne 'schema']},
                         element size {count($lexicon/lexical-entry)
                     }
             }
         }
+        };
+        
+        
+        declare function lexus:lexica3($lexi as node()*) as node()* {
+            element lexica {
+                for $lex in $lexi
+                    let $lexicon := collection('<xsl:value-of select="$lexica-collection"/>')/lexicon[@id eq $lex/@id]
+                    order by $lex/meta/name
+                    return element lexicon {
+                        $lexicon/@*,
+                       $lex/meta,
+                       element size {count($lexicon/lexical-entry)}
+                    }
+            }
         };
     </xsl:template>
     
@@ -86,7 +99,7 @@
     
     <xsl:template name="log">
         declare function lexus:log($lexiconId as xs:string, $type as xs:string, $userId as xs:string, $username as xs:string, $logEntry as node()*) {
-            let $log := collection('<xsl:value-of select="$dbpath"/>/lexica')/log[@id eq $lexiconId]
+            let $log := collection('<xsl:value-of select="$lexica-collection"/>')/log[@id eq $lexiconId]
             let $entry :=  element entry {
                                 attribute type {$type}, attribute date-time {current-dateTime()},
                                 attribute user {$userId}, attribute username {$username},

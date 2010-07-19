@@ -26,26 +26,26 @@
     <!--+
         | Workspace pipelines
         +-->
-    <map:pipeline id="workspace">
+    <map:pipeline id="workspace" type="caching">
 
 
       <!-- 
           Generate main workspace data
-          -->
+      -->      
       <map:match pattern="getPage.xml">
         <map:generate src="service-consumer:"/>
         <map:transform type="saxon" src="getPage/getWorkspace.xslt">
-          <map:parameter name="endpoint" value="${exist.rest.endpoint}"/>
-          <map:parameter name="dbpath" value="${exist.rest.db.path}"/>
+          <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
+          <map:parameter name="users-collection" value="${xmldb.rest.lexica-collection}"/>
         </map:transform>
-
-        <map:transform type="tee" src="debug-info/back-remove-me-pre.xml"/>
+        <map:transform type="saxon" src="${xmldb.rest.transformer}">
+          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
+        </map:transform>
         <map:transform type="rest">
-          <map:parameter name="username" value="${exist.rest.username}"/>
-          <map:parameter name="password" value="${exist.rest.password}"/>
+          <map:parameter name="username" value="${xmldb.rest.username}"/>
+          <map:parameter name="password" value="${xmldb.rest.password}"/>
         </map:transform>
-        <map:transform src="../util/extractDataFromExistResponse.xslt"/>
-        <map:transform type="tee" src="debug-info/back-remove-me-post.xml"/>
+        <map:transform src="../util/extractDataFromRestResponse.xslt"/>
         <!--        <map:transform type="validate" src="getPage/getPage.xsd"/>-->
         <map:serialize type="xml"/>
       </map:match>
@@ -57,14 +57,16 @@
       <map:match pattern="getProfiles.xml">
         <map:generate src="service-consumer:"/>
         <map:transform type="saxon" src="getProfiles/getProfiles.xslt">
-          <map:parameter name="endpoint" value="${exist.rest.endpoint}"/>
-          <map:parameter name="dbpath" value="${exist.rest.db.path}"/>
+          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+        </map:transform>
+        <map:transform type="saxon" src="${xmldb.rest.transformer}">
+          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
         </map:transform>
         <map:transform type="rest">
-          <map:parameter name="username" value="${exist.rest.username}"/>
-          <map:parameter name="password" value="${exist.rest.password}"/>
+          <map:parameter name="username" value="${xmldb.rest.username}"/>
+          <map:parameter name="password" value="${xmldb.rest.password}"/>
         </map:transform>
-        <map:transform src="../util/extractDataFromExistResponse.xslt"/>
+        <map:transform src="../util/extractDataFromRestResponse.xslt"/>
         <map:serialize type="xml"/>
       </map:match>
 
@@ -76,14 +78,18 @@
       <map:match pattern="getSortOrders.xml">
         <map:generate src="service-consumer:"/>
         <map:transform type="saxon" src="sortOrders/getSortOrders.xslt">
-          <map:parameter name="endpoint" value="${exist.rest.endpoint}"/>
-          <map:parameter name="dbpath" value="${exist.rest.db.path}"/>
+          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
         </map:transform>
+        <map:transform type="saxon" src="${xmldb.rest.transformer}">
+          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
+        </map:transform>
+        <map:transform type="tee" src="debug-info/back-pre.xml"/>
         <map:transform type="rest">
-          <map:parameter name="username" value="${exist.rest.username}"/>
-          <map:parameter name="password" value="${exist.rest.password}"/>
+          <map:parameter name="username" value="${xmldb.rest.username}"/>
+          <map:parameter name="password" value="${xmldb.rest.password}"/>
         </map:transform>
-        <map:transform src="../util/extractDataFromExistResponse.xslt"/>
+        <map:transform src="../util/extractDataFromRestResponse.xslt"/>
+        <map:transform type="tee" src="debug-info/back-post.xml"/>
         <map:serialize type="xml"/>
       </map:match>
 
@@ -95,14 +101,16 @@
       <map:match pattern="getQueries.xml">
         <map:generate src="service-consumer:"/>
         <map:transform type="saxon" src="queries/getQueries.xslt">
-          <map:parameter name="endpoint" value="${exist.rest.endpoint}"/>
-          <map:parameter name="dbpath" value="${exist.rest.db.path}"/>
+          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+        </map:transform>
+        <map:transform type="saxon" src="${xmldb.rest.transformer}">
+          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
         </map:transform>
         <map:transform type="rest">
-          <map:parameter name="username" value="${exist.rest.username}"/>
-          <map:parameter name="password" value="${exist.rest.password}"/>
+          <map:parameter name="username" value="${xmldb.rest.username}"/>
+          <map:parameter name="password" value="${xmldb.rest.password}"/>
         </map:transform>
-        <map:transform src="../util/extractDataFromExistResponse.xslt"/>
+        <map:transform src="../util/extractDataFromRestResponse.xslt"/>
         <map:serialize type="xml"/>
       </map:match>
 
@@ -113,14 +121,16 @@
       <map:match pattern="getUsers.xml">
         <map:generate src="service-consumer:"/>
         <map:transform type="saxon" src="users/getUsers.xslt">
-          <map:parameter name="endpoint" value="${exist.rest.endpoint}"/>
-          <map:parameter name="dbpath" value="${exist.rest.db.path}"/>
+          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+        </map:transform>
+        <map:transform type="saxon" src="${xmldb.rest.transformer}">
+          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
         </map:transform>
         <map:transform type="rest">
-          <map:parameter name="username" value="${exist.rest.username}"/>
-          <map:parameter name="password" value="${exist.rest.password}"/>
+          <map:parameter name="username" value="${xmldb.rest.username}"/>
+          <map:parameter name="password" value="${xmldb.rest.password}"/>
         </map:transform>
-        <map:transform src="../util/extractDataFromExistResponse.xslt"/>
+        <map:transform src="../util/extractDataFromRestResponse.xslt"/>
         <map:serialize type="xml"/>
       </map:match>
 
@@ -130,14 +140,16 @@
       <map:match pattern="saveUser.xml">
         <map:generate src="service-consumer:"/>
         <map:transform type="saxon" src="users/saveUser.xslt">
-          <map:parameter name="endpoint" value="${exist.rest.endpoint}"/>
-          <map:parameter name="dbpath" value="${exist.rest.db.path}"/>
+          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+        </map:transform>
+        <map:transform type="saxon" src="${xmldb.rest.transformer}">
+          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
         </map:transform>
         <map:transform type="rest">
-          <map:parameter name="username" value="${exist.rest.username}"/>
-          <map:parameter name="password" value="${exist.rest.password}"/>
+          <map:parameter name="username" value="${xmldb.rest.username}"/>
+          <map:parameter name="password" value="${xmldb.rest.password}"/>
         </map:transform>
-        <map:transform src="../util/extractDataFromExistResponse.xslt"/>
+        <map:transform src="../util/extractDataFromRestResponse.xslt"/>
         <map:serialize type="xml"/>
       </map:match>
 
@@ -146,17 +158,20 @@
       -->
       <map:match pattern="saveLexicon.xml">
         <map:generate src="service-consumer:"/>
-        <map:transform type="tee" src="debug-info/back-remove-me-pre.xml"/>
+        <map:transform type="tee" src="debug-info/back-pre.xml"/>
         <map:transform type="saxon" src="saveLexicon/saveLexicon.xslt">
-          <map:parameter name="endpoint" value="${exist.rest.endpoint}"/>
-          <map:parameter name="dbpath" value="${exist.rest.db.path}"/>
+          <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
+          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+        </map:transform>
+        <map:transform type="saxon" src="${xmldb.rest.transformer}">
+          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
         </map:transform>
         <map:transform type="rest">
-          <map:parameter name="username" value="${exist.rest.username}"/>
-          <map:parameter name="password" value="${exist.rest.password}"/>
+          <map:parameter name="username" value="${xmldb.rest.username}"/>
+          <map:parameter name="password" value="${xmldb.rest.password}"/>
         </map:transform>
-        <map:transform src="../util/extractDataFromExistResponse.xslt"/>
-        <map:transform type="tee" src="debug-info/back-remove-me-post.xml"/>
+        <map:transform src="../util/extractDataFromRestResponse.xslt"/>
+        <map:transform type="tee" src="debug-info/back-post.xml"/>
         <!--        <map:transform type="validate" src="saveLexicon/saveLexicon.xsd"/>-->
         <map:serialize type="xml"/>
       </map:match>
@@ -164,16 +179,19 @@
       <map:match pattern="createLexicon.xml">
         <map:generate src="service-consumer:"/>
         <map:transform type="saxon" src="saveLexicon/createLexicon.xslt">
-          <map:parameter name="endpoint" value="${exist.rest.endpoint}"/>
-          <map:parameter name="dbpath" value="${exist.rest.db.path}"/>
-          <map:parameter name="username" value="${exist.rest.username}"/>
-          <map:parameter name="password" value="${exist.rest.password}"/>
+          <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
+          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+          <map:parameter name="username" value="${xmldb.rest.username}"/>
+          <map:parameter name="password" value="${xmldb.rest.password}"/>
+        </map:transform>
+        <map:transform type="saxon" src="${xmldb.rest.transformer}">
+          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
         </map:transform>
         <map:transform type="rest">
-          <map:parameter name="username" value="${exist.rest.username}"/>
-          <map:parameter name="password" value="${exist.rest.password}"/>
+          <map:parameter name="username" value="${xmldb.rest.username}"/>
+          <map:parameter name="password" value="${xmldb.rest.password}"/>
         </map:transform>
-        <map:transform src="../util/extractDataFromExistResponse.xslt"/>
+        <map:transform src="../util/extractDataFromRestResponse.xslt"/>
         <map:serialize type="xml"/>
       </map:match>
 
@@ -183,14 +201,16 @@
       <map:match pattern="saveSortOrder.xml">
         <map:generate src="service-consumer:"/>
         <map:transform type="saxon" src="sortOrders/saveSortOrder.xslt">
-          <map:parameter name="endpoint" value="${exist.rest.endpoint}"/>
-          <map:parameter name="dbpath" value="${exist.rest.db.path}"/>
+          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+        </map:transform>
+        <map:transform type="saxon" src="${xmldb.rest.transformer}">
+          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
         </map:transform>
         <map:transform type="rest">
-          <map:parameter name="username" value="${exist.rest.username}"/>
-          <map:parameter name="password" value="${exist.rest.password}"/>
+          <map:parameter name="username" value="${xmldb.rest.username}"/>
+          <map:parameter name="password" value="${xmldb.rest.password}"/>
         </map:transform>
-        <map:transform src="../util/extractDataFromExistResponse.xslt"/>
+        <map:transform src="../util/extractDataFromRestResponse.xslt"/>
         <!--        <map:transform type="validate" src="sortOrder/saveSortOrder.xsd"/>-->
         <map:serialize type="xml"/>
       </map:match>
@@ -201,14 +221,16 @@
       <map:match pattern="createSortOrder.xml">
         <map:generate src="service-consumer:"/>
         <map:transform type="saxon" src="sortOrders/createSortOrder.xslt">
-          <map:parameter name="endpoint" value="${exist.rest.endpoint}"/>
-          <map:parameter name="dbpath" value="${exist.rest.db.path}"/>
+          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+        </map:transform>
+        <map:transform type="saxon" src="${xmldb.rest.transformer}">
+          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
         </map:transform>
         <map:transform type="rest">
-          <map:parameter name="username" value="${exist.rest.username}"/>
-          <map:parameter name="password" value="${exist.rest.password}"/>
+          <map:parameter name="username" value="${xmldb.rest.username}"/>
+          <map:parameter name="password" value="${xmldb.rest.password}"/>
         </map:transform>
-        <map:transform src="../util/extractDataFromExistResponse.xslt"/>
+        <map:transform src="../util/extractDataFromRestResponse.xslt"/>
         <map:serialize type="xml"/>
       </map:match>
 
@@ -219,15 +241,17 @@
       <map:match pattern="deleteSortOrder.xml">
         <map:generate src="service-consumer:"/>
         <map:transform type="saxon" src="sortOrders/deleteSortOrder.xslt">
-          <map:parameter name="endpoint" value="${exist.rest.endpoint}"/>
-          <map:parameter name="dbpath" value="${exist.rest.db.path}"/>
+          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+        </map:transform>
+        <map:transform type="saxon" src="${xmldb.rest.transformer}">
+          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
         </map:transform>
         <map:transform type="tee" src="debug-info/pipeline-snapshot.xml"/>
         <map:transform type="rest">
-          <map:parameter name="username" value="${exist.rest.username}"/>
-          <map:parameter name="password" value="${exist.rest.password}"/>
+          <map:parameter name="username" value="${xmldb.rest.username}"/>
+          <map:parameter name="password" value="${xmldb.rest.password}"/>
         </map:transform>
-        <map:transform src="../util/extractDataFromExistResponse.xslt"/>
+        <map:transform src="../util/extractDataFromRestResponse.xslt"/>
         <!--        <map:transform type="validate" src="sortOrder/saveSortOrder.xsd"/>-->
         <map:serialize type="xml"/>
       </map:match>
@@ -242,14 +266,16 @@
       <map:match pattern="import/addLexicon.xml">
         <map:generate src="service-consumer:"/>
         <map:transform type="saxon" src="import/addLexicon.xslt">
-          <map:parameter name="endpoint" value="${exist.rest.endpoint}"/>
-          <map:parameter name="dbpath" value="${exist.rest.db.path}"/>
+          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+        </map:transform>
+        <map:transform type="saxon" src="${xmldb.rest.transformer}">
+          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
         </map:transform>
         <map:transform type="rest">
-          <map:parameter name="username" value="${exist.rest.username}"/>
-          <map:parameter name="password" value="${exist.rest.password}"/>
+          <map:parameter name="username" value="${xmldb.rest.username}"/>
+          <map:parameter name="password" value="${xmldb.rest.password}"/>
         </map:transform>
-        <map:transform src="../util/extractDataFromExistResponse.xslt"/>
+        <map:transform src="../util/extractDataFromRestResponse.xslt"/>
         <map:serialize type="xml"/>
       </map:match>
 
@@ -261,17 +287,19 @@
       <map:match pattern="userLogin.xml">
         <map:generate src="service-consumer:"/>
         <map:transform type="saxon" src="users/loginOrAddAdministratorAccount.xslt">
-          <map:parameter name="endpoint" value="${exist.rest.endpoint}"/>
-          <map:parameter name="dbpath" value="${exist.rest.db.path}"/>
+          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
         </map:transform>
-        <map:transform type="tee" src="debug-info/back-remove-me-pre.xml"/>
+        <map:transform type="saxon" src="${xmldb.rest.transformer}">
+          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
+        </map:transform>
+        <map:transform type="tee" src="debug-info/back-pre.xml"/>
         <map:transform type="rest">
-          <map:parameter name="username" value="${exist.rest.username}"/>
-          <map:parameter name="password" value="${exist.rest.password}"/>
+          <map:parameter name="username" value="${xmldb.rest.username}"/>
+          <map:parameter name="password" value="${xmldb.rest.password}"/>
           <map:parameter name="preemptive-authentication" value="true"/>
         </map:transform>
-        <map:transform src="../util/extractDataFromExistResponse.xslt"/>
-        <map:transform type="tee" src="debug-info/back-remove-me-post.xml"/>
+        <map:transform src="../util/extractDataFromRestResponse.xslt"/>
+        <map:transform type="tee" src="debug-info/back-post.xml"/>
         <map:transform type="saxon" src="users/returnUserLoginInfo.xslt"/>
         <map:serialize type="xml"/>
       </map:match>

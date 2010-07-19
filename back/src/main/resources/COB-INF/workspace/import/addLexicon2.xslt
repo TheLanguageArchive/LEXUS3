@@ -10,10 +10,10 @@
     <xsl:include href="../../util/xquery-components.xslt"/>
     
     <xsl:param name="endpoint"/>
-    <xsl:param name="dbpath"/>
+    <xsl:param name="lexica-collection"/>
 
     <xsl:template match="/">
-        <rest:request target="{$endpoint}{$dbpath}/lexica" method="PUT">
+        <rest:request target="{$endpoint}" method="PUT">
             <rest:header name="Content-Type" value="text/xml; charset=UTF-8"/>
             <rest:body>
                 <query xmlns="http://exist.sourceforge.net/NS/exist">
@@ -43,7 +43,7 @@
                                 </lexus>
                             ]]>
                             
-                            let $path := xmldb:store('<xsl:value-of select="$dbpath"/>/lexica', $id, $contents)
+                            let $path := xmldb:store('<xsl:value-of select="$lexica-collection"/>', $id, $contents)
                         
                             return element result
                             {

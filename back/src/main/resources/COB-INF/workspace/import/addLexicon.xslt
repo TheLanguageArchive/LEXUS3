@@ -8,13 +8,13 @@
     <xsl:include href="../../util/encodeXML.xslt"/>
 
     <xsl:param name="endpoint"/>
-    <xsl:param name="dbpath"/>
+    <xsl:param name="lexica-collection"/>
 
     <xsl:template match="/">
         <xsl:variable name="uid" select="util:randomUUID()"/>
         <xsl:variable name="id" select="util:toString($uid)"/>
         
-        <rest:request target="{$endpoint}{$dbpath}/lexica/{$id}.xml" method="PUT">
+        <rest:request target="{$endpoint}/{$lexica-collection}/{$id}.xml" method="PUT">
             <rest:header name="Content-Type" value="text/xml; charset=UTF-8"/>
             <rest:body>
                 <lexus:lexus id="{$id}">
