@@ -6,6 +6,8 @@
     version="2.0">
 
     <xsl:import href="identity.xslt"/>
+    <xsl:import href="encodeXML.xslt"/>
+    
     <!-- 
         Extract data from the eXist response.
         Throw an exception when an exception element is found in the stream.
@@ -16,6 +18,15 @@
         </xsl:message>
     </xsl:template>
 
+
+    <!-- 
+        Raise an error if there's a REST error.
+    -->
+    <xsl:template match="rest:response[rest:status/@code != '200']">
+        <xsl:message terminate="yes"><xsl:apply-templates select="." mode="encoded"/></xsl:message>
+    </xsl:template>
+    
+    
     <!-- 
         Skip the rest:* stuff.
         -->
