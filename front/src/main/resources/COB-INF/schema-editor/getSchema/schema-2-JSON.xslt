@@ -303,7 +303,10 @@
             }
         -->
     <xsl:template match="component[@type eq 'data-category']" priority="10">
-        <object>            
+        <object>
+            <string key="id">
+                <xsl:value-of select="@id"/>
+            </string>
             <number key="min">
                 <xsl:choose>
                     <xsl:when test="@mandatory eq 'true'">
@@ -356,6 +359,9 @@
     
     <xsl:template match="component[component]" priority="1">
         <object>
+            <string key="id">
+                <xsl:value-of select="@id"/>
+            </string>
             <number key="min">
                 <xsl:choose>
                     <xsl:when test="@mandatory eq 'true'">

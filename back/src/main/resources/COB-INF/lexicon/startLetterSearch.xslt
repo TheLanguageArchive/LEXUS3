@@ -120,30 +120,28 @@
                 let $search := <xsl:apply-templates select="/data/lexus:search" mode="encoded"/>
                 let $user-id := '<xsl:value-of select="/data/user/@id"/>'
                 let $lexiconId := $search/lexicon
-                let $lexicon := collection('<xsl:value-of select="$lexica-collection"/>')/lexicon[@id = $lexiconId]
-                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $lexiconId]
+                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
                 let $startLetter := $search/startLetter
                 let $pageSize := number($search/refiner/pageSize)
                 let $startPage := number($search//refiner/startPage)
                 let $lexi := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[meta/users/user/@ref = $user-id]
-                let $lexica := collection('<xsl:value-of select="$lexica-collection"/>')/lexicon[@id = $lexi/@id]
                 
                 let $lexicalEntries := if ($startLetter ne '') 
-                                           then $lexicon/lexical-entry (: [@start-letter eq $startLetter] :)
-                                           else $lexicon/lexical-entry
+                                           then $lexus/lexicon/lexical-entry (: [@start-letter eq $startLetter] :)
+                                           else $lexus/lexicon/lexical-entry
                 let $startLetters := distinct-values($lexicalEntries/@start-letter)
                 let $schema := $lexus/meta/schema
                 
                 return element result {
                     element results {
                         element startLetter { $startLetter },
-                        lexus:lexicon($lexicon, $lexi),
+                        lexus:lexicon($lexus),
                         element lexical-entries { $lexicalEntries[position() gt ($startPage * $pageSize)][position() le (($startPage + 1) * $pageSize)] },
                         element startPage { $startPage },
                         element count { count($lexicalEntries) },
                         element pageSize {$pageSize}
                     },                                        
-                    lexus:lexica($lexica, $lexi),
+                    lexus:lexica3($lexi),
                     element startLetters { $startLetters },
                     element queries { },
                     element schema { $schema }

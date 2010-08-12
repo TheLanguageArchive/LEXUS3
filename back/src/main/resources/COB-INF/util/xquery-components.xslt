@@ -33,8 +33,9 @@
     
     
     <xsl:template name="schema-permissions">
-        declare function lexus:canUpdateSchema($lexus as node(), $userId as xs:string) as xs:boolean {
-            ($lexus/meta/users/user[@ref eq $userId]/permissions/write eq "true")
+        declare function lexus:canUpdateSchema($lexusMeta as node(), $userId as xs:string) as xs:boolean {
+            let $d := $lexusMeta/users/user[@ref eq $userId]/permissions/write eq "true"
+            return $d
         };
     </xsl:template>
 
@@ -43,21 +44,11 @@
         return the list of lexica with the same ids, order by name.
     -->
     <xsl:template name="lexica">
-        declare function lexus:lexica($lexica as node()*, $lexi as node()*) as node()* {
-            element lexica {
-                for $lexicon in $lexica
-                    order by $lexi[@id eq $lexicon/@id]/meta/name
-                    return element lexicon {
-                        $lexicon/@*,
-                        $lexi[@id eq $lexicon/@id]/meta,
-                        element size {count($lexicon/lexical-entry)}
-                    }
-            }
-        };
         
+        (: return a list of lexica (lexicon is a separate document from metadata) :)
         declare function lexus:lexica2($lexi as node()*) as node()* {
             element lexica {
-            for $lexicon in collection('<xsl:value-of select="$lexica-collection"/>')/lexicon[@id = $lexi/@id]
+                for $lexicon in collection('<xsl:value-of select="$lexica-collection"/>')/lexicon[@id = $lexi/@id]
                     order by $lexi[@id eq $lexicon/@id]/meta/name
                     return element lexicon {
                         $lexicon/@*,
@@ -69,16 +60,17 @@
         };
         
         
+        (: return a list of lexica (lexicon is inside lexus element next to meta element) :)
         declare function lexus:lexica3($lexi as node()*) as node()* {
             element lexica {
-                for $lex in $lexi
-                    let $lexicon := collection('<xsl:value-of select="$lexica-collection"/>')/lexicon[@id eq $lex/@id]
-                    order by $lex/meta/name
+                for $lexus in $lexi
+                    order by $lexus/meta/name
                     return element lexicon {
-                        $lexicon/@*,
-                       $lex/meta,
-                       element size {count($lexicon/lexical-entry)}
+                        $lexus/lexicon[1]/@*,
+                        element meta { $lexus/meta/*[local-name() ne 'schema']},
+                        element size {count($lexus/lexicon/lexical-entry)
                     }
+                }
             }
         };
     </xsl:template>
@@ -88,16 +80,20 @@
         Return a lexicon's attributes (id) and meta data.
     -->
     <xsl:template name="lexicon">
-        declare function lexus:lexicon($lexicon as node(), $lexi as node()*) as node()* {
+        declare function lexus:lexicon($lexus as node()) as node()* {
             element lexicon {
-                $lexicon/@*,
-                $lexi[@id eq $lexicon/@id]/meta
+                $lexus/lexicon/@*,
+                $lexus/meta
             }
         };
     </xsl:template>
     
     
     <xsl:template name="log">
+        
+        (: declare updating function lexus:log-entry($log as node(), $entry as node()) {
+            insert node $entry into $log
+            };  :)
         declare function lexus:log($lexiconId as xs:string, $type as xs:string, $userId as xs:string, $username as xs:string, $logEntry as node()*) {
             let $log := collection('<xsl:value-of select="$lexica-collection"/>')/log[@id eq $lexiconId]
             let $entry :=  element entry {
@@ -105,7 +101,7 @@
                                 attribute user {$userId}, attribute username {$username},
                                 $logEntry
                            }
-            return update insert $entry into $log
+            return () (: lexus:log-entry($log, $entry) :)
         };        
     </xsl:template>
 </xsl:stylesheet>

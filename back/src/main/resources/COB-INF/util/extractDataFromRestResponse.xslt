@@ -7,7 +7,7 @@
 
     <xsl:import href="identity.xslt"/>
     <xsl:import href="encodeXML.xslt"/>
-    
+
     <!-- 
         Extract data from the eXist response.
         Throw an exception when an exception element is found in the stream.
@@ -23,10 +23,12 @@
         Raise an error if there's a REST error.
     -->
     <xsl:template match="rest:response[rest:status/@code != '200']">
-        <xsl:message terminate="yes"><xsl:apply-templates select="." mode="encoded"/></xsl:message>
+        <xsl:message terminate="yes">
+            <xsl:apply-templates select="." mode="encoded"/>
+        </xsl:message>
     </xsl:template>
-    
-    
+
+
     <!-- 
         Skip the rest:* stuff.
         -->
@@ -36,6 +38,10 @@
 
     <xsl:template match="exist:result">
         <xsl:copy-of select="*"/>
+    </xsl:template>
+
+    <xsl:template match="jax-rx:results[not(jax-rx:result)]">
+        <empty-rest-result because="it must be an updating expression"/>
     </xsl:template>
 
     <xsl:template match="jax-rx:results">

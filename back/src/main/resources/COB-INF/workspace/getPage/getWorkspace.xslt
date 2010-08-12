@@ -27,7 +27,7 @@
                 return element result
                            {
                                $users,
-                               lexus:lexica2($lexi),
+                               lexus:lexica3($lexi),
                                $user
                            }
             </lexus:text>

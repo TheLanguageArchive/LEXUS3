@@ -37,6 +37,9 @@
 		
         <script type="text/javascript" src="swfobject.js"></script>
         <script type="text/javascript">
+    	// get epoch seconds as unique number
+			var epoch = new Date().getTime();
+        
             <!-- For version detection, set to min. required Flash Player version, or 0 (or 0.0.0), for no version detection. --> 
             var swfVersionStr = "10.0.0";
             <!-- To use express install, set to playerProductInstall.swf, otherwise the empty string. -->
@@ -54,7 +57,7 @@
             attributes.name = "LexusWebService";
             attributes.align = "middle";
             swfobject.embedSWF(
-                "LexusWebService.swf", "flashContent", 
+            	"LexusWebService.swf?nc=" + epoch, "flashContent", 
                 "100%", "100%", 
                 swfVersionStr, xiSwfUrlStr, 
                 flashvars, params, attributes);

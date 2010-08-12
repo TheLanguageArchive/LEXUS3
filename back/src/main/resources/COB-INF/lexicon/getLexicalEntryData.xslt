@@ -35,7 +35,7 @@
                 let $lexiconId := $data/lexicon
                 let $id := $data/id
                 let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
-                let $lexicalEntry := collection('<xsl:value-of select="$lexica-collection"/>')/lexicon[@id eq $lexiconId]/lexical-entry[@id eq $id]
+                let $lexicalEntry := $lexus/lexicon/lexical-entry[@id eq $id]
                 
                 return element result {
                     $lexicalEntry,

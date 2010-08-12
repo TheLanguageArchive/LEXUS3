@@ -11,7 +11,7 @@
     <xsl:param name="lexica-collection"/>
     <xsl:param name="users-collection"/>
     
-    <xsl:template match="/">
+    <xsl:template match="lexus:save-schema">
         <lexus:query>
             
             <!--(: 
@@ -45,16 +45,13 @@
                {
                    "id": "Mon Jun 07 09:14:16 CEST 2010",
                    "status":         {
-                       "message": "At your service",
-                       "duration": "1874",
-                       "insync": true,
                        "success": true
                    },
                }
                
-               But that JSON is generated in the front, in the back module we'll just generate
+               But that JSON is generated in the front, in the back module I'll just generate
                
-               <result><schema>...</schema</result>
+               <result><schema>...</schema></result>
             :)-->
             <lexus:text>
                 
@@ -63,29 +60,23 @@
                 <xsl:call-template name="sort-order"/>
                 <xsl:call-template name="log"/>
                 
-                declare function lexus:updateSchema($newData as node(), $lexus as node()) as node() {
-                
-                    let $dummy := (
-                        update replace $lexus/meta/schema with $newData
-                    )
-                                            
-                    return element result
-                    {
-                        $lexus/meta/schema
-                    }
+                (: replace the schema in the db :)
+                declare updating function lexus:updateSchema($newSchema as node(), $lexus as node()) {
+                    replace node collection('lexus')/lexus[@id eq $lexus/@id]/meta/schema with $newSchema
                 };
+                
 
                 let $userId := '<xsl:value-of select="/data/user/@id"/>'       
                 let $username := '<xsl:value-of select="/data/user/name"/>'       
-                let $newData := <xsl:apply-templates select="/data/lexus:save-schema" mode="encoded"/>
-                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $newData/@id]
-                return
-                    if (lexus:canUpdateSchema($lexus, $userId))
-                        then let $returnValue := lexus:updateSchema($newData/schema, $lexus)
-                             let $dummy := lexus:log($lexus/@id, 'save-schema', $userId, $username, $newData/schema)
-                             let $sort-order-processing := lexus:sort-order-processSchemaChanged($newData/@id, $userId)
-                             return element boe {$returnValue, element sort-order-processing { $sort-order-processing } }
-                        else element exception {attribute id {"LEX001"}, element message {concat("Permission denied, user '<xsl:value-of select="/data/user/name"/>' ('<xsl:value-of select="/data/user/account"/>', ",$userId, ") cannot update schema for lexicon '", $lexus/meta/name, "' (", $newData/component/@id)}}
+                let $newSchema := <xsl:apply-templates select="/data/lexus:save-schema" mode="encoded"/>
+                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $newSchema/@id]
+                return if (lexus:canUpdateSchema($lexus/meta, $userId))
+                            then lexus:updateSchema($newSchema/schema, $lexus)
+                             (: let $dummy := lexus:log($lexus/@id, 'save-schema', $userId, $username, $newData/schema) :)
+                             (: let $sort-order-processing := lexus:sort-order-processSchemaChanged($newData/@id, $userId) :)
+                             (: return $newData/save-schema/schema :)
+                             (: return () :)
+                    else () (:element exception {attribute id {"LEX001"}, element message {concat("Permission denied, user '<xsl:value-of select="/data/user/name"/>' ('<xsl:value-of select="/data/user/account"/>', ",$userId, ") cannot update schema for lexicon '", $lexus/meta/name, "' (", $newData/component/@id)}} :)
             </lexus:text>
         </lexus:query>
     </xsl:template>

@@ -64,6 +64,9 @@
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/schema-editor/saveSchema.xml"/>
         </map:transform>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:back:/schema-editor/updateLexicaForUpdatedSchema.xml"/>
+        </map:transform>
         <map:transform type="saxon" src="saveSchema/savedSchema-2-JSON.xslt"/>
         <map:serialize type="json"/>
       </map:match>

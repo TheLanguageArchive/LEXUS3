@@ -49,6 +49,9 @@
         <lexus:save-schema id="{parameters/viewId}">
             <xsl:apply-templates select="parameters/schema"/>
         </lexus:save-schema>
+        <lexus:update-lexica-for-updated-schema id="{parameters/viewId}">
+            <xsl:apply-templates select="parameters/schema"/>
+        </lexus:update-lexica-for-updated-schema>
     </xsl:template>
 
     <xsl:template match="schema">
@@ -69,8 +72,8 @@
             </xsl:choose>
         </xsl:variable>
         <schema>
-            <component id="{id}" description="{description}" name="{name}" type="{$type}" xtype="type"
-                mandatory="{if (number(min) gt 0) then 'true' else 'false'}"
+            <component id="{id}" description="{description}" name="{name}" type="{$type}"
+                xtype="type" mandatory="{if (number(min) gt 0) then 'true' else 'false'}"
                 multiple="{if (number(max) eq 1) then 'false' else 'true'}" note="{note}"
                 admin-info="{adminInfo}" sort-order="{sortOrder/id}">
                 <xsl:apply-templates select="children/children"/>
