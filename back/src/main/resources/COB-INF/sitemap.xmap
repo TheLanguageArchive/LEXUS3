@@ -40,9 +40,19 @@
         <map:mount uri-prefix="schema-editor/" src="schema-editor/sitemap.xmap"/>
       </map:match>
       
+      <map:resource name="rest">
+        <map:transform type="tee" src="debug-info/back-post.xml"/>
+        <map:transform type="saxon" src="${xmldb.rest.transformer}">
+          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
+        </map:transform>
+        <map:transform type="rest">
+          <map:parameter name="username" value="${xmldb.rest.username}"/>
+          <map:parameter name="password" value="${xmldb.rest.password}"/>
+        </map:transform>
+        <map:transform src="../util/extractDataFromRestResponse.xslt"/>
+      </map:resource>
+            
     </map:pipeline>
-
-
 
   </map:pipelines>
 

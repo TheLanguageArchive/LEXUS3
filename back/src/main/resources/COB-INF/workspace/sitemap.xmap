@@ -36,7 +36,7 @@
         <map:generate src="service-consumer:"/>
         <map:transform type="saxon" src="getPage/getWorkspace.xslt">
           <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
-          <map:parameter name="users-collection" value="${xmldb.rest.lexica-collection}"/>
+          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
         </map:transform>
         <map:transform type="tee" src="debug-info/back-pre.xml"/>
         <map:transform type="saxon" src="${xmldb.rest.transformer}">
@@ -200,9 +200,25 @@
       -->
       <map:match pattern="saveSortOrder.xml">
         <map:generate src="service-consumer:"/>
+        
         <map:transform type="saxon" src="sortOrders/saveSortOrder.xslt">
           <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
         </map:transform>
+        <map:transform type="saxon" src="${xmldb.rest.transformer}">
+          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
+        </map:transform>
+        <map:transform type="rest">
+          <map:parameter name="username" value="${xmldb.rest.username}"/>
+          <map:parameter name="password" value="${xmldb.rest.password}"/>
+        </map:transform>
+        <map:transform src="../util/extractDataFromRestResponse.xslt"/>
+        
+        <map:transform type="tee" src="debug-info/back-pre.xml"/>
+        <map:transform type="saxon" src="sortOrders/updateSortKeys.xslt">
+          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+          <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
+        </map:transform>
+        <map:transform type="tee" src="debug-info/back-post.xml"/>
         <map:transform type="saxon" src="${xmldb.rest.transformer}">
           <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
         </map:transform>

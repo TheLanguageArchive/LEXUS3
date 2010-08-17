@@ -127,8 +127,8 @@
                 let $lexi := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[meta/users/user/@ref = $user-id]
                 
                 let $lexicalEntries := if ($startLetter ne '') 
-                                           then $lexus/lexicon/lexical-entry (: [@start-letter eq $startLetter] :)
-                                           else $lexus/lexicon/lexical-entry
+                    then for $l in $lexus/lexicon/lexical-entry order by $l//data[@sort-key][1]/@sort-key return $l (: [@start-letter eq $startLetter] :)
+                    else for $l in $lexus/lexicon/lexical-entry order by $l//data[@sort-key][1]/@sort-key return $l
                 let $startLetters := distinct-values($lexicalEntries/@start-letter)
                 let $schema := $lexus/meta/schema
                 

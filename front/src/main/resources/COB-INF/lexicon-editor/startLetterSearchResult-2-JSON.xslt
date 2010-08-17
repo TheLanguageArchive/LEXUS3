@@ -183,10 +183,16 @@
 
     <xsl:template match="startLetter">
         <string key="startLetter">
-            <xsl:value-of select="startLetter"/>
+            <xsl:value-of select="."/>
         </string>
     </xsl:template>
 
+    <xsl:template match="startPage">
+        <string key="startPage">
+            <xsl:value-of select="."/>
+        </string>
+    </xsl:template>
+    
     <xsl:template match="lexica">
         <array key="lexica">
             <xsl:apply-templates/>
@@ -212,9 +218,8 @@
             </string>
             <object key="listView">
                 <string key="value">
-                    <xsl:for-each select=".//data[1] | .//data[2]">
-                        <xsl:value-of select="."/>
-                    </xsl:for-each>
+                    <xsl:variable name="son" select=".//data[@sort-key][1]"/>
+                    <xsl:value-of select="$son/value"/>
                 </string>
             </object>
             <string key="entryView">entryLayout.htm?id=<xsl:value-of select="@id"/></string>

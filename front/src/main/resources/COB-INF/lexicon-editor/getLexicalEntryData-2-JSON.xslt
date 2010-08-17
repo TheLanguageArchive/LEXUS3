@@ -6,31 +6,30 @@
         JSON to produce:
         
         {
-        "id": "Tue Jun 01 14:28:16 CEST 2010",
+        "id": "Mon Aug 16 14:50:36 CEST 2010",
         "result": {"lexicalEntry":         {
-        "id": "MmM5MDkwYTIxZjhlYTJkMzAxMjA2YmViODlmMTdhMDY=",
-        "children":             [
-        {
-        "id": "MmM5MDkwYTIxZjhlYTJkMzAxMjA2YmViODlmNDdhYzg=",
-        "value": "To be specified",
-        "schemaElementId": "MmM5MDkwYTIxZjhlYTJkMzAxMjA2YjE3ZTY5MTc2YTY=",
-        "label": "partOFSpeech",
+        "id": "MmM5MDkwYTIxMWVhYTY5ZTAxMTIyZGMxMTk5OTVjOGU=",
+        "children": [            {
+        "id": "MmM5MDkwYTIxMWVhYTY5ZTAxMTIyZGMxMTk5OTVjOTA=",
+        "value": "aaraj",
+        "schemaElementId": "MmM5MDkwYTIxMWVhYTY5ZTAxMTIyZGMxMTk5OTVjOGM=",
+        "label": "lx",
         "notes": null
-        }        ],
-        "schemaElementId": "MmM5MDkwYTIxZjhlYTJkMzAxMjA2YWVkMmM4Njc2NmQ=",
+        }],
+        "schemaElementId": "MmM5MDkwYTIxMWVhYTY5ZTAxMTIyZGMxMTk5NjVjODQ=",
         "label": "lexicalEntry",
         "notes": null,
-        "listView": {"value": "To be specified"},
-        "entryView": "entryLayout.htm?id=MmM5MDkwYTIxZjhlYTJkMzAxMjA2YmViODlmMTdhMDY="
+        "listView": {"value": "aaraj"},
+        "entryView": "entryLayout.htm?id=MmM5MDkwYTIxMWVhYTY5ZTAxMTIyZGMxMTk5OTVjOGU="
         }},
-        "requester": "LexiconBrowser862",
+        "requester": "LexiconBrowser1277",
         "status":         {
         "message": "At your service",
-        "duration": "975",
+        "duration": "114",
         "insync": true,
         "success": true
         },
-        "requestId": "C7913F51-2842-A189-35D6-F37BCBD08D08"
+        "requestId": "35242B50-E85A-A1EC-BC11-7AF38E2C9BFD"
         }
     -->
 
@@ -61,29 +60,50 @@
             <string key="id">
                 <xsl:value-of select="@id"/>
             </string>
-            <string key="schemaId">
-                <xsl:value-of select="@schema-id"/>
+            <object key="listView">
+                <string key="value">
+                    <xsl:variable name="son" select=".//data[@sort-key][1]"/>
+                    <xsl:value-of select="$son/value"/>
+                </string>
+            </object>
+            <string key="schemaElementId">
+                <xsl:value-of select="@schema-ref"/>
             </string>
-            <xsl:if test="component">
-                <array key="children"><xsl:apply-templates select="component"/></array>
+            <xsl:if test="component|data">
+                <array key="children">
+                    <xsl:apply-templates select="component|data"/>
+                </array>
             </xsl:if>
-            <string key="label"><xsl:value-of select="/result/schema//component[@id = current()/@schema-id]/@name"/></string>
+            <string key="label">
+                <xsl:value-of select="/result/schema//component[@id eq current()/@schema-ref]/@name"
+                />
+            </string>
         </object>
         <xsl:apply-templates select="schema"/>
     </xsl:template>
 
-    <xsl:template match="component">
+    <xsl:template match="component|data">
         <object>
             <string key="id">
                 <xsl:value-of select="@id"/>
             </string>
-            <string key="schemaId">
-                <xsl:value-of select="@schema-id"/>
-            </string>
-            <xsl:if test="component">
-                <array key="children"><xsl:apply-templates select="component"/></array>
+            <xsl:if test="value">
+                <string key="value">
+                    <xsl:value-of select="value"/>
+                </string>
             </xsl:if>
-            <string key="label"><xsl:value-of select="/result/schema//component[@id = current()/@schema-id]"/></string>
+            <string key="schemaElementId">
+                <xsl:value-of select="@schema-ref"/>
+            </string>
+            <xsl:if test="component|data">
+                <array key="children">
+                    <xsl:apply-templates select="component|data"/>
+                </array>
+            </xsl:if>
+            <string key="label">
+                <xsl:value-of select="/result/schema//component[@id eq current()/@schema-ref]/@name"
+                />
+            </string>
         </object>
     </xsl:template>
 

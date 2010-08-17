@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:util="java:java.util.UUID"
+    xmlns:lexus="http://www.mpi.nl/lexus/1.0"
     exclude-result-prefixes="xs" version="2.0">
 
     <xsl:include href="../../util/identity.xslt"/>
@@ -41,39 +42,43 @@
     </xsl:template>
 
     <xsl:template match="parameters">
-        <sortorder>
-            <xsl:attribute name="id">
-                <xsl:choose>
-                    <xsl:when test="id != ''">
-                        <xsl:value-of select="id"/>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="concat('uuid:',util:toString(util:randomUUID()))"/>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:attribute>
-            <xsl:copy-of select="name, description"/>
-            <mappings>
-                <xsl:choose>
-                    <xsl:when test="id != ''">
-                        <xsl:apply-templates select="data/data"/>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <!-- Provide default mapping -->
-                        <xsl:for-each select="97 to 122">
-                            <mapping>
-                                <to>
-                                    <xsl:value-of select="codepoints-to-string(.)"/>
-                                </to>
-                                <from>
-                                    <xsl:value-of select="codepoints-to-string(. - 32)"/><xsl:value-of select="codepoints-to-string(.)"/>
-                                </from>
-                            </mapping>
-                        </xsl:for-each>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </mappings>
-        </sortorder>
+        <lexus:save-sortorder>
+            <sortorder>
+                <xsl:attribute name="id">
+                    <xsl:choose>
+                        <xsl:when test="id != ''">
+                            <xsl:value-of select="id"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="concat('uuid:',util:toString(util:randomUUID()))"
+                            />
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:attribute>
+                <xsl:copy-of select="name, description"/>
+                <mappings>
+                    <xsl:choose>
+                        <xsl:when test="id != ''">
+                            <xsl:apply-templates select="data/data"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <!-- Provide default mapping -->
+                            <xsl:for-each select="97 to 122">
+                                <mapping>
+                                    <to>
+                                        <xsl:value-of select="codepoints-to-string(.)"/>
+                                    </to>
+                                    <from>
+                                        <xsl:value-of select="codepoints-to-string(. - 32)"/>
+                                        <xsl:value-of select="codepoints-to-string(.)"/>
+                                    </from>
+                                </mapping>
+                            </xsl:for-each>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </mappings>
+            </sortorder>
+        </lexus:save-sortorder>
     </xsl:template>
 
 

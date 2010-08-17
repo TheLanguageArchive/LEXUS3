@@ -22,11 +22,11 @@
                 let $lexi := if (lexus:isAdministrator($user))
                             then collection('<xsl:value-of select="$lexica-collection"/>')/lexus
                             else collection('<xsl:value-of select="$lexica-collection"/>')/lexus[meta/users/user/@ref = $user-id]
-                let $users := lexus:users(collection('<xsl:value-of select="$users-collection"/>')/user[@id = distinct-values($lexi/meta/users/user/@ref)])
+                (: let $users := lexus:users(collection('<xsl:value-of select="$users-collection"/>')/user[@id = distinct-values($lexi/meta/users/user/@ref)]) :)
                 
                 return element result
                            {
-                               $users,
+                               (: $users, :)
                                lexus:lexica3($lexi),
                                $user
                            }

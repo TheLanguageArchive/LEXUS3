@@ -24,8 +24,7 @@
                 let $newSchema := <xsl:apply-templates select="/data/lexus:update-lexica-for-updated-schema" mode="encoded"/>
                 let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $newSchema/@id]
                              (: let $dummy := lexus:log($lexus/@id, 'save-schema', $userId, $username, $newData/schema) :)
-                let $sort-order-processing := lexus:sort-order-processSchemaChanged($newSchema/@id, $userId)
-                return $sort-order-processing 
+                return lexus:sort-order-processSchemaChanged($newSchema/@id, $userId)
             </lexus:text>
         </lexus:query>
     </xsl:template>

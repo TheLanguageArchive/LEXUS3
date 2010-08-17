@@ -31,9 +31,7 @@
       -->
       <map:match pattern="startLetterSearch.json">
         <map:generate src="cocoon:/startLetterSearch"/>
-        <map:transform type="tee" src="debug-info/front-pre.xml"/>
         <map:transform type="saxon" src="startLetterSearchResult-2-JSON.xslt"/>
-        <map:transform type="tee" src="debug-info/front-post.xml"/>
         <map:serialize type="json"/>
       </map:match>
 
@@ -56,7 +54,9 @@
       -->
       <map:match pattern="getLexicalEntryData.json">
         <map:generate src="cocoon:/getLexicalEntryData"/>
+        <map:transform type="tee" src="debug-info/front-pre.xml"/>
         <map:transform type="saxon" src="getLexicalEntryData-2-JSON.xslt"/>
+        <map:transform type="tee" src="debug-info/front-post.xml"/>
         <map:serialize type="json"/>
       </map:match>
       <map:match pattern="getLexicalEntryData">

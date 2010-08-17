@@ -8,22 +8,20 @@
     
     <xsl:param name="users-collection"/>
 
-    <xsl:template match="/">
+    <xsl:template match="lexus:save-sortorder">
+        <xsl:copy-of select="."/>
         <lexus:query>
             <lexus:text>
                 <xsl:call-template name="declare-namespace"/>                        
                 
-                declare function lexus:updateSortOrder($sortOrder as node(), $user as node()) as node() {
-                    let $dummy := (
+                declare updating function lexus:updateSortOrder($sortOrder as node(), $user as node()) {
                     if ($user/workspace/sortorders/sortorder[@id eq $sortOrder/@id]) 
-                        then update replace $user/workspace/sortorders/sortorder[@id eq $sortOrder/@id] with $sortOrder
-                        else update insert $sortOrder into $user/workspace/sortorders
-                    )
-                    return element result { $sortOrder, $user }
+                        then replace node $user/workspace/sortorders/sortorder[@id eq $sortOrder/@id] with $sortOrder
+                        else insert node $sortOrder into $user/workspace/sortorders
                 };
 
                 let $userId := '<xsl:value-of select="/data/user/@id"/>'                        
-                let $sortOrder := <xsl:apply-templates select="/data/sortorder" mode="encoded"/>
+                let $sortOrder := <xsl:apply-templates select="sortorder" mode="encoded"/>
                 let $user := collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $userId]
                 return lexus:updateSortOrder($sortOrder, $user)
             </lexus:text>

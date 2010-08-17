@@ -59,6 +59,118 @@
                                 "type": "Form",
                                 "note": null,
                                 "style": null,
+                                "sortOrder":                                     {
+                                       "id": "MmM5MDkwYTIyMjk4MTNhMzAxMjJlZjc2YzM3OTA2Nzc=",
+                                       "description": "azazaz",
+                                       "fill": "?(b?)adcefghijklmnopqrstuvwxyz",
+                                       "name": "azazaz",
+                                       "data":                                         [
+                                       {
+                                       "startLetter": "?",
+                                       "characters": "b?"
+                                       },
+                                       {
+                                       "startLetter": "a",
+                                       "characters": "a"
+                                       },
+                                       {
+                                       "startLetter": "d",
+                                       "characters": "d"
+                                       },
+                                       {
+                                       "startLetter": "c",
+                                       "characters": "c"
+                                       },
+                                       {
+                                       "startLetter": "e",
+                                       "characters": "e"
+                                       },
+                                       {
+                                       "startLetter": "f",
+                                       "characters": "f"
+                                       },
+                                       {
+                                       "startLetter": "g",
+                                       "characters": "g"
+                                       },
+                                       {
+                                       "startLetter": "h",
+                                       "characters": "h"
+                                       },
+                                       {
+                                       "startLetter": "i",
+                                       "characters": "i"
+                                       },
+                                       {
+                                       "startLetter": "j",
+                                       "characters": "j"
+                                       },
+                                       {
+                                       "startLetter": "k",
+                                       "characters": "k"
+                                       },
+                                       {
+                                       "startLetter": "l",
+                                       "characters": "l"
+                                       },
+                                       {
+                                       "startLetter": "m",
+                                       "characters": "m"
+                                       },
+                                       {
+                                       "startLetter": "n",
+                                       "characters": "n"
+                                       },
+                                       {
+                                       "startLetter": "o",
+                                       "characters": "o"
+                                       },
+                                       {
+                                       "startLetter": "p",
+                                       "characters": "p"
+                                       },
+                                       {
+                                       "startLetter": "q",
+                                       "characters": "q"
+                                       },
+                                       {
+                                       "startLetter": "r",
+                                       "characters": "r"
+                                       },
+                                       {
+                                       "startLetter": "s",
+                                       "characters": "s"
+                                       },
+                                       {
+                                       "startLetter": "t",
+                                       "characters": "t"
+                                       },
+                                       {
+                                       "startLetter": "u",
+                                       "characters": "u"
+                                       },
+                                       {
+                                       "startLetter": "v",
+                                       "characters": "v"
+                                       },
+                                       {
+                                       "startLetter": "w",
+                                       "characters": "w"
+                                       },
+                                       {
+                                       "startLetter": "x",
+                                       "characters": "x"
+                                       },
+                                       {
+                                       "startLetter": "y",
+                                       "characters": "y"
+                                       },
+                                       {
+                                       "startLetter": "z",
+                                       "characters": "z"
+                                       }
+                                ]
+                                },
                                 "children": []
                             },
                                                         {
@@ -163,9 +275,9 @@
             },
         -->
     <xsl:template match="schema">
-<!--        <object key="schema">-->
-            <xsl:apply-templates select="component"/>
-<!--        </object>-->
+        <!--        <object key="schema">-->
+        <xsl:apply-templates select="component"/>
+        <!--        </object>-->
     </xsl:template>
 
     <!-- 
@@ -307,6 +419,18 @@
             <string key="id">
                 <xsl:value-of select="@id"/>
             </string>
+            <xsl:choose>
+                <xsl:when test="@sort-order">
+                    <object key="sortOrder">
+                        <string key="id">
+                            <xsl:value-of select="@sort-order"/>
+                        </string>
+                    </object>
+                </xsl:when>
+                <xsl:otherwise>
+                    <null key="sortOrder"/>
+                </xsl:otherwise>
+            </xsl:choose>
             <number key="min">
                 <xsl:choose>
                     <xsl:when test="@mandatory eq 'true'">
@@ -316,12 +440,16 @@
                         <xsl:text>0</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose>
-            </number>            
+            </number>
             <xsl:choose>
                 <xsl:when test="@multiple eq 'false'">
-                    <number key="max"><xsl:text>1</xsl:text></number>
+                    <number key="max">
+                        <xsl:text>1</xsl:text>
+                    </number>
                 </xsl:when>
-                <xsl:otherwise><null key="max"/></xsl:otherwise>
+                <xsl:otherwise>
+                    <null key="max"/>
+                </xsl:otherwise>
             </xsl:choose>
             <string key="parent">
                 <xsl:value-of select="../@id"/>
@@ -339,7 +467,7 @@
             <string key="DCRReference">
                 <xsl:value-of select="@dcrReference"/>
             </string>
-            <xsl:call-template name="sort-order"><xsl:with-param name="sort-order" select="@sortOrder"/></xsl:call-template>
+            <!--            <xsl:call-template name="sort-order"><xsl:with-param name="sort-order" select="@sort-order"/></xsl:call-template>-->
             <string key="adminInfo">
                 <xsl:value-of select="@admin-info"/>
             </string>
@@ -348,7 +476,7 @@
             </array>
         </object>
     </xsl:template>
-    
+
     <xsl:template match="domainvalue">
         <object>
             <string key="value">
@@ -356,7 +484,7 @@
             </string>
         </object>
     </xsl:template>
-    
+
     <xsl:template match="component[component]" priority="1">
         <object>
             <string key="id">
@@ -374,10 +502,14 @@
             </number>
             <xsl:choose>
                 <xsl:when test="@multiple eq 'false'">
-                    <number key="max"><xsl:text>1</xsl:text></number>
+                    <number key="max">
+                        <xsl:text>1</xsl:text>
+                    </number>
                 </xsl:when>
-                <xsl:otherwise><null key="max"/></xsl:otherwise>
-            </xsl:choose>            
+                <xsl:otherwise>
+                    <null key="max"/>
+                </xsl:otherwise>
+            </xsl:choose>
             <string key="parent">
                 <xsl:value-of select="../@id"/>
             </string>
@@ -455,7 +587,7 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-    
+
     <xsl:template match="@* | node()"/>
 
 

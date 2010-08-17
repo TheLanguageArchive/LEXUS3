@@ -75,7 +75,8 @@
             <component id="{id}" description="{description}" name="{name}" type="{$type}"
                 xtype="type" mandatory="{if (number(min) gt 0) then 'true' else 'false'}"
                 multiple="{if (number(max) eq 1) then 'false' else 'true'}" note="{note}"
-                admin-info="{adminInfo}" sort-order="{sortOrder/id}">
+                admin-info="{adminInfo}">
+                <xsl:apply-templates select="sortOrder"/>
                 <xsl:apply-templates select="children/children"/>
             </component>
         </schema>
@@ -103,7 +104,8 @@
         <component id="{$id}" description="{description}" name="{name}" type="{$type}" xtype="type"
             mandatory="{if (number(min) gt 0) then 'true' else 'false'}"
             multiple="{if (number(max) eq 1) then 'false' else 'true'}" note="{note}"
-            admin-info="{adminInfo}" sort-order="{sortOrder/id}">
+            admin-info="{adminInfo}">
+            <xsl:apply-templates select="sortOrder"/>
             <xsl:choose>
                 <xsl:when test="children/children">
                     <xsl:apply-templates select="children/children"/>
@@ -129,6 +131,12 @@
         </xsl:if>
     </xsl:template>
 
+    <xsl:template match="sortOrder[not(id)]"/>
+    <xsl:template match="sortOrder[data(id) eq 'null']"/>
+    <xsl:template match="sortOrder[starts-with(id, 'uuid')]">
+        <xsl:attribute name="sort-order" select="id"/>    
+    </xsl:template>
+    
     <xsl:template match="valuedomain/valuedomain" priority="1">
         <domainvalue>
             <xsl:if test="value/text() ne 'null'">

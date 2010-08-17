@@ -3,10 +3,10 @@
     
     <!-- Encode everything -->
     <xsl:template match="text()" mode="encoded" priority="1">
-        <xsl:value-of select="."/>
+        <xsl:value-of select="translate(., '{', '')"/>
     </xsl:template>
     <xsl:template match="@*" mode="encoded" priority="1">
-        <xsl:text> </xsl:text><xsl:value-of select="local-name()"/>=&quot;<xsl:value-of select="."/>&quot;<xsl:text> </xsl:text>
+        <xsl:text> </xsl:text><xsl:value-of select="local-name()"/>=&quot;<xsl:value-of select="translate(., '{', '')"/>&quot;<xsl:text> </xsl:text>
     </xsl:template>
     <xsl:template match="node()" mode="encoded">
         <xsl:text>&lt;</xsl:text>
