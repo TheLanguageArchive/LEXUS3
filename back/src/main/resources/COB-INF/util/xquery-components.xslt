@@ -38,7 +38,20 @@
             return $d
         };
     </xsl:template>
-
+    
+    <xsl:template name="view-permissions">
+        declare function lexus:canCreateView($lexusMeta as node(), $userId as xs:string) as xs:boolean {
+            $lexusMeta/users/user[@ref eq $userId]/permissions/write eq "true"
+        };
+        declare function lexus:canDeleteView($lexusMeta as node(), $userId as xs:string) as xs:boolean {
+            lexus:canCreateView($lexusMeta, $userId)
+        };
+        declare function lexus:canReadViews($lexusMeta as node(), $userId as xs:string) as xs:boolean {
+            $lexusMeta/users/user[@ref eq $userId]/permissions/read eq "true" or
+            $lexusMeta/users/user[@ref eq $userId]/permissions/write eq "true" 
+        };
+    </xsl:template>
+    
     <!-- 
         Given a list of lexus meta data nodes,
         return the list of lexica with the same ids, order by name.

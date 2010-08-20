@@ -136,7 +136,7 @@
                     element results {
                         element startLetter { $startLetter },
                         lexus:lexicon($lexus),
-                        element lexical-entries { $lexicalEntries[position() gt ($startPage * $pageSize)][position() le (($startPage + 1) * $pageSize)] },
+                        element lexical-entries { subsequence($lexicalEntries,($startPage * $pageSize), $pageSize) },
                         element startPage { $startPage },
                         element count { count($lexicalEntries) },
                         element pageSize {$pageSize}

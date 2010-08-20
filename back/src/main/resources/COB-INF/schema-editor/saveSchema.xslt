@@ -26,17 +26,16 @@
                 
                 (: replace the schema in the db :)
                 declare updating function lexus:updateSchema($newSchema as node(), $lexus as node()) {
-                    replace node collection('lexus')/lexus[@id eq $lexus/@id]/meta/schema with $newSchema
+                    replace node collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexus/@id]/meta/schema with $newSchema
                 };
                 
 
                 let $userId := '<xsl:value-of select="/data/user/@id"/>'       
-                let $username := '<xsl:value-of select="/data/user/name"/>'       
-                let $newSchema := <xsl:apply-templates select="/data/lexus:save-schema" mode="encoded"/>
-                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $newSchema/@id]
+                let $request := <xsl:apply-templates select="/data/lexus:save-schema" mode="encoded"/>
+                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $request/@id]
                 return
                     if (lexus:canUpdateSchema($lexus/meta, $userId))
-                        then lexus:updateSchema($newSchema/schema, $lexus)
+                        then lexus:updateSchema($request/schema, $lexus)
                         else ()
             </lexus:text>
         </lexus:query>

@@ -157,6 +157,20 @@
 
     </map:pipeline>
 
+
+    <!-- 
+      Generate XML from the body of the request
+    -->
+    <map:pipeline id="stream">
+      
+      <map:match pattern="stream">
+        <map:generate type="stream"/>
+        <map:serialize type="xml"/>
+      </map:match>
+      
+    </map:pipeline>
+    
+    
     <!-- 
       Put all the request info in XML
     -->
