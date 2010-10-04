@@ -19,15 +19,19 @@
 -->
 <!-- $Id: block-servlet-service.xml 642117 2008-03-28 08:03:19Z reinhard $ -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:servlet="http://cocoon.apache.org/schema/servlet"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:servlet="http://cocoon.apache.org/schema/servlet"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                            http://cocoon.apache.org/schema/servlet http://cocoon.apache.org/schema/servlet/cocoon-servlet-1.0.xsd">
 
   <bean name="nl.mpi.lexus.front.service" class="org.apache.cocoon.sitemap.SitemapServlet">
-    <servlet:context mount-path="/front" context-path="blockcontext:/front/"><servlet:connections>
-      <entry key="back" value-ref="nl.mpi.lexus.back.service"/>
-    </servlet:connections></servlet:context>
+    <servlet:context mount-path="/" context-path="blockcontext:/front/">
+      <servlet:connections>
+<!--        <entry key="root" value-ref="nl.mpi.lexus.root.service"/>-->
+        <entry key="back" value-ref="nl.mpi.lexus.back.service"/>
+        <entry key="display" value-ref="nl.mpi.lexus.display.service"/>
+      </servlet:connections>
+    </servlet:context>
   </bean>
 
 </beans>
