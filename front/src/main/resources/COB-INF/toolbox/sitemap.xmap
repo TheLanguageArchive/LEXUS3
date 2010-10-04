@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<map:sitemap xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://apache.org/cocoon/sitemap/1.0 http://cocoon.apache.org/schema/sitemap/cocoon-sitemap-1.0.xsd"
+  xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+
+  <map:pipelines>
+    <map:pipeline id="exercise">
+      <map:match pattern="">
+        <map:redirect-to uri="convert/toolbox_demo"/>
+      </map:match>
+      
+      <map:match pattern="convert/*">
+        <map:generate src="cocoon:/convert/{1}.typ/{1}.txt"/>
+        <map:serialize type="xml"/>
+      </map:match>      
+      
+      <map:match pattern="convert/*/*">
+        <map:aggregate element="toolbox-import">
+          <map:part src="cocoon:/toolbox.typ.xml/{1}"/>
+          <map:part src="cocoon:/toolbox.data.xml/{2}"/>
+        </map:aggregate>
+        <!-- Some markers are not defined (really!), remove them -->
+        <map:transform type="saxon" src="toolbox_import/remove-undefined-markers.xslt"/>
+        <!-- Empty markers that are not parents sometimes prevent data-category elements from ending up in the right parent element -->
+        <map:transform type="saxon" src="toolbox_import/remove-empty-markers.xslt"/>
+        <!-- Parents may be missing, add them (Just one 'layer' of parent element is added!) -->
+        <map:transform type="saxon" src="toolbox_import/add-missing-parents.xslt"/>
+        <!-- Create lexical entries -->
+        <map:transform type="saxon" src="toolbox_import/create-lexicalEntries-import.xslt"/>
+        <!-- Clean up DCs that were added as parents -->
+        <map:transform type="saxon" src="toolbox_import/remove-added-dcs.xslt"/>
+        <!-- Components that have no data-category elements with a @value beneath them are removed -->
+        <map:transform type="saxon" src="toolbox_import/remove-empty-components.xslt"/>
+        <map:serialize type="xml"/>
+      </map:match>
+      
+      <map:match pattern="toolbox.typ.xml/*">
+        <map:generate type="text" src="{naming:java:comp/env/toolbox_files}/{1}"/>
+        <map:transform type="lexer" src="toolbox_typ/toolbox.lex"/>
+        <map:transform type="saxon" src="toolbox_typ/post-lexer.xslt"/>
+        <map:transform type="parser" src="toolbox_typ/toolbox.grm"/>
+        <map:transform type="saxon" src="toolbox_typ/post-parser.xslt"/>
+        <map:transform type="saxon" src="toolbox_typ/create-lexicalEntry-schema.xslt"/>
+        <map:serialize type="xml"/>
+      </map:match>
+      
+      <map:match pattern="toolbox.data.xml/*">
+        <map:generate type="text" src="{naming:java:comp/env/toolbox_files}/{1}"/>
+        <map:transform type="lexer" src="toolbox_data/toolbox.lex"/>
+        <map:transform type="saxon" src="toolbox_data/post-lexer.xslt"/>
+        <map:transform type="parser" src="toolbox_data/toolbox.grm"/>
+        <map:transform type="saxon" src="toolbox_data/post-parser.xslt"/>
+        <map:serialize type="xml"/>
+      </map:match>
+    </map:pipeline>
+  </map:pipelines>
+
+</map:sitemap>

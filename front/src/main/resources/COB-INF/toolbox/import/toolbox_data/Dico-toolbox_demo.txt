@@ -1,0 +1,238 @@
+\_sh v3.0  400  MDF 4.0
+\_DateStampHasFourDigitYear
+
+\lx a'aka
+\hm
+\va
+\vn
+\ps
+\sn
+\gn
+\ge
+\rn
+\re
+\dv
+\dn
+\de
+\un
+\rf
+\xv
+\xn
+\xe
+\ff
+\bw
+\sc
+\sf
+\cf
+\cn
+\diaVar
+\th
+\sy
+\an
+\nt
+\dt 11/Jun/2009
+
+\lx mei 'au'ape
+\hm
+\va
+\vn
+\ps n
+\sn
+\gn fruit_à_pain
+\ge breadfruit_variety
+\rn arbre ; fruit à pain, variété de
+\re tree ; breadfruit variety    
+\dv
+\dn variété de fruit à pain, fruit petit et rond
+\de breadfruit variety, small, round fruit
+\un UP, autres?
+\pc D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to
+link/Marquesan lexicon/Fotos/Plants/Breadfruit
+varieties-Marquesas/Breadfruit names/mei 'au'ape1.jpg
+\pc D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to
+link/Marquesan lexicon/Fotos/Plants/Breadfruit
+varieties-Marquesas/Breadfruit names/mei 'au'ape2.jpg
+\rf
+\xv
+\xn
+\xe
+\ff
+\bw
+\sc
+\sf
+\cf
+\cn
+\diaVar
+\th
+\sy
+\an
+\nt
+\dt 20/Oct/2009
+
+\lx mei komako
+\hm
+\va
+\vn
+\ps n
+\sn
+\gn fruit_à_pain
+\ge breadfruit
+\rn fruit à pain (variété)
+\re breadfruit variety
+\dn variété de fruit à pain de coleur jaune en état mûr
+\de breadfruit variety having yellow substance when ripe
+\un UP, autres?
+\pc D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to
+link/Marquesan lexicon/Fotos/Plants/Breadfruit
+varieties-Marquesas/Breadfruit names/mei komako1.jpg
+\pc D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to
+link/Marquesan lexicon/Fotos/Plants/Breadfruit
+varieties-Marquesas/Breadfruit names/mei komako2.jpg
+\rf
+\xv
+\xn
+\xe
+\bw
+\sc
+\cf
+\cn
+\th
+\sy
+\an
+\nt
+\dt 20/Oct/2009
+
+\lx mei ko'opupu
+\hm
+\va
+\vn
+\ps n
+\sn  
+\gn fruit_à_pain
+\ge breadfruit
+\rn fruit à pain, variété de
+\re breadfruit variety
+\dn variété de fruit à pain 
+\de breadfruit variety
+\un UP, autres? 
+\pc D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to
+link/Marquesan lexicon/Fotos/Plants/Breadfruit
+varieties-Marquesas/Breadfruit names/mei ko'opupu 1-UP.jpg
+\un
+\rf
+\xv
+\xn
+\xe
+\ff
+\bw
+\sc
+\sf
+\cf
+\cn
+\diaVar
+\th
+\sy
+\an
+\nt
+\dt 20/Oct/2009
+
+\lx mei ku'uha'a
+\hm
+\va
+\vn
+\ps n
+\sn
+\gn fruit_à_pain
+\ge breadfruit
+\rn fruit à pain, variété de
+\re breadfruit variety
+\dn variété de fruit à pain, à maturité une pulpe marronne, souvent
+utilisé pour faire du "  ka'aku ke'eke'e"  
+\de breadfruit variety with a brownish pulp when ripe, used for making 
+"ka'aku ke'eke'e"  
+\un UP, autres? 
+\pc D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to
+link/Marquesan lexicon/Fotos/Plants/Breadfruit
+varieties-Marquesas/Breadfruit names/mei ku'uha'a1.jpg
+\rf
+\xv
+\xn
+\xe
+\ff
+\bw
+\sc
+\sf
+\cf
+\cn
+\diaVar
+\th
+\sy
+\an
+\nt
+\dt 20/Oct/2009
+
+\lx mei ku'uha'a ke'ā
+\hm
+\va
+\vn
+\ps n
+\sn
+\gn fruit_à_pain
+\ge breadfruit
+\rn fruit à pain (variété)
+\re breadfruit variety
+\dn variété de fruit à pain de pulpe dure, se cuit uniquement dans
+l'eau boilante (pas à la braise)
+\de breadfruit variety of which pulp consistence is hard, only to be
+cooked in water (not on an open fire)
+\un UP, autres?
+\pc
+\rf
+\xv
+\xn
+\xe
+\bw
+\sc
+\cf
+\cn
+\th mei
+\sy
+\an
+\nt
+\dt 20/Oct/2009
+
+\lx mei ohotiketike
+\hm
+\va
+\vn
+\ps n
+\sn
+\gn fruit_à_pain
+\ge breadfruit_variety
+\rn fruit à pain, variété de
+\re breadfruit variety
+\dv
+\dn variété de fruit à pain, fruit long et oval pesant jusqu'à sept
+kilos
+\de breadfruit variety, long and oval-shaped fruit weighing up to 7 kilos
+\un UP, autres?
+\pc D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to
+link/Marquesan lexicon/Fotos/Plants/Breadfruit
+varieties-Marquesas/Breadfruit names/mei ohotiketike(UP)- mei
+kopumoko(HO).jpg
+\rf
+\xv
+\xn
+\xe
+\ff
+\bw
+\sc
+\sf
+\cf
+\cn
+\diaVar mei kopumoko (HO)
+\th
+\sy
+\an
+\nt
+\dt 20/Oct/2009
