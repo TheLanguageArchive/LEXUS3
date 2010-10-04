@@ -14,6 +14,7 @@
             <lexus:text>
                 <xsl:call-template name="declare-namespace"/>                        
                 <xsl:call-template name="users"/>                        
+                <xsl:call-template name="permissions"/>                      
                 <xsl:call-template name="user-permissions"/>                      
                 <xsl:call-template name="lexica"/>
                 

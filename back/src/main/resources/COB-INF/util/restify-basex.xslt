@@ -14,6 +14,7 @@
             <rest:body>
                 <query>
                     <text><xsl:value-of select="lexus:text"/></text>
+                    <parameter name="output" value="omit-xml-declaration=no"/>
                 </query>
             </rest:body>
         </rest:request>

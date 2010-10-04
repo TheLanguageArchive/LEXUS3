@@ -26,12 +26,12 @@
     
     <xsl:param name="lexica-collection"/>
 
-    <xsl:template match="/">
+    <xsl:template match="lexus:get-lexical-entry">
         <lexus:query>
             <lexus:text>
                 <xsl:call-template name="declare-namespace"/> 
                 
-                let $data := <xsl:apply-templates select="/data/get-lexical-entry" mode="encoded"/>
+                let $data := <xsl:apply-templates select="." mode="encoded"/>
                 let $lexiconId := $data/lexicon
                 let $id := $data/id
                 let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]

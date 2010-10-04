@@ -302,20 +302,20 @@
         -->
       <map:match pattern="userLogin.xml">
         <map:generate src="service-consumer:"/>
+        <map:transform type="tee" src="debug-info/back-pre.xml"/>
         <map:transform type="saxon" src="users/loginOrAddAdministratorAccount.xslt">
           <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
         </map:transform>
+        <map:transform type="tee" src="debug-info/back-post.xml"/>
         <map:transform type="saxon" src="${xmldb.rest.transformer}">
           <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
         </map:transform>
-        <map:transform type="tee" src="debug-info/back-pre.xml"/>
         <map:transform type="rest">
           <map:parameter name="username" value="${xmldb.rest.username}"/>
           <map:parameter name="password" value="${xmldb.rest.password}"/>
           <map:parameter name="preemptive-authentication" value="true"/>
         </map:transform>
         <map:transform src="../util/extractDataFromRestResponse.xslt"/>
-        <map:transform type="tee" src="debug-info/back-post.xml"/>
         <map:transform type="saxon" src="users/returnUserLoginInfo.xslt"/>
         <map:serialize type="xml"/>
       </map:match>

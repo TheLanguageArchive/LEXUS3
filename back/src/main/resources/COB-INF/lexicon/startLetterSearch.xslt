@@ -127,10 +127,11 @@
                 let $lexi := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[meta/users/user/@ref = $user-id]
                 
                 let $lexicalEntries := if ($startLetter ne '') 
-                    then for $l in $lexus/lexicon/lexical-entry order by $l//data[@sort-key][1]/@sort-key return $l (: [@start-letter eq $startLetter] :)
-                    else for $l in $lexus/lexicon/lexical-entry order by $l//data[@sort-key][1]/@sort-key return $l
+                    then for $l in $lexus/lexicon/lexical-entry let $d := $l//data[@sort-key] order by $d[1]/@sort-key return $l
+                    else for $l in $lexus/lexicon/lexical-entry let $d := $l//data[@sort-key] order by $d[1]/@sort-key return $l
                 let $startLetters := distinct-values($lexicalEntries/@start-letter)
                 let $schema := $lexus/meta/schema
+                (: let $listView := $lexus/meta/views/view[@id eq $lexus/meta/views/@listView] :)
                 
                 return element result {
                     element results {
@@ -145,6 +146,8 @@
                     element startLetters { $startLetters },
                     element queries { },
                     element schema { $schema }
+                    (: ,
+                    $listView :)
                 }
             </lexus:text>
         </lexus:query>

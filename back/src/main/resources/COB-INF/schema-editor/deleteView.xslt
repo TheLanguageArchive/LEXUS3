@@ -19,6 +19,7 @@
             <lexus:text>
                 
                 <xsl:call-template name="declare-namespace"/>
+                <xsl:call-template name="permissions"/>
                 <xsl:call-template name="view-permissions"/>
                 <xsl:call-template name="log"/>
                 
@@ -27,12 +28,12 @@
                     delete node $lexus/meta/views/view[@id eq $newView/@id]
                 };
                 
-                let $userId := '<xsl:value-of select="/data/user/@id"/>'
+                let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>
                 let $id := '<xsl:value-of select="view/@id"/>'
                 let $request := <xsl:apply-templates select="." mode="encoded"/>
                 let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus/meta/views/view[@id eq $id]/ancestor::lexus
                 return
-                    if (lexus:canDeleteView($lexus/meta, $userId))
+                    if (lexus:canDeleteView($lexus/meta, $user))
                         then lexus:deleteView($request/view, $lexus)
                         else ()
             </lexus:text>

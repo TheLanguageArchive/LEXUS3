@@ -10,11 +10,11 @@
     <xsl:param name="lexica-collection"/>
     <xsl:param name="users-collection"/>
     
-    <xsl:template match="lexus:get-view">
+    <xsl:template match="lexus:get-leview">
         <lexus:query>
             
             <!--             
-                Get view.
+                Get listView.
               -->
             <lexus:text>
                 
@@ -23,13 +23,15 @@
                 <xsl:call-template name="view-permissions"/>
                 <xsl:call-template name="log"/>
                 
-                let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>
-                let $id := '<xsl:value-of select="view/@id"/>'
-                let $request := <xsl:apply-templates select="." mode="encoded"/>
-                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus/meta/views/view[@id eq $id]/ancestor::lexus
+                let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>       
+                let $id := '<xsl:value-of select="@lexical-entry"/>'
+                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus/lexicon/lexical-entry[@id eq $id]/ancestor::lexus
+                
                 return
                     if (lexus:canReadViews($lexus/meta, $user))
-                        then $lexus/meta/views/view[@id eq $id]
+                        then 
+                            let $leView := $lexus/meta/views/@lexicalEntryView
+                            return $lexus/meta/views/view[@id eq $leView]
                         else ()
             </lexus:text>
         </lexus:query>

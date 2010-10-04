@@ -10,11 +10,11 @@
     <xsl:param name="lexica-collection"/>
     <xsl:param name="users-collection"/>
     
-    <xsl:template match="lexus:get-view">
+    <xsl:template match="lexus:save-standard-view">
         <lexus:query>
             
             <!--             
-                Get view.
+                Create a view.
               -->
             <lexus:text>
                 
@@ -23,13 +23,25 @@
                 <xsl:call-template name="view-permissions"/>
                 <xsl:call-template name="log"/>
                 
+                (: create the view in the db :)
+                declare updating function lexus:saveStandardViews($standardViews as node(), $lexus as node()) {
+                    (if (empty($lexus/meta/views/@listView))
+                        then insert node $standardViews/@listView into $lexus/meta/views
+                        else replace node $lexus/meta/views/@listView with $standardViews/@listView,
+                     if (empty($lexus/meta/views/@lexicalEntryView))
+                        then insert node $standardViews/@lexicalEntryView into $lexus/meta/views
+                        else replace node $lexus/meta/views/@lexicalEntryView with $standardViews/@lexicalEntryView
+                    )
+                };
+                
+
                 let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>
-                let $id := '<xsl:value-of select="view/@id"/>'
                 let $request := <xsl:apply-templates select="." mode="encoded"/>
-                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus/meta/views/view[@id eq $id]/ancestor::lexus
+                
+                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $request/@lexicon]
                 return
-                    if (lexus:canReadViews($lexus/meta, $user))
-                        then $lexus/meta/views/view[@id eq $id]
+                    if (lexus:canCreateView($lexus/meta, $user))
+                        then lexus:saveStandardViews($request/standardViews, $lexus)
                         else ()
             </lexus:text>
         </lexus:query>

@@ -20,6 +20,7 @@
             <lexus:text>
                 
                 <xsl:call-template name="declare-namespace"/>
+                <xsl:call-template name="permissions"/>
                 <xsl:call-template name="schema-permissions"/>
                 <xsl:call-template name="sort-order"/>
                 <xsl:call-template name="log"/>
@@ -30,11 +31,11 @@
                 };
                 
 
-                let $userId := '<xsl:value-of select="/data/user/@id"/>'       
+                let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>
                 let $request := <xsl:apply-templates select="/data/lexus:save-schema" mode="encoded"/>
                 let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $request/@id]
                 return
-                    if (lexus:canUpdateSchema($lexus/meta, $userId))
+                    if (lexus:canUpdateSchema($lexus/meta, $user))
                         then lexus:updateSchema($request/schema, $lexus)
                         else ()
             </lexus:text>

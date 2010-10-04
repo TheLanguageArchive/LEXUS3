@@ -19,14 +19,15 @@
             <lexus:text>
                 
                 <xsl:call-template name="declare-namespace"/>
+                <xsl:call-template name="permissions"/>
                 <xsl:call-template name="view-permissions"/>
                 <xsl:call-template name="log"/>
                 
-                let $userId := '<xsl:value-of select="/data/user/@id"/>'       
+                let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>
                 let $request := <xsl:apply-templates select="." mode="encoded"/>
                 let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $request/@lexicon]
                 return
-                    if (lexus:canReadViews($lexus/meta, $userId))
+                    if (lexus:canReadViews($lexus/meta, $user))
                         then $lexus/meta/views
                         else ()
             </lexus:text>

@@ -5,10 +5,16 @@
     xmlns:json="http://apache.org/cocoon/json/1.0" version="2.0">
 
 
+    <!--
+        Declare the lexus namespace in an XQuery
+        -->
     <xsl:template name="declare-namespace">
         declare namespace lexus="http://www.mpi.nl/lat/lexus";
     </xsl:template>
     
+    <!--
+        XQuery functions for handling users.
+    -->
     <xsl:template name="users">
         declare function lexus:user-sequence($users as element()*)  as element()* {
             for $user in $users
@@ -20,35 +26,63 @@
         };
     </xsl:template>
     
-    
-    <xsl:template name="user-permissions">
-        declare function lexus:canUpdateOrCreateUser($user as node()) as xs:boolean {
-            (number($user/accesslevel) ge 30)
-        };
-        
+    <!--
+        XQuery functions for checking permissions.
+    -->    
+    <xsl:template name="permissions">        
         declare function lexus:isAdministrator($user as node()) as xs:boolean {
             (number($user/accesslevel) ge 30)
         };
+        
+        
+        declare function lexus:canWrite($lexusMeta as node()*, $user as node()) as xs:boolean {
+            if (lexus:isAdministrator($user))
+                then true()
+                else
+                    if (empty($lexusMeta))
+                        then false()
+                        else
+                            let $write := $lexusMeta/users/user[@ref eq $user/@id]/permissions/write
+                            return
+                                if (empty($write))
+                                    then false()
+                                    else $write eq "true"
+        };
     </xsl:template>
     
+    <!--
+        XQuery functions for checking user management permissions.
+    -->    
+    <xsl:template name="user-permissions">
+        declare function lexus:canUpdateOrCreateUser($user as node()) as xs:boolean {
+            lexus:isAdministrator($user)
+        };
+    </xsl:template>
     
+    <!--
+        XQuery functions for checking schema management permissions.
+    -->
     <xsl:template name="schema-permissions">
-        declare function lexus:canUpdateSchema($lexusMeta as node(), $userId as xs:string) as xs:boolean {
-            let $d := $lexusMeta/users/user[@ref eq $userId]/permissions/write eq "true"
-            return $d
+        declare function lexus:canUpdateSchema($lexusMeta as node()*, $user as node()) as xs:boolean {
+            lexus:canWrite($lexusMeta, $user)
         };
     </xsl:template>
     
+    <!--
+        XQuery functions for checking view management permissions.
+    -->    
     <xsl:template name="view-permissions">
-        declare function lexus:canCreateView($lexusMeta as node(), $userId as xs:string) as xs:boolean {
-            $lexusMeta/users/user[@ref eq $userId]/permissions/write eq "true"
+        declare function lexus:canCreateView($lexusMeta as node()*, $user as node()) as xs:boolean {
+            lexus:canWrite($lexusMeta, $user)
         };
-        declare function lexus:canDeleteView($lexusMeta as node(), $userId as xs:string) as xs:boolean {
-            lexus:canCreateView($lexusMeta, $userId)
+        declare function lexus:canDeleteView($lexusMeta as node()*, $user as node()) as xs:boolean {
+            lexus:canCreateView($lexusMeta, $user)
         };
-        declare function lexus:canReadViews($lexusMeta as node(), $userId as xs:string) as xs:boolean {
-            $lexusMeta/users/user[@ref eq $userId]/permissions/read eq "true" or
-            $lexusMeta/users/user[@ref eq $userId]/permissions/write eq "true" 
+        declare function lexus:canReadViews($lexusMeta as node()*, $user as node()) as xs:boolean {
+            if (lexus:isAdministrator($user)) then true()
+            else
+                $lexusMeta/users/user[@ref eq $user/@id]/permissions/read eq "true" or
+                $lexusMeta/users/user[@ref eq $user/@id]/permissions/write eq "true" 
         };
     </xsl:template>
     
@@ -104,6 +138,9 @@
     </xsl:template>
     
     
+    <!--
+        XQuery functions for logging changes to a lexicon.
+    -->
     <xsl:template name="log">
         
         (: declare updating function lexus:log-entry($log as node(), $entry as node()) {
