@@ -1,0 +1,1916 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<lexicon xmlns:parser="http://chaperon.sourceforge.net/schema/syntaxtree/2.0"
+    xmlns:lexus="http://www.mpi.nl/lexus" xmlns:mpi="http://www.mpi.nl/lexus">
+    <lexical-entry>
+        <component name="lx" value="'ai">
+            <data-category name="hm" value="3"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="vt">
+                <component name="sn" value="1">
+                    <component name="sd" value="food verbals ; consumption"/>
+                    <component name="gn" value="manger">
+                        <data-category name="ge" value="eat"/>
+                        <data-category name="rn" value="manger"/>
+                        <data-category name="re" value="eat"/>
+                        <data-category name="dv" value="'a&#402;´ (not a def!)"/>
+                        <data-category name="dn" value="manger"/>
+                        <data-category name="de" value="eat"/>
+                        <data-category name="un" value="FI"/>
+                    </component>
+                    <data-category name="pc"/>
+                    <component name="rf">
+                        <component name="xv" value="Ua 'ai au i te fara&#8776;ça pata.">
+                            <data-category name="xn"
+                                value="J'ai mang&#8730;© du pain beurr&#8730;©."/>
+                            <data-category name="xe" value="I have eaten buttered bread."/>
+                        </component>
+                    </component>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar" value="kai (nord, HO, TH)"/>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="nt"/>
+            <data-category name="dt" value="04/Nov/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="'&#402;Å'i">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="sn" value="1">
+                    <component name="sd" value="food ; human condition"/>
+                    <component name="gn" value="famine">
+                        <data-category name="ge" value="hunger"/>
+                        <data-category name="rn" value="souffrance ; malheur ; famine"/>
+                        <data-category name="re" value="suffering ; misfortune ; hunger"/>
+                        <data-category name="dv" value="&#8776;çne nui me te u&#402;ì (HO)"/>
+                        <data-category name="dn" value="famine; souffrance; malheur"/>
+                        <data-category name="de" value="hunger suffering; misfortune"/>
+                        <data-category name="un" value="NH, HO, TH, autres?"/>
+                    </component>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar"/>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="nt"/>
+            <data-category name="dt" value="05/Nov/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="ha'anao">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="vt">
+                <component name="sn">
+                    <component name="gn" value="p&#8730;©parer">
+                        <data-category name="ge" value="prepare"/>
+                        <data-category name="rn" value="p&#8730;©parer"/>
+                        <data-category name="re" value="prepare"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn" value="p&#8730;©parer"/>
+                        <data-category name="de" value="prepare"/>
+                        <data-category name="un" value="HO?, NH?; autres?"/>
+                    </component>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar"/>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="nt"/>
+            <data-category name="dt" value="11/Jun/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="hoana">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="sn">
+                    <component name="gn" value="r&#8730;©cipient">
+                        <data-category name="ge" value="recipient"/>
+                        <data-category name="rn"
+                            value="r&#8730;©cipient ; r&#8730;©cipient plat"/>
+                        <data-category name="re" value="recipient ; recipient, flat"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn"
+                            value="long r&#8730;©cipient plat pour pilonner de la nourriture ou des m&#8730;©dicament"/>
+                        <data-category name="de"
+                            value="long, flat recipient for food or plant medicine preparation"/>
+                        <data-category name="un" value="HO, TH, autres?"/>
+                    </component>
+                    <data-category name="pc"
+                        value="D:/Data/Dobes/MARQUESAN/Photo_Material/Food prep/tools preparation/hoaka ke'a o te kakiu.jpg"/>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar" value="hoaka (UP)"/>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="nt"/>
+            <data-category name="dt" value="05/Nov/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="ina'&#402;´">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="sn">
+                    <component name="gn" value="viande">
+                        <data-category name="ge" value="meat"/>
+                        <data-category name="rn" value="viande"/>
+                        <data-category name="re" value="meat"/>
+                        <data-category name="dv" value="kiko animara henua, me te tai (NH)"/>
+                        <data-category name="dn"
+                            value="viande d'animaux de terres de mer qutant que des algues qui sont accompagn&#8730;©s de produits agricoles (p.ex. taro, fruit &#8730;&#8224; pain, etc.) pr&#8730;©par&#8730;©s dans la regime quoditienne"/>
+                        <data-category name="de"
+                            value="meat of land and sea animals as well as seaweed which are accompanied by prepared agricultural products (e.g. taro, breadfruit, etc.) in the daily diet of Marquesans"/>
+                        <data-category name="un" value="nord/sud"/>
+                    </component>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="nt"/>
+            <data-category name="dt" value="05/Nov/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="'ipo">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="sn">
+                    <component name="gn" value="r&#8730;©cipient_rond">
+                        <data-category name="ge" value="round_recipient"/>
+                        <data-category name="rn"
+                            value="r&#8730;©cipient ; r&#8730;©cipient rond"/>
+                        <data-category name="re" value="recipient ; container ; recipient, round"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn"
+                            value="r&#8730;©cipient rond, un peu profond (avec un couvercle?), surtout utilis&#8730;© de mettre du popoi"/>
+                        <data-category name="de"
+                            value="round hollow recipient (with a lid?), in particular used to put in popoi"/>
+                        <data-category name="un" value="HO, TH, autres?"/>
+                    </component>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="th"
+                value="ip&#8776;´, hoana, hoaka, t&#8776;çt&#8776;ç"/>
+            <data-category name="ev"/>
+            <data-category name="en"/>
+            <data-category name="ee"/>
+            <data-category name="bb"/>
+            <component name="so">
+                <data-category name="nt"/>
+            </component>
+            <data-category name="dt" value="08/Sep/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="kaki'&#8776;ça">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="sn">
+                    <component name="gn" value="fou_brun">
+                        <data-category name="ge" value="albatros"/>
+                        <data-category name="rn" value="oiseau ; albatros"/>
+                        <data-category name="re" value="bird ; albatros"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn"
+                            value="grand oiseau de mer de couleur brun-chocolat, poitrine et dessous de l'aile blanc"/>
+                        <data-category name="de"
+                            value="big sea bird of a brown-chocolate colour; white breast and underside of ailes"/>
+                        <data-category name="un" value="UP"/>
+                    </component>
+                    <data-category name="pc"/>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc" value="Sula leucogaster"/>
+            <data-category name="th" value="manu; hauhe'e"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="nt"/>
+            <data-category name="dt" value="05/Nov/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="kava">
+            <data-category name="hm" value="1"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="sn" value="1">
+                    <component name="gn" value="kava">
+                        <data-category name="ge" value="kava"/>
+                        <data-category name="rn" value="plante ; plante de kava"/>
+                        <data-category name="re" value="plant ; kava plant"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn"
+                            value="plante de kava faisant partie de la famille de poivres (Piperaceae sp.), boisson traditionel de beaucoup de peuples du Pacifique"/>
+                        <data-category name="de"
+                            value="kava plant of the pepper family (Piperaceae sp.), traditional drink of many Pacific culture with intoxicating effects"/>
+                        <data-category name="un" value="nord/sud"/>
+                    </component>
+                    <data-category name="pc"
+                        value="D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to link/Marquesan lexicon/Fotos/Plants/Kava/kava - Piper methysticum 2.jpg"/>
+                    <data-category name="pc"
+                        value="D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to link/Marquesan lexicon/Fotos/Plants/Kava/kava - Piper methysticum 1.jpg"/>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc" value="Piper methysticum"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <component name="sn" value="2">
+                <component name="gn" value="boisson_traditionel">
+                    <data-category name="ge" value="kava_drink"/>
+                    <data-category name="rn" value="boisson traditionel polyn&#8730;©sien"/>
+                    <data-category name="re" value="drink, traditional Polynesian"/>
+                    <data-category name="dv"/>
+                    <data-category name="dn"
+                        value="boisson traditionel polyn&#8730;©sien fait de racines de la plante de kava"/>
+                    <data-category name="de"
+                        value="traditional Polynesian drink made of pepernut root (kava plant)"/>
+                </component>
+            </component>
+            <data-category name="nt" value="Plante cultiv&#8730;©e."/>
+            <data-category name="dt" value="05/Nov/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="ke'&#402;Å tuki popoi">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="sn">
+                    <component name="gn" value="pilon">
+                        <data-category name="ge" value="pounder"/>
+                        <data-category name="rn" value="pilon"/>
+                        <data-category name="re" value="pounder ; pestle"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn" value="pilon"/>
+                        <data-category name="de" value="pounder; pestle"/>
+                        <data-category name="un" value="NH, UP, HO, TH, autres?"/>
+                    </component>
+                    <data-category name="pc"
+                        value="D:/Data/Dobes/MARQUESAN/Photo_Material/Food prep/tools preparation/ke'a tuki popoi.jpg"/>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf" value="tuki">
+                <data-category name="cn" value="battre"/>
+            </component>
+            <component name="cf" value="popoi">
+                <data-category name="cn"
+                    value="p&#8730;¢te de fruit &#8730;&#8224; pain"/>
+            </component>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="nt"
+                value="This term is not only confined to make a breadfruit paste (popoi), but nowadays it is the general term for pounder regardless whether it is used for any kind of food or plant medicine preparation."/>
+            <data-category name="dt" value="05/Nov/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="kik&#402;´ha">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="vs">
+                <component name="sn">
+                    <component name="gn" value="&#8730;&#8482;tre_trop_gras">
+                        <data-category name="ge" value="be_too_fat"/>
+                        <data-category name="rn" value="gras, &#8730;&#8482;tre trop"/>
+                        <data-category name="re" value="fat, be too"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn" value="&#8730;&#8482;tre trop gras"/>
+                        <data-category name="de" value="be too fat"/>
+                        <data-category name="un" value="HO, TH, autres?"/>
+                    </component>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar"/>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="nt"/>
+            <data-category name="dt" value="10/Jun/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="ko'ehi manioka">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="sn">
+                    <component name="gn" value="p&#8730;¢te_de_manioka">
+                        <data-category name="ge" value="manioc_pudding"/>
+                        <data-category name="rn"
+                            value="repas ; p&#8730;¢te ; p&#8730;¢te de manioka"/>
+                        <data-category name="re" value="food dish ; pudding ; pudding, manioc"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn"
+                            value="p&#8730;¢te de manioka m&#8730;©lang&#8730;© avec des bananes"/>
+                        <data-category name="de"
+                            value="kind of manioc pudding mixed with cooked bananas"/>
+                        <data-category name="un" value="HO, autres?"/>
+                    </component>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar"/>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="nt"/>
+            <data-category name="dt" value="11/Jun/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="ko'ehi me'i">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="sn">
+                    <component name="gn" value="p&#8730;¢te">
+                        <data-category name="ge" value="paste"/>
+                        <data-category name="rn" value="p&#8730;¢te ; repas"/>
+                        <data-category name="re" value="paste ; receipe"/>
+                        <data-category name="dv"
+                            value="ko'ehi me'i kava'it&#402;´a me te me&#402;´'a (HO)"/>
+                        <data-category name="dn"
+                            value="p&#8730;¢te faite de fruit &#8730;&#8224; pain cuit &#8730;&#8224; la braise et puis m&#8730;©lang&#8730;© avec des bananes cuites"/>
+                        <data-category name="de"
+                            value="breadfruit paste made from freshly cooked breadfruit on an open fire and lixed with cooked bananas"/>
+                        <data-category name="un" value="HO, TH, autres?"/>
+                    </component>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar"/>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="nt" value="verify!"/>
+            <data-category name="dt" value="17/Sep/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="ko'ehi ta'o kava'i me&#402;´'a">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="sn">
+                    <component name="gn" value="p&#8730;¢te_de_taro">
+                        <data-category name="ge" value="taro_paste"/>
+                        <data-category name="rn"
+                            value="p&#8730;¢te ; repas ; p&#8730;¢te de taro"/>
+                        <data-category name="re" value="pudding ; paste, taro ; food dish"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn"
+                            value="p&#8730;¢te de taro m&#8730;©lang&#8730;© avec des bananes"/>
+                        <data-category name="de"
+                            value="kind of pudding made out of cooked taro mixed with cooked bananas"/>
+                        <data-category name="un" value="HO, autres?"/>
+                    </component>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar"/>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="nt"/>
+            <data-category name="dt" value="11/Jun/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="kumi">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="vt">
+                <component name="sn">
+                    <component name="gn" value="frapper">
+                        <data-category name="ge" value="hit"/>
+                        <data-category name="rn" value="frapper"/>
+                        <data-category name="re" value="hit"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn" value="frapper"/>
+                        <data-category name="de" value="hit"/>
+                        <data-category name="un" value="NH, UP, autres?"/>
+                    </component>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar" value="'umi (sud)"/>
+            <data-category name="nt"/>
+            <data-category name="dt" value="11/Jun/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="me'i kava'i me te 'ina'&#402;´">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps">
+                <component name="sn">
+                    <component name="sd" value="food ; food dish"/>
+                    <component name="gn" value="repas_fruit_&#8730;&#8224;_pain">
+                        <data-category name="ge" value="breadfruit_dish"/>
+                        <data-category name="rn" value="repas"/>
+                        <data-category name="re" value="dish, breadfruit"/>
+                        <data-category name="dv"
+                            value="e tipi te mei, ia pao kotikoti i no he koa o te vahana mei, ia pao ua kava'i me te 'ina'&#402;´ (moa, pua'a, pifa (HO)"/>
+                        <data-category name="dn" value="HO, TH, autres?"/>
+                        <data-category name="de"/>
+                        <data-category name="un"/>
+                    </component>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="th"/>
+            <data-category name="ev"/>
+            <data-category name="en"/>
+            <data-category name="ee"/>
+            <data-category name="bb"/>
+            <component name="so">
+                <data-category name="nt"
+                    value="Remove in end edition! Non-lexicalised multiword expression is not part of lexicon!"
+                />
+            </component>
+            <data-category name="dt" value="05/Nov/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="me'i 'o'omi">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="sn">
+                    <component name="gn" value="pr&#8730;©p_maiore">
+                        <data-category name="ge" value="breadfruit_dish"/>
+                        <data-category name="rn"
+                            value="pr&#8730;©paration du fruit &#8730;&#8224; pain"/>
+                        <data-category name="re" value="dish, breadfruit"/>
+                        <data-category name="dv"
+                            value="me'i i to he vai manini 'ako'e'a manini tikau'e (HO)"/>
+                        <data-category name="dn"
+                            value="pr&#8730;©paration du fruit &#8730;&#8224; pain; fruit &#8730;&#8224; pain cuit &#8730;&#8224; la braise est mis dans l'eau avec du sucre ou du miel"/>
+                        <data-category name="de"
+                            value="breadfruit dish; freshly cooked breadfruit put into water sweetened with sugar or honey"/>
+                        <data-category name="un" value="HO, TH, autres?"/>
+                    </component>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar"/>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="ev"
+                value="Tenei kai na te tau tamaiti e f&#402;Å mahina totahi atu me te tau anamotua tupuna 'a'o'e e niho, titahi no te'a tau 'enata u ko'ana i te mate oko."/>
+            <data-category name="en"
+                value="Ce repas est pour les b&#8730;©b&#8730;©s de plus de quatre mois et pour les vieux qui n'ont plus de dents; c'est aussi pour les gens qui ont attrap&#8730;© une maladie grave."/>
+            <data-category name="ee"
+                value="This dish is for babies which are four months or older as well as for old people who do not have any teeth anymore; it's also for people who have become seriously ill."/>
+            <data-category name="nt"/>
+            <data-category name="dt" value="05/Nov/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="me&#402;´ka kao'ehi">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="sn">
+                    <component name="gn" value="banane_frit&#8730;©e">
+                        <data-category name="ge" value="fried_banana"/>
+                        <data-category name="rn" value="banane frit&#8730;©e"/>
+                        <data-category name="re" value="banana, fried"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn"
+                            value="banane frit&#8730;©e dans l'huile de coco"/>
+                        <data-category name="de" value="banana fried in coconut oil"/>
+                        <data-category name="un" value="UP, autres?"/>
+                    </component>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar"/>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="nt"/>
+            <data-category name="dt" value="05/Nov/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="me&#402;´ka keo piha">
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="gn" value="vari&#8730;©t&#8730;©_banane">
+                    <data-category name="ge" value="banana_variety"/>
+                    <data-category name="rn"
+                        value="plante ; arbuste ; banane, vari&#8730;©t&#8730;© de"/>
+                    <data-category name="re" value="plant ; shrub ; banana variety"/>
+                    <data-category name="dv"/>
+                    <data-category name="dn"
+                        value="vari&#8730;©t&#8730;© de banane en forme de cornes boeuf (disparu)"/>
+                    <data-category name="de"
+                        value="banana variety in form of a beef's horns (disappeard)"/>
+                    <data-category name="un" value="UP, (hum), autres?"/>
+                </component>
+                <component name="cf" value="piha">
+                    <data-category name="cn" value="boeuf"/>
+                </component>
+                <data-category name="diaVar"/>
+                <data-category name="sy" value="me&#402;´ka kerepiha"/>
+                <data-category name="an"/>
+                <data-category name="th"/>
+                <data-category name="ev"/>
+                <data-category name="en"/>
+                <data-category name="ee"/>
+                <data-category name="bb"/>
+            </component>
+            <component name="so">
+                <data-category name="nt"/>
+            </component>
+            <data-category name="dt" value="17/Sep/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="me&#402;´ka pataka">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="sn">
+                    <component name="gn" value="banane_grill&#8730;©e">
+                        <data-category name="ge" value="grilled_banana"/>
+                        <data-category name="rn" value="banane grill&#8730;©e"/>
+                        <data-category name="re" value="banana, grilled"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn" value="banane grill&#8730;©e"/>
+                        <data-category name="de" value="grilled banana"/>
+                        <data-category name="un" value="UP, autres?"/>
+                    </component>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar"/>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="nt"/>
+            <data-category name="dt" value="05/Nov/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="nunu manioka">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps">
+                <component name="sn">
+                    <component name="gn">
+                        <data-category name="ge"/>
+                        <data-category name="rn"/>
+                        <data-category name="re"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn"/>
+                        <data-category name="de"/>
+                        <data-category name="un"/>
+                    </component>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf" value="nunu">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar"/>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="nt"/>
+            <data-category name="dt" value="21/Jul/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="'o'oi paka">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps">
+                <component name="sn">
+                    <component name="gn">
+                        <data-category name="ge"/>
+                        <data-category name="rn"/>
+                        <data-category name="re"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn"/>
+                        <data-category name="de"/>
+                        <data-category name="un"/>
+                    </component>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf" value="'o'oi">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar"/>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="nt"/>
+            <data-category name="dt" value="11/Jun/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="'o'omi">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="vt">
+                <component name="sn">
+                    <component name="gn" value="exprimer">
+                        <data-category name="ge" value="squeeze"/>
+                        <data-category name="rn" value="exprimer"/>
+                        <data-category name="re" value="squeeze"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn" value="exprimer"/>
+                        <data-category name="de" value="squeeze"/>
+                        <data-category name="un" value="NH, UP, HO?, autres?"/>
+                    </component>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar"/>
+            <data-category name="th" value="p&#402;´'omi, 'o'oi"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <component name="sn" value="2">
+                <component name="gn" value="imprimer">
+                    <data-category name="ge" value="print"/>
+                    <data-category name="rn" value="imprimer"/>
+                    <data-category name="re" value="print"/>
+                    <data-category name="dv"/>
+                    <data-category name="dn" value="imprimer"/>
+                    <data-category name="de" value="print"/>
+                    <data-category name="un" value="UP, autres?"/>
+                </component>
+            </component>
+            <data-category name="nt" value="verify! also with 'o'oi, and HO?"/>
+            <data-category name="dt" value="09/Nov/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="panao">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="vt">
+                <component name="sn">
+                    <component name="gn" value="d&#8730;©couper">
+                        <data-category name="ge" value="cut_off"/>
+                        <data-category name="rn"
+                            value="couper ; d&#8730;©couper ; couper par tranche"/>
+                        <data-category name="re" value="cut ; cut off"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn" value="d&#8730;©couper; couper par tranche"/>
+                        <data-category name="de" value="cut off; cut into pieces"/>
+                        <data-category name="un" value="NH?, UP?, HO?, TH?, autres?"/>
+                    </component>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar"/>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="nt" value="verify! cf. Dordillon, p. 306"/>
+            <data-category name="dt" value="09/Nov/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="piere">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="sn">
+                    <component name="gn" value="banane_s&#8730;©ch&#8730;©e">
+                        <data-category name="ge" value="dried_banana"/>
+                        <data-category name="rn" value="banane s&#8730;©ch&#8730;©e"/>
+                        <data-category name="re" value="banana, dried"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn"
+                            value="banane s&#8730;©ch&#8730;©e au soleil"/>
+                        <data-category name="de" value="sun-dried banana"/>
+                        <data-category name="un" value="NH, UP, HO, TH, autres?"/>
+                    </component>
+                    <data-category name="pc"
+                        value="D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to link/Marquesan lexicon/Photo galleries-Marquesas/Food preparation/piere/01-piere-kahui meika.jpg"/>
+                    <data-category name="pc"
+                        value="D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to link/Marquesan lexicon/Photo galleries-Marquesas/Food preparation/piere/06-piere-piere hakamo'o'ia e tahi 'aa.jpg"/>
+                    <data-category name="pc"
+                        value="D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to link/Marquesan lexicon/Photo galleries-Marquesas/Food preparation/piere/08-piere-piere ena mo'o.jpg"/>
+                    <data-category name="pc"
+                        value="D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to link/Marquesan lexicon/Photo galleries-Marquesas/Food preparation/piere/09-piere-mo'o.jpg"/>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar"/>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="nt"/>
+            <data-category name="dt" value="09/Nov/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="p&#402;´ho'e">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="vt">
+                <component name="sn">
+                    <component name="gn" value="&#8730;©plucher">
+                        <data-category name="ge" value="peel"/>
+                        <data-category name="rn" value="&#8730;©plucher"/>
+                        <data-category name="re" value="peel"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn"
+                            value="&#8730;©plucher; enlever la peau sans la couper (banane, fruits cuits)"/>
+                        <data-category name="de"
+                            value="peel; remove skin without cutting it off (banana, cooked fruits)"/>
+                        <data-category name="un" value="UP, autres?"/>
+                    </component>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar"/>
+            <data-category name="th" value="tipi"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="nt"/>
+            <data-category name="dt" value="29/Jun/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="p&#402;´'omi">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="vt">
+                <component name="sn" value="1">
+                    <component name="gn" value="presser">
+                        <data-category name="ge" value="press"/>
+                        <data-category name="rn" value="presser"/>
+                        <data-category name="re" value="press"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn" value="presser"/>
+                        <data-category name="de" value="press"/>
+                        <data-category name="un" value="nord/sud"/>
+                    </component>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar"/>
+            <data-category name="th" value="'o'omi, 'o'oi"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <component name="sn" value="2">
+                <component name="gn" value="&#8730;©craser">
+                    <data-category name="ge" value="crush"/>
+                    <data-category name="rn" value="&#8730;©craser"/>
+                    <data-category name="re" value="crush ; squash"/>
+                    <data-category name="dv"/>
+                    <data-category name="dn" value="&#8730;©craser"/>
+                    <data-category name="de" value="crush; squash"/>
+                    <data-category name="un" value="nord/sud"/>
+                </component>
+                <component name="rf">
+                    <component name="xv">
+                        <data-category name="xn"/>
+                        <data-category name="xe"/>
+                    </component>
+                </component>
+            </component>
+            <data-category name="nt"/>
+            <data-category name="dt" value="11/Jun/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="poke me'i">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="sn">
+                    <component name="gn" value="p&#8730;¢te_de_maior&#8730;©">
+                        <data-category name="ge" value="breadfruit_paste"/>
+                        <data-category name="rn"
+                            value="p&#8730;¢te ; p&#8730;¢te de fruit &#8730;&#8224; pain"/>
+                        <data-category name="re" value="paste ; paste, breadfruit"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn"
+                            value="p&#8730;¢te de fruit &#8730;&#8224; pain"/>
+                        <data-category name="de" value="breadfruit paste"/>
+                        <data-category name="un" value="HO, autres?"/>
+                    </component>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar"/>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="nt"/>
+            <data-category name="dt" value="11/Jun/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="pua'a pa'atai">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="sn">
+                    <component name="gn" value="cochon_sal&#8730;©">
+                        <data-category name="ge" value="salted_pig"/>
+                        <data-category name="rn"
+                            value="animal ; repas ; pr&#8730;©paration du cochon ; cochon sal&#8730;©"/>
+                        <data-category name="re"
+                            value="animal ; food dish ; preparation of pork ; pork, salted"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn"
+                            value="pr&#8730;©paration du cochon; cochon sal&#8730;©; viande de cochon mis dans des grands r&#8730;©cipients et couverts avec du gros sel"/>
+                        <data-category name="de"
+                            value="preparation of pork; salted pork; pork put into large recipients mixed and covered with coarse salt"/>
+                        <data-category name="un" value="HO, TH, autres?"/>
+                    </component>
+                    <data-category name="pc"/>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf" value="pa'atai">
+                <data-category name="cn" value="sel"/>
+            </component>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps">
+                <component name="sn">
+                    <component name="gn">
+                        <data-category name="ge"/>
+                        <data-category name="rn"/>
+                        <data-category name="re"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn"/>
+                        <data-category name="de"/>
+                        <data-category name="un"/>
+                    </component>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar"/>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="nt"/>
+            <data-category name="dt" value="09/Nov/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="puaka pa'atai">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="sn">
+                    <component name="gn" value="cochon_sal&#8730;©">
+                        <data-category name="ge" value="salted_pig"/>
+                        <data-category name="rn"
+                            value="animal ; repas ; pr&#8730;©paration du cochon ; cochon sal&#8730;©"/>
+                        <data-category name="re"
+                            value="animal ; food dish ; preparation of pork ; pork, salted"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn"
+                            value="pr&#8730;©paration du cochon; cochon sal&#8730;©; viande de cochon mis dans des grands r&#8730;©cipients et couverts avec du gros sel"/>
+                        <data-category name="de"
+                            value="preparation of pork; salted pork; pork put into large recipients mixed and covered with coarse salt"/>
+                        <data-category name="un" value="NH, UP, autres?"/>
+                    </component>
+                    <data-category name="pc"/>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="nt"/>
+            <data-category name="dt" value="09/Nov/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="p&#8776;´hako">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="sn" value="1">
+                    <component name="gn" value="coco">
+                        <data-category name="ge" value="coconut"/>
+                        <data-category name="rn" value="coco, vari&#8730;©t&#8730;© de"/>
+                        <data-category name="re" value="coconut variety"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn"
+                            value="petite noix de coco des p&#8776;´hako (sans eau)"/>
+                        <data-category name="de"
+                            value="small coconut of the p&#8776;´hako coconut tree (without fluid)"/>
+                        <data-category name="un" value="UP, NH?, autres?"/>
+                    </component>
+                </component>
+            </component>
+            <component name="ps" value="vs">
+                <component name="sn" value="1">
+                    <component name="gn" value="&#8730;&#8482;tre_sans_jus">
+                        <data-category name="ge" value="be_juiceless"/>
+                        <data-category name="rn"
+                            value="sans jus, &#8730;&#8482;tre (fruit) ; substance, &#8730;&#8482;tre sans"/>
+                        <data-category name="re"
+                            value="juiceless, be ; juice, be without; substance, be without"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn"
+                            value="&#8730;&#8482;tre sans jus dans les fruits; &#8730;&#8482;tre sans substance"/>
+                        <data-category name="de"
+                            value="be juiceless; be without juice in fruits; be without substance"/>
+                        <data-category name="un" value="UP, NH?, autres?"/>
+                    </component>
+                    <data-category name="pc"/>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <component name="sn" value="2">
+                <component name="gn" value="&#8730;&#8482;tre_inf&#8730;©rtile">
+                    <data-category name="ge" value="be_infertile"/>
+                    <data-category name="rn" value="inf&#8730;©rtile, &#8730;&#8482;tre"/>
+                    <data-category name="re" value="infertile, be"/>
+                    <data-category name="dn" value="&#8730;&#8482;tre inf&#8730;©rtile"/>
+                    <data-category name="de" value="be infertile"/>
+                    <data-category name="un" value="UP, autres?"/>
+                </component>
+                <component name="rf" value="UP:04:05">
+                    <component name="xv" value="vehine puh&#402;Åko.">
+                        <data-category name="xe" value="infertile woman."/>
+                        <data-category name="xn" value="femme inf&#8730;©rtile."/>
+                    </component>
+                </component>
+            </component>
+            <component name="ps" value="vi">
+                <component name="gn" value="flotter">
+                    <data-category name="ge" value="float"/>
+                    <data-category name="rn" value="flotter"/>
+                    <data-category name="re" value="float"/>
+                    <data-category name="dv"/>
+                    <data-category name="dn" value="flotter"/>
+                    <data-category name="de" value="float; swim on surface"/>
+                    <data-category name="un" value="UP, autres?"/>
+                </component>
+            </component>
+            <data-category name="nt"/>
+            <data-category name="dt" value="09/Nov/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="ret&#402;´'a hue 'ararahi">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps">
+                <component name="sn">
+                    <component name="gn">
+                        <data-category name="ge"/>
+                        <data-category name="rn"/>
+                        <data-category name="re"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn"/>
+                        <data-category name="de"/>
+                        <data-category name="un"/>
+                    </component>
+                    <data-category name="pc"
+                        value="D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to link/Marquesan lexicon/Photo galleries-Marquesas/Food preparation/reti'a hue'ararahi/01-reti'a hue'ararahi-kokoti te hue'ararahi 2.jpg"/>
+                    <data-category name="pc"
+                        value="D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to link/Marquesan lexicon/Photo galleries-Marquesas/Food preparation/reti'a hue'ararahi/03-reti'a hue'ararahi-hakapi te 'au 'ouhau.jpg"/>
+                    <data-category name="pc"
+                        value="D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to link/Marquesan lexicon/Photo galleries-Marquesas/Food preparation/reti'a hue'ararahi/04-reti'a hue'ararahi-humu te vahi 1.jpg"/>
+                    <data-category name="pc"
+                        value="D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to link/Marquesan lexicon/Photo galleries-Marquesas/Food preparation/reti'a hue'ararahi/05-reti'a hue'ararahi-taki te reti'a 3.jpg"/>
+                    <data-category name="pc"
+                        value="D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to link/Marquesan lexicon/Photo galleries-Marquesas/Food preparation/reti'a hue'ararahi/07-reti'a hue'ararahi-reti'a me te ko'ehi 2.jpg"/>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf" value="ret&#402;´'a">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar"/>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="nt"/>
+            <data-category name="dt" value="24.Sep.2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="ret&#402;´'a me&#402;´ka">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps">
+                <component name="sn">
+                    <component name="gn">
+                        <data-category name="ge"/>
+                        <data-category name="rn"/>
+                        <data-category name="re"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn"/>
+                        <data-category name="de"/>
+                        <data-category name="un"/>
+                    </component>
+                    <data-category name="pc"
+                        value="D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to link/Marquesan lexicon/Photo galleries-Marquesas/Food preparation/reti'a meika/01-reti'a meika-pepe'u te vahi reiti'a 1.jpg"/>
+                    <data-category name="pc"
+                        value="D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to link/Marquesan lexicon/Photo galleries-Marquesas/Food preparation/reti'a meika/02-reti'a meika-reiti'a meika te'e ve'a.jpg"/>
+                    <data-category name="pc"
+                        value="D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to link/Marquesan lexicon/Photo galleries-Marquesas/Food preparation/reti'a meika/03-reti'a meika-kokoti te reiti'a 'io he ko'ehi.jpg"/>
+                    <data-category name="pc"
+                        value="D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to link/Marquesan lexicon/Photo galleries-Marquesas/Food preparation/reti'a meika/04-reti'a meika-reiti'a meika 'io he ko'ehi.jpg"/>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf" value="ret&#402;´'a">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar"/>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="nt"/>
+            <data-category name="dt" value="09/Nov/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="ta'u">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="sn">
+                    <component name="gn" value="chose_mangeable">
+                        <data-category name="ge" value="edible_thing"/>
+                        <data-category name="rn" value="chose mangeable"/>
+                        <data-category name="re" value="edible thing"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn"
+                            value="chose qu'on peut planter; plantes et fruits mangeables"/>
+                        <data-category name="de"
+                            value="thing which can be planted; edible plants and fruits"/>
+                        <data-category name="un" value="nord/sud"/>
+                    </component>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="nt"/>
+            <data-category name="dt" value="09/Nov/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="ta'u">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="sn" value="1">
+                    <component name="gn" value="plante">
+                        <data-category name="ge" value="plant"/>
+                        <data-category name="rn" value="plante ; plante mangeable"/>
+                        <data-category name="re" value="plant ; plant, edible"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn"
+                            value="plante mangeable (g&#8730;©n.); chose qu'on peut planter"/>
+                        <data-category name="de"
+                            value="edible plant (gen.); sth. which can be planted"/>
+                        <data-category name="un" value="NH, autres?"/>
+                    </component>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar"/>
+            <data-category name="th" value="ta'unanu"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <component name="sn" value="2">
+                <component name="gn" value="plante">
+                    <data-category name="ge" value="plant"/>
+                    <data-category name="rn" value="plante"/>
+                    <data-category name="re" value="plant"/>
+                    <data-category name="dv"/>
+                    <data-category name="dn" value="chose qu'on peut planter"/>
+                    <data-category name="de" value="thing which can be planted"/>
+                    <data-category name="un" value="nord/sud"/>
+                </component>
+            </component>
+            <data-category name="nt"/>
+            <data-category name="dt" value="09/Nov/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="toa kanea kaikai">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="sn">
+                    <component name="gn" value="ma&#8730;Ætre_de_nourriture">
+                        <data-category name="ge" value="food_master"/>
+                        <data-category name="rn"
+                            value="ma&#8730;Ætre de cuisine ; ma&#8730;Ætre de la pr&#8730;©paration de la nourriture"/>
+                        <data-category name="re" value="chef ; cuisinier ; master of preparing food"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn"
+                            value="ma&#8730;Ætre de la pr&#8730;©paration de la nourriture"/>
+                        <data-category name="de" value="master of food preparation"/>
+                        <data-category name="un" value="UP?"/>
+                    </component>
+                    <data-category name="pc"/>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="th" value="tuhuka, tuhuna"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="nt" value="verify! ask Teaiki!"/>
+            <data-category name="dt" value="17/Sep/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="t&#8776;´vai">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="sn">
+                    <component name="gn" value="r&#8730;¢pe_de_coco">
+                        <data-category name="ge" value="coconut_grater"/>
+                        <data-category name="rn" value="r&#8730;¢pe de coco"/>
+                        <data-category name="re" value="grater, coconut"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn" value="r&#8730;¢pe de coco"/>
+                        <data-category name="de" value="coconut grater"/>
+                        <data-category name="un" value="HO (anc), autres?"/>
+                    </component>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar" value="heka 'ehi (NH, UP)"/>
+            <data-category name="th"/>
+            <data-category name="sy" value="feka"/>
+            <data-category name="an"/>
+            <data-category name="nt"/>
+            <data-category name="dt" value="09/Nov/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="&#8776;´to '&#402;ìhi">
+            <data-category name="hm"/>
+            <component name="va" value="&#8776;´to">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="sn">
+                    <component name="gn" value="germe_de_coco">
+                        <data-category name="ge" value="coconut_germ"/>
+                        <data-category name="rn" value="plante (partie) ; germe de coco"/>
+                        <data-category name="re" value="plant part ; coconut germ"/>
+                        <data-category name="dv" value="'o'o o te pute'e e'ehi (HO, TH)"/>
+                        <data-category name="dn"
+                            value="germe de coco; coeur moux de coco qui a pouss&#8730;© dans un coco sans eau"/>
+                        <data-category name="de"
+                            value="coconut germ; soft coconut heart grown inside a coconut without remaining juice"/>
+                        <data-category name="un" value="UP, NH, nord?"/>
+                    </component>
+                    <data-category name="pc"
+                        value="D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to link/Marquesan lexicon/Fotos/Plants/coconut parts/tupu e'ehi (HO, TH)- uto 'ehi (UP, NH)- titupu (NH) - germe de coco.jpg"/>
+                    <data-category name="pc"
+                        value="D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to link/Marquesan lexicon/Fotos/Plants/coconut parts/uto e'ehi me te kuku'u-kao-HO-1.jpg"/>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar"
+                value="t&#8776;´p&#8776;´, &#8776;´to e'ehi (HO, TH)"/>
+            <data-category name="th"/>
+            <data-category name="sy" value="tit&#8776;´p&#8776;´ (NH)"/>
+            <data-category name="an"/>
+            <data-category name="nt"/>
+            <data-category name="dt" value="09/Nov/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="vai'o'e">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="sn" value="1">
+                    <component name="gn" value="jeune_coco">
+                        <data-category name="ge" value="young_coconut"/>
+                        <data-category name="rn" value="plante (partie) ; coco, jeune"/>
+                        <data-category name="re" value="plant part ; coconut, young"/>
+                        <data-category name="dv" value="puku o te tumu 'ehi ha'amata te kiko (NH)"/>
+                        <data-category name="dn" value="jeune noix de coco"/>
+                        <data-category name="de" value="young coconut"/>
+                        <data-category name="un" value="NH, UP, autres?"/>
+                    </component>
+                    <data-category name="pc"
+                        value="D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to link/Marquesan lexicon/Fotos/Plants/coconut parts/vai'o'e-HO-1.jpg"/>
+                    <data-category name="pc"
+                        value="D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to link/Marquesan lexicon/Fotos/Plants/coconut parts/vaio'e - o'e.jpg"/>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar" value="vai'o'e ha'ava'iva'i, 'o'e ha'ava'iva'i(HO, TH)"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="th"/>
+            <data-category name="ev"/>
+            <data-category name="en"/>
+            <data-category name="ee"/>
+            <data-category name="bb"/>
+            <component name="so"/>
+            <component name="sn" value="2">
+                <component name="gn" value="jus_coco">
+                    <data-category name="ge" value="coconut_water"/>
+                    <data-category name="rn" value="fruit ; jus de coco"/>
+                    <data-category name="re" value="fruit ; coconut water"/>
+                    <data-category name="dv"/>
+                    <data-category name="dn" value="jus de jeune coco vert"/>
+                    <data-category name="de" value="juice of young green coconut"/>
+                    <data-category name="un" value="NH, UP, autres?"/>
+                </component>
+            </component>
+            <data-category name="nt" value="verify"/>
+            <data-category name="dt" value="09/Nov/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="v&#402;´papai">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps" value="n">
+                <component name="sn">
+                    <component name="gn" value="papaye">
+                        <data-category name="ge" value="papaya"/>
+                        <data-category name="rn" value="fruit ; papayer, fruit du"/>
+                        <data-category name="re" value="fruit ; papaya"/>
+                        <data-category name="dv" value="puku o te tumu v&#402;´papai"/>
+                        <data-category name="dn" value="fruit du papayer"/>
+                        <data-category name="de" value="papaya fruit"/>
+                        <data-category name="un" value="NH, UP, HO, TH, autres?"/>
+                    </component>
+                    <data-category name="pc"
+                        value="D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to link/Marquesan lexicon/Fotos/Plants/Vi- Papaya/Vi-papya2.jpg"/>
+                    <data-category name="pc"/>
+                    <component name="rf" value="HO:04:07">
+                        <component name="xv"
+                            value="Mea oko nui te manini o ta 'oe v&#402;´papai">
+                            <data-category name="xn"
+                                value="Ta papaye est vraiment tr&#8730;®s sucr&#8730;©e."/>
+                            <data-category name="xe" value="Your papaya is very sweet."/>
+                        </component>
+                    </component>
+                </component>
+            </component>
+            <data-category name="sfx"
+                value="C:/Users/gabcab/Documents/Sample sentences-SpLab-Kiel/Edgar/Sf with lexeme andphrase/vipapai-Mea oko nui te manini o ta 'oe vipapai.wav"/>
+            <component name="se" value="tumu v&#402;´papai">
+                <component name="ps" value="n">
+                    <component name="gn" value="papayier">
+                        <data-category name="ge" value="papaya_tree"/>
+                        <data-category name="rn" value="arbre ; papayier"/>
+                        <data-category name="re" value="tree ; papaya tree"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn" value="papayier"/>
+                        <data-category name="de" value="papaya tree"/>
+                        <data-category name="un" value="HO, TH, autres?"/>
+                    </component>
+                    <data-category name="pc"
+                        value="D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to link/Marquesan lexicon/Fotos/Plants/Vi- Papaya/Vi-papaye1.jpg"
+                    />
+                </component>
+            </component>
+            <component name="se" value="tumu v&#402;´papai ahana">
+                <data-category name="hm"/>
+                <component name="va">
+                    <data-category name="vn"/>
+                </component>
+                <component name="ps" value="n">
+                    <component name="sn">
+                        <component name="gn" value="papayer_m&#8730;¢le">
+                            <data-category name="ge" value="male_papayer"/>
+                            <data-category name="rn"
+                                value="plante ; arbuste ; papayer m&#8730;¢le"/>
+                            <data-category name="re" value="plant ; shrub ; papayer tree, male"/>
+                            <data-category name="dv"
+                                value="tumu v&#402;´papai 'a'o'e e hua i te puku (HO)"/>
+                            <data-category name="dn"
+                                value="papayer m&#8730;¢le qui ne produit pas de fruit"/>
+                            <data-category name="de"
+                                value="male papayer tree which does not produce fruits"/>
+                            <data-category name="un" value="sud"/>
+                        </component>
+                        <data-category name="pc"/>
+                        <component name="rf" value="HO:07:04">
+                            <component name="xv"
+                                value="'Umo'i e tanu i tena tumu v&#402;´papai, e tumu v&#402;´papai ahana tena; 'a'o'e nui ia e hua i te puku">
+                                <data-category name="xn"
+                                    value="Ne plante pas ce papayer, c'est un papayer m&#8730;¢le; il ne produira jamais."/>
+                                <data-category name="xe"
+                                    value="Don't plant this papayer tree, it is a male papayer tree, it will never produce fruits."
+                                />
+                            </component>
+                        </component>
+                    </component>
+                </component>
+            </component>
+            <data-category name="sfx"
+                value="C:/Users/gabcab/Documents/Sample sentences-SpLab-Kiel/Edgar/Sf with lexeme and phrase/vipapai-Umo'i e tanu tena tumu vipapai.wav"/>
+            <data-category name="bw"/>
+            <component name="sc" value="Carica papaya L."/>
+            <component name="cf" value="ahana">
+                <data-category name="cn" value="homme"/>
+            </component>
+            <data-category name="diaVar" value="tumu v&#402;´papai vahana (nord)"/>
+            <data-category name="th" value="tumu v&#402;´papai vehine (nord/sud)"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <component name="se" value="tumu v&#402;´papai vehine">
+                <data-category name="hm"/>
+                <component name="va">
+                    <data-category name="vn"/>
+                </component>
+                <component name="ps" value="n">
+                    <component name="sn">
+                        <component name="gn" value="papayer_femelle">
+                            <data-category name="ge" value="female_papayer"/>
+                            <data-category name="rn" value="plante ; tree ; papayer femelle"/>
+                            <data-category name="re" value="plant ; tree ; papayer tree, female"/>
+                            <data-category name="dv"/>
+                            <data-category name="dn" value="papayer femelle qui produit fruits"/>
+                            <data-category name="de" value="femal papayer tree producing fruits"/>
+                            <data-category name="un" value="nord/sud"/>
+                        </component>
+                        <data-category name="pc"
+                            value="D:/Data/Dobes/Iris Helming/Linking media in LEXUS/Images to link/Marquesan lexicon/Fotos/Plants/Vi- Papaya/Vi-papaya3.jpg"/>
+                        <data-category name="pc"/>
+                        <component name="rf" value="HO:07:04">
+                            <component name="xv" value="Mea hua ta 'oe tumu v&#402;´papai.">
+                                <data-category name="xn" value="Il produit beaucoup ton papayer."/>
+                                <data-category name="xe"
+                                    value="Your papayer tree is carrying fruits."/>
+                            </component>
+                        </component>
+                    </component>
+                </component>
+            </component>
+            <data-category name="sfx"
+                value="C:/Users/gabcab/Documents/Sample sentences-SpLab-Kiel/Edgar/Sf with lexeme and phrase/vipapai-Mea hua ta 'oe vipapai.wav"/>
+            <data-category name="bw"/>
+            <component name="sc" value="Carica papaya L."/>
+            <component name="cf"/>
+            <component name="cf" value="vehine">
+                <data-category name="cn" value="femme"/>
+            </component>
+            <data-category name="th"
+                value="tumu v&#402;´papai vahana (nord);tumu v&#402;´papai ahana(sud)"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <component name="se" value="v&#402;´papai op&#402;´o">
+                <component name="ps" value="n">
+                    <component name="gn" value="papaye_vert">
+                        <data-category name="ge" value="green_papaya"/>
+                        <data-category name="rn" value="papaye vert"/>
+                        <data-category name="re" value="papaya, green"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn" value="papaye vert"/>
+                        <data-category name="de" value="green papaya"/>
+                        <data-category name="un" value="HO, TH, autres?"/>
+                    </component>
+                </component>
+            </component>
+            <data-category name="nt"/>
+            <data-category name="dt" value="09/Nov/2009"/>
+        </component>
+    </lexical-entry>
+    <lexical-entry>
+        <component name="lx" value="v&#402;´papai op&#402;´o">
+            <data-category name="hm"/>
+            <component name="va">
+                <data-category name="vn"/>
+            </component>
+            <component name="ps">
+                <component name="sn">
+                    <component name="gn">
+                        <data-category name="ge"/>
+                        <data-category name="rn"/>
+                        <data-category name="re"/>
+                        <data-category name="dv"/>
+                        <data-category name="dn"/>
+                        <data-category name="de"/>
+                        <data-category name="un"/>
+                    </component>
+                    <component name="rf">
+                        <component name="xv">
+                            <data-category name="xn"/>
+                            <data-category name="xe"/>
+                        </component>
+                    </component>
+                    <component name="ff"/>
+                </component>
+            </component>
+            <data-category name="bw"/>
+            <component name="sc"/>
+            <component name="cf" value="v&#402;´papai">
+                <data-category name="cn"/>
+            </component>
+            <data-category name="diaVar"/>
+            <data-category name="th"/>
+            <data-category name="sy"/>
+            <data-category name="an"/>
+            <data-category name="nt"/>
+            <data-category name="dt" value="09/Nov/2009"/>
+        </component>
+    </lexical-entry>
+</lexicon>
