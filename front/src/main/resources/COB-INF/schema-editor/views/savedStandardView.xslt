@@ -7,7 +7,7 @@
     <xsl:include href="../../util/identity.xslt"/>
 
     <xsl:template match="/">
-        <result success="true"><xsl:copy-of select="/data/view"/></result>
+        <xsl:copy-of select="/data/view"/>
     </xsl:template>
 
 </xsl:stylesheet>

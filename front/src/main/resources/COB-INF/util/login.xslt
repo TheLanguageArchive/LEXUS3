@@ -44,9 +44,9 @@
     <xsl:template match="/">
         <login>
             <username>
-                <xsl:value-of select="//h:parameter[@name='username']/h:value"/>
+                <xsl:value-of select="//h:parameter[@name='username']/h:value[1]"/>
             </username>
-            <password><xsl:value-of select="//h:parameter[@name='password']/h:value"/></password>
+            <password><xsl:value-of select="//h:parameter[@name='password']/h:value[1]"/></password>
         </login>
     </xsl:template>
     

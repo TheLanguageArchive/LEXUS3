@@ -2,15 +2,13 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:rest="http://org.apache.cocoon.transformation/rest/1.0"
     xmlns:lexus="http://www.mpi.nl/lexus/1.0"
+    xmlns:h="http://apache.org/cocoon/request/2.0"
     version="2.0">
     <!--
         
         Input is:
         <data>
-            <json xmlns:json="http://apache.org/cocoon/json/1.0">
-                <id>AF836C97-5C1A-3DA6-00A2-3E4F31CCE5F4</id>
-                <lexicon>1</lexicon>
-            </json>
+            <h:request>...</h:request>
             <user>...</user>
         </data>
         {
@@ -24,8 +22,8 @@
     -->
     <xsl:include href="../util/identity.xslt"/>
     
-    <xsl:template match="json">
-        <lexus:get-lexical-entry><xsl:apply-templates select="parameters/*"/></lexus:get-lexical-entry>
+    <xsl:template match="h:request">
+        <lexus:get-lexical-entry id="{h:requestParameters/h:parameter[@name = 'id']/h:value}"/>
     </xsl:template>
 
 </xsl:stylesheet>

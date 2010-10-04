@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="xs" version="2.0">
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:lexus="http://www.mpi.nl/lexus/1.0"
+    xmlns:xhtml="http://www.w3.org/1999/xhtml"
+    exclude-result-prefixes="xs" version="2.0">
 
 
     <xsl:include href="../stylesheets/lexicon.xslt"/>
     <xsl:include href="../stylesheets/schema.xslt"/>
+    <xsl:include href="../util/encodeXML.xslt"/>
 
     <!-- 
         JSON to produce:
@@ -192,7 +196,7 @@
             <xsl:value-of select="."/>
         </string>
     </xsl:template>
-    
+
     <xsl:template match="lexica">
         <array key="lexica">
             <xsl:apply-templates/>
@@ -217,10 +221,25 @@
                 <xsl:value-of select="@id"/>
             </string>
             <object key="listView">
-                <string key="value">
-                    <xsl:variable name="son" select=".//data[@sort-key][1]"/>
-                    <xsl:value-of select="$son/value"/>
-                </string>
+                <xsl:choose>
+                    <xsl:when
+                        test="/data/lexus:display/lexical-entries/lexical-entry[@id = current()/@id]">
+                        <string key="value">
+                            <![CDATA[<b>]]>
+                            <xsl:value-of select="/data/lexus:display/lexical-entries/lexical-entry[@id = current()/@id]/xhtml:html/xhtml:body"/>
+                                <xsl:apply-templates
+                                    select="/data/lexus:display/lexical-entries/lexical-entry[@id = current()/@id]/xhtml:html/xhtml:body/*"
+                                    mode="encoded"/>
+                            <![CDATA[</b>]]>
+                        </string>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <string key="value">
+                            <xsl:variable name="son" select=".//data[@sort-key][1]"/>
+                            <xsl:value-of select="$son/value"/>
+                        </string>
+                    </xsl:otherwise>
+                </xsl:choose>
             </object>
             <string key="entryView">entryLayout.htm?id=<xsl:value-of select="@id"/></string>
         </object>

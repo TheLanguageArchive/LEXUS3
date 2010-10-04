@@ -5,12 +5,17 @@
     <xsl:template match="/">
         <xsl:apply-templates select="/data/views"/>
     </xsl:template>
-    
+
     <xsl:template match="views">
-        <xsl:copy><xsl:apply-templates select="view"/></xsl:copy>
+        <xsl:copy>
+            <xsl:copy-of select="@*"/>
+            <xsl:apply-templates select="view"/>
+        </xsl:copy>
     </xsl:template>
-    
+
     <xsl:template match="view">
-        <xsl:copy><xsl:copy-of select="@*"/></xsl:copy>
+        <xsl:copy>
+            <xsl:copy-of select="@*"/>
+        </xsl:copy>
     </xsl:template>
 </xsl:stylesheet>

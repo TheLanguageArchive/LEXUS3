@@ -60,10 +60,10 @@
         </map:aggregate>
         <map:transform type="tee" src="debug-info/save-schema-pre.xml"/>
         <map:transform type="saxon" src="saveSchema/prepareSaveSchema.xslt"/>
-        <map:transform type="tee" src="debug-info/save-schema-post.xml"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/schema-editor/saveSchema.xml"/>
         </map:transform>
+        <map:transform type="tee" src="debug-info/save-schema-post.xml"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/schema-editor/updateLexicaForUpdatedSchema.xml"/>
         </map:transform>
@@ -98,7 +98,7 @@
           <map:part src="cocoon://stream"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>
-        <map:transform type="tee" src="debug-info/front-pre.xml"/>
+        <map:transform type="tee" src="debug-info/front-get-views-pre.xml"/>
         <map:transform type="saxon" src="views/prepareGetViews.xslt">
           <map:parameter name="lexiconId" value="{request-param:lexiconId}"/>
         </map:transform>
@@ -106,7 +106,7 @@
           <map:parameter name="service" value="servlet:back:/schema-editor/getViews.xml"/>
         </map:transform>
         <map:transform type="saxon" src="views/gotViews.xslt"/>
-        <map:transform type="tee" src="debug-info/front-post.xml"/>
+        <map:transform type="tee" src="debug-info/front-get-views-post.xml"/>
         <map:serialize type="xml"/>
       </map:match>
       
@@ -138,14 +138,35 @@
           <map:part src="cocoon://user"/>
         </map:aggregate>
         <map:transform type="tee" src="debug-info/front-pre.xml"/>
-        <map:transform type="saxon" src="views/prepareDeleteView.xslt"/>        
+        <map:transform type="saxon" src="views/prepareDeleteView.xslt"/>
         <map:transform type="tee" src="debug-info/front-post.xml"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/schema-editor/deleteView.xml"/>
         </map:transform>
         <map:transform type="saxon" src="views/deletedView.xslt"/>
+        <map:transform type="tee" src="debug-info/front-done.xml"/>
         <map:serialize type="xml"/>
       </map:match>
+      
+      
+      <map:match pattern="saveStandardView.xml">
+        <map:aggregate element="data">
+          <map:part src="cocoon://stream"/>
+          <map:part src="cocoon://user"/>
+        </map:aggregate>
+        <map:transform type="tee" src="debug-info/save-standard-view-pre.xml"/>
+        <map:transform type="saxon" src="views/prepareSaveStandardView.xslt">
+          <map:parameter name="lexiconId" value="{request-param:lexiconId}"/>
+        </map:transform>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:back:/schema-editor/saveStandardView.xml"/>
+        </map:transform>
+        <map:transform type="saxon" src="views/savedStandardView.xslt"/>
+        <map:transform type="tee" src="debug-info/save-standard-view-post.xml"/>
+        <map:serialize type="xml"/>
+      </map:match>
+      
+      
     </map:pipeline>
 
   </map:pipelines>
