@@ -117,9 +117,9 @@
           -->
       <map:match pattern="lexus-authuser">
         <map:generate type="request"/>
-        <map:transform type="tee" src="debug-info/authentication-pre.xml"/>
+<!--        <map:transform type="tee" src="debug-info/authentication-pre.xml"/>-->
         <map:transform type="saxon" src="util/login.xslt"/>
-        <map:transform type="tee" src="debug-info/authentication-post.xml"/>
+<!--        <map:transform type="tee" src="debug-info/authentication-post.xml"/>-->
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/workspace/userLogin.xml"/>
         </map:transform>
@@ -337,17 +337,17 @@
           <map:generate type="fileupload">
             <map:parameter name="tmpdir" value="/tmp"/>
           </map:generate>
-          <map:transform type="tee" src="debug-info/remove-me-2.xml"/>
+<!--          <map:transform type="tee" src="debug-info/remove-me-2.xml"/>-->
           <map:transform type="saxon" src="util/xml-to-json.xslt"/>
-          <map:transform type="tee" src="debug-info/remove-me-2.js"/>
+<!--          <map:transform type="tee" src="debug-info/remove-me-2.js"/>-->
           <map:serialize type="text"/>
         </map:act>
         <map:generate type="fileupload">
           <map:parameter name="tmpdir" value="/tmp/"/>
         </map:generate>
-        <map:transform type="tee" src="debug-info/remove-me-2.xml"/>
+<!--        <map:transform type="tee" src="debug-info/remove-me-2.xml"/>-->
         <map:transform type="saxon" src="util/xml-to-json.xslt"/>
-        <map:transform type="tee" src="debug-info/remove-me-2.js"/>
+<!--        <map:transform type="tee" src="debug-info/remove-me-2.js"/>-->
         <map:serialize type="text"/>
         <!--<map:redirect-to uri="index.html"/>-->
       </map:match>

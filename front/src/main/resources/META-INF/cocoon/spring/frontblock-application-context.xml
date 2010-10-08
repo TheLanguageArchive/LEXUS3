@@ -40,8 +40,14 @@
   </bean>
 
   <bean name="org.apache.cocoon.serialization.Serializer/json"
-    class="org.apache.cocoon.serialization.JSONSerializer" scope="prototype">
+    class="org.apache.cocoon.serialization.JSONSerializer" scope="prototype"
+    parent="org.apache.cocoon.serialization.Serializer/text">
     <pipeline:component mime-type="application/json;charset=utf-8"/>
+    <property name="format">
+      <props>
+        <prop key="encoding">UTF-8</prop>
+      </props>
+    </property>
   </bean>
 
   <bean name="org.apache.cocoon.generation.Generator/json"
@@ -53,4 +59,10 @@
   <bean name="org.apache.cocoon.generation.Generator/fileupload"
     class="org.apache.cocoon.generation.LexusFileUploads" scope="prototype"/>
 
+  <bean name="org.apache.cocoon.spring.configurator.log4j"
+    class="org.apache.cocoon.spring.configurator.log4j.Log4JConfigurator"
+    scope="singleton">
+    <property name="resource" value="/WEB-INF/log4j.xml"/>
+  </bean>
+  
 </beans>

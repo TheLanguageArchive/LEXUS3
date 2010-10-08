@@ -48,22 +48,22 @@
   </appender>
 
   <logger name="sitemap.transformer.lexer" additivity="false">
-    <level value="trace"/>
+    <level value="\${org.apache.cocoon.log4j.loglevel}"/>
     <appender-ref ref="lexer-appender"/>
   </logger>
 
   <logger name="sitemap.transformer.parser" additivity="false">
-    <level value="trace"/>
+    <level value="\${org.apache.cocoon.log4j.loglevel}"/>
     <appender-ref ref="parser-appender"/>
   </logger>
   
-  <logger name="rest" additivity="flase">
-    <level value="trace"/>
+  <logger name="rest" additivity="false">
+    <level value="\${org.apache.cocoon.log4j.loglevel}"/>
     <appender-ref ref="CORE"/>
   </logger>
   
   <root>
-    <priority value="info"/><!--\${org.apache.cocoon.log4j.loglevel}-->
+    <priority value="\${org.apache.cocoon.log4j.loglevel}"/>
     <appender-ref ref="CORE"/>
   </root>
   

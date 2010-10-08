@@ -102,7 +102,7 @@
           <map:part src="cocoon://json"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>
-        <map:transform type="tee" src="debug-info/front-pre.xml"/>
+<!--        <map:transform type="tee" src="debug-info/front-pre.xml"/>-->
         <!--<map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/lexicon/saveLexicalEntry.xml"/>
         </map:transform>-->

@@ -31,9 +31,15 @@ import org.xml.sax.Attributes;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Stack;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.stream.StreamResult;
 
 
 import net.sf.saxon.value.Whitespace;
+import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.avalon.framework.configuration.ConfigurationException;
+import org.apache.cocoon.CascadingIOException;
 
 /**
  * JSONSerializer converts XML into JSON.
@@ -48,7 +54,7 @@ import net.sf.saxon.value.Whitespace;
  * 
  * @version $Id: JSONerializer.java 607379 2010-04-28 10:55:00Z huiver $
  */
-public class JSONSerializer implements org.apache.cocoon.serialization.Serializer {
+public class JSONSerializer extends AbstractTextSerializer {
 
     // to be used later on
     public final static String NAMESPACE = "urn:json-output";
@@ -66,59 +72,107 @@ public class JSONSerializer implements org.apache.cocoon.serialization.Serialize
     protected Stack<Integer> objectStack = new Stack<Integer>();
     protected Stack<Integer> isNotFirst = new Stack<Integer>();
     StringBuffer currentText;
-    StringBuffer debugOutput;
-    OutputStream output = null;
+    // StringBuffer debugOutput;
 
+
+    /* (non-Javadoc)
+     * @see org.apache.cocoon.serialization.AbstractTextSerializer#init()
+     */
+    public void init() throws Exception {
+        super.init();
+        this.format.put(OutputKeys.METHOD, "text");
+    }
+
+    /**
+     * Set the configurations for this serializer.
+     */
+    public void configure(Configuration conf) throws ConfigurationException {
+        super.configure(conf);
+        this.format.put(OutputKeys.METHOD, "text");
+    }
+
+    /**
+     * Set the {@link OutputStream} where the requested resource should
+     * be serialized.
+     */
+    public void setOutputStream(OutputStream out) throws IOException {
+        super.setOutputStream(out);
+        try {
+            TransformerHandler handler = this.getTransformerHandler();
+            handler.getTransformer().setOutputProperties(format);
+            handler.setResult(new StreamResult(this.output));
+            this.setContentHandler(handler);
+            this.setLexicalHandler(handler);
+       } catch (Exception e) {
+            final String message = "Cannot set TextSerializer outputstream";
+            throw new CascadingIOException(message, e);
+        }
+    }
+
+
+    @Override
     public void setDocumentLocator(Locator locator) {
     }
 
+    @Override
     public void startDocument() throws SAXException {
-//        Logger.getLogger(JSONSerializer.class.getName()).log(Level.SEVERE, "startDocument()");
-        debugOutput = new StringBuffer("");
-
-       // write("{");
+        super.startDocument();
     }
 
+    @Override
     public void startPrefixMapping(String prefix, String uri) throws SAXException {
     }
 
+    @Override
     public void endPrefixMapping(String prefix) throws SAXException {
     }
 
+    @Override
     public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
     }
 
+    @Override
     public void processingInstruction(String target, String data) throws SAXException {
     }
 
+    @Override
     public void skippedEntity(String name) throws SAXException {
     }
 
+    @Override
     public void startDTD(String name, String publicId, String systemId) throws SAXException {
     }
 
+    @Override
     public void endDTD() throws SAXException {
     }
 
+    @Override
     public void startEntity(String name) throws SAXException {
     }
 
+    @Override
     public void endEntity(String name) throws SAXException {
     }
 
+    @Override
     public void startCDATA() throws SAXException {
     }
 
+    @Override
     public void endCDATA() throws SAXException {
     }
 
+    @Override
     public void comment(char[] ch, int start, int length) throws SAXException {
     }
 
+    @Override
     public String getMimeType() {
         return "application/json";
     }
 
+    @Override
     public boolean shouldSetContentLength() {
         return false;
     }
@@ -126,7 +180,7 @@ public class JSONSerializer implements org.apache.cocoon.serialization.Serialize
     public static class JSONElement {
 
         /**
-         * The loc of the tag. This may be "object", "array", etc.
+         * The type of the tag. This may be "object", "array", etc.
          */
         public String name;
         /**
@@ -139,17 +193,19 @@ public class JSONSerializer implements org.apache.cocoon.serialization.Serialize
      * Set the {@link OutputStream} where the requested resource should
      * be serialized.
      */
+    /*
+    @Override
     public void setOutputStream(OutputStream out) throws IOException {
         this.output = out;
     }
-
-    public void startElement(String uri, String loc, String raw, Attributes a)
+*/
+    public void startElement(String uri, String localName, String raw, Attributes a)
             throws SAXException {
-        // Logger.getLogger(JSONSerializer.class.getName()).log(Level.SEVERE, "startElement " + loc + ", key=" + a.getValue("key")+", stackSize="+objectStack.size());
-        if (!loc.equals("object") && !loc.equals("array")
-                && !loc.equals("number") && !loc.equals("string")
-                && !loc.equals("false") && !loc.equals("true")
-                && !loc.equals("null")) {
+        // Logger.getLogger(JSONSerializer.class.getName()).log(Level.SEVERE, "startElement " + localName + ", key=" + a.getValue("key")+", stackSize="+objectStack.size());
+        if (!localName.equals("object") && !localName.equals("array")
+                && !localName.equals("number") && !localName.equals("string")
+                && !localName.equals("false") && !localName.equals("true")
+                && !localName.equals("null")) {
             throw new SAXException("Element name not one of object, array, number, string, false, true or null!");
         }
 
@@ -158,7 +214,7 @@ public class JSONSerializer implements org.apache.cocoon.serialization.Serialize
         }
 
         if (objectStack.empty()) {
-            if (!loc.equals("array") && !loc.equals("object")) {
+            if (!localName.equals("array") && !localName.equals("object")) {
                 throw new SAXException("Only objects and arrays are allowed as top-level elements!");
             }
         } else {
@@ -171,15 +227,16 @@ public class JSONSerializer implements org.apache.cocoon.serialization.Serialize
         startTagOpen = true;
 
         JSONElement e = new JSONElement();
-        e.name = loc;
+        e.name = localName;
         e.key = a.getValue("key");
         currentElement = e;
-        if (loc.equals("string") || loc.equals("number")) {
+        if (localName.equals("string") || localName.equals("number")) {
             currentText = new StringBuffer();
         }
 
     }
 
+    @Override
     public void endElement(String uri, String loc, String raw)
             throws SAXException {
         // Logger.getLogger(JSONSerializer.class.getName()).log(Level.SEVERE, "endElement "+loc + ", stackSize="+objectStack.size());
@@ -208,6 +265,7 @@ public class JSONSerializer implements org.apache.cocoon.serialization.Serialize
         }
     }
 
+    @Override
     public void characters(char c[], int start, int len)
             throws SAXException {
         CharSequence chars = new String(c);
@@ -229,13 +287,13 @@ public class JSONSerializer implements org.apache.cocoon.serialization.Serialize
         }
     }
 
+    @Override
     public void endDocument() throws SAXException {
         if (!objectStack.isEmpty()) {
             throw new IllegalStateException("Attempt to end document in serializer when elements are unclosed");
         }
 
-        //write("}");
-        Logger.getLogger(JSONSerializer.class.getName()).log(Level.INFO, "JSONSerializer: " + debugOutput);
+        super.endDocument();
     }
 
     protected void closeStartTag(JSONElement e, boolean empty) throws SAXException {
@@ -316,7 +374,7 @@ public class JSONSerializer implements org.apache.cocoon.serialization.Serialize
         String res;
         try {
             /*
-             * Here's some smarty pants code to generate an integer string when the number is an integer.
+             * Here's some smarty pants code to generate an integer string when the string is parseable as an integer.
              */
             Integer i = Integer.parseInt(s);
             double d = Double.parseDouble(s);
@@ -334,12 +392,8 @@ public class JSONSerializer implements org.apache.cocoon.serialization.Serialize
     }
 
     protected void write(String out) throws SAXException {
-        try {
-            // Logger.getLogger(JSONSerializer.class.getName()).log(Level.SEVERE, "writing: " + out);
-            this.output.write(out.getBytes());
-            debugOutput.append(out);
-        } catch (IOException ex) {
-            Logger.getLogger(JSONSerializer.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        char c[];
+        c = out.toCharArray();
+        super.characters(c, 0, c.length);
     }
 }
