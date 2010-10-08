@@ -25,7 +25,7 @@
                 
                 (: create the view in the db :)
                 declare updating function lexus:deleteView($newView as node(), $lexus as node()) {
-                    delete node $lexus/meta/views/view[@id eq $newView/@id]
+                    delete node $lexus/meta/views/view[@id eq $newView/@id][1]
                 };
                 
                 let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>
