@@ -35,6 +35,13 @@
         };
         
         
+        declare function lexus:canRead($lexusMeta as node()*, $user as node()) as xs:boolean {
+            if (lexus:isAdministrator($user)) then true()
+            else
+                $lexusMeta/users/user[@ref eq $user/@id]/permissions/read eq "true" 
+        };
+        
+        
         declare function lexus:canWrite($lexusMeta as node()*, $user as node()) as xs:boolean {
             if (lexus:isAdministrator($user))
                 then true()
@@ -47,6 +54,13 @@
                                 if (empty($write))
                                     then false()
                                     else $write eq "true"
+        };
+        
+        
+        declare function lexus:isOwner($lexusMeta as node()*, $user as node()) as xs:boolean {
+            if (empty($lexusMeta))
+                then false()
+                else $lexusMeta/owner/@ref eq $user/@id
         };
     </xsl:template>
     
@@ -69,15 +83,27 @@
     </xsl:template>
     
     <!--
+        XQuery functions for checking lexicon management permissions.
+    -->
+    <xsl:template name="lexicon-permissions">
+        declare function lexus:canDeleteLexicon($lexusMeta as node()*, $user as node()) as xs:boolean {
+            lexus:isOwner($lexusMeta, $user) or lexus:isAdministrator($user)
+        };
+    </xsl:template>
+    <!--
         XQuery functions for checking view management permissions.
     -->    
     <xsl:template name="view-permissions">
         declare function lexus:canCreateView($lexusMeta as node()*, $user as node()) as xs:boolean {
             lexus:canWrite($lexusMeta, $user)
         };
+        
+        
         declare function lexus:canDeleteView($lexusMeta as node()*, $user as node()) as xs:boolean {
             lexus:canCreateView($lexusMeta, $user)
         };
+        
+        
         declare function lexus:canReadViews($lexusMeta as node()*, $user as node()) as xs:boolean {
             if (lexus:isAdministrator($user)) then true()
             else
@@ -91,21 +117,6 @@
         return the list of lexica with the same ids, order by name.
     -->
     <xsl:template name="lexica">
-        
-        (: return a list of lexica (lexicon is a separate document from metadata) :)
-        declare function lexus:lexica2($lexi as node()*) as node()* {
-            element lexica {
-                for $lexicon in collection('<xsl:value-of select="$lexica-collection"/>')/lexicon[@id = $lexi/@id]
-                    order by $lexi[@id eq $lexicon/@id]/meta/name
-                    return element lexicon {
-                        $lexicon/@*,
-                        element meta { $lexi[@id eq $lexicon/@id]/meta/*[local-name() ne 'schema']},
-                        element size {count($lexicon/lexical-entry)
-                    }
-            }
-        }
-        };
-        
         
         (: return a list of lexica (lexicon is inside lexus element next to meta element) :)
         declare function lexus:lexica3($lexi as node()*) as node()* {
@@ -146,6 +157,8 @@
         (: declare updating function lexus:log-entry($log as node(), $entry as node()) {
             insert node $entry into $log
             };  :)
+            
+            
         declare function lexus:log($lexiconId as xs:string, $type as xs:string, $userId as xs:string, $username as xs:string, $logEntry as node()*) {
             let $log := collection('<xsl:value-of select="$lexica-collection"/>')/log[@id eq $lexiconId]
             let $entry :=  element entry {
