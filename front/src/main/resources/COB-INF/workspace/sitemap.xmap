@@ -52,9 +52,7 @@
           -->
       <map:match pattern="getPage.json">
         <map:generate src="cocoon:/getPage"/>
-        <map:transform type="tee" src="debug-info/front-pre.xml"/>
         <map:transform type="saxon" src="getPage/page-2-JSON.xslt"/>
-        <map:transform type="tee" src="debug-info/front-post.xml"/>
         <map:serialize type="json"/>
       </map:match>
 
@@ -130,12 +128,10 @@
           <map:part src="cocoon://json"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>
-<!--        <map:transform type="tee" src="debug-info/front-pre.xml"/>-->
         <map:transform type="saxon" src="users/prepareSaveUser.xslt"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/workspace/saveUser.xml"/>
         </map:transform>
-<!--        <map:transform type="tee" src="debug-info/front-post.xml"/>-->
         <map:serialize type="xml"/>
       </map:match>
 
@@ -154,9 +150,7 @@
           <map:part src="cocoon://json"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>
-<!--        <map:transform type="tee" src="debug-info/front-pre.xml"/>-->
         <map:transform type="saxon" src="lexicon/prepareSaveLexicon.xslt"/>
-<!--        <map:transform type="tee" src="debug-info/front-post.xml"/>-->
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/workspace/saveLexicon.xml"/>
         </map:transform>
@@ -165,31 +159,42 @@
 
       <!-- 
         Create lexicon.
-        {
-        "id": "EACB869B-B032-F91F-3565-263BEFDC4D73",
-        "requester": "workspace",
-        "parameters":         {
-        "name": "sortorder name",
-        "description": "sortorder description"
-        }
       -->
       <map:match pattern="createLexicon.json">
         <map:aggregate element="data">
           <map:part src="cocoon://json"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>
-<!--        <map:transform type="tee" src="debug-info/front-pre.xml"/>-->
         <map:transform type="saxon" src="lexicon/prepareCreateLexicon.xslt"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/workspace/createLexicon.xml"/>
         </map:transform>
-<!--        <map:transform type="tee" src="debug-info/front-post.xml"/>-->
         <map:transform type="saxon" src="lexicon/savedLexicon-2-JSON.xslt"/>
+        <map:serialize type="json"/>
+      </map:match>
+
+      <!-- 
+        Delete lexicon.
+      -->
+      <map:match pattern="deleteLexicon.json">
+        <map:aggregate element="data">
+          <map:part src="cocoon://json"/>
+          <map:part src="cocoon://user"/>
+        </map:aggregate>
+        <map:transform type="saxon" src="lexicon/prepareDeleteLexicon.xslt"/>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:back:/workspace/deleteLexicon.xml"/>
+        </map:transform>
+        <map:transform type="tee" src="debug-info/front-pre.xml"/>
+        <map:transform type="saxon" src="lexicon/deletedLexicon-2-JSON.xslt"/>
+        <map:transform type="tee" src="debug-info/front-post.xml"/>
         <map:serialize type="json"/>
       </map:match>
 
 
 
+      <!-- Import a Toolbox lexicon given a .txt and a .typ file.
+      -->
       <map:match pattern="importToolboxLexicon.json/*/*">
         <map:aggregate element="data">
           <map:part src="cocoon:/createXMLFromToolbox/{1}/{2}"/>
@@ -201,6 +206,7 @@
         <map:serialize type="xml"/>
       </map:match>
 
+      <!-- Given a .txt and a .typ file, generate a corresponding XML document -->
       <map:match pattern="createXMLFromToolbox/*/*">
         <map:aggregate element="toolbox-import">
           <map:part src="cocoon:/toolbox.typ.xml/{1}"/>
@@ -221,6 +227,7 @@
         <map:serialize type="xml"/>
       </map:match>
 
+      <!-- Process a .typ file to a XML document -->
       <map:match pattern="toolbox.typ.xml/*">
         <map:generate type="text" src="/tmp/{1}"/>
         <map:transform type="lexer" src="toolbox/import/toolbox_typ/toolbox.lex"/>
@@ -231,6 +238,7 @@
         <map:serialize type="xml"/>
       </map:match>
 
+      <!-- Process a .txt file to a XML document -->
       <map:match pattern="toolbox.data.xml/*">
         <map:generate type="text" src="/tmp/{1}"/>
         <map:transform type="lexer" src="toolbox/import/toolbox_data/toolbox.lex"/>
