@@ -20,7 +20,7 @@
         }
         
     -->
-    <xsl:include href="../util/identity.xslt"/>
+    <xsl:include href="../../util/identity.xslt"/>
     
     <xsl:template match="h:request">
         <lexus:get-lexical-entry id="{h:requestParameters/h:parameter[@name = 'id']/h:value}"/>

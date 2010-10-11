@@ -3,7 +3,7 @@
     xmlns:lexus="http://www.mpi.nl/lexus/1.0" xmlns:display="http://www.mpi.nl/lexus/display/1.0"
     version="2.0">
 
-    <xsl:include href="../util/identity.xslt"/>
+    <xsl:include href="../../util/identity.xslt"/>
 
     <xsl:template match="/data">
         <xsl:copy>

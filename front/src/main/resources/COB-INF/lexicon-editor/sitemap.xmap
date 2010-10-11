@@ -44,18 +44,18 @@
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/lexicon/startLetterSearch.xml"/>
         </map:transform>
-        <map:transform type="tee" src="debug-info/front-post.xml"/>        
-        <map:transform type="saxon" src="prepareDisplayGenerator.xslt"/>
+        <map:transform type="tee" src="debug-info/front-post.xml"/>
+        <map:transform type="saxon" src="views/prepareDisplayGenerator.xslt"/>
         <map:transform type="multifragment-xslt" src="cocoon:/getDisplayStylesheet.xslt">
           <map:parameter name="fragment.namespace" value="http://www.mpi.nl/lexus/display/1.0"/>
           <map:parameter name="fragment.element" value="lexical-entry"/>
         </map:transform>
-<!--        <map:transform type="tee" src="debug-info/front-pre-mft.xml"/>-->
-        <map:transform type="multifragment-xslt" src="page2flexhtml.xslt">
+        <!--        <map:transform type="tee" src="debug-info/front-pre-mft.xml"/>-->
+        <map:transform type="multifragment-xslt" src="views/page2flexhtml.xslt">
           <map:parameter name="fragment.namespace" value="http://www.mpi.nl/lexus/display/1.0"/>
           <map:parameter name="fragment.element" value="page"/>
         </map:transform>
-<!--        <map:transform type="tee" src="debug-info/front-post-mft.xml"/>-->
+        <!--        <map:transform type="tee" src="debug-info/front-post-mft.xml"/>-->
         <map:serialize type="xml"/>
       </map:match>
 
@@ -64,11 +64,12 @@
       -->
       <map:match pattern="getLexicalEntryData.json">
         <map:generate src="cocoon:/getLexicalEntryData"/>
-<!--        <map:transform type="tee" src="debug-info/front-pre.xml"/>-->
+        <!--        <map:transform type="tee" src="debug-info/front-pre.xml"/>-->
         <map:transform type="saxon" src="getLexicalEntryData-2-JSON.xslt"/>
-<!--        <map:transform type="tee" src="debug-info/front-post.xml"/>-->
+        <!--        <map:transform type="tee" src="debug-info/front-post.xml"/>-->
         <map:serialize type="json"/>
       </map:match>
+
       <map:match pattern="getLexicalEntryData">
         <map:aggregate element="data">
           <map:part src="cocoon://json"/>
@@ -78,14 +79,14 @@
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/lexicon/getLexicalEntryData.xml"/>
         </map:transform>
-        <map:transform type="saxon" src="prepareDisplayGeneratorForLexicalEntry.xslt"/>
-<!--        <map:transform type="tee" src="debug-info/front-pre-mft.xml"/>-->
+        <map:transform type="saxon" src="views/prepareDisplayGeneratorForLexicalEntry.xslt"/>
+        <!--        <map:transform type="tee" src="debug-info/front-pre-mft.xml"/>-->
         <map:transform type="multifragment-xslt" src="cocoon:/getDisplayStylesheet.xslt">
           <map:parameter name="fragment.namespace" value="http://www.mpi.nl/lexus/display/1.0"/>
           <map:parameter name="fragment.element" value="lexical-entry"/>
         </map:transform>
-<!--        <map:transform type="tee" src="debug-info/front-post-mft.xml"/>-->
-        <map:transform type="multifragment-xslt" src="page2flexhtml.xslt">
+        <!--        <map:transform type="tee" src="debug-info/front-post-mft.xml"/>-->
+        <map:transform type="multifragment-xslt" src="views/page2flexhtml.xslt">
           <map:parameter name="fragment.namespace" value="http://www.mpi.nl/lexus/display/1.0"/>
           <map:parameter name="fragment.element" value="page"/>
         </map:transform>
@@ -102,7 +103,7 @@
           <map:part src="cocoon://json"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>
-<!--        <map:transform type="tee" src="debug-info/front-pre.xml"/>-->
+        <!--        <map:transform type="tee" src="debug-info/front-pre.xml"/>-->
         <!--<map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/lexicon/saveLexicalEntry.xml"/>
         </map:transform>-->
@@ -122,14 +123,14 @@
           <map:part src="cocoon://json"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>
-        <map:transform type="saxon" src="prepareGetListView.xslt"/>
+        <map:transform type="tee" src="debug-info/front-pre-display.xml"/>
+        <map:transform type="saxon" src="views/prepareGetListView.xslt"/>
+        <map:transform type="tee" src="debug-info/front-post-display.xml"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/schema-editor/getListView.xml"/>
         </map:transform>
-        <map:transform type="saxon" src="prepareViewForTransformation.xslt"/>
-        <map:transform type="tee" src="debug-info/front-pre-display.xml"/>
-        <map:transform type="saxon" src="DSL_2_XSLT.xslt"/>
-        <map:transform type="tee" src="debug-info/front-post-display.xml"/>
+        <map:transform type="saxon" src="views/prepareViewForTransformation.xslt"/>
+        <map:transform type="saxon" src="views/DSL_2_XSLT.xslt"/>
         <map:serialize/>
       </map:match>
 
@@ -142,16 +143,16 @@
         <map:aggregate element="data">
           <map:part src="cocoon://user"/>
         </map:aggregate>
-        <map:transform type="saxon" src="prepareGetLEView.xslt">
+        <map:transform type="saxon" src="views/prepareGetLEView.xslt">
           <map:parameter name="id" value="{request:id}"/>
         </map:transform>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/schema-editor/getLEView.xml"/>
         </map:transform>
-        <map:transform type="saxon" src="prepareViewForTransformation.xslt"/>
-        <map:transform type="tee" src="debug-info/front-pre-display.xml"/>
-        <map:transform type="saxon" src="DSL_2_XSLT.xslt"/>
-        <map:transform type="tee" src="debug-info/front-post-display.xml"/>
+        <map:transform type="saxon" src="views/prepareViewForTransformation.xslt"/>
+        <!--        <map:transform type="tee" src="debug-info/front-pre-display.xml"/>-->
+        <map:transform type="saxon" src="views/DSL_2_XSLT.xslt"/>
+        <!--        <map:transform type="tee" src="debug-info/front-post-display.xml"/>-->
         <map:serialize/>
       </map:match>
 
@@ -166,25 +167,47 @@
           <map:part src="cocoon://request"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>-->
-        <map:transform type="tee" src="debug-info/front-pre.xml"/>
-        <map:transform type="saxon" src="prepareGetLexicalEntryViewData.xslt"/>
-        <map:transform type="tee" src="debug-info/front-post.xml"/>
+        <map:transform type="saxon" src="views/prepareGetLexicalEntryViewData.xslt"/>
         <!--<map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/lexicon/getLexicalEntryData.xml"/>
         </map:transform>
-        <map:transform type="saxon" src="prepareDisplayGeneratorForLexicalEntry.xslt"/>
+        <map:transform type="saxon" src="views/prepareDisplayGeneratorForLexicalEntry.xslt"/>
         <map:transform type="tee" src="debug-info/front-pre-mft.xml"/>
         <map:transform type="multifragment-xslt" src="cocoon:/getLEVStylesheet.xslt">
           <map:parameter name="fragment.namespace" value="http://www.mpi.nl/lexus/display/1.0"/>
           <map:parameter name="fragment.element" value="lexical-entry"/>
         </map:transform>
         <map:transform type="tee" src="debug-info/front-post-mft.xml"/>
-        <map:transform type="multifragment-xslt" src="page2flexhtml.xslt">
+        <map:transform type="multifragment-xslt" src="views/page2flexhtml.xslt">
           <map:parameter name="fragment.namespace" value="http://www.mpi.nl/lexus/display/1.0"/>
           <map:parameter name="fragment.element" value="page"/>
         </map:transform>
         <map:transform type="saxon" src="getLexicalEntryData-2-JSON.xslt"/>-->
         <map:serialize type="xml"/>
+      </map:match>
+
+    </map:pipeline>
+
+
+    <map:pipeline>
+
+      <!-- 
+        Get a zip with the lexicon in one document and the schema we use internally.
+      -->
+      <map:match pattern="XMLexport.zip">
+        <map:aggregate element="data">
+          <map:part src="export/baseZip.xml"/>
+          <map:part src="cocoon://user"/>
+        </map:aggregate>
+        <map:transform type="saxon" src="export/prepareGetDocumentAndSchema.xslt">
+          <map:parameter name="id" value="{request-param:id}"/>
+        </map:transform>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:back:/lexicon/getDocumentAndSchema.xml"/>
+        </map:transform>
+        <map:transform type="saxon" src="export/createLexiconAndSchemaZipEntries.xslt"/>
+        <map:transform src="export/prepareZipForSerialisation.xslt"/>
+        <map:serialize type="zip"/>
       </map:match>
 
     </map:pipeline>
