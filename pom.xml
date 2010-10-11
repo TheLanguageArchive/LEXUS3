@@ -12,6 +12,80 @@
 
     <name>Lexus</name>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.cocoon</groupId>
+            <artifactId>cocoon-core</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cocoon</groupId>
+            <artifactId>cocoon-servlet-service-components</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cocoon</groupId>
+            <artifactId>cocoon-template-impl</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cocoon</groupId>
+            <artifactId>cocoon-flowscript-impl</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cocoon</groupId>
+            <artifactId>cocoon-html-impl</artifactId>
+            <version>1.1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cocoon</groupId>
+            <artifactId>cocoon-auth-impl</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>saxon</artifactId>
+            <version>9.1.0.8</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>1.3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>1.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.chaperon</groupId>
+            <artifactId>chaperon</artifactId>
+            <version>20040205</version>
+        </dependency>
+        <dependency>
+            <groupId>cocoon</groupId>
+            <artifactId>cocoon-chaperon</artifactId>
+            <version>2.1.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20090211</version>
+        </dependency>
+        <dependency>
+            <groupId>jtidy</groupId>
+            <artifactId>jtidy</artifactId>
+            <version>4aug2000r7-dev</version>
+        </dependency>
+    </dependencies>
+
     <modules>
         <module>webapp</module>
         <module>front</module>
