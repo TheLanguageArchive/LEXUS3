@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:lexus="http://www.mpi.nl/lexus/1.0" version="2.0">
+    xmlns:lexus="http://www.mpi.nl/lexus" version="2.0">
 
     <xsl:template name="sort-order">       
         
@@ -78,7 +78,7 @@
         (: A sort order has changed, so all data nodes in all lexica using it must be updated :)
         declare updating function lexus:sort-order-processAllData($sortOrderId as xs:string, $userId as xs:string) {
             let $so := collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $userId]/workspace/sortorders/sortorder[@id eq $sortOrderId]
-            let $schemaRefs := collection('<xsl:value-of select="$lexica-collection"/>')/lexus/meta/schema//component[@sort-order eq $sortOrderId]/@id
+            let $schemaRefs := collection('<xsl:value-of select="$lexica-collection"/>')/lexus/meta/schema//container[@sort-order eq $sortOrderId]/@id
             let $data := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[meta/users/user[@ref eq $userId]]/lexicon/lexical-entry//data[@schema-ref = $schemaRefs]
             return lexus:processDataNodes($data, $so)
         };
@@ -87,9 +87,9 @@
         declare updating function lexus:sort-order-processSchemaChanged($lexiconId as xs:string, $userId as xs:string) {
             let $user := collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $userId]
             let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
-            let $sortOrderIds := distinct-values($lexus/meta/schema//component[@sort-order ne '']/@sort-order)
+            let $sortOrderIds := distinct-values($lexus/meta/schema//container[@sort-order ne '']/@sort-order)
             return for $sortOrderId in $sortOrderIds
-                      let $data := $lexus/lexicon[@id eq $lexiconId]//data[@schema-ref = $lexus/meta/schema//component[@sort-order eq $sortOrderId]/@id]
+                      let $data := $lexus/lexicon[@id eq $lexiconId]//data[@schema-ref = $lexus/meta/schema//container[@sort-order eq $sortOrderId]/@id]
                       return lexus:processDataNodes($data, $user/workspace/sortorders/sortorder[@id eq $sortOrderId])
                       (:
                           if (fn:exactly-one($user/workspace/sortorders/sortorder[@id eq $sortOrderId]))
