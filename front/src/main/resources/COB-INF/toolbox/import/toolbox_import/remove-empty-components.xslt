@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-   Remove components without actual content, e.g. just empty data-categories
+    Remove containers without actual content, e.g. just empty data-categories
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -13,9 +13,9 @@
         </xsl:copy>
     </xsl:template>
 
-    <xsl:template match="component">
-        <!-- marker is component with content so copy it -->
-        <xsl:if test=".//data-category[@value]">
+    <xsl:template match="container">
+        <!-- marker is container with content so copy it -->
+        <xsl:if test=".//data[@value]">
             <xsl:copy>
                 <xsl:apply-templates select="@*"/>
                 <xsl:apply-templates select="node()"/>

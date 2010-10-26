@@ -5,15 +5,15 @@
       version="2.0">
 
     <!-- 
-        Combine components that were added because they are missing parents of
+        Combine containers that were added because they are missing parents of
         data categories in the source .txt file.
         We added them in, one for each dc. However, it happens that
-        every dc in a parentcomponent gets it's own parent!
-        This stylesheet rectifies this and combines components with
+        every dc in a parentcontainer gets it's own parent!
+        This stylesheet rectifies this and combines containers with
         the same name and marker that are siblings.
         -->
 
-    <xsl:template match="component[@name = following::*[1]/@name]"/>        
+    <xsl:template match="container[@name = following::*[1]/@name]"/>        
     
     <xsl:template match="@* | node()">
         <xsl:copy>

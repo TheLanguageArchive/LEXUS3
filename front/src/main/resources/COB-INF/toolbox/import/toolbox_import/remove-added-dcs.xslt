@@ -7,12 +7,12 @@
     <!-- 
         Remove data-categories that were added because they are missing parents of
         data categories in the source .txt file.
-        We added them in and then created a component *and* a dc for them,
-        the component has to stay (they are parents), but the added
+        We added them in and then created a container *and* a dc for them,
+        the container has to stay (they are parents), but the added
         dc must go.
         -->
 
-    <xsl:template match="data-category[@added='true']"/>        
+    <xsl:template match="data[@added='true']"/>        
     
     <xsl:template match="@* | node()">
         <xsl:copy>

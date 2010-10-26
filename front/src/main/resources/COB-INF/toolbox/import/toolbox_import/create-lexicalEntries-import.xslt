@@ -7,7 +7,7 @@
     xmlns:parser="http://chaperon.sourceforge.net/schema/syntaxtree/2.0"
     xmlns:lexus="http://www.mpi.nl/lexus" exclude-result-prefixes="xs" version="2.0">
 
-    <xsl:key name="components" match="/toolbox-import/lexiconSchema//component" use="@marker"/>
+    <xsl:key name="containers" match="/toolbox-import/lexiconSchema//container" use="@marker"/>
 
     <xsl:template match="toolbox-import">
         <lexicon>
@@ -25,7 +25,7 @@
 
     <!-- Handle markers one at a time. When an marker has children,
          calculate children first (by applying templates to the next marker),
-         include them in the component and check if the next unprocessed
+         include them in the container and check if the next unprocessed
          marker is a sibling.
          If the marker is just a datacategory, include it and also
          check if the next unprocessed marker is a sibling.
@@ -34,16 +34,16 @@
         <xsl:param name="parent" select="''"/>
 
         <xsl:variable name="attrName" as="xs:string" select="@name"/>
-        <xsl:variable name="schemaName" select="key('components', $attrName)[1]/@nam"/>
+        <xsl:variable name="schemaName" select="key('containers', $attrName)[1]/@nam"/>
         
         <xsl:choose>
             <!-- marker has descendants -->
-            <xsl:when test="key('components', @name)/component">
+            <xsl:when test="key('containers', @name)/container">
                 
                 <xsl:variable name="nextMarkerAncestorNames"
-                    select="key('components', following-sibling::marker[1]/@name)/ancestor::component/@marker"/>
+                    select="key('containers', following-sibling::marker[1]/@name)/ancestor::container/@marker"/>
 
-                <!-- If next marker is a descendant then process it and include in component element -->
+                <!-- If next marker is a descendant then process it and include in container element -->
                 <xsl:choose>
                     <xsl:when test="$nextMarkerAncestorNames = $attrName or $parent eq ''">
                         <xsl:variable name="children">
@@ -51,25 +51,25 @@
                                 <xsl:with-param name="parent" select="$attrName"/>
                             </xsl:apply-templates>
                         </xsl:variable>
-                        <component name="{concat($schemaName, 'Group')}" marker="{@name}">
-                            <data-category name="{$schemaName}" marker="{@name}">
+                        <container name="{concat($schemaName, 'Group')}" marker="{@name}">
+                            <data name="{$schemaName}" marker="{@name}">
                                 <xsl:copy-of select="@*[local-name() ne 'name']" />
-                            </data-category>
+                            </data>
                             <xsl:copy-of select="$children"/>
-                        </component>
+                        </container>
                         <!-- Check if next marker is a (descendant of a) sibling -->
                         <xsl:call-template name="process-possible-sibling">
                             <xsl:with-param name="parent" select="$parent"/>
-                            <xsl:with-param name="nextMarker" select="following-sibling::marker[position() eq 1 + count($children//data-category)]"/>
+                            <xsl:with-param name="nextMarker" select="following-sibling::marker[position() eq 1 + count($children//data)]"/>
                         </xsl:call-template>
                     </xsl:when>
                     <xsl:otherwise>
                         <!-- Next marker is not a descendant, but may be a (descendant of a) sibling -->
-                        <component name="{concat($schemaName, 'Group')}" marker="{@name}">
-                            <data-category name="{$schemaName}" marker="{@name}">
+                        <container name="{concat($schemaName, 'Group')}" marker="{@name}">
+                            <data name="{$schemaName}" marker="{@name}">
                                 <xsl:copy-of select="@*[local-name() ne 'name']" />
-                            </data-category>
-                        </component>
+                            </data>
+                        </container>
                         <xsl:call-template name="process-possible-sibling">
                             <xsl:with-param name="parent" select="$parent"/>
                             <xsl:with-param name="nextMarker" select="following-sibling::marker[1]"/>
@@ -79,9 +79,9 @@
             </xsl:when>
             <!-- Marker has no descendants: just a data category -->
             <xsl:otherwise>
-                <data-category name="{$schemaName}" marker="{@name}">
+                <data name="{$schemaName}" marker="{@name}">
                     <xsl:copy-of select="@*[local-name() ne 'name']" />
-                </data-category>
+                </data>
                 <!-- Check if next marker is a (descendant of a) sibling -->
                 <xsl:call-template name="process-possible-sibling">
                     <xsl:with-param name="parent" select="$parent"/>
@@ -94,7 +94,7 @@
     <xsl:template name="process-possible-sibling">
         <xsl:param name="parent"/>
         <xsl:param name="nextMarker"/>
-        <xsl:variable name="nextMarkersAncestors" select="key('components', $nextMarker/@name)/ancestor::component/@marker"/>
+        <xsl:variable name="nextMarkersAncestors" select="key('containers', $nextMarker/@name)/ancestor::container/@marker"/>
         
         <xsl:if test="$nextMarkersAncestors = $parent or $parent eq ''">
             <xsl:apply-templates

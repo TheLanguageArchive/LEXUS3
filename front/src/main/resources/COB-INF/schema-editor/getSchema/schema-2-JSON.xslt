@@ -248,13 +248,13 @@
     <!-- 
             Transform this:
             <schema>
-            <component id="uuid:67a9c4d1-7fb1-4c4a-b3a8-c67a494e449a" description="The container for all the lexical entries of a source language within the database. A Lexicon must contain at least one lexical entry" name="Lexicon" mandatory="true" multiple="false" type="lexicon">
-            <component id="uuid:ef64b80b-5aad-4392-9265-296000ccd87b" description="Contains administrative information and other general attributes" name="Lexicon Information" type="lexicon-information" mandatory="true" multiple="false"/>
-            <component id="uuid:9e1dbc3c-55d1-4ba2-96b8-391f779a16ab" description="Represents a word, a multi-word expression, or an affix in a given language" name="lexical-entry" mandatory="true" multiple="true" type="lexical-entry">
-            <component id="uuid:6b9f1ff4-6349-4c08-96ad-d04d29533813" description="Represents one lexical variant of the written or spoken form of the lexical entry" name="Form" mandatory="true" multiple="false" type="form"/>
-            <component id="uuid:c27cd277-9852-4fd8-94bb-7909e25fdd8c" description="Contains attributes that describe meanings of a lexical entry" name="Sense" mandatory="true" multiple="false" type="sense"/>
-            </component>
-            </component>
+            <container id="uuid:67a9c4d1-7fb1-4c4a-b3a8-c67a494e449a" description="The container for all the lexical entries of a source language within the database. A Lexicon must contain at least one lexical entry" name="Lexicon" mandatory="true" multiple="false" type="lexicon">
+            <container id="uuid:ef64b80b-5aad-4392-9265-296000ccd87b" description="Contains administrative information and other general attributes" name="Lexicon Information" type="lexicon-information" mandatory="true" multiple="false"/>
+            <container id="uuid:9e1dbc3c-55d1-4ba2-96b8-391f779a16ab" description="Represents a word, a multi-word expression, or an affix in a given language" name="lexical-entry" mandatory="true" multiple="true" type="lexical-entry">
+            <container id="uuid:6b9f1ff4-6349-4c08-96ad-d04d29533813" description="Represents one lexical variant of the written or spoken form of the lexical entry" name="Form" mandatory="true" multiple="false" type="form"/>
+            <container id="uuid:c27cd277-9852-4fd8-94bb-7909e25fdd8c" description="Contains attributes that describe meanings of a lexical entry" name="Sense" mandatory="true" multiple="false" type="sense"/>
+            </container>
+            </container>
             </schema>
             to this:
             "mySchema":             [
@@ -276,7 +276,7 @@
         -->
     <xsl:template match="schema">
         <!--        <object key="schema">-->
-        <xsl:apply-templates select="component"/>
+        <xsl:apply-templates select="container"/>
         <!--        </object>-->
     </xsl:template>
 
@@ -293,7 +293,7 @@
             "note": null
             }
         -->
-    <xsl:template match="component[@type='lexicon']" priority="10">
+    <xsl:template match="container[@type='lexicon']" priority="10">
         <object key="schema">
             <string key="id">
                 <xsl:value-of select="@id"/>
@@ -310,9 +310,9 @@
             <string key="name">lexicon</string>
             <null key="parent"/>
             <string key="note"/>
-            <xsl:if test="component">
+            <xsl:if test="container">
                 <array key="children">
-                    <xsl:apply-templates select="component"/>
+                    <xsl:apply-templates select="container"/>
                 </array>
             </xsl:if>
         </object>
@@ -331,7 +331,7 @@
             "note": null
             }
         -->
-    <!--<xsl:template match="component[@type='lexicon-information']" priority="10">
+    <!--<xsl:template match="container[@type='lexicon-information']" priority="10">
         <object>
             <string key="id">
                 <xsl:value-of select="@id"/>
@@ -350,9 +350,9 @@
                 <xsl:value-of select="../@id"/>
             </string>
             <string key="note"/>
-            <xsl:if test="component">
+            <xsl:if test="container">
                 <array key="children">
-                    <xsl:apply-templates select="component"/>
+                <xsl:apply-templates select="container"/>
                 </array>
             </xsl:if>
         </object>
@@ -370,7 +370,7 @@
             "type": "LexicalEntry",
             "note": null
             }-->
-    <xsl:template match="component[@type='lexical-entry']" priority="10">
+    <xsl:template match="container[@type='lexical-entry']" priority="10">
         <object>
             <string key="id">
                 <xsl:value-of select="@id"/>
@@ -389,9 +389,9 @@
                 <xsl:value-of select="../@id"/>
             </string>
             <string key="note"/>
-            <xsl:if test="component">
+            <xsl:if test="container">
                 <array key="children">
-                    <xsl:apply-templates select="component"/>
+                    <xsl:apply-templates select="container"/>
                 </array>
             </xsl:if>
         </object>
@@ -414,7 +414,7 @@
             "note": null
             }
         -->
-    <xsl:template match="component[@type eq 'data-category']" priority="10">
+    <xsl:template match="container[@type eq 'data']" priority="10">
         <object>
             <string key="id">
                 <xsl:value-of select="@id"/>
@@ -462,10 +462,17 @@
                 <xsl:value-of select="@description"/>
             </string>
             <string key="DCR">
-                <xsl:value-of select="@dcr"/>
+                <xsl:choose>
+                    <xsl:when test="@registry eq 'ISO-12620'">
+                        <xsl:text>12620</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="@registry"/>
+                    </xsl:otherwise>
+                </xsl:choose>
             </string>
             <string key="DCRReference">
-                <xsl:value-of select="@dcrReference"/>
+                <xsl:value-of select="@reference"/>
             </string>
             <!--            <xsl:call-template name="sort-order"><xsl:with-param name="sort-order" select="@sort-order"/></xsl:call-template>-->
             <string key="adminInfo">
@@ -485,7 +492,7 @@
         </object>
     </xsl:template>
 
-    <xsl:template match="component[component]" priority="1">
+    <xsl:template match="container[container]" priority="1">
         <object>
             <string key="id">
                 <xsl:value-of select="@id"/>
@@ -521,10 +528,17 @@
                 <xsl:value-of select="@description"/>
             </string>
             <string key="DCR">
-                <xsl:value-of select="@dcr"/>
+                <xsl:choose>
+                    <xsl:when test="@registry eq 'ISO-12620'">
+                        <xsl:text>12620</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="@registry"/>
+                    </xsl:otherwise>
+                </xsl:choose>
             </string>
             <string key="DCRReference">
-                <xsl:value-of select="@dcrReference"/>
+                <xsl:value-of select="@reference"/>
             </string>
             <string key="sortOrder">
                 <xsl:value-of select="@sortOrder"/>
@@ -533,7 +547,7 @@
                 <xsl:value-of select="@admin-info"/>
             </string>
             <array key="children">
-                <xsl:apply-templates select="component"/>
+                <xsl:apply-templates select="container"/>
             </array>
 
         </object>

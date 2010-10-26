@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:lexus="http://www.mpi.nl/lexus/1.0"
+    xmlns:lexus="http://www.mpi.nl/lexus"
     xmlns:xhtml="http://www.w3.org/1999/xhtml" 
     exclude-result-prefixes="xs" version="2.0">
 
@@ -97,20 +97,20 @@
             <string key="schemaElementId">
                 <xsl:value-of select="@schema-ref"/>
             </string>
-            <xsl:if test="component|data">
+            <xsl:if test="container|data">
                 <array key="children">
-                    <xsl:apply-templates select="component|data"/>
+                    <xsl:apply-templates select="container|data"/>
                 </array>
             </xsl:if>
             <string key="label">
-                <xsl:value-of select="/data/result/schema//component[@id eq current()/@schema-ref]/@name"
+                <xsl:value-of select="/data/result/schema//container[@id eq current()/@schema-ref]/@name"
                 />
             </string>
         </object>
         <xsl:apply-templates select="schema"/>
     </xsl:template>
 
-    <xsl:template match="component|data">
+    <xsl:template match="container|data">
         <object>
             <string key="id">
                 <xsl:value-of select="@id"/>
@@ -123,13 +123,13 @@
             <string key="schemaElementId">
                 <xsl:value-of select="@schema-ref"/>
             </string>
-            <xsl:if test="component|data">
+            <xsl:if test="container|data">
                 <array key="children">
-                    <xsl:apply-templates select="component|data"/>
+                    <xsl:apply-templates select="container|data"/>
                 </array>
             </xsl:if>
             <string key="label">
-                <xsl:value-of select="/data/result/schema//component[@id eq current()/@schema-ref]/@name"
+                <xsl:value-of select="/data/result/schema//container[@id eq current()/@schema-ref]/@name"
                 />
             </string>
         </object>

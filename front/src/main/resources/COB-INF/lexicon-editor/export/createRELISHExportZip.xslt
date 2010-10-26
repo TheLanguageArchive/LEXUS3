@@ -3,11 +3,16 @@
     xmlns:zip="http://apache.org/cocoon/zip-archive/1.0" xmlns:lexus="http://www.mpi.nl/lexus"
     exclude-result-prefixes="#all" version="2.0">
 
+    <xsl:include href="createRelaxNGForLexicon.xslt"/>
+    <xsl:include href="createAltFormatForLexicon.xslt"/>
+
+    <xsl:output method="xml" indent="yes"/>
+    <xsl:strip-space elements="*"/>
+
     <!-- 
-        Separate the data from the backend in three separate files:
+        Separate the data from the backend in separate files:
         1   the lexicon.
-        2   the meta/schema data.
-        3   if sort orders are used, a file with the sort orders.
+        2   the meta/schema data + sort orders if used.
     -->
 
     <xsl:include href="../../util/identity.xslt"/>
@@ -28,8 +33,13 @@
     <!-- Match the top node we got from the back module,
         generate sort orders file and then process the lexus element. -->
     <xsl:template match="docAndSortorders">
-        <xsl:apply-templates select="sortorders"/>
         <xsl:apply-templates select="lexus"/>
+        <!--<zip:entry name="{substring-after(lexus/@id, 'uuid:')}-all-in-one.xml" serializer="xml">
+            <xsl:element name="lexus" namespace="{$lexusNamespace}">
+                <xsl:apply-templates select="lexus/lexicon"/>
+                <xsl:apply-templates select="lexus/meta"/>
+            </xsl:element>
+        </zip:entry>-->
     </xsl:template>
 
 
@@ -41,16 +51,12 @@
             select="distinct-values(ancestor::docAndSortorders/lexus/meta/schema//container/@sort-order)"/>
 
         <xsl:if test="sortorder[@id = $usedSOs]">
-            <zip:entry name="{lexus/@id}-sort-orders.xml" serializer="xml">
-                <xsl:element name="sortorders" namespace="{$lexusNamespace}">
-                    <xsl:attribute name="version" select="'1.0'"/>
-                    <xsl:apply-templates select="@*"/>
-                    <xsl:attribute name="id" select="ancestor::docAndSortorders/lexus/@id"/>
-                    <xsl:apply-templates select="sortorder[@id = $usedSOs]" mode="use_namespace">
-                        <xsl:with-param name="ns" select="$lexusNamespace"/>
-                    </xsl:apply-templates>
-                </xsl:element>
-            </zip:entry>
+            <xsl:element name="sortorders" namespace="{$lexusNamespace}">
+                <xsl:apply-templates select="@*"/>
+                <xsl:apply-templates select="sortorder[@id = $usedSOs]" mode="use_namespace">
+                    <xsl:with-param name="ns" select="$lexusNamespace"/>
+                </xsl:apply-templates>
+            </xsl:element>
         </xsl:if>
     </xsl:template>
 
@@ -63,21 +69,22 @@
         <zip:entry name="{$id}.xml" serializer="xml">
             <xsl:apply-templates select="lexicon"/>
         </zip:entry>
-        <zip:entry name="{$id}_schema.xml" serializer="xml">
+        <zip:entry name="{$id}_internal_schema.xml" serializer="xml">
             <xsl:apply-templates select="meta"/>
         </zip:entry>
+        <!--<zip:entry name="{$id}_rng.xml" serializer="xml">
+            <xsl:apply-templates select="meta" mode="relaxng"/>
+        </zip:entry>-->
         <zip:entry name="{$id}_alt.xml" serializer="xml">
             <xsl:apply-templates select="lexicon" mode="alt"/>
         </zip:entry>
     </xsl:template>
-
 
     <!--
         Add a namespace and copy children.
         -->
     <xsl:template match="lexicon">
         <xsl:element name="lexicon" namespace="{$lexusNamespace}">
-            <xsl:attribute name="LMF" select="'no'"/>
             <xsl:attribute name="version" select="'1.0'"/>
             <xsl:apply-templates select="@*"/>
             <xsl:call-template name="lexicon-information"/>
@@ -87,13 +94,14 @@
         </xsl:element>
     </xsl:template>
 
+
     <!-- Copy name, description and note to a lexicon -->
     <xsl:template name="lexicon-information">
         <xsl:element name="lexicon-information" namespace="{$lexusNamespace}">
             <xsl:element name="name" namespace="{$lexusNamespace}">
                 <xsl:value-of select="ancestor::lexus/meta/name"/>
             </xsl:element>
-                <xsl:element name="description" namespace="{$lexusNamespace}">
+            <xsl:element name="description" namespace="{$lexusNamespace}">
                 <xsl:value-of select="ancestor::lexus/meta/description"/>
             </xsl:element>
             <xsl:element name="note" namespace="{$lexusNamespace}">
@@ -107,76 +115,57 @@
         Add the id attribute, a namespace and copy children.
     -->
     <xsl:template match="meta">
-        <xsl:element name="meta" namespace="{$lexusNamespace}">
+        <xsl:element name="meta" namespace="{$lexusNamespace}"
+            xmlns:isocat="http://www.isocat.org/datcat/">
             <xsl:attribute name="version" select="'1.0'"/>
             <xsl:attribute name="id" select="ancestor::lexus/@id"/>
             <xsl:apply-templates mode="use_namespace">
                 <xsl:with-param name="ns" select="$lexusNamespace"/>
             </xsl:apply-templates>
+            <xsl:apply-templates select="ancestor::docAndSortorders/sortorders"/>
         </xsl:element>
     </xsl:template>
 
-
-
-    <!--
-        Export an alternative format, more human readable, to some.
-        Add a lexicon-information element.
+    <!-- Skip the lexicon container, it's pretty useless.
     -->
-    <xsl:template match="lexicon" mode="alt">
-        <xsl:element name="lexicon" namespace="{$lexusNamespace}">
-            <xsl:apply-templates select="@*" mode="alt"/>
-            <xsl:attribute name="version" select="'1.0-alt'"/>
-            <xsl:call-template name="lexicon-information"/>
-            <xsl:apply-templates select="*" mode="alt"/>
+    <xsl:template match="schema//container[@type='lexicon']" mode="use_namespace">
+        <xsl:apply-templates mode="use_namespace"/>
+    </xsl:template>
+    
+    
+    <!-- Modify the lexical-entry container, it's got too much information.
+    -->
+    <xsl:template match="schema//container[@type='lexical-entry']" mode="use_namespace">
+        <xsl:element name="container" namespace="{$lexusNamespace}">
+            <xsl:copy-of select="@id | @admin-info | @description | @type | @note"/>
+            <xsl:apply-templates select="*" mode="use_namespace"/>
+        </xsl:element>
+    </xsl:template>
+    
+    <!-- Transform the registry/reference attributes to datcat="isocat:DC-xxxx" attribute.
+    -->
+    <xsl:template match="schema//container[@type='data']" mode="use_namespace"
+        xmlns:dcr="http://www.isocat.org/ns/dcr">
+        <xsl:element name="datacategory" namespace="{$lexusNamespace}"
+            xmlns:isocat="http://www.isocat.org/datcat/">
+            <xsl:copy-of select="@*[local-name() ne 'reference' and local-name() ne 'registry']"/>
+            <xsl:choose>
+                <xsl:when test="@registry eq 'ISO-12620' and @reference ne ''">
+                    <xsl:attribute name="dcr:datcat" select="@reference"/>
+                </xsl:when>
+                <xsl:when test="@registry eq 'MDF' and @reference ne ''">
+                    <xsl:attribute name="dcr:datcat"
+                        select="concat('http://lexus.mpi.nl/datcat/mdf/', @reference)"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:copy-of
+                        select="@*[local-name() eq 'reference' and local-name() eq 'registry']"/>
+                </xsl:otherwise>
+            </xsl:choose>
         </xsl:element>
     </xsl:template>
 
-    <!--
-        Copy text and attributes in the alt-format.
-        -->
-    <xsl:template match="text() | @*" mode="alt" priority="1">
-        <xsl:copy-of select="."/>
-    </xsl:template>
+    <xsl:template match="meta/owner|meta/users|meta/views|meta/name|meta/description|meta/note"
+        mode="use_namespace"/>
 
-    <!--
-        Copy nodes in the alt-format.
-        -->
-    <xsl:template match="node()" mode="alt">
-        <xsl:variable name="localName" select="lexus:getLocalName(local-name())"/>
-        <xsl:element name="{$localName}" namespace="{$lexusNamespace}">
-            <xsl:apply-templates select="@* | node()" mode="alt"/>
-        </xsl:element>
-    </xsl:template>
-
-    <!--
-        Copy container elements in the alt-format.
-        -->
-    <xsl:template match="container" mode="alt" priority="1">
-        <xsl:element name="{lexus:getLocalName(key('schemaIds', @schema-ref)/@name)}"
-            namespace="{$lexusNamespace}">
-            <xsl:apply-templates select="@* | node()" mode="alt"/>
-        </xsl:element>
-    </xsl:template>
-
-    <!--
-        Copy data elements in the alt-format.
-        -->
-    <xsl:template match="data" mode="alt" priority="1">
-        <xsl:element name="{lexus:getLocalName(key('schemaIds', @schema-ref)/@name)}"
-            namespace="{$lexusNamespace}">
-            <xsl:apply-templates select="@*"/>
-            <xsl:value-of select="value"/>
-        </xsl:element>
-    </xsl:template>
-
-
-    <!-- Generate a valid local-name from a string. 
-         Rudimentary atm, just relaces the space character by _x0020_.
-        -->
-    <xsl:function name="lexus:getLocalName">
-        <xsl:param name="s"/>
-        <xsl:value-of
-            select="replace(replace(replace($s, ' ', '_x0020_'), '\(', '_x0028_'), '\)', '_x0029_')"
-        />
-    </xsl:function>
 </xsl:stylesheet>

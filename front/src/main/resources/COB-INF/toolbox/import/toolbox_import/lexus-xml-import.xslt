@@ -21,19 +21,19 @@
 
     <!-- Handle markers one at a time. When an marker has children,
          calculate children first (by applying templates to the next marker),
-         include them in the component and check if the next unprocessed
+         include them in the container and check if the next unprocessed
          marker is a sibling.
          If the marker is just a datacategory, include it and also
          check if the next unprocessed marker is a sibling.
          -->
-    <xsl:template match="component">
+    <xsl:template match="container">
         <xsl:element name="{@name}">
             <xsl:value-of select="@value"/>
         </xsl:element>
         <xsl:apply-templates select="node()"/>
     </xsl:template>
 
-    <xsl:template match="data-category">
+    <xsl:template match="data">
         <xsl:element name="{@name}">
             <xsl:value-of select="@value"/>
         </xsl:element>

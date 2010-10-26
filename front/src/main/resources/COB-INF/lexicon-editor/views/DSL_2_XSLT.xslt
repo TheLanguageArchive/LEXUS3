@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:target="target-namespace"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:display="http://www.mpi.nl/lexus/display/1.0"
-    xmlns:lexus="http://www.mpi.nl/lexus/1.0" exclude-result-prefixes="xs" version="2.0">
+    xmlns:lexus="http://www.mpi.nl/lexus" exclude-result-prefixes="xs" version="2.0">
     <xsl:namespace-alias stylesheet-prefix="target" result-prefix="xsl"/>
     <xsl:strip-space elements="*"/>
     <xsl:output indent="yes"/>
@@ -72,15 +72,15 @@
     </xsl:template>
     <!-- Process lists -->
     <xsl:template match="list">
-        <target:for-each select=".//component[@schema-ref = '{@id}']"><!--
+        <target:for-each select=".//container[@schema-ref = '{@id}']"><!--
             <div>
                 <xsl:copy-of select="@*[local-name(.) != 'isBranch']"/>-->
                 <xsl:apply-templates/>
 <!--            </div>-->
         </target:for-each>
     </xsl:template>
-    <xsl:template match="component[@id]">
-        <target:template match="component[@schema-ref eq '{@id}']">
+    <xsl:template match="container[@id]">
+        <target:template match="container[@schema-ref eq '{@id}']">
             <xsl:apply-templates mode="apply"/>
         </target:template>
     </xsl:template>
@@ -101,7 +101,7 @@
             </row>
         </thead>
         <tbody name="Table body" type="dsl_table_body" isBranch="true">
-            <list id="uuid:2c9090a21a6d44e9011a714ccb140253" name="SubentryGroup" type="component"
+        <list id="uuid:2c9090a21a6d44e9011a714ccb140253" name="SubentryGroup" type="container"
                 isBranch="true">
                 <row type="dsl_table_row" name="Table row" isBranch="true">
                     <col type="dsl_table_column" name="Table column" isBranch="true">

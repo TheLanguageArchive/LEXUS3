@@ -15,8 +15,8 @@
     </xsl:template>
 
     <xsl:template match="marker[not(@value)] | marker[@value eq '']">
-        <!-- marker is component with children so copy it -->
-        <xsl:if test="/toolbox-import/lexiconSchema//component[@marker eq current()/@name]/component">
+        <!-- marker is container with children so copy it -->
+        <xsl:if test="/toolbox-import/lexiconSchema//container[@marker eq current()/@name]/container">
             <xsl:copy-of select="."/>
         </xsl:if>
     </xsl:template>

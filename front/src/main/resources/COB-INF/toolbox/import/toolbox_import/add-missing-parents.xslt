@@ -7,7 +7,7 @@
     xmlns:parser="http://chaperon.sourceforge.net/schema/syntaxtree/2.0"
     xmlns:lexus="http://www.mpi.nl/lexus" exclude-result-prefixes="#all" version="2.0">
 
-    <xsl:key name="components" match="/toolbox-import/lexiconSchema//component" use="@marker"/>
+    <xsl:key name="containers" match="/toolbox-import/lexiconSchema//container" use="@marker"/>
 
     <xsl:template match="lexical-entry">
         <xsl:copy>
@@ -29,7 +29,7 @@
 
         <xsl:for-each select="$markers[$pos]">
             <xsl:variable name="parentNames"
-                select="distinct-values(key('components', @name)[parent::component]/../@marker)"/>
+                select="distinct-values(key('containers', @name)[parent::container]/../@marker)"/>
             <!-- parent does not exists, add the first parent -->
             <xsl:choose>
                 <xsl:when test="count($parentNames) > 0 and not($parentNames = $precedingMarkers)">
@@ -60,7 +60,7 @@
 
         <xsl:for-each select="$markers[$pos]">
             <xsl:variable name="parentNames"
-                select="distinct-values(key('components', @name)[parent::component]/../@marker)"/>
+                select="distinct-values(key('containers', @name)[parent::container]/../@marker)"/>
             <!-- parent does not exists, add element to the sibling list -->
             <xsl:if test="count($parentNames) > 0 and $parentNames[1] eq $parent">
                 <xsl:variable name="children"

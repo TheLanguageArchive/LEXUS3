@@ -17,7 +17,7 @@
     <xsl:template match="marker">
         <xsl:variable name="name" select="@name"/>
         <!-- marker exists so copy it -->
-        <xsl:if test="/toolbox-import/lexiconSchema//component[@marker=$name]">
+        <xsl:if test="/toolbox-import/lexiconSchema//container[@marker=$name]">
             <xsl:copy-of select="."/>
         </xsl:if>
     </xsl:template>

@@ -26,7 +26,7 @@
             select="/parser:databaseType/parser:markerSet/parser:marker[parser:attribute[@name eq 'mkrOverThis']/text() eq $rootMarker/@name]"/>
         <xsl:choose>
             <xsl:when test="$children">
-                <component marker="{$rootMarker/@name}"
+                <container marker="{$rootMarker/@name}"
                     nam="{$rootMarker/parser:attribute[@name eq 'nam']}"
                     desc="{$rootMarker/parser:attribute[@name eq 'desc']}"
                     lng="{$rootMarker/parser:attribute[@name eq 'lng']}">
@@ -36,10 +36,10 @@
                             <xsl:with-param name="rootMarker" select="."/>
                         </xsl:call-template>
                     </xsl:for-each>
-                </component>
+                </container>
             </xsl:when>
             <xsl:otherwise>
-                <component marker="{$rootMarker/@name}" nam="{$rootMarker/parser:attribute[@name eq 'nam']}"
+                <container marker="{$rootMarker/@name}" nam="{$rootMarker/parser:attribute[@name eq 'nam']}"
                     desc="{$rootMarker/parser:attribute[@name eq 'desc']}"
                     lng="{$rootMarker/parser:attribute[@name eq 'lng']}"/>
             </xsl:otherwise>
