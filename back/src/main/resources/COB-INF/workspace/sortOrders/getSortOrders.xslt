@@ -9,7 +9,9 @@
     <xsl:param name="users-collection"/>
 
     <xsl:template match="/">
-        <lexus:query>
+        <xsl:copy>
+<!--            <xsl:apply-templates select="@*"/>-->
+            <lexus:query>
             <lexus:text>
                 <xsl:call-template name="declare-namespace"/>
                 
@@ -19,7 +21,8 @@
             <properties>
                 <property name="pretty-print" value="no"/>
             </properties>
-        </lexus:query>
+            </lexus:query>
+            </xsl:copy>
     </xsl:template>
 
 </xsl:stylesheet>

@@ -9,7 +9,9 @@
     <xsl:param name="users-collection"/>
 
     <xsl:template match="/">
-        <lexus:query>
+        <xsl:copy><!--
+            <xsl:apply-templates select="@*"/>-->
+            <lexus:query>
             <lexus:text>
                 <xsl:call-template name="declare-namespace"/>                        
                 
@@ -25,7 +27,8 @@
                 let $user := collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $userId]
                 return lexus:deleteSortOrder($sortOrder, $user)
             </lexus:text>
-        </lexus:query>
+            </lexus:query>
+            </xsl:copy>
     </xsl:template>
     
 </xsl:stylesheet>

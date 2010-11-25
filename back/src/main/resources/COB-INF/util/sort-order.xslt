@@ -98,6 +98,18 @@
                               :)
         };
 
+
+        (: A schema changed, so process all data from the lexicon that have a sort order :)
+        declare updating function lexus:sort-order-processLexicalEntryChanged($lexiconId as xs:string, $leId as xs:string, $userId as xs:string) {
+            let $user := collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $userId]
+            let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
+            let $sortOrderIds := distinct-values($lexus/meta/schema//container[@sort-order ne '']/@sort-order)
+            return
+                for $sortOrderId in $sortOrderIds
+                    let $data := $lexus/lexicon[@id eq $lexiconId]/lexical-entry[@id eq $leId]//data[@schema-ref = $lexus/meta/schema//container[@sort-order eq $sortOrderId]/@id]
+                    return lexus:processDataNodes($data, $user/workspace/sortorders/sortorder[@id eq $sortOrderId])
+        
+        };
     </xsl:template>
     
 </xsl:stylesheet>

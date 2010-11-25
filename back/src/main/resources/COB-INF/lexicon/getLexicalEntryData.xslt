@@ -27,22 +27,26 @@
     <xsl:param name="lexica-collection"/>
 
     <xsl:template match="lexus:get-lexical-entry">
-        <lexus:query>
-            <lexus:text>
-                <xsl:call-template name="declare-namespace"/> 
-                
-                let $data := <xsl:apply-templates select="." mode="encoded"/>
-                let $lexiconId := $data/lexicon
-                let $id := $data/id
-                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
-                let $lexicalEntry := $lexus/lexicon/lexical-entry[@id eq $id]
-                
-                return element result {
-                    $lexicalEntry,
-                    $lexus/meta/schema
-                }
-            </lexus:text>
-        </lexus:query>
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
+            <lexus:query>
+                <lexus:text>
+                    <xsl:call-template name="declare-namespace"/> 
+                    
+                    let $data := <xsl:apply-templates select="." mode="encoded"/>
+                    let $lexiconId := $data/lexicon
+                    let $id := $data/id
+                    let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
+                    let $lexicalEntry := $lexus/lexicon/lexical-entry[@id eq $id]
+                    
+                    return element result {
+                        attribute lexicon { $lexiconId },
+                        $lexicalEntry,
+                        $lexus/meta/schema
+                    }
+                </lexus:text>
+            </lexus:query>
+        </xsl:copy>
     </xsl:template>
 
 </xsl:stylesheet>

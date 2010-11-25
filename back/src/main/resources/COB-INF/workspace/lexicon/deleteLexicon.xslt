@@ -11,7 +11,9 @@
     <xsl:param name="users-collection"/>
     
     <xsl:template match="lexus:delete-lexicon">
-        <lexus:query>
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
+            <lexus:query>
             
             <!--             
                 Delete a view.
@@ -36,7 +38,8 @@
                         then lexus:deleteLexicon($lexus)
                         else ()
             </lexus:text>
-        </lexus:query>
+            </lexus:query>
+            </xsl:copy>
     </xsl:template>
     
 </xsl:stylesheet>

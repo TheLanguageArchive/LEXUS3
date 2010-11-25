@@ -11,7 +11,9 @@
     <xsl:param name="users-collection"/>
     
     <xsl:template match="lexus:save-standard-view">
-        <lexus:query>
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
+            <lexus:query>
             
             <!--             
                 Create a view.
@@ -44,7 +46,7 @@
                         then lexus:saveStandardViews($request/standardViews, $lexus)
                         else ()
             </lexus:text>
-        </lexus:query>
+        </lexus:query></xsl:copy>
     </xsl:template>
     
 </xsl:stylesheet>

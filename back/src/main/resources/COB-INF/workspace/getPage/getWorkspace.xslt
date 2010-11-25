@@ -10,7 +10,9 @@
     <xsl:param name="users-collection"/>
     
     <xsl:template match="lexus:get-page">
-        <lexus:query>
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
+            <lexus:query>
             <lexus:text>
                 <xsl:call-template name="declare-namespace"/>                        
                 <xsl:call-template name="users"/>                        
@@ -23,16 +25,14 @@
                 let $lexi := if (lexus:isAdministrator($user))
                             then collection('<xsl:value-of select="$lexica-collection"/>')/lexus
                             else collection('<xsl:value-of select="$lexica-collection"/>')/lexus[meta/users/user/@ref = $user-id]
-                (: let $users := lexus:users(collection('<xsl:value-of select="$users-collection"/>')/user[@id = distinct-values($lexi/meta/users/user/@ref)]) :)
-                
-                return element result
-                           {
-                               (: $users, :)
-                               lexus:lexica3($lexi),
-                               $user
-                           }
+                let $users := lexus:users(collection('<xsl:value-of select="$users-collection"/>')/user)
+                return element result {
+                    lexus:lexica3($lexi),
+                    $users,
+                    $user
+                }
             </lexus:text>
-        </lexus:query>
+        </lexus:query></xsl:copy>
     </xsl:template>
 
 </xsl:stylesheet>

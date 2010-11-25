@@ -11,7 +11,9 @@
     <xsl:param name="users-collection"/>
     
     <xsl:template match="lexus:get-listview">
-        <lexus:query>
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
+            <lexus:query>
             
             <!--             
                 Get listView.
@@ -33,7 +35,7 @@
                             return $lexus/meta/views/view[@id eq $listView]
                         else ()
             </lexus:text>
-        </lexus:query>
+        </lexus:query></xsl:copy>
     </xsl:template>
     
 </xsl:stylesheet>

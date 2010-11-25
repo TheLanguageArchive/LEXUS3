@@ -28,17 +28,20 @@
     <xsl:param name="users-collection"/>
 
     <xsl:template match="lexus:get-document-and-schema">
-        <lexus:query>
-            <lexus:text>
-                <xsl:call-template name="declare-namespace"/> 
-                <xsl:call-template name="permissions"/> 
-                let $lexiconId := '<xsl:value-of select="@id"/>'
-                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
-                let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>
-                let $sortOrders := collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $user/@id]/workspace/sortorders
-                return if (lexus:canRead($lexus/meta, $user)) then element docAndSortorders {$lexus, $sortOrders} else ()
-            </lexus:text>
-        </lexus:query>
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
+            <lexus:query>
+                <lexus:text>
+                    <xsl:call-template name="declare-namespace"/> 
+                    <xsl:call-template name="permissions"/> 
+                    let $lexiconId := '<xsl:value-of select="@id"/>'
+                    let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
+                    let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>
+                    let $sortOrders := collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $user/@id]/workspace/sortorders
+                    return if (lexus:canRead($lexus/meta, $user)) then element docAndSortorders {$lexus, $sortOrders} else ()
+                </lexus:text>
+            </lexus:query>
+        </xsl:copy>
     </xsl:template>
 
 </xsl:stylesheet>

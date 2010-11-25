@@ -9,7 +9,9 @@
     <xsl:param name="lexica-collection"/>
 
     <xsl:template match="lexus:get-schema">
-        <lexus:query>
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
+            <lexus:query>
             <lexus:text>
                 <xsl:call-template name="declare-namespace"/> 
                 <xsl:call-template name="lexicon"/>
@@ -20,7 +22,7 @@
                 
                 return element result { $schema, lexus:lexicon($lexus) }
             </lexus:text>
-        </lexus:query>
+        </lexus:query></xsl:copy>
     </xsl:template>
 
 </xsl:stylesheet>

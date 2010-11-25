@@ -9,7 +9,9 @@
     <xsl:param name="users-collection"/>
 
     <xsl:template match="/">
-        <lexus:query>
+        <xsl:copy>
+<!--            <xsl:apply-templates select="@*"/>-->
+            <lexus:query>
             <lexus:text>
                 <xsl:call-template name="declare-namespace"/>                        
                 <xsl:call-template name="users"/>
@@ -24,7 +26,8 @@
                         then lexus:getUsers()
                         else element exception {attribute id {"LEX002"}, element message {"Permission denied, user is not an administrator."}}
             </lexus:text>
-        </lexus:query>
+            </lexus:query>
+            </xsl:copy>
     </xsl:template>
 
 </xsl:stylesheet>

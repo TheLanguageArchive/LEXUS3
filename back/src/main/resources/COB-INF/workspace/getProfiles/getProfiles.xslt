@@ -6,23 +6,20 @@
     <xsl:include href="../../util/identity.xslt"/>
     <xsl:include href="../../util/encodeXML.xslt"/>
     
-    <xsl:param name="dbpath"/>
+    <xsl:param name="users-collection"/>
 
     <xsl:template match="/">
-        <lexus:query>
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
+            <lexus:query>
             <lexus:text>
-               (: let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>
-                let $user-id := '<xsl:value-of select="/data/user/@id"/>' :)
-                let $users := for $user in collection('<xsl:value-of select="$dbpath"/>/users')/user
+                let $user-id := '<xsl:value-of select="/data/user/@id"/>'
+                let $users := for $user in collection('<xsl:value-of select="$users-collection"/>/users')/user
                     order by $user/name
-                    return $user (: <![CDATA[<user id='{$userId}'>{name}</user>]]> :)
-                return <![CDATA[
-                        <result>
-                            <users>{$users}</users>
-                        </result>
-                     ]]>
+                    return $user
+                return element result { element users { $users } }
             </lexus:text>
-        </lexus:query>
+        </lexus:query></xsl:copy>
     </xsl:template>
 
 </xsl:stylesheet>

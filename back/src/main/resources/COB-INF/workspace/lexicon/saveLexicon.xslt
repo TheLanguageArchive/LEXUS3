@@ -9,8 +9,10 @@
     <xsl:param name="lexica-collection"/>
     <xsl:param name="users-collection"/>
 
-    <xsl:template match="/">
-        <lexus:query>
+    <xsl:template match="lexus:save-lexicon">
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
+            <lexus:query>
             
             <!--(: 
             
@@ -29,39 +31,31 @@
                 
                 <xsl:call-template name="declare-namespace"/>                        
                 <xsl:call-template name="users"/>
+                <xsl:call-template name="permissions"/>
                 
-                declare function lexus:updateLexicon($newData as node(), $lexus as node()) as node() {
-                    let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>
-                
-                    let $dummy := (
-                        update replace $lexus/meta/name with $newData/meta/name,
-                        update replace $lexus/meta/description with $newData/meta/description,
-                        update replace $lexus/meta/note with $newData/meta/note,
-                        update replace $lexus/meta/users with $newData/meta/users
-                    )
-                    
-                    let $users := lexus:users(collection('<xsl:value-of select="$users-collection"/>')/user[@id = distinct-values($lexus/meta/users/user/@ref)])
-                
-                    return element result
-                    {
-                        $users,
-                        element lexicon
-                            {$lexus/lexicon/@*,
-                            $lexus/lexicon/lexicon-information,
-                            element size {count($lexus/lexicon/lexical-entry)}},
-                        $lexus,
-                        $user
-                    }
+                declare updating function lexus:updateLexicon($newData as node(), $lexus as node()) {
+                    (
+                        delete node $lexus/meta/name,
+                        insert node $newData/meta/name into $lexus/meta,
+                        delete node $lexus/meta/description,
+                        insert node $newData/meta/description into $lexus/meta,
+                        delete node $lexus/meta/note,
+                        insert node $newData/meta/note into $lexus/meta,
+                        delete node $lexus/meta/users,
+                        insert node $newData/meta/users into $lexus/meta
+                    )                    
                 };
 
+                let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>
                 let $userId := '<xsl:value-of select="/data/user/@id"/>'                        
-                let $newData := <xsl:apply-templates select="/data/lexus" mode="encoded"/>
+                let $newData := <xsl:apply-templates select="lexus" mode="encoded"/>
                 let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $newData/id]
-                return if ($lexus/meta/users/user[@ref = $userId]/permissions/write eq "true")
+                return if (lexus:canWrite($lexus/meta, $user))
                     then lexus:updateLexicon($newData, $lexus)
-                    else element exception {attribute id {"LEX001"}, element message {concat("Permission denied, user '<xsl:value-of select="/data/user/name"/>' ('<xsl:value-of select="/data/user/account"/>', ",$userId, ") does not have write permission on lexicon '", $lexicon/lexicon-information/feat[@name='name'], "' (", $lexicon/@id)}}
+                    else ()
             </lexus:text>
-        </lexus:query>
+            </lexus:query>
+            </xsl:copy>
     </xsl:template>
     
 </xsl:stylesheet>

@@ -9,7 +9,9 @@
     <xsl:param name="users-collection"/>
 
     <xsl:template match="/">
-        <lexus:query>
+        <xsl:copy>
+<!--            <xsl:apply-templates select="@*"/>-->
+            <lexus:query>
             
             <lexus:text>
                 
@@ -53,7 +55,8 @@
                                 <xsl:value-of select="/data/user/@id"/>, ") does not have sufficient rights")}
                         }
             </lexus:text>
-        </lexus:query>
+            </lexus:query>
+            </xsl:copy>
     </xsl:template>
     
 </xsl:stylesheet>

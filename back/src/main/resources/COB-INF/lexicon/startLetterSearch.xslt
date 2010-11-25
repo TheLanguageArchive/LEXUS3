@@ -5,14 +5,14 @@
         
         Input is:
         <data>
-        <search>
+        <lexus:search>
         <lexicon>1</lexicon>
         <refiner>
         <startLetter/>
         <pageSize>25</pageSize>
         <startPage>0</startPage>
         </refiner>
-        </search>
+        </lexus:search>
         <user>...</user>
         </data>
         
@@ -108,49 +108,56 @@
     <xsl:include href="../util/xquery-components.xslt"/>
     
     <xsl:param name="lexica-collection"/>
+    <xsl:param name="users-collection"/>
 
     <xsl:template match="lexus:search">
-        <lexus:query>
-            <lexus:text>
-                <xsl:call-template name="declare-namespace"/>                        
-                <xsl:call-template name="users"/>                       
-                <xsl:call-template name="lexicon"/>                       
-                <xsl:call-template name="lexica"/>
-                
-                let $search := <xsl:apply-templates select="/data/lexus:search" mode="encoded"/>
-                let $user-id := '<xsl:value-of select="/data/user/@id"/>'
-                let $lexiconId := $search/lexicon
-                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
-                let $startLetter := $search/startLetter
-                let $pageSize := number($search/refiner/pageSize)
-                let $startPage := number($search//refiner/startPage)
-                let $lexi := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[meta/users/user/@ref = $user-id]
-                
-                let $lexicalEntries := if ($startLetter ne '') 
-                    then for $l in $lexus/lexicon/lexical-entry let $d := $l//data[@sort-key] order by $d[1]/@sort-key return $l
-                    else for $l in $lexus/lexicon/lexical-entry let $d := $l//data[@sort-key] order by $d[1]/@sort-key return $l
-                let $startLetters := distinct-values($lexicalEntries/@start-letter)
-                let $schema := $lexus/meta/schema
-                (: let $listView := $lexus/meta/views/view[@id eq $lexus/meta/views/@listView] :)
-                
-                return element result {
-                    element results {
-                        element startLetter { $startLetter },
-                        lexus:lexicon($lexus),
-                        element lexical-entries { subsequence($lexicalEntries,($startPage * $pageSize), $pageSize) },
-                        element startPage { $startPage },
-                        element count { count($lexicalEntries) },
-                        element pageSize {$pageSize}
-                    },                                        
-                    lexus:lexica3($lexi),
-                    element startLetters { $startLetters },
-                    element queries { },
-                    element schema { $schema }
-                    (: ,
-                    $listView :)
-                }
-            </lexus:text>
-        </lexus:query>
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
+            <lexus:query>
+               <lexus:text>
+                   <xsl:call-template name="declare-namespace"/>                        
+                   <xsl:call-template name="users"/>                       
+                   <xsl:call-template name="lexicon"/>                       
+                   <xsl:call-template name="lexica"/>
+                   
+                   let $search := <xsl:apply-templates select="/data/lexus:search" mode="encoded"/>
+                   let $user-id := '<xsl:value-of select="/data/user/@id"/>'
+                   let $lexiconId := $search/lexicon
+                   let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
+                   let $startLetter := data($search/refiner/startLetter)
+                   let $pageSize := number($search/refiner/pageSize)
+                   let $startPage := number($search//refiner/startPage)
+                   let $lexi := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[meta/users/user/@ref = $user-id]
+                   let $listView := $lexus/meta/views/view[@id eq $lexus/meta/views/@listView]
+                   let $firstDataCategoryId := ($listView//data[@type eq 'data category'])[1]/@id
+                   
+                   let $sortOrderDCs := for $le in $lexus/lexicon/lexical-entry return ($le//data[@schema-ref eq $firstDataCategoryId])[1]
+                   let $sLValues := for $sodc in $sortOrderDCs return substring($sodc/value, 1, 1)
+                   let $startLetters := for $sl in distinct-values($sLValues) return element startLetter { $sl }
+                   let $lexicalEntries := if ($startLetter ne '') 
+                        then for $sodc in $sortOrderDCs return if (substring($sodc/value, 1, 1) eq $startLetter) then $sodc/ancestor::lexical-entry else ()
+                        else for $l in $lexus/lexicon/lexical-entry let $d := $l//data[@sort-key] order by $d[1]/@sort-key return $l
+                   let $schema := $lexus/meta/schema
+                   let $users := lexus:users(collection('<xsl:value-of select="$users-collection"/>')/user[@id = distinct-values($lexus/meta/users/user/@ref)])
+                   
+                   return element result {
+                       element results {
+                           element startLetter { $startLetter },
+                           lexus:lexicon($lexus),
+                           element lexical-entries { subsequence($lexicalEntries,($startPage * $pageSize), $pageSize) },
+                           element startPage { $startPage },
+                           element count { count($lexicalEntries) },
+                           element pageSize {$pageSize}
+                       },                                        
+                       lexus:lexica3($lexi),
+                       element startLetters { $startLetters },
+                       element queries { },
+                       element schema { $schema },
+                       $users
+                   }
+               </lexus:text>
+          </lexus:query>
+        </xsl:copy>
     </xsl:template>
 
 </xsl:stylesheet>

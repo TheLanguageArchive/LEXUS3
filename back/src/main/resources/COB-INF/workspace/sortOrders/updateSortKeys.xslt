@@ -9,8 +9,10 @@
     <xsl:param name="users-collection"/>
     <xsl:param name="lexica-collection"/>
     
-    <xsl:template match="lexus:save-sortorder">
-        <lexus:query>
+    <xsl:template match="lexus:update-sort-keys">
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
+            <lexus:query>
             <lexus:text>
                 <xsl:call-template name="declare-namespace"/>
                 <xsl:call-template name="sort-order"/>
@@ -19,7 +21,8 @@
                 let $sortOrderId := '<xsl:value-of select="sortorder/@id"/>'
                 return lexus:sort-order-processAllData($sortOrderId, $userId)
             </lexus:text>
-        </lexus:query>
+            </lexus:query>
+            </xsl:copy>
     </xsl:template>
     
 </xsl:stylesheet>

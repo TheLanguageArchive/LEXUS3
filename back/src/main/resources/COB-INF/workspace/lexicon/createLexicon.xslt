@@ -46,7 +46,9 @@
         <xsl:variable name="id">
             <xsl:value-of select="substring-after(lexicon/@id, 'uuid:')"/>
         </xsl:variable>
-        <lexus:query>
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
+            <lexus:query>
             <lexus:text>
                 <xsl:call-template name="declare-namespace"/>                       
                 <xsl:call-template name="users"/>
@@ -69,7 +71,7 @@
                     else 
                         element exception {'access denied for user <xsl:value-of select="$username"/>'}
             </lexus:text>
-        </lexus:query>
+        </lexus:query></xsl:copy>
     </xsl:template>
 
 </xsl:stylesheet>

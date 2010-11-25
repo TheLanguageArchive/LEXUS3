@@ -113,7 +113,7 @@
     </xsl:template>
     
     <!-- 
-        Given a list of lexus meta data nodes,
+        Given a list of lexus nodes,
         return the list of lexica with the same ids, order by name.
     -->
     <xsl:template name="lexica">
@@ -124,17 +124,30 @@
                 for $lexus in $lexi
                     order by $lexus/meta/name
                     return element lexicon {
-                        $lexus/lexicon[1]/@*,
+                        $lexus/lexicon/@*,
                         element meta { $lexus/meta/*[local-name() ne 'schema']},
-                        element size {count($lexus/lexicon/lexical-entry)
+                        element size {count($lexus/lexicon/lexical-entry)}
                     }
-                }
             }
         };
         
         
     </xsl:template>
     
+    
+    <xsl:template name="lexicon3">
+        
+        (: return a lexicon in the lexus:lexica3 format :)
+        declare function lexus:lexicon($lexus as node()) as node() {
+        element lexicon {
+            $lexus/lexicon/@*,
+            element meta { $lexus/meta/*[local-name() ne 'schema']},
+            element size {count($lexus/lexicon/lexical-entry)}
+        }
+        };
+        
+        
+    </xsl:template>
     
     <!-- 
         Return a lexicon's attributes (id) and meta data.

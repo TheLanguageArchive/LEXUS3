@@ -13,7 +13,9 @@
             <xsl:apply-templates select="/login" mode="admin"/>
         </xsl:variable>
         
-        <lexus:query>
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
+            <lexus:query>
             <lexus:text>
                 <xsl:call-template name="declare-namespace"/>
                 
@@ -43,7 +45,8 @@
                                 }
                          :)
             </lexus:text>
-        </lexus:query>
+            </lexus:query>
+            </xsl:copy>
     </xsl:template>
     
     <xsl:template match="login" mode="admin">

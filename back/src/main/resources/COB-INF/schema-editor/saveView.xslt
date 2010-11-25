@@ -17,7 +17,9 @@
         If everything's ok, create or update the view.
         -->
     <xsl:template match="lexus:save-view">
-        <lexus:query>
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
+            <lexus:query>
             <lexus:text>
                 
                 <xsl:call-template name="declare-namespace"/>
@@ -59,6 +61,7 @@
                         else ()
             </lexus:text>
         </lexus:query>
+        </xsl:copy>
     </xsl:template>
     
 </xsl:stylesheet>

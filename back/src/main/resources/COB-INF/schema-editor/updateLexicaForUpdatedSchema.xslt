@@ -12,7 +12,9 @@
     <xsl:param name="users-collection"/>
     
     <xsl:template match="lexus:update-lexica-for-updated-schema">
-        <lexus:query>
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
+            <lexus:query>
             <lexus:text>
                 
                 <xsl:call-template name="declare-namespace"/>
@@ -26,7 +28,8 @@
                              (: let $dummy := lexus:log($lexus/@id, 'save-schema', $userId, $username, $newData/schema) :)
                 return lexus:sort-order-processSchemaChanged($newSchema/@id, $userId)
             </lexus:text>
-        </lexus:query>
+            </lexus:query>
+        </xsl:copy>
     </xsl:template>
     
 </xsl:stylesheet>

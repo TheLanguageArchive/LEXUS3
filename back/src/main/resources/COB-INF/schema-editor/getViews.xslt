@@ -11,7 +11,9 @@
     <xsl:param name="users-collection"/>
     
     <xsl:template match="lexus:get-views">
-        <lexus:query>
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
+            <lexus:query>
             
             <!--             
                 Get views.
@@ -31,7 +33,7 @@
                         then $lexus/meta/views
                         else ()
             </lexus:text>
-        </lexus:query>
+        </lexus:query></xsl:copy>
     </xsl:template>
     
 </xsl:stylesheet>

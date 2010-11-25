@@ -12,7 +12,9 @@
     <xsl:param name="users-collection"/>
     
     <xsl:template match="lexus:save-schema">
-        <lexus:query>
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
+            <lexus:query>
             
             <!--             
                 Save a schema.                
@@ -39,7 +41,7 @@
                         then lexus:updateSchema($request/schema, $lexus)
                         else ()
             </lexus:text>
-        </lexus:query>
+        </lexus:query></xsl:copy>
     </xsl:template>
     
 </xsl:stylesheet>

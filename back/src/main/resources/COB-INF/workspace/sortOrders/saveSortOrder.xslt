@@ -8,9 +8,18 @@
     
     <xsl:param name="users-collection"/>
 
+    <!-- 
+        Create an XQuery that saves the sort order.
+        Also create an lexus:update-sort-keys element for sorting lexica later on.
+        -->
     <xsl:template match="lexus:save-sortorder">
-        <xsl:copy-of select="."/>
-        <lexus:query>
+        <xsl:element name="update-sort-keys" namespace="http://www.mpi.nl/lexus">
+            <xsl:apply-templates select="sortorder" mode="update-sort-keys"/>
+        </xsl:element>
+        
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
+            <lexus:query>
             <lexus:text>
                 <xsl:call-template name="declare-namespace"/>                        
                 
@@ -25,7 +34,17 @@
                 let $user := collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $userId]
                 return lexus:updateSortOrder($sortOrder, $user)
             </lexus:text>
-        </lexus:query>
+            </lexus:query>
+            </xsl:copy>
+    </xsl:template>
+    
+    <!-- 
+        Copy the sortorder element with it's id attribute, used by the updateSortKeys stylesheet.
+        -->
+    <xsl:template match="sortorder" mode="update-sort-keys">
+        <xsl:copy>
+            <xsl:apply-templates select="@*"/>
+        </xsl:copy>
     </xsl:template>
     
 </xsl:stylesheet>
