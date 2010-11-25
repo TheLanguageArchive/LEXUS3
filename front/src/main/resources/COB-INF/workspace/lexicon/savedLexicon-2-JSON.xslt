@@ -42,7 +42,7 @@
     -->
     
     <xsl:template match="/">
-        <object><xsl:apply-templates /></object>
+        <object><xsl:apply-templates select="/data/result"/></object>
     </xsl:template>
     
     <xsl:template match="result">

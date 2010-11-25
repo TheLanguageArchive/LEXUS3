@@ -6,6 +6,10 @@
             logger="sitemap.generator.textgenerator"/>
     </map:generators>
     
+    <map:actions>
+        <map:action name="json-field" src="org.apache.cocoon.acting.JSONField"/>
+    </map:actions>
+    
     <map:transformers>
         <map:transformer name="saxon" src="org.apache.cocoon.transformation.TraxTransformer">
             <xslt-processor-role>saxon</xslt-processor-role>
@@ -27,6 +31,9 @@
         <map:transformer name="lexer" src="org.apache.cocoon.transformation.LexicalTransformer"
             logger="sitemap.transformer.lexer"/>
         <map:transformer name="parser" src="org.apache.cocoon.transformation.ParserTransformer"
-            logger="sitemap.transformer.parser"/>
+        logger="sitemap.transformer.parser"/>
+        
+        <map:transformer name="resource-resolver" src="nl.mpi.lexus.transformation.ResourceIdToURLTransformer"
+            logger="sitemap.transformer.resource-resolver"/>
     </map:transformers>
 </map:components>

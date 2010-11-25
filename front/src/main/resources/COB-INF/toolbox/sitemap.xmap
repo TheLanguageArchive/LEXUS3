@@ -25,33 +25,62 @@
         <map:redirect-to uri="convert/toolbox_demo"/>
       </map:match>
       
+      <map:match pattern="convert/*.zip">
+        <map:generate src="cocoon:/convert/{1}.typ/{1}.txt"/>
+        <map:serialize type="zip"/>
+      </map:match>
+      
       <map:match pattern="convert/*">
         <map:generate src="cocoon:/convert/{1}.typ/{1}.txt"/>
         <map:serialize type="xml"/>
-      </map:match>      
-      
+      </map:match>
+
       <map:match pattern="convert/*/*">
         <map:aggregate element="toolbox-import">
           <map:part src="cocoon:/toolbox.typ.xml/{1}"/>
           <map:part src="cocoon:/toolbox.data.xml/{2}"/>
         </map:aggregate>
+
         <!-- Some markers are not defined (really!), remove them -->
         <map:transform type="saxon" src="toolbox_import/remove-undefined-markers.xslt"/>
         <!-- Empty markers that are not parents sometimes prevent data-category elements from ending up in the right parent element -->
         <map:transform type="saxon" src="toolbox_import/remove-empty-markers.xslt"/>
         <!-- Parents may be missing, add them (Just one 'layer' of parent element is added!) -->
         <map:transform type="saxon" src="toolbox_import/add-missing-parents.xslt"/>
+
+        <!-- Create schema -->
+        <map:transform type="saxon" src="toolbox_import/create-schema.xslt"/>
+
+        <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>
+
         <!-- Create lexical entries -->
-        <map:transform type="saxon" src="toolbox_import/create-lexicalEntries-import.xslt"/>
+        <map:transform type="saxon" src="toolbox_import/create-lexicalEntries.xslt">
+          <map:parameter name="name" value="{1}"/>
+        </map:transform>
+
         <!-- Clean up DCs that were added as parents -->
         <map:transform type="saxon" src="toolbox_import/remove-added-dcs.xslt"/>
+
         <!-- Components that have no data-category elements with a @value beneath them are removed -->
         <map:transform type="saxon" src="toolbox_import/remove-empty-components.xslt"/>
+
+        <!-- Remove markers from groups in the schema that were added by create-schema.xslt. -->
+        <map:transform type="saxon" src="toolbox_import/finalize-schema.xslt"/>
+
+        <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>
+
+        <!-- Create a zip file from the content of the pipeline (schema and lexicon) -->
+        <map:transform type="saxon" src="toolbox_import/create-zipfile.xslt"/>
         <map:serialize type="xml"/>
       </map:match>
-      
+
+      <!--
+        {naming:java:comp/env/toolbox_files}
+      -->
       <map:match pattern="toolbox.typ.xml/*">
-        <map:generate type="text" src="{naming:java:comp/env/toolbox_files}/{1}"/>
+        <map:generate type="text" src="${toolbox_files}/{1}">
+          <map:parameter name="encoding" value="UTF-8"/>
+        </map:generate>
         <map:transform type="lexer" src="toolbox_typ/toolbox.lex"/>
         <map:transform type="saxon" src="toolbox_typ/post-lexer.xslt"/>
         <map:transform type="parser" src="toolbox_typ/toolbox.grm"/>
@@ -59,9 +88,13 @@
         <map:transform type="saxon" src="toolbox_typ/create-lexicalEntry-schema.xslt"/>
         <map:serialize type="xml"/>
       </map:match>
-      
+
       <map:match pattern="toolbox.data.xml/*">
-        <map:generate type="text" src="{naming:java:comp/env/toolbox_files}/{1}"/>
+        <map:generate type="text" src="${toolbox_files}/{1}">
+          <map:parameter name="encoding" value="UTF-8"/>
+        </map:generate>
+        <map:transform type="tee"
+          src="{naming:java:comp/env/tee-folder}debug-info/front-pre-toolbox.xml"/>
         <map:transform type="lexer" src="toolbox_data/toolbox.lex"/>
         <map:transform type="saxon" src="toolbox_data/post-lexer.xslt"/>
         <map:transform type="parser" src="toolbox_data/toolbox.grm"/>

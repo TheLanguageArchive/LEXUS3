@@ -4,13 +4,13 @@
     
     <xsl:include href="../../util/identity.xslt"/>
 
-    <xsl:param name="id"/>
+    <xsl:param name="lexicon"/>
     
     <xsl:template match="data">
         <xsl:copy>
-            <lexus:get-leview lexical-entry="{$id}"/>
+            <lexus:get-leview lexicon="{$lexicon}" />
             <xsl:copy-of select="user"/>
         </xsl:copy>
     </xsl:template>
-
+    
 </xsl:stylesheet>

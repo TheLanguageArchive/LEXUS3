@@ -117,9 +117,9 @@
           -->
       <map:match pattern="lexus-authuser">
         <map:generate type="request"/>
-<!--        <map:transform type="tee" src="debug-info/authentication-pre.xml"/>-->
+<!--        <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/authentication-pre.xml"/>-->
         <map:transform type="saxon" src="util/login.xslt"/>
-<!--        <map:transform type="tee" src="debug-info/authentication-post.xml"/>-->
+<!--        <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/authentication-post.xml"/>-->
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/workspace/userLogin.xml"/>
         </map:transform>
@@ -157,7 +157,7 @@
     <!-- 
         Generate XML from the json in the request parameter
         -->
-    <map:pipeline id="json">
+    <map:pipeline id="json" type="caching">
 
       <map:match pattern="json">
         <map:generate type="json"/>
@@ -199,21 +199,21 @@
       sitemap by the authentication module
       using the cauth-is-logged-in action).
     -->
-    <map:pipeline internal-only="true">
+    <map:pipeline internal-only="true" type="caching">
 
       <!-- Get 1 user -->
       <map:match pattern="user">
         <map:act type="cauth-is-logged-in">
           <map:parameter name="application" value="Lexus"/>
           <map:generate src="resource/internal/user.xml"/>
-          <!--          <map:transform type="tee" src="debug-info/session-front-pre.xml"/>-->
+          <!--          <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/session-front-pre.xml"/>-->
           <map:transform src="util/create-user-element.xslt">
             <map:parameter name="id" value="{user-id}"/>
             <map:parameter name="name" value="{user-name}"/>
             <map:parameter name="account" value="{user-account}"/>
             <map:parameter name="accesslevel" value="{user-accesslevel}"/>
           </map:transform>
-          <!--          <map:transform type="tee" src="debug-info/session-front-post.xml"/>-->
+          <!--          <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/session-front-post.xml"/>-->
           <map:serialize type="xml"/>
         </map:act>
       </map:match>
@@ -230,7 +230,7 @@
     <!-- Get Lexical Entry View -->
     <map:pipeline>
       <map:match pattern="entryLayout.htm">
-        <map:redirect-to uri="LexusLexicalEntryEditor/entryLayout.htm?id={request:id}"/>
+        <map:redirect-to uri="LexusLexicalEntryEditor/entryLayout.htm?lexicon={request-param:lexicon}&amp;id={request-param:id}"/>
       </map:match>
       </map:pipeline>
 
@@ -314,7 +314,12 @@
         </map:act>
         <map:redirect-to uri="index.html"/>
       </map:match>
-
+      
+      
+      <map:match pattern="LexusWorkspaceEditor/reOrder.xml">
+          <map:mount uri-prefix="LexusWorkspaceEditor/" src="workspace/sitemap.xmap"/>
+      </map:match>
+      
       <map:match pattern="LexusWorkspaceEditor/**">
         <map:act type="cauth-is-logged-in">
           <map:parameter name="application" value="Lexus"/>
@@ -339,23 +344,32 @@
         <map:redirect-to uri="index.html"/>
       </map:match>
       
+      
+      <map:match pattern="toolbox/**">
+<!--        <map:act type="cauth-is-logged-in">
+          <map:parameter name="application" value="Lexus"/> -->
+          <map:mount uri-prefix="toolbox/" src="toolbox/sitemap.xmap"/>
+<!--         </map:act>
+        <map:redirect-to uri="index.html"/> -->
+      </map:match>
+      
       <map:match pattern="StagingFileHandler/uploadFile.json">
         <map:act type="cauth-is-logged-in">
           <map:parameter name="application" value="Lexus"/>
           <map:generate type="fileupload">
             <map:parameter name="tmpdir" value="/tmp"/>
           </map:generate>
-<!--          <map:transform type="tee" src="debug-info/remove-me-2.xml"/>-->
+<!--          <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/remove-me-2.xml"/>-->
           <map:transform type="saxon" src="util/xml-to-json.xslt"/>
-<!--          <map:transform type="tee" src="debug-info/remove-me-2.js"/>-->
+<!--          <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/remove-me-2.js"/>-->
           <map:serialize type="text"/>
         </map:act>
         <map:generate type="fileupload">
           <map:parameter name="tmpdir" value="/tmp/"/>
         </map:generate>
-<!--        <map:transform type="tee" src="debug-info/remove-me-2.xml"/>-->
+<!--        <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/remove-me-2.xml"/>-->
         <map:transform type="saxon" src="util/xml-to-json.xslt"/>
-<!--        <map:transform type="tee" src="debug-info/remove-me-2.js"/>-->
+<!--        <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/remove-me-2.js"/>-->
         <map:serialize type="text"/>
         <!--<map:redirect-to uri="index.html"/>-->
       </map:match>

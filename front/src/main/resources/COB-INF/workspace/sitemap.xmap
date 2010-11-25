@@ -25,7 +25,26 @@
 
     <map:pipeline id="workspace">
 
-
+      <map:match pattern="reOrder.xml">
+        <map:generate src="all/getAllLexiconIds.xml"/>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:back:/workspace/getAllLexiconIds.xml"/>
+        </map:transform>
+        <map:transform src="all/prepareReOrderEachLexicon.xslt"/>
+        <map:transform type="cinclude"/>
+        <map:serialize/>
+      </map:match>
+      
+      <map:match pattern="reOrderLexicon.xml">
+        <map:generate src="all/getAllLexiconIds.xml"/>
+        <map:transform src="all/reOrderLexicon.xslt">
+          <map:parameter name="id" value="{request-param:id}"/>
+        </map:transform>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:back:/workspace/reOrderLexicon.xml"/>
+        </map:transform>
+        <map:serialize/>
+      </map:match>
       <!-- 
         Get queries
       -->
@@ -52,7 +71,9 @@
           -->
       <map:match pattern="getPage.json">
         <map:generate src="cocoon:/getPage"/>
+        <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>
         <map:transform type="saxon" src="getPage/page-2-JSON.xslt"/>
+        <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>
         <map:serialize type="json"/>
       </map:match>
 
@@ -185,9 +206,8 @@
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/workspace/deleteLexicon.xml"/>
         </map:transform>
-        <map:transform type="tee" src="debug-info/front-pre.xml"/>
         <map:transform type="saxon" src="lexicon/deletedLexicon-2-JSON.xslt"/>
-        <map:transform type="tee" src="debug-info/front-post.xml"/>
+        <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>
         <map:serialize type="json"/>
       </map:match>
 

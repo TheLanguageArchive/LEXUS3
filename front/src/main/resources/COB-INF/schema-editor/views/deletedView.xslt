@@ -3,7 +3,7 @@
     xmlns:lexus="http://www.mpi.nl/lexus" xmlns:util="java:java.util.UUID" version="2.0">
 
     <xsl:template match="/">
-        <result success="true"><view id="{/data/view/@id}"/></result>
+        <result success="true"><view id="{/data/lexus:delete-view/view/@id}"/></result>
     </xsl:template>
     
 </xsl:stylesheet>

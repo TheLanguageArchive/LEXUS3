@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-   Remove markers that do not exist in the schema. Yes, there are markers that are undefined. Really.
-   Seriously. For real. No joke.
+   Remove markers from groups in the schema. Also rename container elements to datacategory elements.
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -15,11 +14,16 @@
         </xsl:copy>
     </xsl:template>
 
-    <xsl:template match="marker[not(@value)] | marker[@value eq '']">
-        <!-- marker is container with children so copy it -->
-        <xsl:if
-            test="/toolbox-import/lexus:meta/lexus:schema//lexus:container[@mdf:marker eq current()/@name]/mdf:container">
-            <xsl:copy-of select="."/>
-        </xsl:if>
+    <xsl:template match="lexus:schema//lexus:container[@type eq 'container'][@mdf:marker]">
+        <xsl:copy>
+            <xsl:apply-templates select="@*[local-name() ne 'marker']"/>
+            <xsl:apply-templates/>
+        </xsl:copy>
+    </xsl:template>
+    
+    <xsl:template match="lexus:schema//lexus:container[@type eq 'data']">
+        <lexus:datacategory>
+            <xsl:apply-templates select="@* | node()"/>
+        </lexus:datacategory>
     </xsl:template>
 </xsl:stylesheet>

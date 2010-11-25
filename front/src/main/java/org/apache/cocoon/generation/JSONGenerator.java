@@ -17,10 +17,9 @@
 package org.apache.cocoon.generation;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.io.Serializable;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
@@ -28,14 +27,15 @@ import java.util.logging.Logger;
 
 import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.ProcessingException;
+import org.apache.cocoon.caching.CacheableProcessingComponent;
 import org.apache.cocoon.environment.ObjectModelHelper;
 import org.apache.cocoon.environment.Request;
 import org.apache.cocoon.environment.SourceResolver;
+import org.apache.excalibur.source.SourceValidity;
 import org.json.JSONException;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 import org.json.JSONObject;
-import org.apache.excalibur.source.Source;
 import org.json.JSONArray;
 
 /**
@@ -51,7 +51,7 @@ import org.json.JSONArray;
  *
  * @version $Id: JSONGenerator.java 605689 2010-02-14 20:48:43Z huiver $
  */
-public class JSONGenerator extends ServiceableGenerator {
+public class JSONGenerator extends ServiceableGenerator implements CacheableProcessingComponent {
 
     /** The namespace prefix of this generator. */
     private final static String JSONnode = "json";
@@ -69,6 +69,8 @@ public class JSONGenerator extends ServiceableGenerator {
     private Boolean useNamespace;
     private String rootElement;
     protected static AttributesImpl attributes;
+    private String jsonSource;
+    private JSONValidity validity;
 
     /**
      * @Override setup method for generator
@@ -80,6 +82,8 @@ public class JSONGenerator extends ServiceableGenerator {
         requestParameter = parameters.getParameter(REQUESTPARAMETER, "request");
         useNamespace = parameters.getParameterAsBoolean(USENAMESPACE, false);
         rootElement = parameters.getParameter(ROOTELEMENT, JSONnode);
+        final Request request = ObjectModelHelper.getRequest(objectModel);
+        jsonSource = request.getParameter(requestParameter);
     }
 
     /**
@@ -91,8 +95,8 @@ public class JSONGenerator extends ServiceableGenerator {
         final AttributesImpl attr = new AttributesImpl();
 
         try {
-            getLogger().debug("JSON source =" + request.getParameter(requestParameter));
-            JSONObject json = new JSONObject(request.getParameter(requestParameter));
+            getLogger().debug("JSON source =" + jsonSource);
+            JSONObject json = new JSONObject(jsonSource);
             this.contentHandler.startDocument();
             this.contentHandler.startPrefixMapping(PREFIX, URI);
             toSAX(json, JSONnode, this.contentHandler);
@@ -195,5 +199,46 @@ public class JSONGenerator extends ServiceableGenerator {
         String chars = org.json.XML.escape(s);
         getLogger().debug("content: " + chars);
         contentHandler.characters(chars.toCharArray(), 0, chars.length());
+    }
+
+    public Serializable getKey() {
+        MessageDigest md;
+        if (null == jsonSource) {
+            return null;
+        }
+        try {
+            md = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(JSONGenerator.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+        return md.digest(jsonSource.getBytes());
+    }
+
+    public SourceValidity getValidity() {
+        if (this.validity == null) {
+            this.validity = new JSONValidity(this.jsonSource);
+        }
+        return this.validity;
+    }
+
+
+    /** Specific validity class, that holds all files that have been generated */
+    public static class JSONValidity implements SourceValidity {
+
+        private final String jsonSource;
+
+        public JSONValidity(String jsonSource) {
+            this.jsonSource = jsonSource;
+        }
+
+        public int isValid() {
+            return SourceValidity.VALID;
+        }
+
+        public int isValid(SourceValidity newValidity) {
+            return isValid();
+        }
+
     }
 }

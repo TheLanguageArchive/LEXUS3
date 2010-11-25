@@ -23,6 +23,7 @@
     <xsl:include href="../../util/identity.xslt"/>
     
     <xsl:template match="json">
+        <xsl:copy-of select="."/>
         <lexus:get-schema><xsl:apply-templates select="parameters/*"/></lexus:get-schema>
     </xsl:template>
 

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="xs" version="2.0">
+    xmlns:lexus="http://www.mpi.nl/lexus" exclude-result-prefixes="#all" version="2.0">
 
     <!-- 
-
+    HHV: just return success or failure, sort order serialisation is thrown away on the client!
+    
     original app's JSON to mimic (but leave out stuff that's unnecessary, like "fill"):
+    
     {
     "id": "Mon Apr 26 17:01:27 CEST 2010",
     "result": {"sortOrder":         {
@@ -36,23 +38,29 @@
     },
     "requestId": "A65D6F11-3379-0004-BBA9-3AA319CA9FCA"
     }
+    
+    
+    
 -->
 
     <xsl:template match="/">
         <object>
-            <xsl:apply-templates select="result"/>
+            <xsl:if test="//lexus:save-sortorder/lexus:result/@success = 'true'">
+                <!--<xsl:apply-templates select="//lexus:saved-sortorder"/>-->
+            </xsl:if>
             <object key="status">
                 <string key="success">
                     <xsl:choose>
-                        <xsl:when test="result/sortorder">true</xsl:when>
+                        <xsl:when test="//lexus:save-sortorder/lexus:result/@success = 'true'"
+                            >true</xsl:when>
                         <xsl:otherwise>false</xsl:otherwise>
                     </xsl:choose>
                 </string>
             </object>
         </object>
     </xsl:template>
-
-    <xsl:template match="result">
+<!--
+    <xsl:template match="lexus:saved-sortorder">
         <object key="result">
             <object key="sortOrder">
                 <xsl:apply-templates select="sortorder/@* | sortorder/*"/>
@@ -87,5 +95,5 @@
                 <xsl:value-of select="from"/>
             </string>
         </object>
-    </xsl:template>
+    </xsl:template>-->
 </xsl:stylesheet>

@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:lexus="http://www.mpi.nl/lexus"
-    xmlns:xhtml="http://www.w3.org/1999/xhtml" 
-    exclude-result-prefixes="xs" version="2.0">
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:lexus="http://www.mpi.nl/lexus"
+    xmlns:rr="http://nl.mpi.lexus/resource-resolver"
+    xmlns:xhtml="http://www.w3.org/1999/xhtml" exclude-result-prefixes="xs" version="2.0">
 
 
     <xsl:include href="../util/encodeXML.xslt"/>
-    
+
     <!-- 
         JSON to produce:
         
@@ -41,10 +40,10 @@
 
     <xsl:template match="/">
         <object>
-            <xsl:apply-templates select="data/result"/>
+            <xsl:apply-templates select="//lexus:get-lexical-entry/result"/>
             <object key="status">
                 <xsl:choose>
-                    <xsl:when test="data/result/lexical-entry">
+                    <xsl:when test="//lexus:get-lexical-entry/result/lexical-entry">
                         <true key="success"/>
                     </xsl:when>
                     <xsl:otherwise>
@@ -74,13 +73,13 @@
                 </object>-->
             <object key="listView">
                 <xsl:choose>
-                    <xsl:when
-                        test="/data/lexus:display/lexical-entry[@id = current()/@id]">
+                    <xsl:when test="//lexus:display/lexical-entry[@id = current()/@id]">
                         <string key="value">
                             <![CDATA[<b>]]>
-                            <xsl:value-of select="/data/lexus:display/lexical-entry[@id = current()/@id]/xhtml:html/xhtml:body"/>
+                            <xsl:value-of
+                                select="//lexus:display/lexical-entry[@id = current()/@id]/xhtml:html/xhtml:body"/>
                             <xsl:apply-templates
-                                select="/data/lexus:display/lexical-entry[@id = current()/@id]/xhtml:html/xhtml:body/*"
+                                select="//lexus:display/lexical-entry[@id = current()/@id]/xhtml:html/xhtml:body/*"
                                 mode="encoded"/>
                             <![CDATA[</b>]]>
                         </string>
@@ -93,7 +92,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </object>
-            <string key="entryView">entryLayout.htm?id=<xsl:value-of select="@id"/></string>
+            <string key="entryView">entryLayout.htm?lexicon=<xsl:value-of select="ancestor::lexus:get-lexical-entry/result/@lexicon"/>&amp;id=<xsl:value-of select="@id"/></string>
             <string key="schemaElementId">
                 <xsl:value-of select="@schema-ref"/>
             </string>
@@ -103,8 +102,8 @@
                 </array>
             </xsl:if>
             <string key="label">
-                <xsl:value-of select="/data/result/schema//container[@id eq current()/@schema-ref]/@name"
-                />
+                <xsl:value-of
+                    select="//lexus:get-lexical-entry/result/schema//container[@id eq current()/@schema-ref]/@name"/>
             </string>
         </object>
         <xsl:apply-templates select="schema"/>
@@ -129,9 +128,38 @@
                 </array>
             </xsl:if>
             <string key="label">
-                <xsl:value-of select="/data/result/schema//container[@id eq current()/@schema-ref]/@name"
-                />
+                <xsl:value-of
+                    select="//lexus:get-lexical-entry/result/schema//container[@id eq current()/@schema-ref]/@name"/>
             </string>
+
+            <xsl:if test="resource">
+                <!-- Output this:
+                    "multimedia":                                                         {
+                    "mimetype": "text/x-eaf+xml",
+                    "value": "MPI316757#",
+                    "archive": "MPI",
+                    "type": "url",
+                    "url": "http://corpus1.mpi.nl/ds/annex/runLoader?nodeid=MPI316757%23&time=0&duration=18000&viewType=waveform"
+                    }
+                -->
+                <object key="multimedia">
+                    <string key="value">
+                        <xsl:value-of select="resource/@value"/>
+                    </string>
+                    <string key="type">
+                        <xsl:value-of select="resource/@type"/>
+                    </string>
+                    <string key="mimetype">
+                        <xsl:value-of select="resource/@mimetype"/>
+                    </string>
+                    <string key="archive">
+                        <xsl:value-of select="resource/@archive"/>
+                    </string>
+                    <string key="url">
+                        <rr:resource-id-to-url><xsl:value-of select="resource/@value"/></rr:resource-id-to-url>
+                    </string>
+                </object>
+            </xsl:if>
         </object>
     </xsl:template>
 

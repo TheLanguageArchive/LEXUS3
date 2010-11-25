@@ -13,9 +13,9 @@
         </xsl:copy>
     </xsl:template>
 
-    <xsl:template match="container">
+    <xsl:template match="lexus:lexicon//lexus:container">
         <!-- marker is container with content so copy it -->
-        <xsl:if test=".//data[@value]">
+        <xsl:if test=".//lexus:data[lexus:value]">
             <xsl:copy>
                 <xsl:apply-templates select="@*"/>
                 <xsl:apply-templates select="node()"/>

@@ -30,6 +30,11 @@
         </zip:archive>
     </xsl:template>
 
+    <!-- Skip any elements in the lexus namespace -->
+    <xsl:template match="lexus:*">
+        <xsl:apply-templates />
+    </xsl:template>
+    
     <!-- Match the top node we got from the back module,
         generate sort orders file and then process the lexus element. -->
     <xsl:template match="docAndSortorders">

@@ -72,8 +72,6 @@ public class JSONSerializer extends AbstractTextSerializer {
     protected Stack<Integer> objectStack = new Stack<Integer>();
     protected Stack<Integer> isNotFirst = new Stack<Integer>();
     StringBuffer currentText;
-    // StringBuffer debugOutput;
-
 
     /* (non-Javadoc)
      * @see org.apache.cocoon.serialization.AbstractTextSerializer#init()
@@ -189,16 +187,7 @@ public class JSONSerializer extends AbstractTextSerializer {
         public String key = null;
     };
 
-    /**
-     * Set the {@link OutputStream} where the requested resource should
-     * be serialized.
-     */
-    /*
-    @Override
-    public void setOutputStream(OutputStream out) throws IOException {
-        this.output = out;
-    }
-*/
+
     public void startElement(String uri, String localName, String raw, Attributes a)
             throws SAXException {
         // Logger.getLogger(JSONSerializer.class.getName()).log(Level.SEVERE, "startElement " + localName + ", key=" + a.getValue("key")+", stackSize="+objectStack.size());

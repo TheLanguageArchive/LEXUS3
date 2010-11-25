@@ -5,10 +5,17 @@
   <lexeme symbol="attribute">
     <concat>
       <cstring content="\"/>
-      <cclass minOccurs="1" maxOccurs="40">
+      <cclass minOccurs="1" maxOccurs="1">
         <cset content="_"/>
         <cinterval min="A" max="Z"/>
         <cinterval min="a" max="z"/>
+      </cclass>
+      <cclass minOccurs="0" maxOccurs="40">
+        <cset content="_"/>
+        <cset content="-"/>
+        <cinterval min="A" max="Z"/>
+        <cinterval min="a" max="z"/>
+        <cinterval min="0" max="9"/>
       </cclass>
     </concat>
   </lexeme>

@@ -152,10 +152,10 @@
 
     <xsl:template match="/">
         <object>
-            <xsl:apply-templates select="/data/result"/>
+            <xsl:apply-templates select="/data/lexus:search/result"/>
             <object key="status">
                 <xsl:choose>
-                    <xsl:when test="/data/result/results">
+                    <xsl:when test="/data/lexus:search/result/results">
                         <true key="success"/>
                     </xsl:when>
                     <xsl:otherwise>
@@ -241,7 +241,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </object>
-            <string key="entryView">entryLayout.htm?id=<xsl:value-of select="@id"/></string>
+            <string key="entryView">entryLayout.htm?lexicon=<xsl:value-of select="ancestor::lexus:search/result/results/lexicon/@id"/>&amp;id=<xsl:value-of select="@id"/></string>
         </object>
     </xsl:template>
 
@@ -253,12 +253,19 @@
         -->
     <xsl:template match="startLetters">
         <array key="startLetters">
-            <object>
-                <string key="values">Aa</string>
-                <string key="label">a</string>
-            </object>
+            <!--<object>
+                <string key="values"></string>
+                <string key="label"></string>
+            </object>-->
             <xsl:apply-templates/>
         </array>
+    </xsl:template>
+    
+    <xsl:template match="startLetters/startLetter">
+        <object>
+            <string key="values"><xsl:value-of select="."/></string>
+            <string key="label"><xsl:value-of select="."/></string>
+        </object>
     </xsl:template>
     <xsl:template match="@* | node()"/>
 

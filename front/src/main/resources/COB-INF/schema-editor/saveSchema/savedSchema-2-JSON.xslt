@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:h="http://apache.org/cocoon/request/2.0"
-    xmlns:rest="http://org.apache.cocoon.transformation/rest/1.0"
-    xmlns:exist="http://exist.sourceforge.net/NS/exist" version="2.0">
+    xmlns:lexus="http://www.mpi.nl/lexus" version="2.0">
 
     <!-- 
         JSON source to mimic:
@@ -16,12 +14,14 @@
     <xsl:template match="/">
         <object>
             <object key="status">
-                <string key="success">
-                    <xsl:choose>
-                        <xsl:when test="result/schema">true</xsl:when>
-                        <xsl:otherwise>false</xsl:otherwise>
-                    </xsl:choose>
-                </string>
+                <xsl:choose>
+                    <xsl:when test="data/lexus:save-schema/lexus:result[@success = 'true']">
+                        <true key="success"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <false key="success"/>
+                    </xsl:otherwise>
+                </xsl:choose>
             </object></object>
     </xsl:template>
     

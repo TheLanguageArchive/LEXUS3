@@ -58,7 +58,6 @@
       -->
       <map:match pattern="saveSortOrder.json">
         <map:generate src="cocoon:/saveSortOrder"/>
-        <map:transform type="tee" src="debug-info/front-pre.xml"/>
         <map:transform type="saxon" src="savedSortOrder2JSON.xslt"/>
         <map:serialize type="json"/>
       </map:match>
@@ -69,6 +68,7 @@
           <map:part src="cocoon://user"/>
         </map:aggregate>
         <map:transform type="saxon" src="prepareSaveSortOrder.xslt"/>
+<!--        <map:transform type="saxon" src="copySaveToSavedSortOrder.xslt"/>-->
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/workspace/saveSortOrder.xml"/>
         </map:transform>

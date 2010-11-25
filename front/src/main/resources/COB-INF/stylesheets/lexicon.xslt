@@ -62,13 +62,13 @@
                 <xsl:value-of select="$id"/>
             </string>
             <string key="name">
-                <xsl:value-of select="//result/users/user[@id eq $id]/name"/>
+                <xsl:value-of select="ancestor::result/users/user[@id eq $id]/name"/>
             </string>
             <number key="accesslevel">
-                <xsl:value-of select="//result/users/user[@id eq $id]/accesslevel"/>
+                <xsl:value-of select="ancestor::result/users/user[@id eq $id]/accesslevel"/>
             </number>
             <xsl:choose>
-                <xsl:when test="number(//result/users/user[@id=$id]/accesslevel) eq 30">
+                <xsl:when test="number(ancestor::result/users/user[@id eq $id]/accesslevel) eq 30">
                     <true key="administrator"/>
                 </xsl:when>
                 <xsl:otherwise>

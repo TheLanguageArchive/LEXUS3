@@ -6,7 +6,7 @@
     <xsl:strip-space elements="*"/>
     <xsl:output indent="yes"/>
     <xsl:template match="lexus:display">
-        <target:stylesheet version="2.0">
+        <target:stylesheet version="1.0">
 
             <target:strip-space elements="*"/>
 

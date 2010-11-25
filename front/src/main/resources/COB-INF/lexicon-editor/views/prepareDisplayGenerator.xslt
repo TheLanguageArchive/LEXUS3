@@ -9,7 +9,7 @@
         <xsl:copy>
             <xsl:apply-templates select="@* | node()"/>
             <lexus:display>
-                <xsl:apply-templates select="result/results/lexical-entries"/>
+                <xsl:apply-templates select="lexus:search/result/results/lexical-entries"/>
             </lexus:display>
         </xsl:copy>
     </xsl:template>
