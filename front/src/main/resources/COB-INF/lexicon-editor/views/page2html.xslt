@@ -54,30 +54,30 @@
     </xsl:template>
 
     <xsl:template match="div">
-        <xsl:copy>
+        <div xmlns="http://www.w3.org/1999/xhtml">
             <xsl:attribute name="style">
                 <xsl:apply-templates select="@*"/>
             </xsl:attribute>
             <xsl:apply-templates/>
-        </xsl:copy>
+        </div>
     </xsl:template>
 
     <xsl:template match="@color">
-        <xsl:text>color:</xsl:text>
-        <xsl:value-of select="."/>
+        <xsl:text>color:#</xsl:text>
+        <xsl:value-of select="substring-after(., '0x')"/>
         <xsl:text>;</xsl:text>
     </xsl:template>
 
     <xsl:template match="@fontFamily">
-        <xsl:text>font-family:</xsl:text>
+        <xsl:text>font-family:'</xsl:text>
         <xsl:value-of select="."/>
-        <xsl:text>;</xsl:text>
+        <xsl:text>';</xsl:text>
     </xsl:template>
 
     <xsl:template match="@fontSize">
         <xsl:text>font-size:</xsl:text>
         <xsl:value-of select="."/>
-        <xsl:text>;</xsl:text>
+        <xsl:text>pt;</xsl:text>
     </xsl:template>
 
     <xsl:template match="@*"/>

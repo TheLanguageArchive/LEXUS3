@@ -147,6 +147,14 @@
         </xsl:element>
     </xsl:template>
     
+    <!-- A regular container element -->
+    <xsl:template match="schema//container[@type='container']" mode="use_namespace">
+        <xsl:element name="container" namespace="{$lexusNamespace}">
+            <xsl:copy-of select="@id | @admin-info | @description | @type | @note"/>
+            <xsl:apply-templates select="*" mode="use_namespace"/>
+        </xsl:element>
+    </xsl:template>
+    
     <!-- Transform the registry/reference attributes to datcat="isocat:DC-xxxx" attribute.
     -->
     <xsl:template match="schema//container[@type='data']" mode="use_namespace"
