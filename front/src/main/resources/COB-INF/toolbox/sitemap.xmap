@@ -51,8 +51,6 @@
         <!-- Create schema -->
         <map:transform type="saxon" src="toolbox_import/create-schema.xslt"/>
 
-        <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>
-
         <!-- Create lexical entries -->
         <map:transform type="saxon" src="toolbox_import/create-lexicalEntries.xslt">
           <map:parameter name="name" value="{1}"/>
@@ -61,12 +59,16 @@
         <!-- Clean up DCs that were added as parents -->
         <map:transform type="saxon" src="toolbox_import/remove-added-dcs.xslt"/>
 
-        <!-- Components that have no data-category elements with a @value beneath them are removed -->
+        <!-- Components that have no data-category elements with a value beneath them are removed -->
         <map:transform type="saxon" src="toolbox_import/remove-empty-components.xslt"/>
-
-        <!-- Remove markers from groups in the schema that were added by create-schema.xslt. -->
+        
+        <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>
+        
+        <!-- Remove markers from groups in the schema that were added by create-schema.xslt.
+             Add ISOCat DCR references based on the MDF markers, or add dcr references to MDF markers.
+        -->
         <map:transform type="saxon" src="toolbox_import/finalize-schema.xslt"/>
-
+        
         <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>
 
         <!-- Create a zip file from the content of the pipeline (schema and lexicon) -->
