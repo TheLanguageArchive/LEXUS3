@@ -152,10 +152,10 @@
 
     <xsl:template match="/">
         <object>
-            <xsl:apply-templates select="/data/lexus:search/result"/>
+            <xsl:apply-templates select="/data/lexus:search/lexus:result/result"/>
             <object key="status">
                 <xsl:choose>
-                    <xsl:when test="/data/lexus:search/result/results">
+                    <xsl:when test="/data/lexus:search/lexus:result/result/results">
                         <true key="success"/>
                     </xsl:when>
                     <xsl:otherwise>

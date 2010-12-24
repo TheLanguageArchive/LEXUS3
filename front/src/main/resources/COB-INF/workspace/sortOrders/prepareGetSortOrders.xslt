@@ -34,10 +34,10 @@
 
     <xsl:template match="/data">
         <xsl:copy>
-            <lexus:delete-sortorder>
+            <lexus:get-sortorders>
                 <xsl:apply-templates select="json/parameters"/>
-            </lexus:delete-sortorder>
-            <xsl:copy-of select="user"/>
+            </lexus:get-sortorders>
+            <xsl:copy-of select="user|json"/>
         </xsl:copy>
     </xsl:template>
 

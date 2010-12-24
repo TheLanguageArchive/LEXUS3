@@ -25,20 +25,26 @@
         <map:redirect-to uri="convert/toolbox_demo"/>
       </map:match>
       
+      
+      <map:match pattern="convert/*/*/ConvertedToolbox.zip">
+        <map:generate src="cocoon:/convert/{1}.typ/{2}.txt/{naming:java:comp/env/LEXUS/tempDir}"/>
+        <map:serialize type="zip"/>
+      </map:match>
+      
       <map:match pattern="convert/*.zip">
-        <map:generate src="cocoon:/convert/{1}.typ/{1}.txt"/>
+        <map:generate src="cocoon:/convert/{1}.typ/{1}.txt/{naming:java:comp/env/LEXUS/ToolboxFiles}"/>
         <map:serialize type="zip"/>
       </map:match>
       
       <map:match pattern="convert/*">
-        <map:generate src="cocoon:/convert/{1}.typ/{1}.txt"/>
+        <map:generate src="cocoon:/convert/{1}.typ/{1}.txt/{naming:java:comp/env/LEXUS/ToolboxFiles}"/>
         <map:serialize type="xml"/>
       </map:match>
 
-      <map:match pattern="convert/*/*">
+      <map:match pattern="convert/*/*/**">
         <map:aggregate element="toolbox-import">
-          <map:part src="cocoon:/toolbox.typ.xml/{1}"/>
-          <map:part src="cocoon:/toolbox.data.xml/{2}"/>
+          <map:part src="cocoon:/toolbox.typ.xml/{3}/{1}"/>
+          <map:part src="cocoon:/toolbox.data.xml/{3}/{2}"/>
         </map:aggregate>
 
         <!-- Some markers are not defined (really!), remove them -->
@@ -62,14 +68,14 @@
         <!-- Components that have no data-category elements with a value beneath them are removed -->
         <map:transform type="saxon" src="toolbox_import/remove-empty-components.xslt"/>
         
-        <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>
+<!--        <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>-->
         
         <!-- Remove markers from groups in the schema that were added by create-schema.xslt.
              Add ISOCat DCR references based on the MDF markers, or add dcr references to MDF markers.
         -->
         <map:transform type="saxon" src="toolbox_import/finalize-schema.xslt"/>
         
-        <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>
+<!--        <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>-->
 
         <!-- Create a zip file from the content of the pipeline (schema and lexicon) -->
         <map:transform type="saxon" src="toolbox_import/create-zipfile.xslt"/>
@@ -79,20 +85,22 @@
       <!--
         {naming:java:comp/env/toolbox_files}
       -->
-      <map:match pattern="toolbox.typ.xml/*">
-        <map:generate type="text" src="${toolbox_files}/{1}">
+      <map:match pattern="toolbox.typ.xml/**">
+        <map:generate type="text" src="{1}">
           <map:parameter name="encoding" value="UTF-8"/>
         </map:generate>
         <map:transform type="lexer" src="toolbox_typ/toolbox.lex"/>
         <map:transform type="saxon" src="toolbox_typ/post-lexer.xslt"/>
         <map:transform type="parser" src="toolbox_typ/toolbox.grm"/>
         <map:transform type="saxon" src="toolbox_typ/post-parser.xslt"/>
+<!--        <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>-->
         <map:transform type="saxon" src="toolbox_typ/create-lexicalEntry-schema.xslt"/>
+<!--        <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>  -->
         <map:serialize type="xml"/>
       </map:match>
 
-      <map:match pattern="toolbox.data.xml/*">
-        <map:generate type="text" src="${toolbox_files}/{1}">
+      <map:match pattern="toolbox.data.xml/**">
+        <map:generate type="text" src="{1}">
           <map:parameter name="encoding" value="UTF-8"/>
         </map:generate>
         <map:transform type="tee"

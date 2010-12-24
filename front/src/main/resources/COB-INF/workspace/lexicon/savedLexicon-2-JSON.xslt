@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:h="http://apache.org/cocoon/request/2.0"
-    xmlns:rest="http://org.apache.cocoon.transformation/rest/1.0"
-    xmlns:exist="http://exist.sourceforge.net/NS/exist" version="2.0">
+    xmlns:lexus="http://www.mpi.nl/lexus" version="2.0">
 
     <!-- 
         JSON source to mimic:
@@ -42,7 +40,7 @@
     -->
     
     <xsl:template match="/">
-        <object><xsl:apply-templates select="/data/result"/></object>
+        <object><xsl:apply-templates select="/data/lexus:get-saved-lexicon/lexus:result/result"/></object>
     </xsl:template>
     
     <xsl:template match="result">
@@ -50,7 +48,7 @@
     </xsl:template>
     
     <xsl:template match="lexicon">
-        <xsl:variable name="userId" select="/result/user/@id"/>
+        <xsl:variable name="userId" select="/data/user/@id"/>
         <object key="lexicon">
             <string key="id">
                 <xsl:value-of select="@id"/>
@@ -108,13 +106,13 @@
                 <xsl:value-of select="$id"/>
             </string>
             <string key="name">
-                <xsl:value-of select="/result/users/user[@id eq $id]/name"/>
+                <xsl:value-of select="/data/lexus:get-saved-lexicon/lexus:result/users/user[@id eq $id]/name"/>
             </string>
             <number key="accesslevel">
-                <xsl:value-of select="/result/users/user[@id eq $id]/accesslevel"/>
+                <xsl:value-of select="/data/lexus:get-saved-lexicon/lexus:result/users/user[@id eq $id]/accesslevel"/>
             </number>
             <xsl:choose>
-                <xsl:when test="number(/result/users/user[@id=$id]/accesslevel) eq 30">
+                <xsl:when test="number(/data/lexus:get-saved-lexicon/lexus:result/users/user[@id=$id]/accesslevel) eq 30">
                     <true key="administrator"/>
                 </xsl:when>
                 <xsl:otherwise>

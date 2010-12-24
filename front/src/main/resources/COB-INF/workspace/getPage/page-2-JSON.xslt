@@ -39,25 +39,25 @@
 -->
     <xsl:template match="/">
         <object>
-            <xsl:apply-templates select="data/lexus:get-page/result"/>
+            <xsl:apply-templates select="data/lexus:get-page/lexus:result/result"/>
         </object>
     </xsl:template>
 
-    <xsl:template match="lexus:get-page/result">
+    <xsl:template match="lexus:get-page/lexus:result/result">
         <object key="result">
             <xsl:apply-templates/>
         </object>
     </xsl:template>
 
-    <xsl:template match="lexus:get-page/result/users"/>
+    <xsl:template match="lexus:get-page/lexus:result/result/users"/>
 
-    <xsl:template match="lexus:get-page/result/lexica">
+    <xsl:template match="lexus:get-page/lexus:result/result/lexica">
         <array key="myLexica">
             <xsl:apply-templates/>
         </array>
     </xsl:template>
 
-    <xsl:template match="lexus:get-page/result/user">
+    <xsl:template match="lexus:get-page/lexus:result/result/user">
         <object key="user">
             <string key="id">
                 <xsl:value-of select="@id"/>

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:h="http://apache.org/cocoon/request/2.0"
-    xmlns:rest="http://org.apache.cocoon.transformation/rest/1.0"
-    xmlns:exist="http://exist.sourceforge.net/NS/exist" version="2.0">
+    xmlns:lexus="http://www.mpi.nl/lexus" version="2.0">
 
     <!-- 
         JSON source to mimic:
@@ -36,11 +34,11 @@
 
     <xsl:template match="/">
         <object>
-            <xsl:apply-templates/>
+            <xsl:apply-templates select="lexus:result/result"/>
         </object>
     </xsl:template>
 
-    <xsl:template match="result">
+    <xsl:template match="lexus:result/result">
         <object key="result">
             <xsl:apply-templates select="users"/>
         </object>

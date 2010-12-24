@@ -8,23 +8,20 @@
     <xsl:import href="identity.xslt"/>
     <xsl:import href="encodeXML.xslt"/>
 
-    <!-- 
-        Extract data from the eXist response.
-        Throw an exception when an exception element is found in the stream.
-    -->
-    <xsl:template match="exception">
-        <lexus:result success="false">
+
+
+    <!-- HTTP PUT a new file to the server. -->
+    <xsl:template match="rest:response[rest:status/@code = '201']" priority="1">
+        <lexus:result success="true">
             <lexus:message>
-                <xsl:copy-of select="//exception"/>
+                <xsl:value-of select="rest:body"/>
             </lexus:message>
         </lexus:result>
     </xsl:template>
-
-
     <!-- 
         Raise an error if there's a REST error.
     -->
-    <xsl:template match="rest:response[rest:status/@code != '200']" priority="1">
+    <xsl:template match="rest:response[not(starts-with(rest:status/@code, '2'))]" priority="1">
         <lexus:result success="false">
             <lexus:message>
                 <xsl:apply-templates select="." mode="encoded"/>
@@ -40,27 +37,35 @@
         <xsl:apply-templates select="rest:body/*"/>
     </xsl:template>
 
+    <!-- 
+        Extract data from the eXist response.
+        Throw an exception when an exception element is found in the stream.
+    -->
+    <xsl:template match="exception">
+        <lexus:result success="false">
+            <lexus:message>
+                <xsl:copy-of select="//exception"/>
+            </lexus:message>
+        </lexus:result>
+    </xsl:template>
+    
     <xsl:template match="exist:result">
         <lexus:result success="true"><xsl:copy-of select="*"/></lexus:result>
     </xsl:template>
 
+    <!-- 
+        Extract data from the BaseX response.
+    -->
     <xsl:template match="jax-rx:results[not(jax-rx:result)]">
         <lexus:result success="true" />
     </xsl:template>
 
     <xsl:template match="jax-rx:results">
-        <xsl:choose>
-            <xsl:when test="count(jax-rx:result) &gt; 1">
-                <lexus:result success="true">
-                    <xsl:apply-templates select="jax-rx:result"/>
-                </lexus:result>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:apply-templates select="jax-rx:result"/>
-            </xsl:otherwise>
-        </xsl:choose>
+        <lexus:result success="true">
+            <xsl:apply-templates select="jax-rx:result"/>
+        </lexus:result>
     </xsl:template>
-
+    
     <xsl:template match="jax-rx:result">
         <xsl:copy-of select="*"/>
     </xsl:template>

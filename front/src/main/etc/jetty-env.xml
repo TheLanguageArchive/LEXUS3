@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
+
+<Configure class="org.mortbay.jetty.webapp.WebAppContext">
+    
+    <!-- 
+        Upload folder.
+        -->
+    <New id="lexus_tempdir"  class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>LEXUS/tempDir</Arg>
+        <Arg type="java.lang.String">/tmp/</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    
+    <!--
+        Where toolbox files are stored.
+        -->
+    <New id="toolbox_files"  class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>LEXUS/ToolboxFiles</Arg>
+        <Arg type="java.lang.String">file:///toolbox2XML-base/toolbox_files</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+
+
+    <!--
+        Where tee files are stored (tee transformers stors content of pipeline in a file.
+        -->
+    <New id="tee-folder"  class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>tee-folder</Arg>
+        <Arg type="java.lang.String"></Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    
+</Configure>

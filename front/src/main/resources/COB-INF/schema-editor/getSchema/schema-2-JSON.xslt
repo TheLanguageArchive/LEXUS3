@@ -234,11 +234,11 @@
 -->
     <xsl:template match="/">
         <object>
-            <xsl:apply-templates select="data/lexus:get-schema/*"/>
+            <xsl:apply-templates select="data/lexus:get-schema/lexus:result/result"/>
         </object>
     </xsl:template>
 
-    <xsl:template match="result">
+    <xsl:template match="lexus:result/result">
         <object key="result">
             <xsl:apply-templates/>
         </object>

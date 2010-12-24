@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="xs" version="2.0">
+    xmlns:lexus="http://www.mpi.nl/lexus" 
+    version="2.0">
 
     <!-- 
 
@@ -14,7 +15,7 @@
                 <object key="status">
                     <string key="success">
                         <xsl:choose>
-                            <xsl:when test="result">true</xsl:when>
+                            <xsl:when test="//lexus:delete-sortorder/lexus:result[@success = 'true']">true</xsl:when>
                             <xsl:otherwise>false</xsl:otherwise>
                         </xsl:choose>
                     </string>

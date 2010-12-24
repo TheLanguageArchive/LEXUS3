@@ -45,13 +45,13 @@
 
     <xsl:template match="/">
         <object>
-            <xsl:if test="//lexus:save-sortorder/lexus:result/@success = 'true'">
-                <!--<xsl:apply-templates select="//lexus:saved-sortorder"/>-->
+            <xsl:if test="/data/lexus:save-sortorder/lexus:result[@success = 'true']">
+                <xsl:apply-templates select="//lexus:saved-sortorder"/>
             </xsl:if>
             <object key="status">
                 <string key="success">
                     <xsl:choose>
-                        <xsl:when test="//lexus:save-sortorder/lexus:result/@success = 'true'"
+                        <xsl:when test="/data/lexus:save-sortorder/lexus:result[@success = 'true']"
                             >true</xsl:when>
                         <xsl:otherwise>false</xsl:otherwise>
                     </xsl:choose>
@@ -59,7 +59,7 @@
             </object>
         </object>
     </xsl:template>
-<!--
+
     <xsl:template match="lexus:saved-sortorder">
         <object key="result">
             <object key="sortOrder">
@@ -95,5 +95,5 @@
                 <xsl:value-of select="from"/>
             </string>
         </object>
-    </xsl:template>-->
+    </xsl:template>
 </xsl:stylesheet>

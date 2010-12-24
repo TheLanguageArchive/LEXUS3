@@ -40,10 +40,10 @@
 
     <xsl:template match="/">
         <object>
-            <xsl:apply-templates select="//lexus:get-lexical-entry/result"/>
+            <xsl:apply-templates select="//lexus:get-lexical-entry/lexus:result/result"/>
             <object key="status">
                 <xsl:choose>
-                    <xsl:when test="//lexus:get-lexical-entry/result/lexical-entry">
+                    <xsl:when test="//lexus:get-lexical-entry/lexus:result/result/lexical-entry">
                         <true key="success"/>
                     </xsl:when>
                     <xsl:otherwise>
@@ -92,7 +92,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </object>
-            <string key="entryView">entryLayout.htm?lexicon=<xsl:value-of select="ancestor::lexus:get-lexical-entry/result/@lexicon"/>&amp;id=<xsl:value-of select="@id"/></string>
+            <string key="entryView">entryLayout.htm?lexicon=<xsl:value-of select="ancestor::lexus:get-lexical-entry/lexus:result/result/@lexicon"/>&amp;id=<xsl:value-of select="@id"/></string>
             <string key="schemaElementId">
                 <xsl:value-of select="@schema-ref"/>
             </string>
@@ -103,7 +103,7 @@
             </xsl:if>
             <string key="label">
                 <xsl:value-of
-                    select="//lexus:get-lexical-entry/result/schema//container[@id eq current()/@schema-ref]/@name"/>
+                    select="//lexus:get-lexical-entry/lexus:result/result/schema//container[@id eq current()/@schema-ref]/@name"/>
             </string>
         </object>
         <xsl:apply-templates select="schema"/>
@@ -129,7 +129,7 @@
             </xsl:if>
             <string key="label">
                 <xsl:value-of
-                    select="//lexus:get-lexical-entry/result/schema//container[@id eq current()/@schema-ref]/@name"/>
+                    select="//lexus:get-lexical-entry/lexus:result/result/schema//container[@id eq current()/@schema-ref]/@name"/>
             </string>
 
             <xsl:if test="resource">

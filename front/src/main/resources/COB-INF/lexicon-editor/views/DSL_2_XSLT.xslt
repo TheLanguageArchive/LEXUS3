@@ -15,7 +15,8 @@
             <target:template match="/">
                 <display:page>
                     <xsl:copy-of select="@*"/>
-                    <xsl:apply-templates/>
+                    <display:style><xsl:value-of select="style"/></display:style>
+                    <display:structure><xsl:apply-templates select="structure"/></display:structure>
                 </display:page>
             </target:template>
 
@@ -60,9 +61,7 @@
         </div>
     </xsl:template>
     <xsl:template match="text">
-        <target:text>
-            <xsl:value-of select="@value"/>
-        </target:text>
+        <xsl:copy><xsl:copy-of select="@dsl_class"/><xsl:value-of select="@value"/></xsl:copy>
     </xsl:template>
     <!-- 
         A <data/> element in the DSL matches data elements in the LE based on their @schema-ref attribute.

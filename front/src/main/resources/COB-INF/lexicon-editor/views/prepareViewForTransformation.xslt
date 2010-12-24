@@ -6,11 +6,11 @@
 
     <xsl:template match="/"><lexus:display>
         <xsl:choose>
-            <xsl:when test="/data/lexus:get-listview/view">
-                <xsl:apply-templates select="/data/lexus:get-listview/view"/>
+            <xsl:when test="/data/lexus:get-listview/lexus:result/view">
+                <xsl:apply-templates select="/data/lexus:get-listview/lexus:result/view"/>
             </xsl:when>
-            <xsl:when test="/data/lexus:get-leview/view">
-                <xsl:apply-templates select="/data/lexus:get-leview/view"/>
+            <xsl:when test="/data/lexus:get-leview/lexus:result/view">
+                <xsl:apply-templates select="/data/lexus:get-leview/lexus:result/view"/>
             </xsl:when>
             <xsl:otherwise>
                 <view><show><text value="Please create a list view in the Schema Editor">Please create a list view in the Schema Editor</text></show></view>

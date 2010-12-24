@@ -195,6 +195,7 @@
             </connector>
           </connectors>
           <webAppSourceDirectory>${project.build.directory}/rcl/webapp</webAppSourceDirectory>
+          <jettyEnvXml>${basedir}/src/main/etc/jetty-env.xml</jettyEnvXml>
           <contextPath>/</contextPath>
           <systemProperties>
             <systemProperty>

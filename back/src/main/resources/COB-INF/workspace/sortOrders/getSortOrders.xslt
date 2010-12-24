@@ -8,9 +8,8 @@
     
     <xsl:param name="users-collection"/>
 
-    <xsl:template match="/">
+    <xsl:template match="lexus:get-sortorders">
         <xsl:copy>
-<!--            <xsl:apply-templates select="@*"/>-->
             <lexus:query>
             <lexus:text>
                 <xsl:call-template name="declare-namespace"/>

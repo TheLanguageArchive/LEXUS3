@@ -14,7 +14,6 @@ import javax.activation.MimetypesFileTypeMap;
 import org.apache.avalon.framework.parameters.ParameterException;
 
 import org.apache.commons.fileupload.FileItem;
-// import org.apache.commons.io.FileNameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.avalon.framework.parameters.Parameters;
@@ -33,7 +32,7 @@ public class LexusFileUploads extends ServiceableGenerator {
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
     private long maxUploadSize = 1024 * 1024 * 10;
-    private String tmpDir = "/tmp";
+    private String uploadDir = "/tmp";
 
     /**
      * @Override setup method for generator
@@ -43,7 +42,7 @@ public class LexusFileUploads extends ServiceableGenerator {
         try {
             super.setup(resolver, objectModel, src, parameters);
             // maxUploadSize = parameters.getParameterAsLong("maxUploadSize");
-            tmpDir = parameters.getParameter("tmpdir");
+            uploadDir = parameters.getParameter("uploadDir");
         } catch (ParameterException ex) {
             Logger.getLogger(LexusFileUploads.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -76,7 +75,7 @@ public class LexusFileUploads extends ServiceableGenerator {
                 String ext = (extSeparatorLastIndex == -1)
                         ? ""
                         : value.substring(extSeparatorLastIndex + 1, value.length());
-                File tmpFile = new File(this.tmpDir + "/" + id + "." + ext);
+                File tmpFile = new File(this.uploadDir + "/" + id + "." + ext); 
 
                 File file = new File(value);
                 org.apache.commons.io.FileUtils.copyFile(file, tmpFile);

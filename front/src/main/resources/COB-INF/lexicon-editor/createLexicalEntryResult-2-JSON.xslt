@@ -36,10 +36,10 @@
 
     <xsl:template match="/">
         <object>
-            <xsl:apply-templates select="/data/result"/>
+            <xsl:apply-templates select="/data/lexus:result/result"/>
             <object key="status">
                 <xsl:choose>
-                    <xsl:when test="/data/result/schema">
+                    <xsl:when test="/data/lexus:result/result/schema">
                         <true key="success"/>
                     </xsl:when>
                     <xsl:otherwise>
@@ -95,7 +95,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </object>
-            <string key="entryView">entryLayout.htm?lexicon=<xsl:value-of select="ancestor::lexus:get-lexical-entry/result/@lexicon"/>&amp;id=<xsl:value-of select="@id"/></string>
+            <string key="entryView">entryLayout.htm?lexicon=<xsl:value-of select="ancestor::lexus:get-lexical-entry/lexus:result/result/@lexicon"/>&amp;id=<xsl:value-of select="@id"/></string>
             <xsl:if test="container|data">
                 <array key="children">
                     <xsl:apply-templates select="container|data"/>

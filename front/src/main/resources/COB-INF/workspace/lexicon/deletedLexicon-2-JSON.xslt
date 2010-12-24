@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:rest="http://org.apache.cocoon.transformation/rest/1.0" version="2.0">
+    xmlns:lexus="http://www.mpi.nl/lexus" version="2.0">
     
     <xsl:template match="/">
         <object>
@@ -8,7 +8,7 @@
                 <object key="status">
                     <string key="success">
                         <xsl:choose>
-                            <xsl:when test="/data/empty-rest-result">true</xsl:when>
+                            <xsl:when test="/data/lexus:delete-lexicon/lexus:result[@success='true']">true</xsl:when>
                             <xsl:otherwise>false</xsl:otherwise>
                         </xsl:choose>
                     </string>

@@ -3,12 +3,13 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xhtml="http://www.w3.org/1999/xhtml"
     xmlns:display="http://www.mpi.nl/lexus/display/1.0" exclude-result-prefixes="#all" version="2.0">
 
+
+
     <xsl:template match="/">
         <html xmlns="http://www.w3.org/1999/xhtml">
             <head>
                 <title>Lexical entry</title>
-                <link rel="stylesheet" href="default.css" type="text/css"/>
-                <link rel="stylesheet" href="lexical-entry.css" type="text/css"/>
+                <style type="text/css"><xsl:value-of select="/display:page/display:style"/></style>
             </head>
             <body>
                 <xsl:apply-templates select="@* | node()"/>
@@ -17,7 +18,7 @@
     </xsl:template>
 
     <xsl:template match="display:page">
-        <xsl:apply-templates/>
+        <xsl:apply-templates select="display:structure/*"/>
     </xsl:template>
 
     <xsl:template match="text">
@@ -63,8 +64,6 @@
         <xsl:copy-of select="."/>
     </xsl:template>
 
-    <xsl:template match="@*"/>
-
     <xsl:template match="div">
         &lt;font
             <xsl:apply-templates select="@*"/>&gt;
@@ -72,7 +71,13 @@
         &lt;/font&gt;
     </xsl:template>
 
-    <xsl:template match="@color">
+    <xsl:template match="@dsl_class">
+        <xsl:text>class=&apos;#</xsl:text>
+        <xsl:value-of select="."/>
+        <xsl:text>&apos; </xsl:text>
+    </xsl:template>
+    
+    <xsl:template match="@color[not(../@localStyle) or ../@localStyle eq 'true']">
         <!--<xsl:attribute name="color">
             <xsl:value-of select="."/>
         </xsl:attribute>-->
@@ -82,17 +87,16 @@
         <xsl:text>&apos; </xsl:text>
     </xsl:template>
 
-    <xsl:template match="@fontFamily">
+    <xsl:template match="@fontFamily[not(../@localStyle) or ../@localStyle eq 'true']">
         <!--<xsl:attribute name="font-family">
             <xsl:value-of select="."/>
         </xsl:attribute>-->
         <xsl:text>face=&apos;</xsl:text>
         <xsl:value-of select="."/>
         <xsl:text>&apos; </xsl:text>
-
     </xsl:template>
 
-    <xsl:template match="@fontSize">
+    <xsl:template match="@fontSize[not(../@localStyle) or ../@localStyle eq 'true']">
         <!--<xsl:attribute name="font-size">
             <xsl:value-of select="."/>
         </xsl:attribute>-->
@@ -111,4 +115,8 @@
             <xsl:apply-templates select="@* | node()"/>
         </xsl:element>
     </xsl:template>
+
+    <xsl:template match="@*"/>
+    
+    
 </xsl:stylesheet>
