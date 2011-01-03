@@ -80,9 +80,9 @@
         <!--<zip:entry name="{$id}_rng.xml" serializer="xml">
             <xsl:apply-templates select="meta" mode="relaxng"/>
         </zip:entry>-->
-        <zip:entry name="{$id}_alt.xml" serializer="xml">
+        <!--<zip:entry name="{$id}_alt.xml" serializer="xml">
             <xsl:apply-templates select="lexicon" mode="alt"/>
-        </zip:entry>
+        </zip:entry>-->
     </xsl:template>
 
     <!--

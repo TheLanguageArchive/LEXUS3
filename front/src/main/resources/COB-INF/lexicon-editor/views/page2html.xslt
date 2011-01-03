@@ -7,9 +7,9 @@
         <html xmlns="http://www.w3.org/1999/xhtml">
             <head>
                 <title>Lexical entry</title>
-                <!-- <link rel="stylesheet" href="default.css" type="text/css"/>
-                <link rel="stylesheet" href="lexical-entry.css" type="text/css"/> -->
-                <style type="text/css"><xsl:value-of select="/display:page/display:style"/></style>
+                 <!--<link rel="stylesheet" href="default.css" type="text/css"/>
+                <link rel="stylesheet" href="lexical-entry.css" type="text/css"/>--> 
+                <style type="text/css">&#32;<xsl:value-of select="/display:page/display:style"/></style>
             </head>
             <body>
                 <div>

@@ -383,13 +383,13 @@
         <map:transform type="saxon" src="${xmldb.rest.transformer}">
           <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
         </map:transform>
+        <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/back-pre.xml"/>
         <map:transform type="rest">
           <map:parameter name="username" value="${xmldb.rest.username}"/>
           <map:parameter name="password" value="${xmldb.rest.password}"/>
           <map:parameter name="preemptive-authentication" value="true"/>
         </map:transform>
         <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
-        <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/back-pre.xml"/>
         <map:transform type="saxon" src="users/returnUserLoginInfo.xslt"/>
         <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/back-post.xml"/>
         <map:serialize type="xml"/>
