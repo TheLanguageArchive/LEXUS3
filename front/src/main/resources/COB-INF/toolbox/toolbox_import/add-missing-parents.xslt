@@ -11,64 +11,77 @@
 
     <xsl:template match="lexical-entry">
         <xsl:copy>
-            <xsl:copy-of select="lexus:add_parents(marker, 1)"/>
+            <xsl:sequence select="lexus:add_parents2(marker, 1, /)"/>
         </xsl:copy>
     </xsl:template>
-
+        
     <xsl:template match="@* | node()">
         <xsl:copy>
             <xsl:apply-templates select="@* | node()"/>
         </xsl:copy>
     </xsl:template>
 
-    <xsl:function name="lexus:add_parents">
+
+    <!--
+        Process markers until the first marker with a missing parent is found. Then, add the 
+        parents and start over again.
+        -->
+    <xsl:function name="lexus:add_parents2">
         <xsl:param name="markers" as="node()*"/>
         <xsl:param name="pos" as="xs:integer"/>
-        
-        <xsl:variable name="precedingMarkers" select="$markers[position() lt $pos]/@name"/>
+        <xsl:param name="context" as="node()"/>
 
-        <xsl:for-each select="$markers[$pos]">
-            <xsl:variable name="parentNames"
-                select="distinct-values(key('containers', @name)[parent::container]/../@marker)"/>
-            <!-- parent does not exists, add the first parent -->
-            <xsl:choose>
-                <xsl:when test="count($parentNames) > 0 and not($parentNames = $precedingMarkers)">
-                    <xsl:variable name="children"
-                        select="lexus:get_siblings($markers, $pos, $parentNames[1])"/>
-                    <marker name="{$parentNames[1]}" added="true">
-                    </marker>
-                    <!-- 
-                        Do not add parent markers for sibling elements -->
-                    <xsl:sequence select="$children"/>
-                    <xsl:sequence
-                        select="lexus:add_parents($markers, $pos + count($children))"/>
-                </xsl:when>
-                <!-- Copy the node and process the others -->
-                <xsl:otherwise>
-                    <xsl:sequence select="."/>
-                    <xsl:sequence
-                        select="lexus:add_parents($markers, $pos + 1)"/>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:for-each>
+        <xsl:variable name="marker" select="subsequence($markers, $pos, 1)"/>
+        <xsl:variable name="precedingMarkers" select="subsequence($markers, 1, $pos - 1)"/>
+
+        <xsl:choose>
+            
+            <xsl:when test="$pos gt count($markers)">
+                <xsl:sequence select="$markers"/>
+            </xsl:when>
+            
+            <xsl:otherwise>
+                <xsl:variable name="parentName"
+                    select="subsequence(distinct-values(key('containers', data($marker/@name), $context)[parent::container]/../@marker), 1, 1)"/>
+                
+                <!-- If the first parent does not exist, add all missing parents -->
+                <xsl:choose>
+                    <xsl:when test="count($parentName) > 0 and not($parentName = $precedingMarkers/@name)">
+                        <xsl:variable name="parents">
+                            <xsl:sequence
+                                select="lexus:get_parents($precedingMarkers, $parentName, $context)"/>
+                        </xsl:variable>
+                        <xsl:variable name="newMarkers" select="insert-before($markers, $pos, $parents)"/>
+                        <xsl:sequence select="lexus:add_parents2($newMarkers, count($newMarkers) + 1, $context)"/>
+                    </xsl:when>
+                    <!-- Process the following markers -->
+                    <xsl:otherwise>
+                        <xsl:sequence select="lexus:add_parents2($markers, $pos + 1, $context)"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:otherwise>
+        </xsl:choose>
+        
     </xsl:function>
 
-    <xsl:function name="lexus:get_siblings">
+    <!--
+        Create a sequence of markers for the marker $name and all it's parents that are not in $markers.
+    -->
+    <xsl:function name="lexus:get_parents">
         <xsl:param name="markers" as="node()*"/>
-        <xsl:param name="pos" as="xs:integer"/>
-        <xsl:param name="parent" as="xs:string"/>
+        <xsl:param name="name" as="xs:string"/>
+        <xsl:param name="context" as="node()"/>
 
-        <xsl:for-each select="$markers[$pos]">
-            <xsl:variable name="parentNames"
-                select="distinct-values(key('containers', @name)[parent::container]/../@marker)"/>
-            <!-- parent does not exists, add element to the sibling list -->
-            <xsl:if test="count($parentNames) > 0 and $parentNames[1] eq $parent">
-                <xsl:variable name="children"
-                    select="lexus:get_siblings($markers, $pos + 1, $parent)"/>
-                <xsl:sequence select="."/>
-                <xsl:sequence select="$children"/>
-            </xsl:if>
-        </xsl:for-each>
+        <xsl:variable name="parentName"
+            select="subsequence(distinct-values(key('containers', $name, $context)[parent::container]/../@marker), 1, 1)"/>
+
+        <!-- parent exists, add element to the parents sequence -->
+        <xsl:if test="count($parentName) > 0 and not($markers/@name = $parentName)">
+            <xsl:sequence select="lexus:get_parents($markers, $parentName, $context)"/>
+        </xsl:if>
+
+        <marker name="{$name}" added="true" parentName="{$parentName}"/>
+
     </xsl:function>
 
 </xsl:stylesheet>
