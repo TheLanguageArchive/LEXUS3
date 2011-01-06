@@ -106,7 +106,7 @@
         <map:generate type="text" src="{1}">
           <map:parameter name="encoding" value="UTF-8"/>
         </map:generate>
-        <map:transform type="tee"
+        <map:transform type="${tee}"
           src="{naming:java:comp/env/tee-folder}debug-info/front-pre-toolbox.xml"/>
         <map:transform type="lexer" src="toolbox_data/toolbox.lex"/>
         <map:transform type="saxon" src="toolbox_data/post-lexer.xslt"/>

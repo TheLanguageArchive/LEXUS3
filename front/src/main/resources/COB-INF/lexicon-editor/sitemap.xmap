@@ -52,7 +52,7 @@
             <map:parameter name="fragment.element" value="page"/>
           </map:transform>
           <map:transform type="saxon" src="extractLexicalEntryHTML.xslt"/>
-          <map:transform type="tee"
+          <map:transform type="${tee}"
             src="{naming:java:comp/env/tee-folder}debug-info/front-post2.xml"/>
           <map:serialize type="html"/>
         </map:act>
@@ -73,7 +73,7 @@
           <map:transform type="servletService">
             <map:parameter name="service" value="servlet:back:/lexicon/getLexicalEntryData.xml"/>
           </map:transform>
-          <map:transform type="tee"
+          <map:transform type="${tee}"
             src="{naming:java:comp/env/tee-folder}debug-info/front-pre-mft.xml"/>
           <map:transform type="saxon" src="views/prepareDisplayGeneratorForLexicalEntry.xslt"/>
           <map:transform type="multifragment-xslt"
@@ -86,7 +86,7 @@
             <map:parameter name="fragment.element" value="page"/>
           </map:transform>
           <map:transform type="saxon" src="getLexicalEntryData-2-JSON.xslt"/>
-          <map:transform type="tee"
+          <map:transform type="${tee}"
             src="{naming:java:comp/env/tee-folder}debug-info/front-post-mft.xml"/>
           <map:serialize type="json"/>
         </map:act>
@@ -140,13 +140,13 @@
             <map:parameter name="fragment.namespace" value="http://www.mpi.nl/lexus/display/1.0"/>
             <map:parameter name="fragment.element" value="lexical-entry"/>
           </map:transform>
-          <map:transform type="tee"
+          <map:transform type="${tee}"
             src="{naming:java:comp/env/tee-folder}debug-info/front-post-mft.xml"/>
           <map:transform type="multifragment-xslt" src="views/page2flexhtml.xslt">
             <map:parameter name="fragment.namespace" value="http://www.mpi.nl/lexus/display/1.0"/>
             <map:parameter name="fragment.element" value="page"/>
           </map:transform>
-          <map:transform type="tee"
+          <map:transform type="${tee}"
             src="{naming:java:comp/env/tee-folder}debug-info/front-post2-mft.xml"/>
           <map:serialize type="xml"/>
         </map:act>
@@ -215,14 +215,14 @@
             <map:parameter name="service" value="servlet:back:/lexicon/getLexicalEntryData.xml"/>
           </map:transform>
           <map:transform type="saxon" src="views/prepareDisplayGeneratorForLexicalEntry.xslt"/>
-          <map:transform type="tee"
+          <map:transform type="${tee}"
             src="{naming:java:comp/env/tee-folder}debug-info/front-pre-mft.xml"/>
           <map:transform type="multifragment-xslt"
             src="cached:cocoon:/getDisplayStylesheet.xslt/listView/{lexicon}?cocoon:cache-expires=10">
             <map:parameter name="fragment.namespace" value="http://www.mpi.nl/lexus/display/1.0"/>
             <map:parameter name="fragment.element" value="lexical-entry"/>
           </map:transform>
-          <map:transform type="tee"
+          <map:transform type="${tee}"
             src="{naming:java:comp/env/tee-folder}debug-info/front-post-mft.xml"/>
           <map:transform type="multifragment-xslt" src="views/page2flexhtml.xslt">
             <map:parameter name="fragment.namespace" value="http://www.mpi.nl/lexus/display/1.0"/>
@@ -255,7 +255,7 @@
         <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-post-display.xml"/>
         <map:transform type="saxon" src="views/prepareViewForTransformation.xslt"/>
         <map:transform type="saxon" src="views/DSL_2_XSLT.xslt"/>
-        <map:transform type="tee"
+        <map:transform type="${tee}"
           src="{naming:java:comp/env/tee-folder}debug-info/front-post-display.xml"/>
         <map:serialize/>
       </map:match>

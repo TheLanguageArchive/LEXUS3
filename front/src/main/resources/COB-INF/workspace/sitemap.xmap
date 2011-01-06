@@ -237,16 +237,16 @@
     <map:pipeline>
       <map:match pattern="importGetLexusSchema/**">
         <map:generate src="{1}"/>
-        <map:transform type="tee"
+        <map:transform type="${tee}"
           src="{naming:java:comp/env/tee-folder}debug-info/front-import-schema-pre.xml"/>
         <map:transform type="validate" src="import/lexusSchema.rng"/>
-        <map:transform type="tee"
+        <map:transform type="${tee}"
           src="{naming:java:comp/env/tee-folder}debug-info/front-import-schema-post.xml"/>
         <map:serialize/>
       </map:match>
       <map:handle-errors when="always">
         <map:generate type="exception"/>
-        <map:transform type="tee"
+        <map:transform type="${tee}"
           src="{naming:java:comp/env/tee-folder}debug-info/front-import-schema-error.xml"/>
         <map:serialize/>
       </map:handle-errors>
@@ -254,7 +254,7 @@
     <map:pipeline>
       <map:match pattern="importGetLexusLexicon/**">
         <map:generate src="{1}"/>
-        <map:transform type="tee"
+        <map:transform type="${tee}"
           src="{naming:java:comp/env/tee-folder}debug-info/front-import-lexicon.xml"/>
         <map:transform type="validate" src="import/lexusLexicon.rng"/>
         <map:serialize/>

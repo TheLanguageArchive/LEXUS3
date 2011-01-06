@@ -45,7 +45,7 @@
         <map:parameter name="password" value="${xmldb.rest.password}"/>
       </map:transform>
       <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
-      <map:transform type="tee"
+      <map:transform type="${tee}"
         src="{naming:java:comp/env/tee-folder}debug-info/back-post.xml"/>
       <map:serialize type="xml"/>
     </map:match>
@@ -67,7 +67,7 @@
           <map:parameter name="username" value="${xmldb.rest.username}"/>
           <map:parameter name="password" value="${xmldb.rest.password}"/>
         </map:transform>
-        <map:transform type="tee"
+        <map:transform type="${tee}"
           src="{naming:java:comp/env/tee-folder}debug-info/sls-back-post.xml"/>
         <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
         <!--        <map:transform type="validate" src="startLetterSearch.xsd"/>-->
