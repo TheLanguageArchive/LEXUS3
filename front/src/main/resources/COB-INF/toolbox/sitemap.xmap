@@ -24,20 +24,22 @@
       <map:match pattern="">
         <map:redirect-to uri="convert/toolbox_demo"/>
       </map:match>
-      
-      
+
+
       <map:match pattern="convert/*/*/ConvertedToolbox.zip">
         <map:generate src="cocoon:/convert/{1}.typ/{2}.txt/{naming:java:comp/env/LEXUS/tempDir}"/>
         <map:serialize type="zip"/>
       </map:match>
-      
+
       <map:match pattern="convert/*.zip">
-        <map:generate src="cocoon:/convert/{1}.typ/{1}.txt/{naming:java:comp/env/LEXUS/ToolboxFiles}"/>
+        <map:generate
+          src="cocoon:/convert/{1}.typ/{1}.txt/{naming:java:comp/env/LEXUS/ToolboxFiles}"/>
         <map:serialize type="zip"/>
       </map:match>
-      
+
       <map:match pattern="convert/*">
-        <map:generate src="cocoon:/convert/{1}.typ/{1}.txt/{naming:java:comp/env/LEXUS/ToolboxFiles}"/>
+        <map:generate
+          src="cocoon:/convert/{1}.typ/{1}.txt/{naming:java:comp/env/LEXUS/ToolboxFiles}"/>
         <map:serialize type="xml"/>
       </map:match>
 
@@ -51,8 +53,13 @@
         <map:transform type="saxon" src="toolbox_import/remove-undefined-markers.xslt"/>
         <!-- Empty markers that are not parents sometimes prevent data-category elements from ending up in the right parent element -->
         <map:transform type="saxon" src="toolbox_import/remove-empty-markers.xslt"/>
+
+<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>-->
+
         <!-- Parents may be missing, add them (Just one 'layer' of parent element is added!) -->
         <map:transform type="saxon" src="toolbox_import/add-missing-parents.xslt"/>
+
+<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>-->
 
         <!-- Create schema -->
         <map:transform type="saxon" src="toolbox_import/create-schema.xslt"/>
@@ -67,15 +74,11 @@
 
         <!-- Components that have no data-category elements with a value beneath them are removed -->
         <map:transform type="saxon" src="toolbox_import/remove-empty-components.xslt"/>
-        
-<!--        <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>-->
-        
+
         <!-- Remove markers from groups in the schema that were added by create-schema.xslt.
              Add ISOCat DCR references based on the MDF markers, or add dcr references to MDF markers.
         -->
         <map:transform type="saxon" src="toolbox_import/finalize-schema.xslt"/>
-        
-<!--        <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>-->
 
         <!-- Create a zip file from the content of the pipeline (schema and lexicon) -->
         <map:transform type="saxon" src="toolbox_import/create-zipfile.xslt"/>
@@ -93,9 +96,9 @@
         <map:transform type="saxon" src="toolbox_typ/post-lexer.xslt"/>
         <map:transform type="parser" src="toolbox_typ/toolbox.grm"/>
         <map:transform type="saxon" src="toolbox_typ/post-parser.xslt"/>
-<!--        <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>-->
+        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>-->
         <map:transform type="saxon" src="toolbox_typ/create-lexicalEntry-schema.xslt"/>
-<!--        <map:transform type="tee" src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>  -->
+        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>  -->
         <map:serialize type="xml"/>
       </map:match>
 

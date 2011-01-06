@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns:dcr="http://www.isocat.org/ns/dcr" xmlns:lexus="http://www.mpi.nl/lexus" xmlns:mdf="http://lexus.mpi.nl/datcat/mdf/" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <start>
+    <element name="lexus:meta">
+      <attribute name="version">
+        <data type="decimal"/>
+      </attribute>
+      <element name="lexus:schema">
+        <ref name="container"/>
+      </element>
+    </element>
+  </start>
+  <define name="container">
+    <element name="lexus:container">
+      <attribute name="description"/>
+      <attribute name="id">
+        <data type="NMTOKEN"/>
+      </attribute>
+      <optional>
+        <attribute name="name"/>
+      </optional>
+      <attribute name="type">
+        <data type="NCName"/>
+      </attribute>
+      <zeroOrMore>
+        <choice>
+          <ref name="container"/>
+          <element name="lexus:datacategory">
+            <attribute name="description"/>
+            <attribute name="id">
+              <data type="NMTOKEN"/>
+            </attribute>
+            <attribute name="name"/>
+            <attribute name="type">
+              <data type="NCName"/>
+            </attribute>
+            <optional>
+              <attribute name="mdf:lng">
+                <data type="NCName"/>
+              </attribute>
+            </optional>
+            <optional>
+              <attribute name="mdf:marker">
+                <data type="NCName"/>
+              </attribute>
+            </optional>
+            <optional>
+              <attribute name="dcr:datcat">
+                <data type="anyURI"/>
+              </attribute>
+            </optional>
+            <zeroOrMore>
+              <element name="lexus:value">
+                <text/>
+              </element>
+            </zeroOrMore>
+          </element>
+        </choice>
+      </zeroOrMore>
+    </element>
+  </define>
+</grammar>

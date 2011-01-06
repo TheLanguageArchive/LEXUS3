@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns:lexus="http://www.mpi.nl/lexus" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <start>
+    <element name="lexus:lexicon">
+      <attribute name="version">
+        <data type="decimal"/>
+      </attribute>
+      <element name="lexus:lexicon-information">
+        <element name="lexus:name">
+          <data type="NCName"/>
+        </element>
+        <element name="lexus:description">
+          <empty/>
+        </element>
+        <element name="lexus:note">
+          <empty/>
+        </element>
+      </element>
+      <oneOrMore>
+        <element name="lexus:lexical-entry">
+          <attribute name="schema-ref">
+            <data type="anyURI"/>
+          </attribute>
+          <oneOrMore>
+            <ref name="container"/>
+          </oneOrMore>
+        </element>
+      </oneOrMore>
+    </element>
+  </start>
+  <define name="container">
+    <element name="lexus:container">
+      <attribute name="name"/>
+      <attribute name="schema-ref">
+        <data type="NMTOKEN"/>
+      </attribute>
+      <optional>
+        <attribute name="type">
+          <data type="NCName"/>
+        </attribute>
+      </optional>
+      <zeroOrMore>
+        <choice>
+          <ref name="container"/>
+          <element name="lexus:data">
+            <attribute name="name"/>
+            <attribute name="schema-ref">
+              <data type="NMTOKEN"/>
+            </attribute>
+            <element name="lexus:value">
+              <text/>
+            </element>
+          </element>
+        </choice>
+      </zeroOrMore>
+    </element>
+  </define>
+</grammar>
