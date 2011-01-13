@@ -18,51 +18,35 @@
     </xsl:template>
 
     <xsl:template match="lexiconSchema">
+        <xsl:variable name="lexiconId" select="concat('uuid:',util:toString(util:randomUUID()))"/>
         <xsl:variable name="lexicalEntryId"
             select="concat('uuid:',util:toString(util:randomUUID()))"/>
         <lexus:meta version="1.0">
             <lexus:schema>
-                <lexus:container description="Represents a word, a multi-word expression, or an affix in a given language"
-                    type="lexical-entry" id="{$lexicalEntryId}">
-                    <xsl:apply-templates/>
+                <lexus:container id="{$lexiconId}" description="Represents the entire lexicon"
+                    type="lexicon" name="Lexicon" mandatory="true" multiple="false" note=""
+                    admin-info="">
+                    <lexus:container
+                        description="Represents a word, a multi-word expression, or an affix in a given language"
+                        type="lexical-entry" id="{$lexicalEntryId}">
+                        <xsl:apply-templates/>
+                    </lexus:container>
                 </lexus:container>
             </lexus:schema>
         </lexus:meta>
     </xsl:template>
 
-    <!-- 
-        <container id="uuid:2c9090a212d67e360112f6a68fff05bb"
-            description="Represents a word, a multi-word expression, or an affix in a given language"
-            type="lexical-entry" note="" admin-info="">
-                <container xmlns="" id="uuid:2c9090a212d67e360112f6a6900005bf"
-                    description="Contains attributes that describe meanings of a lexical entry"
-                    name="sense" type="component" xtype="type" mandatory="false" multiple="true" note=""
-                    admin-info="">
-                    <datacategory xmlns="http://www.mpi.nl/lexus"
-                        id="uuid:2c9090a212d67e360112f6a6900506f7" description="Echt alleen maar a?"
-                        name="a" type="data" xtype="type" mandatory="false" multiple="true" note=""
-                        admin-info=""/>
-    -->
-
     <xsl:template match="lexiconSchema//container[container]" priority="1">
-        <xsl:variable name="containerId"
-            select="concat('uuid:',util:toString(util:randomUUID()))"/>
+        <xsl:variable name="containerId" select="concat('uuid:',util:toString(util:randomUUID()))"/>
         <xsl:variable name="dataId" select="concat('uuid:',util:toString(util:randomUUID()))"/>
-        <lexus:container description="Group added for marker '{@marker}'" name="{concat(@nam, 'Group')}" type="container"
-            id="{$containerId}" mdf:marker="{@marker}">
+        <lexus:container description="Group added for marker '{@marker}'"
+            name="{concat(@nam, 'Group')}" type="container" id="{$containerId}"
+            mdf:marker="{@marker}">
             <lexus:container description="{@desc}" name="{@nam}" type="data" id="{$dataId}"
-                mdf:marker="{@marker}" mdf:lng="{@lng}"/>            
+                mdf:marker="{@marker}" mdf:lng="{@lng}"/>
             <xsl:apply-templates/>
         </lexus:container>
     </xsl:template>
-
-    <!--<xsl:template match="lexiconSchema//container[container]">
-        <xsl:variable name="containerId" select="concat('uuid:',util:toString(util:randomUUID()))"/>
-        <lexus:container description="{@desc}" name="{@nam}" type="container" id="{$containerId}"
-            mdf:marker="{@marker}" mdf:lng="{@lng}">
-            <xsl:apply-templates/>
-        </lexus:container>
-    </xsl:template>-->
 
     <xsl:template match="lexiconSchema//container[not(container)]">
         <xsl:variable name="containerId" select="concat('uuid:',util:toString(util:randomUUID()))"/>

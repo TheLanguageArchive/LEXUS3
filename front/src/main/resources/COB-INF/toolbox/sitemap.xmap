@@ -53,22 +53,22 @@
         <map:transform type="saxon" src="toolbox_import/remove-undefined-markers.xslt"/>
         <!-- Empty markers that are not parents sometimes prevent data-category elements from ending up in the right parent element -->
         <map:transform type="saxon" src="toolbox_import/remove-empty-markers.xslt"/>
-
-<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>-->
+        
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>
 
         <!-- Parents may be missing, add them (Just one 'layer' of parent element is added!) -->
         <map:transform type="saxon" src="toolbox_import/add-missing-parents.xslt"/>
-
-<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>-->
+        
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>
 
         <!-- Create schema -->
         <map:transform type="saxon" src="toolbox_import/create-schema.xslt"/>
-
+        
         <!-- Create lexical entries -->
-        <map:transform type="saxon" src="toolbox_import/create-lexicalEntries.xslt">
+        <map:transform type="saxon" src="toolbox_import/create-lexicon.xslt">
           <map:parameter name="name" value="{1}"/>
         </map:transform>
-
+        
         <!-- Clean up DCs that were added as parents -->
         <map:transform type="saxon" src="toolbox_import/remove-added-dcs.xslt"/>
 
@@ -79,9 +79,14 @@
              Add ISOCat DCR references based on the MDF markers, or add dcr references to MDF markers.
         -->
         <map:transform type="saxon" src="toolbox_import/finalize-schema.xslt"/>
-
+        
+        <!-- Generate a RelaxNG schema based on our typ-generated-schema.xml.
+        -->
+        <map:transform type="saxon" src="toolbox_import/createRelaxNGForLexicon.xslt"/>
+        
         <!-- Create a zip file from the content of the pipeline (schema and lexicon) -->
         <map:transform type="saxon" src="toolbox_import/create-zipfile.xslt"/>
+        
         <map:serialize type="xml"/>
       </map:match>
 

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar ns="http://www.mpi.nl/lexus" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <start>
+    <element name="lexus">
+      <attribute name="id">
+        <data type="anyURI"/>
+      </attribute>
+      <element name="meta">
+        <attribute name="id">
+          <data type="anyURI"/>
+        </attribute>
+        <attribute name="version">
+          <data type="decimal"/>
+        </attribute>
+        <element name="schema">
+          <ref name="container"/>
+        </element>
+        <element name="owner">
+          <attribute name="ref">
+            <data type="anyURI"/>
+          </attribute>
+        </element>
+        <element name="users">
+          <element name="user">
+            <attribute name="ref">
+              <data type="anyURI"/>
+            </attribute>
+            <element name="permissions">
+              <element name="read">
+                <data type="boolean"/>
+              </element>
+              <element name="write">
+                <data type="boolean"/>
+              </element>
+            </element>
+          </element>
+        </element>
+        <element name="name">
+          <text/>
+        </element>
+        <element name="description">
+          <text/>
+        </element>
+        <element name="note">
+          <text/>
+        </element>
+      </element>
+      <element name="lexicon">
+        <attribute name="id">
+          <data type="anyURI"/>
+        </attribute>
+        <attribute name="version">
+          <data type="decimal"/>
+        </attribute>
+        <oneOrMore>
+          <element name="lexical-entry">
+            <attribute name="id">
+              <data type="anyURI"/>
+            </attribute>
+            <attribute name="schema-ref">
+              <data type="anyURI"/>
+            </attribute>
+            <oneOrMore>
+              <ref name="container"/>
+            </oneOrMore>
+          </element>
+        </oneOrMore>
+      </element>
+    </element>
+  </start>
+  <define name="container">
+    <element name="container">
+      <optional>
+        <attribute name="admin-info"/>
+      </optional>
+      <optional>
+        <attribute name="description"/>
+      </optional>
+      <attribute name="id">
+        <data type="anyURI"/>
+      </attribute>
+      <optional>
+        <attribute name="mandatory">
+          <data type="boolean"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="multiple">
+          <data type="boolean"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="name"/>
+      </optional>
+      <optional>
+        <attribute name="note"/>
+      </optional>
+      <optional>
+        <attribute name="schema-ref">
+          <data type="anyURI"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="type">
+          <data type="NCName"/>
+        </attribute>
+      </optional>
+      <zeroOrMore>
+        <choice>
+          <ref name="container"/>
+          <element name="data">
+            <attribute name="id">
+              <data type="anyURI"/>
+            </attribute>
+            <attribute name="name"/>
+            <attribute name="schema-ref">
+              <data type="anyURI"/>
+            </attribute>
+            <element name="value">
+              <attribute name="id">
+                <data type="anyURI"/>
+              </attribute>
+              <text/>
+            </element>
+            <optional>
+              <element name="resource">
+                <attribute name="archive">
+                  <data type="NCName"/>
+                </attribute>
+                <attribute name="id">
+                  <data type="anyURI"/>
+                </attribute>
+                <attribute name="mimetype"/>
+                <attribute name="type">
+                  <data type="NCName"/>
+                </attribute>
+                <attribute name="value"/>
+              </element>
+            </optional>
+          </element>
+          <element name="datacategory">
+            <attribute name="admin-info"/>
+            <attribute name="description"/>
+            <attribute name="id">
+              <data type="anyURI"/>
+            </attribute>
+            <attribute name="mandatory">
+              <data type="boolean"/>
+            </attribute>
+            <attribute name="multiple">
+              <data type="boolean"/>
+            </attribute>
+            <attribute name="name"/>
+            <attribute name="note"/>
+            <attribute name="type">
+              <data type="NCName"/>
+            </attribute>
+          </element>
+        </choice>
+      </zeroOrMore>
+    </element>
+  </define>
+</grammar>

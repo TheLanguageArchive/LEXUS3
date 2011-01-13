@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Create a zip file containing the typ-generated-schema and the lexicon.
+    Create a zip file containing the typ-generated-schema, the lexicon and a RelaxNG schema for the lexicon.
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mpi="http://www.mpi.nl/lexus"
-    xmlns:parser="http://chaperon.sourceforge.net/schema/syntaxtree/2.0"
+    xmlns:rng="http://relaxng.org/ns/structure/1.0"
     xmlns:lexus="http://www.mpi.nl/lexus" xmlns:zip="http://apache.org/cocoon/zip-archive/1.0"
     exclude-result-prefixes="#all" version="2.0">
 
@@ -14,7 +13,11 @@
                 <xsl:copy-of select="lexus:meta"/>
             </zip:entry>
             <zip:entry name="lexicon.xml" serializer="xml">
+                <xsl:copy-of select="processing-instruction()"/>
                 <xsl:copy-of select="lexus:lexicon"/>
+            </zip:entry>
+            <zip:entry name="lexicon.rng" serializer="xml">
+                <xsl:copy-of select="rng:grammar"/>
             </zip:entry>
         </zip:archive>
     </xsl:template>

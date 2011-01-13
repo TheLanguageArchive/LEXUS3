@@ -73,7 +73,7 @@
         </xsl:variable>
         <schema>
             <container id="{id}" description="{description}" name="{name}" type="{$type}"
-                xtype="type" mandatory="{if (number(min) gt 0) then 'true' else 'false'}"
+                mandatory="{if (number(min) gt 0) then 'true' else 'false'}"
                 multiple="{if (number(max) eq 1) then 'false' else 'true'}" note="{note}"
                 admin-info="{adminInfo}">
                 <xsl:apply-templates select="sortOrder"/>
@@ -101,7 +101,7 @@
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
-        <container id="{$id}" description="{description}" name="{name}" type="{$type}" xtype="type"
+        <container id="{$id}" description="{description}" name="{name}" type="{$type}" 
             mandatory="{if (number(min) gt 0) then 'true' else 'false'}"
             multiple="{if (number(max) eq 1) then 'false' else 'true'}" note="{note}"
             admin-info="{adminInfo}">

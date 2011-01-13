@@ -3,8 +3,8 @@
     xmlns:lexus="http://www.mpi.nl/lexus" version="2.0">
 
     <xsl:include href="../../util/identity.xslt"/>
-    
-<!-- 
+
+    <!-- 
         JSON source to mimic:
         {
         "id": "Tue Feb 16 16:13:09 CET 2010",
@@ -28,25 +28,44 @@
         },
 -->
     <xsl:template match="/">
-        <object><xsl:apply-templates /></object>
+        <object>
+            <xsl:apply-templates/>
+        </object>
     </xsl:template>
+    
+    <xsl:template match="lexus:*">
+        <xsl:apply-templates />
+    </xsl:template>
+    
     <xsl:template match="lexus:result/result">
         <object key="result">
             <xsl:apply-templates select="users"/>
         </object>
     </xsl:template>
-    
-<xsl:template match="users">
-    <array key="users"><xsl:apply-templates /></array>
-</xsl:template>
-    
+
+    <xsl:template match="users">
+        <array key="users">
+            <xsl:apply-templates/>
+        </array>
+    </xsl:template>
+
     <xsl:template match="user">
         <object>
-            <string key="id"><xsl:value-of select="@id"/></string>
-            <string key="name"><xsl:value-of select="name"/></string>
-            <number key="accesslevel"><xsl:value-of select="accesslevel"/></number>
-            <string key="administrator"><xsl:value-of select="administrator"/></string>
-            <string key="account"><xsl:value-of select="account"/></string>
+            <string key="id">
+                <xsl:value-of select="@id"/>
+            </string>
+            <string key="name">
+                <xsl:value-of select="name"/>
+            </string>
+            <number key="accesslevel">
+                <xsl:value-of select="accesslevel"/>
+            </number>
+            <string key="administrator">
+                <xsl:value-of select="administrator"/>
+            </string>
+            <string key="account">
+                <xsl:value-of select="account"/>
+            </string>
         </object>
     </xsl:template>
 

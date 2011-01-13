@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<grammar xmlns:lexus="http://www.mpi.nl/lexus" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+<grammar ns="http://www.mpi.nl/lexus" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <start>
-    <element name="lexus:lexicon">
+    <element name="lexicon">
+      <attribute name="id">
+        <data type="anyURI"/>
+      </attribute>
       <attribute name="version">
         <data type="decimal"/>
       </attribute>
-      <element name="lexus:lexicon-information">
-        <element name="lexus:name">
-          <data type="NCName"/>
+      <element name="lexicon-information">
+        <element name="name">
+          <text/>
         </element>
-        <element name="lexus:description">
-          <empty/>
+        <element name="description">
+          <text/>
         </element>
-        <element name="lexus:note">
-          <empty/>
+        <element name="note">
+          <text/>
         </element>
       </element>
       <oneOrMore>
-        <element name="lexus:lexical-entry">
+        <element name="lexical-entry">
+          <attribute name="id">
+            <data type="anyURI"/>
+          </attribute>
           <attribute name="schema-ref">
             <data type="anyURI"/>
           </attribute>
@@ -29,27 +35,40 @@
     </element>
   </start>
   <define name="container">
-    <element name="lexus:container">
+    <element name="container">
+      <attribute name="id">
+        <data type="anyURI"/>
+      </attribute>
       <attribute name="name"/>
       <attribute name="schema-ref">
-        <data type="NMTOKEN"/>
+        <data type="anyURI"/>
       </attribute>
-      <optional>
-        <attribute name="type">
-          <data type="NCName"/>
-        </attribute>
-      </optional>
       <zeroOrMore>
         <choice>
           <ref name="container"/>
-          <element name="lexus:data">
+          <element name="data">
+            <attribute name="id">
+              <data type="anyURI"/>
+            </attribute>
             <attribute name="name"/>
             <attribute name="schema-ref">
-              <data type="NMTOKEN"/>
+              <data type="anyURI"/>
             </attribute>
-            <element name="lexus:value">
+            <element name="value">
               <text/>
             </element>
+            <optional>
+              <element name="resource">
+                <attribute name="archive">
+                  <data type="NCName"/>
+                </attribute>
+                <attribute name="mimetype"/>
+                <attribute name="type">
+                  <data type="NCName"/>
+                </attribute>
+                <attribute name="value"/>
+              </element>
+            </optional>
           </element>
         </choice>
       </zeroOrMore>

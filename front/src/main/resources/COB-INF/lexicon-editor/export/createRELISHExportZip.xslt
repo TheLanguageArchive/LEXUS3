@@ -124,19 +124,11 @@
             xmlns:isocat="http://www.isocat.org/datcat/">
             <xsl:attribute name="version" select="'1.0'"/>
             <xsl:attribute name="id" select="ancestor::lexus/@id"/>
-            <xsl:apply-templates mode="use_namespace">
-                <xsl:with-param name="ns" select="$lexusNamespace"/>
-            </xsl:apply-templates>
+            <xsl:apply-templates mode="use_namespace"/>
             <xsl:apply-templates select="ancestor::docAndSortorders/sortorders"/>
         </xsl:element>
     </xsl:template>
 
-    <!-- Skip the lexicon container, it's pretty useless.
-    -->
-    <xsl:template match="schema//container[@type='lexicon']" mode="use_namespace">
-        <xsl:apply-templates mode="use_namespace"/>
-    </xsl:template>
-    
     
     <!-- Modify the lexical-entry container, it's got too much information.
     -->
