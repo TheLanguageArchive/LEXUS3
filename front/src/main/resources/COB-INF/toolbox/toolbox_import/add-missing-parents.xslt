@@ -33,7 +33,7 @@
 
         <xsl:variable name="marker" select="subsequence($markers, $pos, 1)"/>
         <xsl:variable name="precedingAncestors"
-            select="lexus:preceding-ancestors($markers, $pos - 1, data(subsequence($markers, $pos, 1)/@name), $context)"/>
+            select="lexus:preceding-ancestors($markers, $pos - 1, $marker/@name, $context)"/>
 
         <xsl:choose>
 
@@ -60,7 +60,9 @@
                     </xsl:when>
                     <xsl:otherwise>
                         <!-- Process the following markers -->
-                        <xsl:sequence select="lexus:add_parents2($markers, $pos + 1, $context)"/>
+                        <xsl:sequence
+                            select="lexus:add_parents2($markers, $pos + 1, $context)"
+                        />
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:otherwise>
@@ -123,7 +125,7 @@
                 <xsl:variable name="pred" select="data(subsequence($markers, $pos, 1)/@name)"/>
 
                 <xsl:choose>
-                    <!-- When the name of the previous marker is in the list of ancestors add it to the list
+                    <!-- When the previous marker is an ancestors add it to the list
                         of available ancestors and continue with the previous marker. -->
                     <xsl:when
                         test="$pred = distinct-values(key('containers', $name, $context)/ancestor::container/@marker)">
@@ -131,12 +133,29 @@
                             select="(lexus:preceding-ancestors($markers, $pos - 1, $pred, $context), $pred)"
                         />
                     </xsl:when>
-                    <!-- Previous marker is not in the list of the ancestors, so continue searching for
-                        an ancestor of this marker to add to the list. -->
+                    <!-- Previous marker is not in the list of the ancestors.
+                        Now there are two situations:
+                            - $pred is higher in the tree than $name. That means means we've jumped to a higher level in the tree and continue searching for
+                        an ancestor of this marker ***above the treelevel of $pred*** to add to the list.
+                            - $pred is not higher in the tree than $name. We carry on with $name.
+                        -->
                     <xsl:otherwise>
-                        <xsl:sequence
-                            select="lexus:preceding-ancestors($markers, $pos - 1, $name, $context)"
-                        />
+                        <xsl:variable name="predAncestors" select="key('containers', $pred, $context)/ancestor::container/@marker"/>
+                        <xsl:variable name="nameAncestors" select="key('containers', $name, $context)/ancestor::container/@marker"/>
+                        <xsl:variable name="predTreeLevel" select="count($predAncestors)"/>
+                        <xsl:variable name="nameTreeLevel" select="count($nameAncestors)"/>
+                        <xsl:choose>
+                            <xsl:when test="$predTreeLevel lt $nameTreeLevel">
+                                <xsl:sequence
+                                    select="lexus:preceding-ancestors($markers, $pos - 1, subsequence($nameAncestors, $predTreeLevel + 1, 1), $context)"
+                                />
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:sequence
+                                    select="lexus:preceding-ancestors($markers, $pos - 1, $name, $context)"
+                                />
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:otherwise>
