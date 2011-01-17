@@ -177,7 +177,7 @@
             <number key="total">
                 <xsl:value-of select="count"/>
             </number>
-            <xsl:apply-templates select="startLetter, lexical-entries, startPage"/>
+            <xsl:apply-templates select="startLetter, lexical-entries, startPage, searchTerm"/>
             <xsl:apply-templates select="lexicon">
                 <xsl:with-param name="key" select="'lexicon'"/>
             </xsl:apply-templates>
@@ -187,6 +187,12 @@
 
     <xsl:template match="startLetter">
         <string key="startLetter">
+            <xsl:value-of select="."/>
+        </string>
+    </xsl:template>    
+    
+    <xsl:template match="searchTerm">
+        <string key="searchTerm">
             <xsl:value-of select="."/>
         </string>
     </xsl:template>

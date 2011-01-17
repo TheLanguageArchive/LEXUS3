@@ -125,6 +125,7 @@
                    let $lexiconId := $search/lexicon
                    let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
                    let $startLetter := data($search/refiner/startLetter)
+                   let $searchTerm := data($search/refiner/searchTerm)
                    let $pageSize := number($search/refiner/pageSize)
                    let $startPage := number($search//refiner/startPage)
                    let $lexi := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[meta/users/user/@ref = $user-id]
@@ -137,6 +138,9 @@
                    let $lexicalEntries := if ($startLetter ne '') 
                         then for $sodc in $sortOrderDCs return if (substring($sodc/value, 1, 1) eq $startLetter) then $sodc/ancestor::lexical-entry else ()
                         else for $l in $lexus/lexicon/lexical-entry let $d := $l//data[@sort-key] order by $d[1]/@sort-key return $l
+                   let $searchedLexicalEntries := if ($searchTerm eq '')
+                        then $lexicalEntries
+                        else for $l in $lexicalEntries return if ($l//value[text() contains text {concat('.*', $searchTerm, '.*')} using wildcards]) then $l else ()
                    let $schema := $lexus/meta/schema
                    let $users := lexus:users(collection('<xsl:value-of select="$users-collection"/>')/user[@id = distinct-values($lexus/meta/users/user/@ref)])
                    
@@ -144,9 +148,10 @@
                        element results {
                            element startLetter { $startLetter },
                            lexus:lexicon($lexus),
-                           element lexical-entries { subsequence($lexicalEntries,($startPage * $pageSize), $pageSize) },
+                           element lexical-entries { subsequence($searchedLexicalEntries,($startPage * $pageSize), $pageSize) },
                            element startPage { $startPage },
-                           element count { count($lexicalEntries) },
+                           element searchTerm { $searchTerm },
+                           element count { count($searchedLexicalEntries) },
                            element pageSize {$pageSize}
                        },                                        
                        lexus:lexica3($lexi),

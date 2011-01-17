@@ -2,9 +2,9 @@
 <grammar ns="http://www.mpi.nl/lexus" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <start>
     <element name="lexicon">
-      <attribute name="id">
+      <optional><attribute name="id">
         <data type="anyURI"/>
-      </attribute>
+      </attribute></optional>
       <attribute name="version">
         <data type="decimal"/>
       </attribute>
@@ -21,9 +21,9 @@
       </element>
       <oneOrMore>
         <element name="lexical-entry">
-          <attribute name="id">
+          <optional><attribute name="id">
             <data type="anyURI"/>
-          </attribute>
+          </attribute></optional>
           <attribute name="schema-ref">
             <data type="anyURI"/>
           </attribute>
@@ -36,9 +36,9 @@
   </start>
   <define name="container">
     <element name="container">
-      <attribute name="id">
+      <optional><attribute name="id">
         <data type="anyURI"/>
-      </attribute>
+      </attribute></optional>
       <attribute name="name"/>
       <attribute name="schema-ref">
         <data type="anyURI"/>
@@ -47,9 +47,9 @@
         <choice>
           <ref name="container"/>
           <element name="data">
-            <attribute name="id">
+            <optional><attribute name="id">
               <data type="anyURI"/>
-            </attribute>
+            </attribute></optional>
             <attribute name="name"/>
             <attribute name="schema-ref">
               <data type="anyURI"/>
