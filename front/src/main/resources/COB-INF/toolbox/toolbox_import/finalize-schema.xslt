@@ -29,7 +29,7 @@
                 </xsl:when>
                 <!-- If that doesn't work, create a reference to our own lexus MDF DCR. -->
                 <xsl:otherwise>
-                    <xsl:text>http://lexus.mpi.nl/datcat/mdf/</xsl:text>
+                    <xsl:text>lexus-user:</xsl:text>
                     <xsl:value-of select="."/>
                 </xsl:otherwise>
             </xsl:choose>

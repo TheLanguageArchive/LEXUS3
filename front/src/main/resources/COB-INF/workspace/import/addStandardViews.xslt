@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl" xmlns:lexus="http://www.mpi.nl/lexus"
+    xmlns:dcr="http://www.isocat.org/ns/dcr"
     xmlns:mdf="http://lexus.mpi.nl/datcat/mdf/" xmlns:ex="http://apache.org/cocoon/exception/1.0"
     xmlns:util="java:java.util.UUID" exclude-result-prefixes="#all" version="2.0">
     <xd:doc scope="stylesheet">
@@ -30,11 +31,18 @@
             <xsl:variable name="lexemeId">
                 <xsl:choose>
                     <xsl:when
+                        test=".//lexus:container[@type eq 'data'][@dcr:datcat eq 'http://www.isocat.org/datcat/DC-3723']">
+                        <xsl:value-of
+                            select=".//lexus:container[@type eq 'data'][@mdf:marker eq 'lx'][1]/@id"
+                        />
+                    </xsl:when>
+                    <xsl:when
                         test=".//lexus:container[@type eq 'data'][@mdf:marker eq 'lx']">
                         <xsl:value-of
                             select=".//lexus:container[@type eq 'data'][@mdf:marker eq 'lx'][1]/@id"
                         />
                     </xsl:when>
+                    
                     <xsl:when
                         test=".//lexus:container[@type eq 'data'][lower-case(@name) eq 'lexeme']">
                         <xsl:value-of

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:zip="http://apache.org/cocoon/zip-archive/1.0" xmlns:lexus="http://www.mpi.nl/lexus"
+    xmlns:zip="http://apache.org/cocoon/zip-archive/1.0"
+    xmlns:lexus="http://www.mpi.nl/lexus"
+    xmlns:mdf="http://lexus.mpi.nl/datcat/mdf/" 
     exclude-result-prefixes="#all" version="2.0">
 
     <xsl:include href="createRelaxNGForLexicon.xslt"/>
@@ -129,10 +131,17 @@
         </xsl:element>
     </xsl:template>
 
+    <!-- The schema element -->
+    <xsl:template match="schema" mode="use_namespace">
+        <xsl:element name="schema" namespace="{$lexusNamespace}">
+            <xsl:apply-templates select="@*|node()" mode="use_namespace"/>
+        </xsl:element>
+    </xsl:template>
+    
     
     <!-- Modify the lexical-entry container, it's got too much information.
     -->
-    <xsl:template match="schema//container[@type='lexical-entry']" mode="use_namespace">
+    <xsl:template match="schema//container[@type='lexical-entry'] | schema//container[@type='lexicon']" mode="use_namespace">
         <xsl:element name="container" namespace="{$lexusNamespace}">
             <xsl:copy-of select="@id | @admin-info | @description | @type | @note"/>
             <xsl:apply-templates select="*" mode="use_namespace"/>
@@ -140,7 +149,7 @@
     </xsl:template>
     
     <!-- A regular container element -->
-    <xsl:template match="schema//container[@type='container']" mode="use_namespace">
+    <xsl:template match="schema//container[@type='container'] | schema//container[not(@type)]" mode="use_namespace">
         <xsl:element name="container" namespace="{$lexusNamespace}">
             <xsl:copy-of select="@id | @admin-info | @description | @type | @note"/>
             <xsl:apply-templates select="*" mode="use_namespace"/>
@@ -153,23 +162,30 @@
         xmlns:dcr="http://www.isocat.org/ns/dcr">
         <xsl:element name="datacategory" namespace="{$lexusNamespace}"
             xmlns:isocat="http://www.isocat.org/datcat/">
-            <xsl:copy-of select="@*[local-name() ne 'reference' and local-name() ne 'registry']"/>
+            <xsl:apply-templates select="@*" mode="use_namespace"/>
             <xsl:choose>
                 <xsl:when test="@registry eq 'ISO-12620' and @reference ne ''">
                     <xsl:attribute name="dcr:datcat" select="@reference"/>
-                </xsl:when>
+                </xsl:when><!--
                 <xsl:when test="@registry eq 'MDF' and @reference ne ''">
                     <xsl:attribute name="dcr:datcat"
-                        select="concat('http://lexus.mpi.nl/datcat/mdf/', @reference)"/>
-                </xsl:when>
-                <xsl:otherwise>
+                        select="concat('lexus-user:', @reference)"/>
+                </xsl:when>-->
+                <xsl:otherwise><!--
                     <xsl:copy-of
-                        select="@*[local-name() eq 'reference' and local-name() eq 'registry']"/>
+                        select="@*[local-name() eq 'reference' and local-name() eq 'registry']"/>-->
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:element>
     </xsl:template>
-
+    
+    <xsl:template match="@reference | @registry | @mdf:*" mode="use_namespace" priority="3"/>
+    
+    <xsl:template match="@*" mode="use_namespace" priority="2">
+        <xsl:copy/>
+    </xsl:template>
+    
+    
     <xsl:template match="meta/owner|meta/users|meta/views|meta/name|meta/description|meta/note"
         mode="use_namespace"/>
 

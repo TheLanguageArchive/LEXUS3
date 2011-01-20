@@ -235,6 +235,7 @@
         </map:transform>
         <map:transform type="${tee}"
           src="{naming:java:comp/env/tee-folder}debug-info/front-post3.xml"/>
+        <map:transform type="saxon" src="import/reportOnImport.xslt"/>
         <map:serialize type="xml"/>
       </map:match>
     </map:pipeline>

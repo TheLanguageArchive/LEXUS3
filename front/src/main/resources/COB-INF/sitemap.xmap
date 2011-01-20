@@ -265,7 +265,7 @@
       </map:match>
 
       <map:match pattern="aboutLexus.xml">
-        <map:read src="flexus/aboutLexus.xml"/>
+        <map:read src="resource/internal/aboutLexus.xml"/>
       </map:match>
 
       <map:match pattern="*.html">
