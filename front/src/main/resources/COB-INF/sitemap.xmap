@@ -47,24 +47,6 @@
     </map:pipeline>
 
 
-    <map:pipeline>
-
-      <!-- 
-        No idea why this is necessary, i.e. what it is used for,
-        but it is a request from the client side so a response needs to be served.
-        It seems to be a static file.
-      -->
-      <map:match pattern="QueryBuilder/getConditions.json">
-        <map:act type="cauth-is-logged-in">
-          <map:parameter name="application" value="Lexus"/>
-          <map:read src="resource/external/getConditions.js"/>
-        </map:act>
-        <map:redirect-to uri="index.html"/>
-      </map:match>
-
-    </map:pipeline>
-
-
 
     <!-- 
         Authentication pipeline, uses Cocoon cauth
@@ -121,9 +103,11 @@
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/workspace/userLogin.xml"/>
         </map:transform>
-        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/authentication-pre.xml"/>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/authentication-pre.xml"/>
         <map:transform src="util/createAuthenticationDocument.xslt"/>
-        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/authentication-post.xml"/>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/authentication-post.xml"/>
         <map:serialize type="xml"/>
       </map:match>
 
@@ -225,8 +209,21 @@
 
     </map:pipeline>
 
-
-
+    <!-- Serve users' resources. -->
+    <map:pipeline>
+      <map:match pattern="user-resources/*/*">
+        <!-- HHV: TODO: This does NOT check if the user has read rights on the given lexicon! -->
+        <map:act type="cauth-is-logged-in">
+          <map:parameter name="application" value="Lexus"/>
+          <map:read src="{naming:java:comp/env/LEXUS/resourceDirectory}/{../2}"/>
+        </map:act>
+        <map:redirect-to uri="index.html"/><!--
+        <map:redirect-to
+          uri="LexusLexicalEntryEditor/user-resource?lexicon={1}&amp;id={2}"
+        />-->
+      </map:match>
+    </map:pipeline>
+    
     <!-- Get Lexical Entry View -->
     <map:pipeline>
       <map:match pattern="entryLayout.htm">
@@ -346,7 +343,16 @@
         </map:act>
         <map:redirect-to uri="/index.html"/>
       </map:match>
-
+      
+      
+      <map:match pattern="QueryBuilder/**">
+        <map:act type="cauth-is-logged-in">
+          <map:parameter name="application" value="Lexus"/>
+          <map:mount uri-prefix="" src="workspace/sitemap.xmap"/>
+        </map:act>
+        <map:redirect-to uri="/index.html"/>
+      </map:match>
+      
       <map:match pattern="LexusSchemaEditor/**">
         <map:act type="cauth-is-logged-in">
           <map:parameter name="application" value="Lexus"/>
@@ -364,9 +370,12 @@
         <map:redirect-to uri="index.html"/> -->
       </map:match>
 
+
       <map:match pattern="StagingFileHandler/uploadFile.json">
-        <map:generate src="StagingFileHandler/uploadFile.xml"/>
+        <map:generate src="cocoon:/StagingFileHandler/uploadFile.xml"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>
         <map:transform type="saxon" src="upload/upload-2-JSON.xslt"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>
         <map:serialize type="json"/>
       </map:match>
 
@@ -379,12 +388,12 @@
           <!--
           <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-upload-pre.xml"/>-->
           <map:serialize type="xml"/>
-        </map:act>
+        </map:act><!--
         <map:generate type="fileupload">
           <map:parameter name="uploadDir" value="{naming:java:comp/env/LEXUS/tempDir}"/>
         </map:generate>
-        <map:serialize type="xml"/>
-        <!--<map:redirect-to uri="index.html"/>-->
+        <map:serialize type="xml"/>-->
+        <map:redirect-to uri="index.html"/>
       </map:match>
 
     </map:pipeline>

@@ -28,12 +28,40 @@
             <data type="anyURI"/>
           </attribute>
           <oneOrMore>
-            <ref name="container"/>
+            <choice>
+              <ref name="container"/>
+              <ref name="data"/>
+            </choice>
           </oneOrMore>
         </element>
       </oneOrMore>
     </element>
   </start>
+  <define name="data">
+    <element name="data">
+      <optional><attribute name="id">
+        <data type="anyURI"/>
+      </attribute></optional>
+      <attribute name="name"/>
+      <attribute name="schema-ref">
+        <data type="anyURI"/>
+      </attribute>
+      <element name="value">
+        <text/>
+      </element>
+      <optional>
+        <element name="resource">
+          <attribute name="archive">
+            <data type="NCName"/>
+          </attribute>
+          <attribute name="mimetype"/>
+          <attribute name="type">
+            <data type="NCName"/>
+          </attribute>
+          <attribute name="value"/>
+        </element>
+      </optional>
+    </element></define>
   <define name="container">
     <element name="container">
       <optional><attribute name="id">
@@ -46,30 +74,7 @@
       <zeroOrMore>
         <choice>
           <ref name="container"/>
-          <element name="data">
-            <optional><attribute name="id">
-              <data type="anyURI"/>
-            </attribute></optional>
-            <attribute name="name"/>
-            <attribute name="schema-ref">
-              <data type="anyURI"/>
-            </attribute>
-            <element name="value">
-              <text/>
-            </element>
-            <optional>
-              <element name="resource">
-                <attribute name="archive">
-                  <data type="NCName"/>
-                </attribute>
-                <attribute name="mimetype"/>
-                <attribute name="type">
-                  <data type="NCName"/>
-                </attribute>
-                <attribute name="value"/>
-              </element>
-            </optional>
-          </element>
+          <ref name="data"/>
         </choice>
       </zeroOrMore>
     </element>

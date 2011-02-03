@@ -1,4 +1,4 @@
-package org.apache.cocoon.generation;
+package nl.mpi.lexus.generation;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +21,7 @@ import org.apache.cocoon.ProcessingException;
 import org.apache.cocoon.environment.ObjectModelHelper;
 import org.apache.cocoon.environment.Request;
 import org.apache.cocoon.environment.SourceResolver;
+import org.apache.cocoon.generation.ServiceableGenerator;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -83,6 +84,7 @@ public class LexusFileUploads extends ServiceableGenerator {
 
                 map.put("tmpFile", tmpFile.getAbsolutePath());
 
+                logger.debug("session = " + request.getSession());
                 request.getSession().setAttribute(id, tmpFile.getAbsolutePath());
 
                 String mimeType = null;

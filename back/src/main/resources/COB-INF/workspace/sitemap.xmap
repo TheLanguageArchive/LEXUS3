@@ -46,7 +46,7 @@
         <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
         <map:serialize type="xml"/>
       </map:match>
-      
+
       <map:match pattern="reOrderLexicon.xml">
         <map:generate src="service-consumer:"/>
         <map:transform type="saxon" src="all/reOrderLexicon.xslt">
@@ -65,11 +65,11 @@
         <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
         <map:serialize type="xml"/>
       </map:match>
-      
+
 
       <!-- 
           Generate main workspace data
-      -->      
+      -->
       <map:match pattern="getPage.xml">
         <map:generate src="service-consumer:"/>
         <map:transform type="saxon" src="getPage/getWorkspace.xslt">
@@ -151,6 +151,24 @@
         <map:serialize type="xml"/>
       </map:match>
 
+      <map:match pattern="getDataCategories.xml">
+        <map:generate src="service-consumer:"/>
+        <map:transform type="saxon" src="queries/getDataCategories.xslt">
+          <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
+          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+        </map:transform>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-getdc-pre.xml"/>
+        <map:transform type="saxon" src="${xmldb.rest.transformer}">
+          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
+        </map:transform>
+        <map:transform type="rest">
+          <map:parameter name="username" value="${xmldb.rest.username}"/>
+          <map:parameter name="password" value="${xmldb.rest.password}"/>
+        </map:transform>
+        <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-getdc-post.xml"/>
+        <map:serialize type="xml"/>
+      </map:match>
 
       <!-- 
         Generate userslist for administrators
@@ -221,7 +239,7 @@
           <map:parameter name="password" value="${xmldb.rest.password}"/>
         </map:transform>
         <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
-        
+
         <!--        <map:transform type="validate" src="saveLexicon/saveLexicon.xsd"/>-->
         <map:serialize type="xml"/>
       </map:match>
@@ -236,9 +254,9 @@
           <map:parameter name="username" value="${xmldb.rest.username}"/>
           <map:parameter name="password" value="${xmldb.rest.password}"/>
         </map:transform>
-<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-pre.xml"/>-->
+        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-pre.xml"/>-->
         <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
-<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-post.xml"/>-->
+        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-post.xml"/>-->
         <map:transform type="saxon" src="lexicon/getSavedLexicon.xslt">
           <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
           <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
@@ -253,7 +271,7 @@
         <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
         <map:serialize type="xml"/>
       </map:match>
-      
+
       <map:match pattern="deleteLexicon.xml">
         <map:generate src="service-consumer:"/>
         <map:transform type="saxon" src="lexicon/deleteLexicon.xslt">
@@ -338,7 +356,8 @@
         <map:transform type="saxon" src="${xmldb.rest.transformer}">
           <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
         </map:transform>
-        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/pipeline-snapshot.xml"/>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/pipeline-snapshot.xml"/>
         <map:transform type="rest">
           <map:parameter name="username" value="${xmldb.rest.username}"/>
           <map:parameter name="password" value="${xmldb.rest.password}"/>
@@ -371,6 +390,10 @@
         <map:serialize type="xml"/>
       </map:match>
 
+      <map:match pattern="import/importLexicon.xml">
+        <map:generate src="service-consumer:"/>
+        <map:serialize type="xml"/>
+      </map:match>
       <!-- 
         Try to find the user and return the users' data.
         If a user can't be found and there are no users yet a

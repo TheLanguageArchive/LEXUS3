@@ -119,14 +119,17 @@
     <xsl:template name="lexica">
         
         (: return a list of lexica (lexicon is inside lexus element next to meta element) :)
-        declare function lexus:lexica3($lexi as node()*) as node()* {
+        declare function lexus:lexica($lexi as node()*) as node()* {
+            lexus:lexica($lexi, false())
+        };
+        declare function lexus:lexica($lexi as node()*, $admin as xs:boolean) as node()* {
             element lexica {
                 for $lexus in $lexi
                     order by $lexus/meta/name
                     return element lexicon {
                         $lexus/lexicon/@*,
-                        element meta { $lexus/meta/*[local-name() ne 'schema']},
-                        element size {count($lexus/lexicon/lexical-entry)}
+                        element meta {$lexus/meta/*[local-name() ne 'schema']},
+                        element size {if ($admin) then '' else count($lexus/lexicon/lexical-entry)}
                     }
             }
         };
@@ -137,7 +140,7 @@
     
     <xsl:template name="lexicon3">
         
-        (: return a lexicon in the lexus:lexica3 format :)
+        (: return a lexicon in the lexus:lexica format :)
         declare function lexus:lexicon($lexus as node()) as node() {
         element lexicon {
             $lexus/lexicon/@*,

@@ -27,7 +27,7 @@
                             else collection('<xsl:value-of select="$lexica-collection"/>')/lexus[meta/users/user/@ref = $user-id]
                 let $users := lexus:users(collection('<xsl:value-of select="$users-collection"/>')/user)
                 return element result {
-                    lexus:lexica3($lexi),
+                    lexus:lexica($lexi, false()), (: lexus:isAdministrator($user) :)
                     $users,
                     $user
                 }

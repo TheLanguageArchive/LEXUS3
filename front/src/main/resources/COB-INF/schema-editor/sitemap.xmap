@@ -31,7 +31,7 @@
       <map:match pattern="getSchema.json">
         <map:generate src="cocoon:/getSchema.xml"/>
         <map:transform type="saxon" src="getSchema/schema-2-JSON.xslt"/>
-                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-post2.xml"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/demo-front-4.xml"/>
         <map:serialize type="json"/>
       </map:match>
 
@@ -40,12 +40,13 @@
           <map:part src="cocoon://json"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/demo-front-1.xml"/>
         <map:transform type="saxon" src="getSchema/prepareGetSchema.xslt"/>
-        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/demo-front-2.xml"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/schema-editor/getSchema.xml"/>
         </map:transform>
-        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/demo-front-3.xml"/>
         <map:serialize type="xml"/>
       </map:match>
 
@@ -59,20 +60,22 @@
           <map:part src="cocoon://json"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>
-<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-schema-pre.xml"/>-->
+        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-schema-pre.xml"/>-->
         <map:transform type="saxon" src="saveSchema/prepareSaveSchema.xslt"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/schema-editor/saveSchema.xml"/>
         </map:transform>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:back:/schema-editor/updateLexicaForUpdatedSchema.xml"/>
+          <map:parameter name="service"
+            value="servlet:back:/schema-editor/updateLexicaForUpdatedSchema.xml"/>
         </map:transform>
-        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-schema-post.xml"/>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/save-schema-post.xml"/>
         <map:transform type="saxon" src="saveSchema/savedSchema-2-JSON.xslt"/>
         <map:serialize type="json"/>
       </map:match>
-      
-      
+
+
       <!-- 
         Create View
       -->
@@ -81,25 +84,25 @@
           <map:part src="cocoon://stream"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>
-<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-view-pre.xml"/>-->
+        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-view-pre.xml"/>-->
         <map:transform type="saxon" src="views/prepareSaveView.xslt">
           <map:parameter name="lexiconId" value="{request-param:lexiconId}"/>
         </map:transform>
-<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-view-post.xml"/>-->
+        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-view-post.xml"/>-->
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/schema-editor/saveView.xml"/>
         </map:transform>
         <map:transform type="saxon" src="views/savedView.xslt"/>
         <map:serialize type="xml"/>
       </map:match>
-      
-      
+
+
       <map:match pattern="getViews.xml">
         <map:aggregate element="data">
           <map:part src="cocoon://stream"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>
-<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-get-views-pre.xml"/>-->
+        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-get-views-pre.xml"/>-->
         <map:transform type="saxon" src="views/prepareGetViews.xslt">
           <map:parameter name="lexiconId" value="{request-param:lexiconId}"/>
         </map:transform>
@@ -107,10 +110,10 @@
           <map:parameter name="service" value="servlet:back:/schema-editor/getViews.xml"/>
         </map:transform>
         <map:transform type="saxon" src="views/gotViews.xslt"/>
-<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-get-views-post.xml"/>-->
+        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-get-views-post.xml"/>-->
         <map:serialize type="xml"/>
       </map:match>
-      
+
       <!-- 
         Get view by @id in <view id="..."/>
         -->
@@ -119,15 +122,15 @@
           <map:part src="cocoon://stream"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>
-        <map:transform type="saxon" src="views/prepareGetView.xslt"/>        
+        <map:transform type="saxon" src="views/prepareGetView.xslt"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/schema-editor/getView.xml"/>
         </map:transform>
         <map:transform type="saxon" src="views/gotView.xslt"/>
         <map:serialize type="xml"/>
       </map:match>
-      
-      
+
+
       <!-- 
         Delete view by @id in <view id="..."/>
       -->
@@ -136,24 +139,24 @@
           <map:part src="cocoon://stream"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>
-<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>-->
+        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>-->
         <map:transform type="saxon" src="views/prepareDeleteView.xslt"/>
-<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>-->
+        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>-->
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/schema-editor/deleteView.xml"/>
         </map:transform>
         <map:transform type="saxon" src="views/deletedView.xslt"/>
-<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-done.xml"/>-->
+        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-done.xml"/>-->
         <map:serialize type="xml"/>
       </map:match>
-      
-      
+
+
       <map:match pattern="saveStandardView.xml">
         <map:aggregate element="data">
           <map:part src="cocoon://stream"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>
-<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-standard-view-pre.xml"/>-->
+        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-standard-view-pre.xml"/>-->
         <map:transform type="saxon" src="views/prepareSaveStandardView.xslt">
           <map:parameter name="lexiconId" value="{request-param:lexiconId}"/>
         </map:transform>
@@ -161,11 +164,11 @@
           <map:parameter name="service" value="servlet:back:/schema-editor/saveStandardView.xml"/>
         </map:transform>
         <map:transform type="saxon" src="views/savedStandardView.xslt"/>
-<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-standard-view-post.xml"/>-->
+        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-standard-view-post.xml"/>-->
         <map:serialize type="xml"/>
       </map:match>
-      
-      
+
+
     </map:pipeline>
 
   </map:pipelines>

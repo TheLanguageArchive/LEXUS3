@@ -36,10 +36,10 @@
 
     <xsl:template match="/">
         <object>
-            <xsl:apply-templates select="/data/lexus:result/result"/>
+            <xsl:apply-templates select="/data/lexus:create-lexical-entry/lexus:result/result"/>
             <object key="status">
                 <xsl:choose>
-                    <xsl:when test="/data/lexus:result/result/schema">
+                    <xsl:when test="/data/lexus:create-lexical-entry/lexus:result/result/schema">
                         <true key="success"/>
                     </xsl:when>
                     <xsl:otherwise>

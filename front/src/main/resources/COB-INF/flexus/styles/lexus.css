@@ -1,4 +1,7 @@
-
+/* * {
+	fontFamily: "Arial Unicode MS";
+}
+*/
 Panel {
    borderAlpha: 0.55;
    borderThicknessLeft: 6;

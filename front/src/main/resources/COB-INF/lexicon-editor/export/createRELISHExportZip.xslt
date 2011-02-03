@@ -143,7 +143,7 @@
     -->
     <xsl:template match="schema//container[@type='lexical-entry'] | schema//container[@type='lexicon']" mode="use_namespace">
         <xsl:element name="container" namespace="{$lexusNamespace}">
-            <xsl:copy-of select="@id | @admin-info | @description | @type | @note"/>
+            <xsl:copy-of select="@id | @admin-info | @description | @type | @note | @name"/>
             <xsl:apply-templates select="*" mode="use_namespace"/>
         </xsl:element>
     </xsl:template>
@@ -151,7 +151,7 @@
     <!-- A regular container element -->
     <xsl:template match="schema//container[@type='container'] | schema//container[not(@type)]" mode="use_namespace">
         <xsl:element name="container" namespace="{$lexusNamespace}">
-            <xsl:copy-of select="@id | @admin-info | @description | @type | @note"/>
+            <xsl:copy-of select="@id | @admin-info | @description | @type | @note | @name"/>
             <xsl:apply-templates select="*" mode="use_namespace"/>
         </xsl:element>
     </xsl:template>

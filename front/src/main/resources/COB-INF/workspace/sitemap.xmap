@@ -23,6 +23,8 @@
   <map:pipelines>
 
 
+
+
     <map:pipeline id="workspace">
 
       <map:match pattern="reOrder.xml">
@@ -210,58 +212,78 @@
         <map:transform type="saxon" src="lexicon/deletedLexicon-2-JSON.xslt"/>
         <map:serialize type="json"/>
       </map:match>
-
+    </map:pipeline>
+    
+    <map:pipeline type="noncaching">
 
       <!--
         Import a Lexus XML lexicon.
         -->
       <map:match pattern="import/*/*/ImportLexusXML.xml">
+        
         <map:aggregate element="import-lexicon" ns="http://www.mpi.nl/lexus">
-          <map:part src="cocoon:/importGetLexusMeta/{naming:java:comp/env/LEXUS/tempDir}/{1}.xml"/>
-          <map:part src="cocoon:/importGetLexusLexicon/{naming:java:comp/env/LEXUS/tempDir}/{2}.xml"/>
           <map:part src="cocoon://user"/>
+          <map:part src="{naming:java:comp/env/LEXUS/tempDir}/{2}.xml"/>
+          <map:part src="{naming:java:comp/env/LEXUS/tempDir}/{1}.xml"/>
         </map:aggregate>
+        <map:transform type="stx" src="import/add-meta-and-ids.stx"/>
         <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>
-        <map:transform type="saxon" src="import/createLexusDocument.xslt"/>
-        <map:transform type="saxon" src="import/addStandardViews.xslt"/>
-<!--        <map:transform type="validate" src="import/lexusLexus.rng"/>-->
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>
+        <map:transform type="stx" src="import/add-cincludes-lexus.stx"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>
+        <map:transform type="cinclude"/>
+        <map:transform type="stx" src="import/add-cincludes-lexical-entries.stx"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-post2.xml"/>
+        <!--        <map:transform type="cinclude"/>-->
+        <!--        <map:transform type="stx" src="import/count-ids.stx"/>-->
+<!--        <map:transform type="saxon" src="import/createLexusDocument.xslt"/>-->
+<!--        <map:transform type="saxon" src="import/addStandardViews.xslt"/>
+<!-\-        <map:transform type="validate" src="import/lexusLexus.rng"/>-\->
+        <!-\-<map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>-\->
         <map:transform type="saxon" src="import/prepareLexusDocumentForDatabase.xslt"/>
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/front-post2.xml"/>
+        <!-\-<map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/front-post2.xml"/>-\->
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:back:/workspace/createLexicon.xml"/>
         </map:transform>
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/front-post3.xml"/>
-        <map:transform type="saxon" src="import/reportOnImport.xslt"/>
+        <!-\-<map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/front-post3.xml"/>-\->
+-->
+<!--        <map:transform type="saxon" src="import/reportOnImport.xslt"/>-->
+<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-post3.xml"/>-->
         <map:serialize type="xml"/>
+      </map:match>
+      
+      <map:match pattern="importLexusLexus">
+        <map:generate type="stream">
+          <map:parameter name="form-name" value="lexicon"/>
+        </map:generate>
+        <map:serialize/>
       </map:match>
     </map:pipeline>
 
     <map:pipeline>
       <map:match pattern="importGetLexusMeta/**">
         <map:generate src="{1}"/>
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/front-import-schema-pre.xml"/>
+        <!--<map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/front-import-schema-pre.xml"/>-->
         <map:transform type="validate" src="import/lexusMeta.rng"/>
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/front-import-schema-post.xml"/>
+        <!--<map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/front-import-schema-post.xml"/>-->
         <map:serialize/>
       </map:match>
       <map:handle-errors when="always">
         <map:generate type="exception"/>
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/front-import-schema-error.xml"/>
+        <!--<map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/front-import-schema-error.xml"/>-->
         <map:serialize/>
       </map:handle-errors>
     </map:pipeline>
     <map:pipeline>
       <map:match pattern="importGetLexusLexicon/**">
         <map:generate src="{1}"/>
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/front-import-lexicon.xml"/>
+        <!--<map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/front-import-lexicon.xml"/>-->
         <map:transform type="validate" src="import/lexusLexicon.rng"/>
         <map:serialize/>
       </map:match>
@@ -271,6 +293,58 @@
       </map:handle-errors>
     </map:pipeline>
 
+
+
+    <map:pipeline id="querybuilder">
+      
+      <!-- 
+        No idea why this is necessary, i.e. what it is used for,
+        but it is a request from the client side so a response needs to be served.
+        It seems to be a static file.
+      -->
+      <map:match pattern="QueryBuilder/getConditions.json">
+        <map:act type="cauth-is-logged-in">
+          <map:parameter name="application" value="Lexus"/>
+          <map:read src="../resource/external/getConditions.js"/>
+        </map:act>
+        <map:redirect-to uri="index.html"/>
+      </map:match>
+      
+      <map:match pattern="QueryBuilder/getLexica.json">
+        <map:generate src="cocoon:/getPage"/>
+<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>-->
+        <map:transform type="saxon" src="queries/lexica-2-JSON.xslt"/>
+<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>-->
+        <map:serialize type="json"/>
+      </map:match>
+      
+      
+      <map:match pattern="QueryBuilder/getDataCategories.json">
+        <map:generate src="cocoon:/getDataCategories"/>
+        <map:transform type="saxon" src="queries/dataCategories-2-JSON.xslt"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-getdc-post2.xml"/>
+        <map:serialize type="json"/>
+      </map:match>
+      
+      <map:match pattern="getDataCategories">
+        <map:aggregate element="data">
+          <map:part src="cocoon://json"/>
+          <map:part src="cocoon://user"/>
+        </map:aggregate>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-getdc-pre.xml"/>
+        <map:transform type="saxon" src="queries/prepareGetDataCategories.xslt"/>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:back:/workspace/getDataCategories.xml"/>
+        </map:transform>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/front-getdc-post.xml"/>
+        <map:serialize type="xml"/>
+      </map:match>
+      
+      
+    </map:pipeline>
+    
+    
   </map:pipelines>
 
 </map:sitemap>

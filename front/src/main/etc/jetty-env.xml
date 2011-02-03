@@ -13,6 +13,25 @@
     </New>
     
     <!--
+        Where the users' local resources are permanently stored.
+        -->
+    <New id="lexus_user-resources-folder"  class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>LEXUS/resourceDirectory</Arg>
+        <Arg type="java.lang.String">/lexus/user-resources/</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    
+    <!--
+        How the users retrieve local resources.
+    -->
+    <New id="lexus_user-resources-url"  class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>LEXUS/resourceContextPath</Arg>
+        <Arg type="java.lang.String">/user-resources/</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    
+    
+    <!--
         Where toolbox files are stored.
         -->
     <New id="toolbox_files"  class="org.mortbay.jetty.plus.naming.EnvEntry">

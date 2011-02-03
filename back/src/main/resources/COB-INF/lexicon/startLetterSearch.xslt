@@ -154,10 +154,10 @@
                            element count { count($searchedLexicalEntries) },
                            element pageSize {$pageSize}
                        },                                        
-                       lexus:lexica3($lexi),
+                       lexus:lexica($lexi),
                        element startLetters { $startLetters },
                        element queries { },
-                       element schema { $schema },
+                       $schema,
                        $users
                    }
                </lexus:text>

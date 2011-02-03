@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:lexus="http://www.mpi.nl/lexus"
-    xmlns:xhtml="http://www.w3.org/1999/xhtml"
-    exclude-result-prefixes="xs" version="2.0">
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:lexus="http://www.mpi.nl/lexus"
+    xmlns:xhtml="http://www.w3.org/1999/xhtml" exclude-result-prefixes="xs" version="2.0">
 
+    <xsl:param name="sessionId"/>
 
     <xsl:include href="../stylesheets/lexicon.xslt"/>
     <xsl:include href="../stylesheets/schema.xslt"/>
@@ -168,7 +167,13 @@
 
     <xsl:template match="result">
         <object key="result">
-            <xsl:apply-templates/>
+            <xsl:apply-templates select="results, lexica, startLetters, queries, users"/>
+            <xsl:apply-templates select="schema">
+                <xsl:with-param name="tree" select="'false'"/>
+            </xsl:apply-templates>
+            <string key="sessionID">
+                <xsl:value-of select="$sessionId"/>
+            </string>
         </object>
     </xsl:template>
 
@@ -182,15 +187,14 @@
                 <xsl:with-param name="key" select="'lexicon'"/>
             </xsl:apply-templates>
         </object>
-        <xsl:apply-templates select="schema"/>
     </xsl:template>
 
     <xsl:template match="startLetter">
         <string key="startLetter">
             <xsl:value-of select="."/>
         </string>
-    </xsl:template>    
-    
+    </xsl:template>
+
     <xsl:template match="searchTerm">
         <string key="searchTerm">
             <xsl:value-of select="."/>
@@ -232,10 +236,11 @@
                         test="/data/lexus:display/lexical-entries/lexical-entry[@id = current()/@id]">
                         <string key="value">
                             <![CDATA[<b>]]>
-                            <xsl:value-of select="/data/lexus:display/lexical-entries/lexical-entry[@id = current()/@id]/xhtml:html/xhtml:body"/>
-                                <xsl:apply-templates
-                                    select="/data/lexus:display/lexical-entries/lexical-entry[@id = current()/@id]/xhtml:html/xhtml:body/*"
-                                    mode="encoded"/>
+                            <xsl:value-of
+                                select="/data/lexus:display/lexical-entries/lexical-entry[@id = current()/@id]/xhtml:html/xhtml:body"/>
+                            <xsl:apply-templates
+                                select="/data/lexus:display/lexical-entries/lexical-entry[@id = current()/@id]/xhtml:html/xhtml:body/*"
+                                mode="encoded"/>
                             <![CDATA[</b>]]>
                         </string>
                     </xsl:when>
@@ -247,7 +252,9 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </object>
-            <string key="entryView">entryLayout.htm?lexicon=<xsl:value-of select="ancestor::lexus:search/result/results/lexicon/@id"/>&amp;id=<xsl:value-of select="@id"/></string>
+            <string key="entryView">entryLayout.htm?lexicon=<xsl:value-of
+                    select="ancestor::lexus:search/result/results/lexicon/@id"
+                    />&amp;id=<xsl:value-of select="@id"/></string>
         </object>
     </xsl:template>
 
@@ -266,11 +273,15 @@
             <xsl:apply-templates/>
         </array>
     </xsl:template>
-    
+
     <xsl:template match="startLetters/startLetter">
         <object>
-            <string key="values"><xsl:value-of select="."/></string>
-            <string key="label"><xsl:value-of select="."/></string>
+            <string key="values">
+                <xsl:value-of select="."/>
+            </string>
+            <string key="label">
+                <xsl:value-of select="."/>
+            </string>
         </object>
     </xsl:template>
     <xsl:template match="@* | node()"/>

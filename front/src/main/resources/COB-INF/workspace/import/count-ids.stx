@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<stx:transform xmlns:stx="http://stx.sourceforge.net/2002/ns" xmlns:lexus="http://www.mpi.nl/lexus"
+  xmlns:util="java:java.util.UUID" version="1.0">
+
+  <stx:variable name="count" select="0"/>
+
+
+  <stx:template match="/">
+    <stx:process-children/>
+    <lexus:lexus>
+      <stx:attribute name="count" select="$count"/>
+      </lexus:lexus>
+  </stx:template>
+
+  <stx:template match="lexus:lexical-entry">
+    <stx:assign name="count" select="$count + 1"/>
+  </stx:template>
+
+  <!-- Process everything -->
+
+  <stx:template match="@* | node()">
+    <stx:process-children/>
+  </stx:template>
+
+</stx:transform>

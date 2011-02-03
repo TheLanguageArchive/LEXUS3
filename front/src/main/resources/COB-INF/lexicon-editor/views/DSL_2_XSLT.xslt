@@ -117,10 +117,22 @@
     </table>
 -->
     <xsl:template match="table[@type = 'dsl_table']">
-        <xsl:copy>
-            <xsl:copy-of select="@*[local-name(.) != 'isBranch']"/>
-            <xsl:apply-templates />
-        </xsl:copy>
+        <target:if>
+            <xsl:attribute name="test">
+                <xsl:for-each select=".//data">
+                    <xsl:variable name="d" select="."/>
+                    <xsl:text>.//data[@schema-ref='</xsl:text>
+                    <xsl:value-of select="$d/@id"/>
+                    <xsl:text>'] | </xsl:text>
+                </xsl:for-each>
+                <xsl:text>()</xsl:text>
+            </xsl:attribute>            
+            
+            <xsl:copy>
+                <xsl:copy-of select="@*[local-name(.) != 'isBranch']"/>
+                <xsl:apply-templates />
+            </xsl:copy>
+        </target:if>
     </xsl:template>
     <xsl:template match="thead[@type='dsl_table_heading'] | tbody[@type='dsl_table_body']">
         <xsl:copy><xsl:apply-templates /></xsl:copy>

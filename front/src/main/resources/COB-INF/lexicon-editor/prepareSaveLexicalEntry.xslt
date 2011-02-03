@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:rest="http://org.apache.cocoon.transformation/rest/1.0"
-    xmlns:lexus="http://www.mpi.nl/lexus" version="2.0">
+    xmlns:lexus="http://www.mpi.nl/lexus" 
+    xmlns:process-upload="http://www.mpi.nl/lexus/process-upload/1.0" 
+    exclude-result-prefixes="#all"
+    version="2.0">
 
     <xsl:include href="../util/identity.xslt"/>
 
@@ -61,6 +64,8 @@
             <value>
                 <xsl:value-of select="value"/>
             </value>
+            <!-- If any resources were added or already existed, copy them. -->
+            <xsl:copy-of select="resource"/>
         </data>
     </xsl:template>
 </xsl:stylesheet>

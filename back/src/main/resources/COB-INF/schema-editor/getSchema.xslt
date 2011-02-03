@@ -16,7 +16,7 @@
                 <xsl:call-template name="declare-namespace"/> 
                 <xsl:call-template name="lexicon"/>
                 
-                let $id := '<xsl:value-of select="/data/lexus:get-schema/id"/>'
+                let $id := '<xsl:value-of select="id"/>'
                 let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $id]
                 let $schema := $lexus/meta/schema
                 

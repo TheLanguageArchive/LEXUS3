@@ -13,6 +13,12 @@
             <string key="id">
                 <xsl:value-of select="id"/>
             </string>
+            <string key="requestId">
+                <xsl:value-of select="requestId"/>
+            </string>
+            <string key="resource">
+                <xsl:value-of select="resource"/>
+            </string>
             <string key="tmpFile">
                 <xsl:value-of select="tmpFile"/>
             </string>

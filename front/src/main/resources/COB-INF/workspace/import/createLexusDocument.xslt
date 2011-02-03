@@ -11,7 +11,7 @@
             <xd:p/>
             <xd:p>Create an id for the lexus:lexus, lexus:meta and lexus:lexicon elements. Also, add
                 ids to all the lexical entries, containers and data elements in the lexicon,
-                existing ids are preserved. Add owner and user informtion to the meta
+                existing ids are preserved. Add owner and user information to the meta
                 element.</xd:p>
         </xd:desc>
     </xd:doc>

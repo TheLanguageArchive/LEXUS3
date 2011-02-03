@@ -15,6 +15,15 @@
             <xslt-processor-role>saxon</xslt-processor-role>
         </map:transformer>
         
+        <!--<map:transformer name="stx" src="org.apache.cocoon.transformation.TraxTransformer">
+            <xslt-processor-role>stx</xslt-processor-role>
+        </map:transformer>-->
+        <!--<map:transformer name="stx2"
+            logger="sitemap.transformer.stx"
+            src="org.apache.cocoon.transformation.TraxTransformer">
+            <transformer-factory>net.sf.joost.trax.TransformerFactoryImpl</transformer-factory>
+        </map:transformer>-->
+        
         <map:transformer name="tee" src="org.apache.cocoon.transformation.alternative.TeeTransformer"/>
         <map:transformer name="no-op" src="org.apache.cocoon.transformation.NoOpTransformer"/>
         

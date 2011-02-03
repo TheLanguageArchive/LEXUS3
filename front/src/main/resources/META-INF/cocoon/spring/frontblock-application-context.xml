@@ -50,6 +50,10 @@
     </property>
   </bean>
 
+  <!--<bean name="org.apache.cocoon.transformation.Transformer/stx2"
+    class="net.sf.joost.trax.TransformerFactoryImpl" scope="prototype">
+  </bean>-->
+  
   <bean name="org.apache.cocoon.generation.Generator/json"
     class="org.apache.cocoon.generation.JSONGenerator" scope="prototype"/>
 
@@ -57,8 +61,11 @@
     class="org.apache.cocoon.generation.SessionAttributeGenerator" scope="prototype"/>
 
   <bean name="org.apache.cocoon.generation.Generator/fileupload"
-    class="org.apache.cocoon.generation.LexusFileUploads" scope="prototype"/>
-
+    class="nl.mpi.lexus.generation.LexusFileUploads" scope="prototype"/>
+  
+  <bean name="org.apache.cocoon.transformation.Transformer/process-upload"
+    class="nl.mpi.lexus.transformation.UploadProcessorTransformer" scope="prototype"/>
+  
   <bean name="org.apache.cocoon.spring.configurator.log4j"
     class="org.apache.cocoon.spring.configurator.log4j.Log4JConfigurator"
     scope="singleton">

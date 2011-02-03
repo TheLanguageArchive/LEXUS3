@@ -42,7 +42,7 @@
   		Refer to the Tomcat documentation for more about directory mapping.-->
   <!-- Insensitive to '/' on the end -->
   <Environment name="LEXUS/resourceDirectory" override="false" type="java.lang.String"
-    value="resources"/>
+    value="/lexus/user-resources"/>
   
   <!--Refers to the server context path for resource files. This path is relative to http://<serverNameUse>/lexusDojo.
   		Use '/' since it is a context path-->

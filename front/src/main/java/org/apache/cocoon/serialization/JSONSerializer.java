@@ -66,6 +66,14 @@ public class JSONSerializer extends AbstractTextSerializer {
     public final static int FALSE = 4;
     public final static int TRUE = 5;
     public final static int NULL = 6;
+
+    private static class JSONSerializationException extends SAXException {
+
+        public JSONSerializationException(String message) {
+            super(message);
+        }
+    }
+
     protected boolean empty = true;
     protected boolean startTagOpen = false;
     protected JSONElement currentElement = null;
@@ -113,56 +121,60 @@ public class JSONSerializer extends AbstractTextSerializer {
     }
 
     @Override
-    public void startDocument() throws SAXException {
-        super.startDocument();
+    public void startDocument() throws JSONSerializationException {
+        try {
+            super.startDocument();
+        } catch (SAXException ex) {
+            throw (JSONSerializationException)ex;
+        }
     }
 
     @Override
-    public void startPrefixMapping(String prefix, String uri) throws SAXException {
+    public void startPrefixMapping(String prefix, String uri) throws JSONSerializationException {
     }
 
     @Override
-    public void endPrefixMapping(String prefix) throws SAXException {
+    public void endPrefixMapping(String prefix) throws JSONSerializationException {
     }
 
     @Override
-    public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
+    public void ignorableWhitespace(char[] ch, int start, int length) throws JSONSerializationException {
     }
 
     @Override
-    public void processingInstruction(String target, String data) throws SAXException {
+    public void processingInstruction(String target, String data) throws JSONSerializationException {
     }
 
     @Override
-    public void skippedEntity(String name) throws SAXException {
+    public void skippedEntity(String name) throws JSONSerializationException {
     }
 
     @Override
-    public void startDTD(String name, String publicId, String systemId) throws SAXException {
+    public void startDTD(String name, String publicId, String systemId) throws JSONSerializationException {
     }
 
     @Override
-    public void endDTD() throws SAXException {
+    public void endDTD() throws JSONSerializationException {
     }
 
     @Override
-    public void startEntity(String name) throws SAXException {
+    public void startEntity(String name) throws JSONSerializationException {
     }
 
     @Override
-    public void endEntity(String name) throws SAXException {
+    public void endEntity(String name) throws JSONSerializationException {
     }
 
     @Override
-    public void startCDATA() throws SAXException {
+    public void startCDATA() throws JSONSerializationException {
     }
 
     @Override
-    public void endCDATA() throws SAXException {
+    public void endCDATA() throws JSONSerializationException {
     }
 
     @Override
-    public void comment(char[] ch, int start, int length) throws SAXException {
+    public void comment(char[] ch, int start, int length) throws JSONSerializationException {
     }
 
     @Override
@@ -189,13 +201,13 @@ public class JSONSerializer extends AbstractTextSerializer {
 
 
     public void startElement(String uri, String localName, String raw, Attributes a)
-            throws SAXException {
+            throws JSONSerializationException {
         // Logger.getLogger(JSONSerializer.class.getName()).log(Level.SEVERE, "startElement " + localName + ", key=" + a.getValue("key")+", stackSize="+objectStack.size());
         if (!localName.equals("object") && !localName.equals("array")
                 && !localName.equals("number") && !localName.equals("string")
                 && !localName.equals("false") && !localName.equals("true")
                 && !localName.equals("null")) {
-            throw new SAXException("Element name not one of object, array, number, string, false, true or null!");
+            throw new JSONSerializationException("Element name not one of object, array, number, string, false, true or null!");
         }
 
         if (startTagOpen) {
@@ -204,12 +216,12 @@ public class JSONSerializer extends AbstractTextSerializer {
 
         if (objectStack.empty()) {
             if (!localName.equals("array") && !localName.equals("object")) {
-                throw new SAXException("Only objects and arrays are allowed as top-level elements!");
+                throw new JSONSerializationException("Only objects and arrays are allowed as top-level elements!");
             }
         } else {
             int type = objectStack.peek().intValue();
             if (type != OBJECT && type != ARRAY) {
-                throw new SAXException("Only objects and arrays may contain subelements!");
+                throw new JSONSerializationException("Only objects and arrays may contain subelements!");
             }
         }
 
@@ -227,7 +239,7 @@ public class JSONSerializer extends AbstractTextSerializer {
 
     @Override
     public void endElement(String uri, String loc, String raw)
-            throws SAXException {
+            throws JSONSerializationException {
         // Logger.getLogger(JSONSerializer.class.getName()).log(Level.SEVERE, "endElement "+loc + ", stackSize="+objectStack.size());
         if (startTagOpen) {
             closeStartTag(currentElement, true);
@@ -256,7 +268,7 @@ public class JSONSerializer extends AbstractTextSerializer {
 
     @Override
     public void characters(char c[], int start, int len)
-            throws SAXException {
+            throws JSONSerializationException {
         CharSequence chars = new String(c);
         if (startTagOpen) {
             closeStartTag(currentElement, false);
@@ -266,26 +278,29 @@ public class JSONSerializer extends AbstractTextSerializer {
             return;
         }
         if (objectStack.empty()) {
-            throw new SAXException("Character data is not allowed outside <number> and <string>!");
+            throw new JSONSerializationException("Character data is not allowed outside <number> and <string>!");
         }
         int type = objectStack.peek().intValue();
         if (type == NUMBER || type == STRING) {
             currentText.append(chars);
         } else {
-            throw new SAXException("Character data is not allowed outside <number> and <string>!");
+            throw new JSONSerializationException("Character data is not allowed outside <number> and <string>!");
         }
     }
 
     @Override
-    public void endDocument() throws SAXException {
+    public void endDocument() throws JSONSerializationException {
         if (!objectStack.isEmpty()) {
-            throw new IllegalStateException("Attempt to end document in serializer when elements are unclosed");
+            throw new JSONSerializationException("Attempt to end document in serializer when elements are unclosed");
         }
-
-        super.endDocument();
+        try {
+            super.endDocument();
+        } catch (SAXException ex) {
+            throw (JSONSerializationException) ex;
+        }
     }
 
-    protected void closeStartTag(JSONElement e, boolean empty) throws SAXException {
+    protected void closeStartTag(JSONElement e, boolean empty) throws JSONSerializationException {
         if (startTagOpen) {
             if (!isNotFirst.empty() && isNotFirst.peek().intValue() == 1) {
                 write(",");
@@ -299,7 +314,7 @@ public class JSONSerializer extends AbstractTextSerializer {
                 write(e.key);
                 write("\":");
             } else if (e.key == null && !objectStack.empty() && objectStack.peek().intValue() == OBJECT) {
-                throw new SAXException("key attribute for child of object not given: e.name="+e.name+", currentText=" + currentText);
+                throw new JSONSerializationException("key attribute for child of object not given: e.name="+e.name+", currentText=" + currentText);
             }
 
             startTagOpen = false;
@@ -334,31 +349,31 @@ public class JSONSerializer extends AbstractTextSerializer {
                 type = STRING;
             } else if (e.name.equals("true")) {
                 if (!empty) {
-                    throw new SAXException("true, false and null elements must be empty!");
+                    throw new JSONSerializationException("true, false and null elements must be empty!");
                 }
                 write("true");
                 return;
             } else if (e.name.equals("false")) {
                 if (!empty) {
-                    throw new SAXException("true, false and null elements must be empty!");
+                    throw new JSONSerializationException("true, false and null elements must be empty!");
                 }
                 write("false");
                 return;
             } else if (e.name.equals("null")) {
                 if (!empty) {
-                    throw new SAXException("true, false and null elements must be empty!");
+                    throw new JSONSerializationException("true, false and null elements must be empty!");
                 }
                 write("null");
                 return;
             } else {
-                throw new SAXException("Element name not one of object, array, number, string, false, true or null!");
+                throw new JSONSerializationException("Element name not one of object, array, number, string, false, true or null!");
             }
             objectStack.push(new Integer(type));
             isNotFirst.push(new Integer(0));
         }
     }
 
-    protected void writeNumber(String s) throws SAXException {
+    protected void writeNumber(String s) throws JSONSerializationException {
         // make sure value's numeric
         String res;
         try {
@@ -380,9 +395,13 @@ public class JSONSerializer extends AbstractTextSerializer {
         write(res);
     }
 
-    protected void write(String out) throws SAXException {
+    protected void write(String out) throws JSONSerializationException {
         char c[];
         c = out.toCharArray();
-        super.characters(c, 0, c.length);
+        try {
+            super.characters(c, 0, c.length);
+        } catch (SAXException ex) {
+            throw (JSONSerializationException) ex;
+        }
     }
 }
