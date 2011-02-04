@@ -74,7 +74,9 @@
       <map:match pattern="getPage.json">
         <map:generate src="cocoon:/getPage"/>
         <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>
-        <map:transform type="saxon" src="getPage/page-2-JSON.xslt"/>
+        <map:transform type="saxon" src="getPage/page-2-JSON.xslt">
+          <map:parameter name="sessionId" value="{session:id}"/>
+        </map:transform>
         <map:transform type="${tee}"
           src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>
         <map:serialize type="json"/>

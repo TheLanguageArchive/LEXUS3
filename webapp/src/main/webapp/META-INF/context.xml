@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- The contents of this file will be loaded for each web application -->
-<Context path="/webapp-1.0-SNAPSHOT">
+<Context antiJARLocking="true" path="/mpi/lexuscc">
   <!-- Default set of monitored resources -->
   <WatchedResource>WEB-INF/web.xml</WatchedResource>
   <!-- Uncomment this to disable session persistence across Tomcat restarts -->
@@ -35,7 +35,7 @@
   <!--Refers to the server context path for resource files. This path is relative to http://<serverNameUse>/lexusDojo.
   		Use '/' since it is a context path-->
   <!-- Insensitive to '/' on the end -->
-  <Environment name="LEXUS/resourceContextPath" override="false" type="java.lang.String" value="/resources"/>
+  <Environment name="LEXUS/resourceContextPath" override="false" type="java.lang.String" value="/resources/"/>
   <!--Refers to the maximum upload size for files-->
   <Environment name="LEXUS/maximumUploadSize" override="false" type="java.lang.Integer" value="20000000"/>
   <!--Refers to the base directory for resources used by Lexus internally-->

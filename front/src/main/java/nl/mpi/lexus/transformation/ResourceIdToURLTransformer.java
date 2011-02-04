@@ -88,7 +88,8 @@ public class ResourceIdToURLTransformer
                 if (null != archive) {
                     if (archive.equals(LOCAL_COPY)) {
                         Request request = ObjectModelHelper.getRequest(objectModel);
-                        String reqURI = request.getScheme() + ":////" + request.getServerName() + ":" + request.getServerPort() + "/";
+                        String reqURI = request.getScheme() + ":////" + request.getServerName() + ":" + request.getServerPort() +
+                                "/" + request.getContextPath() + "/";
                         urlStr = reqURI + resources_uri + "/" + lexiconId + "/" + value;
                         urlStr = urlStr.replaceAll("//", "/");
                     } else if (archive.equals(MPI)) {

@@ -2,7 +2,9 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:lexus="http://www.mpi.nl/lexus"
     version="2.0">
-
+    
+    <xsl:param name="sessionId"/>
+    
     <xsl:include href="../../stylesheets/lexicon.xslt"/>
     
     <!-- 
@@ -46,6 +48,9 @@
     <xsl:template match="lexus:get-page/lexus:result/result">
         <object key="result">
             <xsl:apply-templates/>
+            <string key="sessionID">
+                <xsl:value-of select="$sessionId"/>
+            </string>
         </object>
     </xsl:template>
 

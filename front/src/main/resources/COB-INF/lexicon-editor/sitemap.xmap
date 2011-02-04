@@ -24,17 +24,6 @@
 
     <map:pipeline id="lexicon" type="caching">
 
-
-      <!--
-        Serve a resource. Check if the user has read rights on the lexicon.
-      -->
-      <!--<map:match pattern="user-resource/*/*">
-        <map:aggregate element="data">
-          <map:part src="cocoon://request"/>
-          <map:part src="cocoon://user"/>
-        </map:aggregate>
-        <map:serialize/>
-      </map:match>-->
       <!-- 
           Get the Lexical Entry View.
         -->
@@ -46,8 +35,8 @@
             <map:part src="cocoon://user"/>
           </map:aggregate>
           <map:transform type="saxon" src="prepareGetLexicalEntryDataFromRequestParameters.xslt"/>
-          <map:transform type="${tee}"
-            src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>
+          <!--<map:transform type="${tee}"
+            src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>-->
           <map:transform type="servletService">
             <map:parameter name="service" value="servlet:back:/lexicon/getLexicalEntryData.xml"/>
           </map:transform>
@@ -61,11 +50,11 @@
             <map:parameter name="fragment.namespace" value="http://www.mpi.nl/lexus/display/1.0"/>
             <map:parameter name="fragment.element" value="page"/>
           </map:transform>
-          <map:transform type="${tee}"
-            src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>
+          <!--<map:transform type="${tee}"
+            src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>-->
           <map:transform type="saxon" src="extractLexicalEntryHTML.xslt"/>
-          <map:transform type="${tee}"
-            src="{naming:java:comp/env/tee-folder}debug-info/front-post2.xml"/>
+          <!--<map:transform type="${tee}"
+            src="{naming:java:comp/env/tee-folder}debug-info/front-post2.xml"/>-->
           <map:serialize type="html"/>
         </map:act>
       </map:match>
@@ -173,14 +162,7 @@
       -->
       <map:match pattern="getLexicalEntryData.json">
         <map:generate src="cocoon:/getLexicalEntryData"/>
-        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>
-        <map:transform type="saxon" src="getLexicalEntryData-2-JSON.xslt"/>
-        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>
-        <!-- resolve archive IDs to URIs -->
-        <map:transform type="resource-resolver">
-          <map:parameter name="resources-uri"
-            value="{naming:java:comp/env/LEXUS/resourceContextPath}"/>
-        </map:transform>
+        <map:call resource="getLexicalEntry-resource.json"/>
         <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-post2.xml"/>
         <map:serialize type="json"/>
       </map:match>
@@ -193,20 +175,8 @@
             <map:part src="cocoon://user"/>
           </map:aggregate>
           <map:transform type="saxon" src="prepareGetLexicalEntryData.xslt"/>
-          <map:transform type="servletService">
-            <map:parameter name="service" value="servlet:back:/lexicon/getLexicalEntryData.xml"/>
-          </map:transform>
-          <map:transform type="saxon" src="views/prepareDisplayGeneratorForLexicalEntry.xslt"/>
-          <map:transform type="multifragment-xslt"
-            src="cached:cocoon:/getDisplayStylesheet.xslt/listView/{lexicon}?cocoon:cache-expires=10">
-            <map:parameter name="fragment.namespace" value="http://www.mpi.nl/lexus/display/1.0"/>
-            <map:parameter name="fragment.element" value="lexical-entry"/>
-          </map:transform>
-          <map:transform type="multifragment-xslt" src="views/page2flexhtml.xslt">
-            <map:parameter name="fragment.namespace" value="http://www.mpi.nl/lexus/display/1.0"/>
-            <map:parameter name="fragment.element" value="page"/>
-          </map:transform>
-          <map:serialize type="xml"/>
+          <map:call resource="getLexicalEntry-resource.xml"/>
+          <map:serialize/>
         </map:act>
       </map:match>
 
@@ -240,27 +210,11 @@
             <map:parameter name="service"
               value="servlet:back:/lexicon/updateSortorderKeysInLexicalEntry.xml"/>
           </map:transform>
-          <map:transform type="servletService">
-            <map:parameter name="service" value="servlet:back:/lexicon/getLexicalEntryData.xml"/>
-          </map:transform>
-          <map:transform type="saxon" src="views/prepareDisplayGeneratorForLexicalEntry.xslt"/>
-          <!--<map:transform type="${tee}"
-            src="{naming:java:comp/env/tee-folder}debug-info/front-pre-mft.xml"/>-->
-          <map:transform type="multifragment-xslt"
-            src="cached:cocoon:/getDisplayStylesheet.xslt/listView/{lexicon}?cocoon:cache-expires=10">
-            <map:parameter name="fragment.namespace" value="http://www.mpi.nl/lexus/display/1.0"/>
-            <map:parameter name="fragment.element" value="lexical-entry"/>
-          </map:transform>
-          <!--<map:transform type="${tee}"
-            src="{naming:java:comp/env/tee-folder}debug-info/front-post-mft.xml"/>-->
-          <map:transform type="multifragment-xslt" src="views/page2flexhtml.xslt">
-            <map:parameter name="fragment.namespace" value="http://www.mpi.nl/lexus/display/1.0"/>
-            <map:parameter name="fragment.element" value="page"/>
-          </map:transform>
-          <map:transform type="saxon" src="getLexicalEntryData-2-JSON.xslt"/>
+          <map:call resource="getLexicalEntry-resource.xml"/>
+          <map:call resource="getLexicalEntry-resource.json"/>
           <map:transform type="${tee}"
             src="{naming:java:comp/env/tee-folder}debug-info/front-post2.xml"/>
-          <map:serialize type="xml"/>
+          <map:serialize type="json"/>
         </map:act>
       </map:match>
 
@@ -346,4 +300,32 @@
 
   </map:pipelines>
 
+  <map:resources>
+    <map:resource name="getLexicalEntry-resource.xml">
+      <map:transform type="servletService">
+        <map:parameter name="service" value="servlet:back:/lexicon/getLexicalEntryData.xml"/>
+      </map:transform>
+      <map:transform type="saxon" src="views/prepareDisplayGeneratorForLexicalEntry.xslt"/>
+      <map:transform type="multifragment-xslt"
+        src="cached:cocoon:/getDisplayStylesheet.xslt/listView/{lexicon}?cocoon:cache-expires=10">
+        <map:parameter name="fragment.namespace" value="http://www.mpi.nl/lexus/display/1.0"/>
+        <map:parameter name="fragment.element" value="lexical-entry"/>
+      </map:transform>
+      <map:transform type="multifragment-xslt" src="views/page2flexhtml.xslt">
+        <map:parameter name="fragment.namespace" value="http://www.mpi.nl/lexus/display/1.0"/>
+        <map:parameter name="fragment.element" value="page"/>
+      </map:transform>
+    </map:resource>
+    
+    <map:resource name="getLexicalEntry-resource.json">
+      <!--<map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>-->
+      <map:transform type="saxon" src="getLexicalEntryData-2-JSON.xslt"/>
+      <!--<map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>-->
+      <!-- resolve archive IDs to URIs -->
+      <map:transform type="resource-resolver">
+        <map:parameter name="resources-uri"
+          value="{naming:java:comp/env/LEXUS/resourceContextPath}"/>
+      </map:transform>
+    </map:resource>
+  </map:resources> 
 </map:sitemap>

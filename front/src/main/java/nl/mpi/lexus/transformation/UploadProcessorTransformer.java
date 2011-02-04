@@ -91,56 +91,63 @@ public class UploadProcessorTransformer extends AbstractTransformer {
             final HttpSession session = request.getSession();
             String mimeType = "";
             String type = "";
+            File tf = null;
 
             String id = attributes.getValue(VALUE_ATTRIBUTE);
             getLogger().debug("id " + id);
             getLogger().debug("session = " + session);
 
             String tmpFile = (String) session.getAttribute(id);
-            File tf = new File(tmpFile);
-            String fileName = tf.getName();
-
-            /* Try to copy the file to the resources folder. */
             try {
-                copy(tmpFile, usersResourcesFolder + fileName);
-            } catch (Exception ex) {
-                getLogger().error("Failed to copy " + tmpFile + " to " + usersResourcesFolder);
+                tf = new File(tmpFile);
+            } catch(Exception ioex) {
+                getLogger().error("Failed to access uploaded file " + tmpFile);
             }
+            if (null != tf) {
+                String fileName = tf.getName();
 
-            /* determine mimetype */
-            FileType ft = new FileType();
-            FileInputStream tmpStr;
-            try {
-                tmpStr = new FileInputStream(tmpFile);
-                String str = ft.checkStream(tmpStr, fileName);
-                tmpStr.close();
-                mimeType = FileType.resultToMimeType(str);
-                if (mimeType == null) {
-                    //We switch to the 'standard' java mime type maper here
-                    MimetypesFileTypeMap handler = new MimetypesFileTypeMap();
-                    mimeType = handler.getContentType(tmpFile);
-
+                /* Try to copy the file to the resources folder. */
+                try {
+                    copy(tmpFile, usersResourcesFolder + fileName);
+                } catch (Exception ex) {
+                    getLogger().error("Failed to copy " + tmpFile + " to " + usersResourcesFolder);
                 }
-            } catch (Exception ex) {
-                getLogger().error("Failed to establish mimetype: " + ex.getLocalizedMessage());
+
+                /* determine mimetype */
+                FileType ft = new FileType();
+                FileInputStream tmpStr;
+                try {
+                    tmpStr = new FileInputStream(tmpFile);
+                    String str = ft.checkStream(tmpStr, fileName);
+                    tmpStr.close();
+                    mimeType = FileType.resultToMimeType(str);
+                    if (mimeType == null) {
+                        //We switch to the 'standard' java mime type maper here
+                        MimetypesFileTypeMap handler = new MimetypesFileTypeMap();
+                        mimeType = handler.getContentType(tmpFile);
+
+                    }
+                } catch (Exception ex) {
+                    getLogger().error("Failed to establish mimetype: " + ex.getLocalizedMessage());
+                }
+
+                /* Delete the file from scratch area. */
+                tf.delete();
+
+                /* Determine general type */
+                type = determineType(mimeType);
+
+                /* Add the attributes. */
+                AttributesImpl attr = new AttributesImpl();
+                // attr.setAttributes(attributes);
+                attr.addAttribute("", VALUE_ATTRIBUTE, VALUE_ATTRIBUTE, "string", fileName);
+                attr.addAttribute("", ARCHIVE_ATTRIBUTE, ARCHIVE_ATTRIBUTE, "string", ARCHIVE_LOCAL);
+                attr.addAttribute("", MIMETYPE_ATTRIBUTE, MIMETYPE_ATTRIBUTE, "string", mimeType);
+                attr.addAttribute("", TYPE_ATTRIBUTE, TYPE_ATTRIBUTE, "string", type);
+
+                contentHandler.startElement(RESOURCE_ELEMENT_NAMESPACE, RESOURCE_ELEMENT, RESOURCE_ELEMENT, attr);
+                contentHandler.endElement(RESOURCE_ELEMENT_NAMESPACE, RESOURCE_ELEMENT, RESOURCE_ELEMENT);
             }
-
-            /* Delete the file from scratch area. */
-            tf.delete();
-
-            /* Determine general type */
-            type = determineType(mimeType);
-
-            /* Add the attributes. */
-            AttributesImpl attr = new AttributesImpl();
-            // attr.setAttributes(attributes);
-            attr.addAttribute("", VALUE_ATTRIBUTE, VALUE_ATTRIBUTE, "string", fileName);
-            attr.addAttribute("", ARCHIVE_ATTRIBUTE, ARCHIVE_ATTRIBUTE, "string", ARCHIVE_LOCAL);
-            attr.addAttribute("", MIMETYPE_ATTRIBUTE, MIMETYPE_ATTRIBUTE, "string", mimeType);
-            attr.addAttribute("", TYPE_ATTRIBUTE, TYPE_ATTRIBUTE, "string", type);
-
-            contentHandler.startElement(RESOURCE_ELEMENT_NAMESPACE, RESOURCE_ELEMENT, RESOURCE_ELEMENT, attr);
-            contentHandler.endElement(RESOURCE_ELEMENT_NAMESPACE, RESOURCE_ELEMENT, RESOURCE_ELEMENT);
         } else {
             super.startElement(namespaceURI, localName, qName, attributes);
         }
