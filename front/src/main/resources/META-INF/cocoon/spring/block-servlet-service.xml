@@ -27,9 +27,8 @@
   <bean name="nl.mpi.lexus.front.service" class="org.apache.cocoon.sitemap.SitemapServlet">
     <servlet:context mount-path="/" context-path="blockcontext:/front/">
       <servlet:connections>
-<!--        <entry key="root" value-ref="nl.mpi.lexus.root.service"/>-->
         <entry key="back" value-ref="nl.mpi.lexus.back.service"/>
-<!--        <entry key="display" value-ref="nl.mpi.lexus.display.service"/>-->
+        <entry key="display" value-ref="nl.mpi.lexus.display.service"/>
       </servlet:connections>
     </servlet:context>
   </bean>
