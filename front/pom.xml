@@ -69,7 +69,7 @@
     <dependency>
       <groupId>com.google.code</groupId>
       <artifactId>cocooncomponents</artifactId>
-      <version>1.0.4-SNAPSHOT</version>
+      <version>1.0.5-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -123,10 +123,15 @@
       <version>1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
+      <groupId>nl.mpi.lexus</groupId>
+      <artifactId>display</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
       <groupId>nl.mpi</groupId>
       <artifactId>corpusstructure</artifactId>
       <version>1.6.4</version>
-    </dependency>    
+    </dependency>
     <dependency>
       <groupId>nl.mpi.bcarchive</groupId>
       <artifactId>typecheck</artifactId>
@@ -136,6 +141,26 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <version>1.0-beta-4</version>
+        <executions>
+          <execution>
+            <phase>validate</phase>
+            <goals>
+              <goal>create</goal>
+            </goals>
+          </execution>
+        </executions>
+
+        <configuration>
+          <doCheck>false</doCheck>
+          <doUpdate>false</doUpdate>
+
+          <revisionOnScmFailure/>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>com.google.code.maven-svn-revision-number-plugin</groupId>
         <artifactId>maven-svn-revision-number-plugin</artifactId>
@@ -193,7 +218,6 @@
                   <filtering>false</filtering>
                 </resource>
                 <resource>
-                  <targetPath>${basedir}/src/main/webapp/</targetPath>
                   <filtering>true</filtering>
                   <directory>${basedir}/src/main/resources/COB-INF/resource/internal</directory>
                   <includes>
@@ -206,6 +230,15 @@
                   <directory>${basedir}/src/main/etc</directory>
                   <includes>
                     <include>context.xml</include>
+                  </includes>
+                </resource>
+                <resource>
+                  <targetPath>${basedir}/target/classes/</targetPath>
+                  <filtering>true</filtering>
+                  <directory>${basedir}/src/main/etc</directory>
+                  <includes>
+                    <include>log4j.xml</include>
+                    <include>ehcache.xml</include>
                   </includes>
                 </resource>
               </resources>
@@ -261,6 +294,14 @@
         </configuration>
       </plugin>
     </plugins>
+
   </build>
+
+
+  <scm>
+    <connection>scm:svn:https://svn.mpi.nl/LAT/lexus/trunk/LexusCocoon/front</connection>
+    <developerConnection>scm:svn:file:///D:/repos1</developerConnection>
+    <url>scm:svn:https://svn.mpi.nl/LAT/lexus/trunk/LexusCocoon/front</url>
+  </scm>
 
 </project>
