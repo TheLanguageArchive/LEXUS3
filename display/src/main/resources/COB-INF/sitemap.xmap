@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<map:sitemap xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://apache.org/cocoon/sitemap/1.0 http://cocoon.apache.org/schema/sitemap/cocoon-sitemap-1.0.xsd"
+  xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+
+  <map:pipelines>
+
+
+    <map:pipeline id="lexicon" type="caching">
+
+      <!-- 
+        Get list view of lexical entries
+      -->
+      <map:match pattern="lexicon.xml">
+        <map:generate src="service-consumer:"/>
+        <map:transform type="saxon" src="views/prepareFragmentsTransformer.xslt"/>
+        <map:transform type="fragments"/>
+        <map:transform type="multifragment-xslt" src="views/page2flexhtml.xslt">
+          <map:parameter name="fragment.namespace" value="http://www.mpi.nl/lexus/display/1.0"/>
+          <map:parameter name="fragment.element" value="page"/>
+        </map:transform>
+        <map:serialize type="xml"/>
+      </map:match>
+
+
+
+      <!-- 
+        Get HTML view of lexical entry
+      -->
+      <map:match pattern="htmlview.xml">
+        <map:generate src="service-consumer:"/>
+        <map:transform type="saxon" src="views/prepareFragmentsTransformer.xslt"/>
+
+        <!--<map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/display-post.xml"/>-->
+
+        <map:transform type="fragments"/>
+        <map:transform type="multifragment-xslt" src="views/page2html.xslt">
+          <map:parameter name="fragment.namespace" value="http://www.mpi.nl/lexus/display/1.0"/>
+          <map:parameter name="fragment.element" value="page"/>
+        </map:transform>
+        <map:serialize type="xml"/>
+      </map:match>
+
+
+    </map:pipeline>
+
+    <map:pipeline type="caching">
+
+      <!--
+         Get the listView (DSL) from the database using the back module and call DSL_2_XSLT.xslt
+         to transform the DSL to a XSLT stylesheet.
+         Save it to <lexiconId>-listView.xslt.
+         -->
+      <map:match pattern="getDisplayStylesheet.xslt/listView/*">
+        <map:generate src="views/display.xml"/>
+        <map:transform type="saxon" src="views/prepareGetListView.xslt">
+          <map:parameter name="lexicon-id" value="{1}"/>
+        </map:transform>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:back:/schema-editor/getListView.xml"/>
+        </map:transform>
+        <map:transform type="saxon" src="views/prepareViewForTransformation.xslt"/>
+        <map:transform type="saxon" src="views/DSL_2_XSLT.xslt"/>
+        <map:serialize type="xml"/>
+      </map:match>
+
+
+      <!--
+        Get the Lexical Entry View (DSL) from the database using the back module and call DSL_2_XSLT.xslt
+        to transform the DSL to a XSLT stylesheet.
+      -->
+      <map:match pattern="getDisplayStylesheet.xslt/leView/*">
+        <map:generate src="views/display.xml"/>
+        <map:transform type="saxon" src="views/prepareGetLEView.xslt">
+          <map:parameter name="lexicon" value="{1}"/>
+        </map:transform>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:back:/schema-editor/getLEView.xml"/>
+        </map:transform>
+        <map:transform type="saxon" src="views/prepareViewForTransformation.xslt"/>
+        <map:transform type="saxon" src="views/DSL_2_XSLT.xslt"/>
+        <map:serialize type="xml"/>
+      </map:match>
+
+    </map:pipeline>
+
+  </map:pipelines>
+
+</map:sitemap>
