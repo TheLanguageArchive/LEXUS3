@@ -28,18 +28,9 @@
   http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
   http://cocoon.apache.org/schema/pipeline http://cocoon.apache.org/schema/pipeline/cocoon-pipeline-1.0.xsd">
 
-  <bean id="demo" class="nl.mpi.lexus.MyBean">
-    <property name="message" value="This is a message coming from a Spring bean." />
-  </bean>
   
   <bean name="org.apache.cocoon.transformation.Transformer/validate"
     class="org.apache.cocoon.transformation.ValidatingTransformer" 
     scope="prototype" />
-  <!--
-  <bean name="org.apache.cocoon.transformation.Transformator/rest"
-    class="org.apache.cocoon.transformation.RESTTransformer" scope="prototype">
-    <property name="username" value="${exist.rest.username}"/>
-    <property name="password" value="${exist.rest.password}"/>
-  </bean>
-  -->
+  
 </beans>
