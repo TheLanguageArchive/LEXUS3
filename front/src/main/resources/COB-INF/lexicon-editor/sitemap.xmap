@@ -72,7 +72,7 @@
             src="{naming:java:comp/env/tee-folder}debug-info/front-pre-mft.xml"/>-->
           <map:transform type="saxon" src="views/prepareDisplayGeneratorForLexicalEntry.xslt"/>
           <map:transform type="servletService">
-            <map:parameter name="service" value="servlet:display:/lexicon.xml"/>
+            <map:parameter name="service" value="servlet:display:/flexhtmlview.xml"/>
           </map:transform>
           <map:transform type="saxon" src="getLexicalEntryData-2-JSON.xslt"/>
           <!--<map:transform type="${tee}"
@@ -122,7 +122,7 @@
         </map:transform>
         <map:transform type="saxon" src="views/prepareDisplayGenerator.xslt"/>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:display:/lexicon.xml"/>
+          <map:parameter name="service" value="servlet:display:/flexhtmlview.xml"/>
         </map:transform>
         <map:serialize type="xml"/>
       </map:match>
@@ -134,7 +134,7 @@
         <map:generate src="cocoon:/getLexicalEntryData"/>
         <map:transform type="saxon" src="views/prepareDisplayGeneratorForLexicalEntry.xslt"/>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:display:/lexicon.xml"/>
+          <map:parameter name="service" value="servlet:display:/flexhtmlview.xml"/>
         </map:transform>
         <map:transform type="saxon" src="getLexicalEntryData-2-JSON.xslt"/>
         <!-- resolve archive IDs to URIs -->
@@ -151,7 +151,7 @@
         <map:generate src="cocoon:/getLexicalEntryData"/>
         <map:transform type="saxon" src="views/prepareDisplayGeneratorForLexicalEntry.xslt"/>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:display:/lexicon.xml"/>
+          <map:parameter name="service" value="servlet:display:/flexhtmlview.xml"/>
         </map:transform>
         <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>
         <map:transform type="saxon" src="getLexicalEntryData-2-JSON.xslt"/>
@@ -207,7 +207,7 @@
           </map:transform>
           <map:transform type="saxon" src="views/prepareDisplayGeneratorForLexicalEntry.xslt"/>
           <map:transform type="servletService">
-            <map:parameter name="service" value="servlet:display:/lexicon.xml"/>
+            <map:parameter name="service" value="servlet:display:/flexhtmlview.xml"/>
           </map:transform>
           <map:transform type="saxon" src="getLexicalEntryData-2-JSON.xslt"/>
           <!-- resolve archive IDs to URIs -->
