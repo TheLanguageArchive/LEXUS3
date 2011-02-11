@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:lexus="http://www.mpi.nl/lexus"
+    xmlns:display="http://www.mpi.nl/lexus/display/1.0"
     xmlns:rr="http://nl.mpi.lexus/resource-resolver" xmlns:xhtml="http://www.w3.org/1999/xhtml"
     exclude-result-prefixes="xs" version="2.0">
 
@@ -67,15 +68,13 @@
             </string>
             <object key="listView">
                 <xsl:choose>
-                    <xsl:when test="//lexus:display/lexical-entry[@id = current()/@id]">
+                    <xsl:when test="//display:lexicon/lexical-entry[@id = current()/@id]">
                         <string key="value">
-                            <![CDATA[<b>]]>
                             <xsl:value-of
-                                select="//lexus:display/lexical-entry[@id = current()/@id]/xhtml:html/xhtml:body"/>
+                                select="//display:lexicon/lexical-entry[@id = current()/@id]/xhtml:html/xhtml:body"/>
                             <xsl:apply-templates
-                                select="//lexus:display/lexical-entry[@id = current()/@id]/xhtml:html/xhtml:body/*"
+                                select="//display:lexicon/lexical-entry[@id = current()/@id]/xhtml:html/xhtml:body/*"
                                 mode="encoded"/>
-                            <![CDATA[</b>]]>
                         </string>
                     </xsl:when>
                     <xsl:otherwise>
