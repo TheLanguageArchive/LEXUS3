@@ -29,10 +29,6 @@
   </map:components>
 
 
-  <map:flow language="javascript">
-    <map:script src="flow/uploads.js"/>
-  </map:flow>
-
 
   <map:pipelines>
 
