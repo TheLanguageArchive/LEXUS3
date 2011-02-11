@@ -32,6 +32,6 @@
   </parent>
   
   <artifactId>db</artifactId>
-  <name>back</name>
+  <name>db</name>
 
 </project>
