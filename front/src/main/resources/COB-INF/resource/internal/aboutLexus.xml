@@ -11,5 +11,5 @@
 <about>
     <name>Lexus</name>
     <version>3.0-alpha</version>  <!-- ${project.version} -->
-    <scm><revision>23456</revision></scm> <!-- ${prefix.revision} -->
+    <scm><revision>${buildNumber}</revision></scm> <!-- ${prefix.revision} -->
 </about>
