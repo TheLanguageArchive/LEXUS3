@@ -1,0 +1,255 @@
+<!-- saved from url=(0014)about:internet -->
+<html lang="en">
+
+<!--
+Smart developers always View Source.
+
+This application was built using Adobe Flex, an open source framework
+for building rich Internet applications that get delivered via the
+Flash Player or to desktops via Adobe AIR.
+
+Learn more about Flex at http://flex.org
+// -->
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<!--  BEGIN Browser History required section -->
+<link rel="stylesheet" type="text/css" href="history/history.css" />
+<!--  END Browser History required section -->
+
+<title></title>
+<script src="AC_OETags.js" language="javascript"></script>
+
+<!--  BEGIN Browser History required section -->
+<script src="history/history.js" language="javascript"></script>
+<!--  END Browser History required section -->
+
+<style>
+body { margin: 0px; overflow:hidden }
+</style>
+<script language="JavaScript" type="text/javascript">
+<!--
+// -----------------------------------------------------------------------------
+// Globals
+// Major version of Flash required
+var requiredMajorVersion = 9;
+// Minor version of Flash required
+var requiredMinorVersion = 0;
+// Minor version of Flash required
+var requiredRevision = 124;
+// -----------------------------------------------------------------------------
+// -->
+
+
+</script>
+<script language="JavaScript" type="text/javascript">
+
+
+/************************************************
+*	IFRAME METHODS
+************************************************/
+function moveIFrame(x,y,w,h) {
+    var frameRef=document.getElementById("myFrame");
+    frameRef.style.left=x;
+    frameRef.style.top=y;
+    var iFrameRef=document.getElementById("myIFrame");
+    iFrameRef.width=w;
+    iFrameRef.height=h;
+}
+
+function hideIFrame(){
+    //document.getElementById("myFrame").style.visibility="hidden";
+    document.getElementById("myFrame").style.display="none";
+}
+
+function showIFrame(){
+    //document.getElementById("myFrame").style.visibility="visible";
+    document.getElementById("myFrame").style.display="";
+}
+
+function loadIFrame(url){
+
+    document.getElementById("myFrame").innerHTML = "<iframe id='myIFrame' src='" + url + "'frameborder='0'></iframe>";
+}
+/************************************************
+*	QUICKTIME METHODS
+************************************************/
+function moveQuickTime(x,y,w,h) {
+    var frameRef=document.getElementById("quicktime");
+    frameRef.style.left=x;
+    frameRef.style.top=y;
+    var iFrameRef=document.getElementById("quicktime");
+    //iFrameRef.width=w;
+    //iFrameRef.height=h;
+}
+
+function hideQuickTime(){
+    //document.getElementById("quicktime").style.visibility="hidden";
+    document.getElementById("quicktime").style.display="none";
+}
+
+function showQuickTime(){
+    //document.getElementById("quicktime").style.visibility="visible";
+    document.getElementById("quicktime").style.display="";
+}
+
+function loadQuickTime(url){
+
+	   var htmlStr = "";
+	   htmlStr += "<object id='QTPlayer' width='320' height='240' classid='clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B' codebase='http://www.apple.com/qtactivex/qtplugin.cab#version=6,0,2,0'>\n";
+	   htmlStr += "<param name='src' value='"+url+"'>\n";
+	   htmlStr += "<param name='scale' value='Aspect'>\n";
+	   htmlStr += "<param name='kioskmode' value='true'>\n";
+	   htmlStr += "<param name='autostart' value='false'>\n";
+	   htmlStr += "<param name='controller' value ='true'>\n";
+	   htmlStr += "<param name='enablejavascript' value='true'>\n";
+	   htmlStr += "<embed name='QTPlayer' width='320' height='240' src='"+url+"' scale='Aspect' autostart='false'\n";
+	   htmlStr += " controller='true' enablejavascript='true' />\n";
+	   htmlStr += "</object>";
+	   document.getElementById("quicktime").innerHTML = htmlStr;
+showQuickTime();
+
+
+}
+/************************************************
+*	SWF NAVIGATION METHODS
+************************************************/
+
+function getParameter ( parameterName ) {
+	var queryString = window.top.location.search.substring(1);
+   // Add "=" to the parameter name (i.e. parameterName=value)
+   var parameterName = parameterName + "=";
+   if ( queryString.length > 0 ) {
+      // Find the beginning of the string
+      begin = queryString.indexOf ( parameterName );
+      // If the parameter name is not found, skip it, otherwise return the value
+      if ( begin != -1 ) {
+         // Add the length (integer) to the beginning
+         begin += parameterName.length;
+         // Multiple parameters are separated by the "&" sign
+         end = queryString.indexOf ( "&" , begin );
+      if ( end == -1 ) {
+         end = queryString.length
+      }
+      // Return the string
+      return unescape ( queryString.substring ( begin, end ) );
+   }
+   // Return "null" if no parameter has been found
+   return "null";
+   }
+}
+function openEntry(){
+	var queryString = window.top.location.search.substring(1);
+	var param = getParameter(queryString, "id");
+	//alert( param);
+	alert(thisMovie("LexicalEntryViewer"));
+	thisMovie("LexicalEntryViewer").showEntry( param);
+}
+function thisMovie(movieName) {
+	 if (navigator.appName.indexOf("Microsoft") != -1) {
+		 return window[movieName];
+	 } else {
+		 return document[movieName];
+	 }
+}
+var jsReady = false;
+function isReady() {
+  return jsReady;
+}
+function pageInit() {
+	jsReady = true;
+}
+
+
+
+</script>
+
+</head>
+
+<body scroll="no" onload="pageInit()">
+<script language="JavaScript" type="text/javascript">
+<!--
+// Version check for the Flash Player that has the ability to start Player Product Install (6.0r65)
+var hasProductInstall = DetectFlashVer(6, 0, 65);
+
+// Version check based upon the values defined in globals
+var hasRequestedVersion = DetectFlashVer(requiredMajorVersion, requiredMinorVersion, requiredRevision);
+
+if ( hasProductInstall && !hasRequestedVersion ) {
+	// DO NOT MODIFY THE FOLLOWING FOUR LINES
+	// Location visited after installation is complete if installation is required
+	var MMPlayerType = (isIE == true) ? "ActiveX" : "PlugIn";
+	var MMredirectURL = window.location;
+    document.title = document.title.slice(0, 47) + " - Flash Player Installation";
+    var MMdoctitle = document.title;
+
+	AC_FL_RunContent(
+		"src", "playerProductInstall",
+		"FlashVars", "MMredirectURL="+MMredirectURL+'&MMplayerType='+MMPlayerType+'&MMdoctitle='+MMdoctitle+"",
+		"width", "100%",
+		"height", "100%",
+		"align", "middle",
+		"id", "LexicalEntryViewer",
+		"quality", "high",
+		"bgcolor", "#869ca7",
+		"name", "LexicalEntryViewer",
+		"allowScriptAccess","sameDomain",
+		"type", "application/x-shockwave-flash",
+		"pluginspage", "http://www.adobe.com/go/getflashplayer"
+	);
+} else if (hasRequestedVersion) {
+	// if we've detected an acceptable version
+	// embed the Flash Content SWF when all tests are passed
+	AC_FL_RunContent(
+			"src", "LexicalEntryViewer",
+			"width", "100%",
+			"height", "100%",
+			"align", "middle",
+			"id", "LexicalEntryViewer",
+			"quality", "high",
+			"wmode", "opaque",
+			"bgcolor", "#869ca7",
+			"name", "LexicalEntryViewer",
+			"allowScriptAccess","sameDomain",
+			"type", "application/x-shockwave-flash",
+			"pluginspage", "http://www.adobe.com/go/getflashplayer"
+	);
+  } else {  // flash is too old or we can't detect the plugin
+    var alternateContent = 'Alternate HTML content should be placed here. '
+  	+ 'This content requires the Adobe Flash Player. '
+   	+ '<a href=http://www.adobe.com/go/getflash/>Get Flash</a>';
+    document.write(alternateContent);  // insert non-flash content
+  }
+// -->
+</script>
+<noscript>
+  	<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"
+			id="LexicalEntryViewer" width="100%" height="100%"
+			codebase="http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab">
+			<param name="movie" value="LexicalEntryViewer.swf" />
+			<param name="quality" value="high" />
+			<param name="bgcolor" value="#869ca7" />
+			<param name="allowScriptAccess" value="sameDomain" />
+			<embed src="LexicalEntryViewer.swf" quality="high" bgcolor="#869ca7"
+				width="100%" height="100%" name="LexicalEntryViewer" align="middle"
+				play="true"
+				loop="false"
+				quality="high"
+				allowScriptAccess="sameDomain"
+				type="application/x-shockwave-flash"
+				pluginspage="http://www.adobe.com/go/getflashplayer">
+
+			</embed>
+	</object>
+</noscript>
+
+
+<div id="myFrame" style="position:absolute;background-color:transparent;border:0px;display:none;"></div>
+<div id="quicktime" style="position:absolute; display:none; left:192; top:96; z-index:4;">
+      <!-- the Quicktime player will be dynamically loaded into this div by JavaScript -->
+</div>
+
+
+</body>
+</html>
