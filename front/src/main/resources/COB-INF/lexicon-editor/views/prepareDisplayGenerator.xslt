@@ -8,19 +8,9 @@
     <xsl:template match="/data">
         <xsl:copy>
             <xsl:apply-templates select="@* | node()"/>
-            <lexus:display>
+            <display:lexicon id="{lexus:search/lexus:result/result/results/lexicon/@id}" view="list-view">
                 <xsl:apply-templates select="lexus:search/lexus:result/result/results/lexical-entries"/>
-            </lexus:display>
-        </xsl:copy>
-    </xsl:template>
-
-
-    <xsl:template match="lexical-entry">
-        <xsl:copy>
-            <xsl:apply-templates select="@*"/>
-            <display:lexical-entry>
-                <xsl:apply-templates select="*"/>
-            </display:lexical-entry>
+            </display:lexicon>
         </xsl:copy>
     </xsl:template>
 
