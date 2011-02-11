@@ -90,5 +90,6 @@
         <module>webapp</module>
         <module>front</module>
         <module>back</module>
+        <module>display</module>
     </modules>
 </project>
