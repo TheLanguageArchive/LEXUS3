@@ -8,8 +8,7 @@
 
     <groupId>nl.mpi.lexus</groupId>
     <artifactId>lexus</artifactId>
-    <version>1.0-SNAPSHOT</version>
-
+    <version>3.0-SNAPSHOT</version>
     <name>Lexus</name>
 
     <dependencies>
@@ -84,12 +83,66 @@
             <artifactId>jtidy</artifactId>
             <version>4aug2000r7-dev</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.code</groupId>
+            <artifactId>cocooncomponents</artifactId>
+            <version>1.0.5</version>
+        </dependency>
+
+        <!-- MPI dependencies -->
+        <dependency>
+            <groupId>nl.mpi</groupId>
+            <artifactId>corpusstructure</artifactId>
+            <version>1.6.4</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.mpi.bcarchive</groupId>
+            <artifactId>typecheck</artifactId>
+            <version>1.5.16611</version>
+        </dependency>
     </dependencies>
 
     <modules>
         <module>webapp</module>
         <module>front</module>
-        <module>back</module>
+        <module>db</module>
         <module>display</module>
     </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Cocoon-Block-Name>${pom.artifactId}</Cocoon-Block-Name>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.0.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <version>2.5</version>
+            </plugin>
+        </plugins>
+    </build>
 </project>
