@@ -27,10 +27,11 @@
             <artifactId>cocoon-template-impl</artifactId>
             <version>1.1.0</version>
         </dependency>
+        
         <dependency>
             <groupId>org.apache.cocoon</groupId>
-            <artifactId>cocoon-flowscript-impl</artifactId>
-            <version>1.0.0</version>
+            <artifactId>cocoon-validation-impl</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.cocoon</groupId>

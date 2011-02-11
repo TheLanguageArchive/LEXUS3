@@ -38,12 +38,12 @@
     <dependency>
       <groupId>nl.mpi.lexus</groupId>
       <artifactId>db</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>3.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>nl.mpi.lexus</groupId>
       <artifactId>display</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>3.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
@@ -109,13 +109,12 @@
         <executions>
           <execution>
             <id>copy-resources</id>
-            <!-- here the phase you need -->
             <phase>validate</phase>
             <goals>
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${basedir}/src/main/resources/COB-INF/flexus</outputDirectory>
+              <outputDirectory>${project.build.outputDirectory}/COB-INF/flexus</outputDirectory>
               <overwrite>true</overwrite>
               <resources>
                 <resource>
@@ -123,25 +122,11 @@
                   <filtering>false</filtering>
                 </resource>
                 <resource>
-                  <filtering>true</filtering>
-                  <directory>${basedir}/src/main/resources/COB-INF/resource/internal</directory>
-                  <includes>
-                    <include>**/aboutLexus.xml</include>
-                  </includes>
-                </resource>
-                <resource>
-                  <targetPath>${basedir}/target/classes/META-INF/</targetPath>
+                  <targetPath>${project.build.outputDirectory}/META-INF/</targetPath>
                   <filtering>true</filtering>
                   <directory>${basedir}/src/main/etc</directory>
                   <includes>
                     <include>context.xml</include>
-                  </includes>
-                </resource>
-                <resource>
-                  <targetPath>${basedir}/target/classes/</targetPath>
-                  <filtering>true</filtering>
-                  <directory>${basedir}/src/main/etc</directory>
-                  <includes>
                     <include>log4j.xml</include>
                     <include>ehcache.xml</include>
                   </includes>
@@ -176,6 +161,18 @@
       </plugin>
     </plugins>
 
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource><!--
+      <resource>
+        <filtering>true</filtering>
+        <directory>${basedir}/src/main/resources/COB-INF/resource/internal</directory>
+        <includes>
+          <include>**/aboutLexus.xml</include>
+        </includes>
+      </resource>--></resources>
   </build>
 
 

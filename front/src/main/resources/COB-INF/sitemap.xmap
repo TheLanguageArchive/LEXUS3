@@ -97,7 +97,7 @@
         <map:generate type="request"/>
         <map:transform type="saxon" src="util/login.xslt"/>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:back:/workspace/userLogin.xml"/>
+          <map:parameter name="service" value="servlet:db:/workspace/userLogin.xml"/>
         </map:transform>
         <map:transform type="${tee}"
           src="{naming:java:comp/env/tee-folder}debug-info/authentication-pre.xml"/>

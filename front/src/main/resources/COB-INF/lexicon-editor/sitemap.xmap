@@ -36,7 +36,7 @@
           </map:aggregate>
           <map:transform type="saxon" src="prepareGetLexicalEntryDataFromRequestParameters.xslt"/>
           <map:transform type="servletService">
-            <map:parameter name="service" value="servlet:back:/lexicon/getLexicalEntryData.xml"/>
+            <map:parameter name="service" value="servlet:db:/lexicon/getLexicalEntryData.xml"/>
           </map:transform>
           <map:transform type="saxon" src="views/prepareDisplayGeneratorForLexicalEntry.xslt">
             <map:parameter name="view" value="le-view"/>
@@ -63,10 +63,10 @@
             src="{naming:java:comp/env/tee-folder}debug-info/front-pre2.xml"/>
           <map:transform type="saxon" src="addIdsToNewLexicalEntry.xslt"/>
           <map:transform type="servletService">
-            <map:parameter name="service" value="servlet:back:/lexicon/saveLexicalEntry.xml"/>
+            <map:parameter name="service" value="servlet:db:/lexicon/saveLexicalEntry.xml"/>
           </map:transform>
           <map:transform type="servletService">
-            <map:parameter name="service" value="servlet:back:/lexicon/getLexicalEntryData.xml"/>
+            <map:parameter name="service" value="servlet:db:/lexicon/getLexicalEntryData.xml"/>
           </map:transform>
           <!--<map:transform type="${tee}"
             src="{naming:java:comp/env/tee-folder}debug-info/front-pre-mft.xml"/>-->
@@ -93,7 +93,7 @@
         </map:aggregate>
         <map:transform type="saxon" src="prepareDeleteLexicalEntry.xslt"/>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:back:/lexicon/deleteLexicalEntry.xml"/>
+          <map:parameter name="service" value="servlet:db:/lexicon/deleteLexicalEntry.xml"/>
         </map:transform>
         <map:transform type="saxon" src="deleteLexicalEntryData-2-JSON.xslt"/>
         <map:serialize type="json"/>
@@ -118,7 +118,7 @@
         </map:aggregate>
         <map:transform type="saxon" src="prepareStartLetterSearch.xslt"/>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:back:/lexicon/startLetterSearch.xml"/>
+          <map:parameter name="service" value="servlet:db:/lexicon/startLetterSearch.xml"/>
         </map:transform>
         <map:transform type="saxon" src="views/prepareDisplayGenerator.xslt"/>
         <map:transform type="servletService">
@@ -172,7 +172,7 @@
         </map:aggregate>
         <map:transform type="saxon" src="prepareGetLexicalEntryData.xslt"/>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:back:/lexicon/getLexicalEntryData.xml"/>
+          <map:parameter name="service" value="servlet:db:/lexicon/getLexicalEntryData.xml"/>
         </map:transform>
         <map:serialize type="xml"/>
       </map:match>
@@ -196,14 +196,14 @@
           </map:transform>
           <map:transform type="saxon" src="prepareSaveLexicalEntry.xslt"/>
           <map:transform type="servletService">
-            <map:parameter name="service" value="servlet:back:/lexicon/saveLexicalEntry.xml"/>
+            <map:parameter name="service" value="servlet:db:/lexicon/saveLexicalEntry.xml"/>
           </map:transform>
           <map:transform type="servletService">
             <map:parameter name="service"
-              value="servlet:back:/lexicon/updateSortorderKeysInLexicalEntry.xml"/>
+              value="servlet:db:/lexicon/updateSortorderKeysInLexicalEntry.xml"/>
           </map:transform>
           <map:transform type="servletService">
-            <map:parameter name="service" value="servlet:back:/lexicon/getLexicalEntryData.xml"/>
+            <map:parameter name="service" value="servlet:db:/lexicon/getLexicalEntryData.xml"/>
           </map:transform>
           <map:transform type="saxon" src="views/prepareDisplayGeneratorForLexicalEntry.xslt"/>
           <map:transform type="servletService">
@@ -235,7 +235,7 @@
           <map:parameter name="id" value="{request-param:id}"/>
         </map:transform>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:back:/lexicon/getDocumentAndSchema.xml"/>
+          <map:parameter name="service" value="servlet:db:/lexicon/getDocumentAndSchema.xml"/>
         </map:transform>
         <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>
         <!--        <map:transform type="saxon" src="export/createLexiconAndSchemaZipEntries.xslt"/>-->

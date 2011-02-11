@@ -30,7 +30,7 @@
       <map:match pattern="reOrder.xml">
         <map:generate src="all/getAllLexiconIds.xml"/>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:back:/workspace/getAllLexiconIds.xml"/>
+          <map:parameter name="service" value="servlet:db:/workspace/getAllLexiconIds.xml"/>
         </map:transform>
         <map:transform src="all/prepareReOrderEachLexicon.xslt"/>
         <map:transform type="cinclude"/>
@@ -43,7 +43,7 @@
           <map:parameter name="id" value="{request-param:id}"/>
         </map:transform>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:back:/workspace/reOrderLexicon.xml"/>
+          <map:parameter name="service" value="servlet:db:/workspace/reOrderLexicon.xml"/>
         </map:transform>
         <map:serialize/>
       </map:match>
@@ -69,7 +69,7 @@
         </map:aggregate>
         <map:transform type="saxon" src="getPage/prepareGetPage.xslt"/>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:back:/workspace/getPage.xml"/>
+          <map:parameter name="service" value="servlet:db:/workspace/getPage.xml"/>
         </map:transform>
         <map:serialize type="xml"/>
       </map:match>
@@ -90,7 +90,7 @@
           <map:part src="cocoon://user"/>
         </map:aggregate>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:back:/workspace/getProfiles.xml"/>
+          <map:parameter name="service" value="servlet:db:/workspace/getProfiles.xml"/>
         </map:transform>
         <map:serialize type="xml"/>
       </map:match>
@@ -115,7 +115,7 @@
           <map:part src="cocoon://user"/>
         </map:aggregate>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:back:/workspace/getUsers.xml"/>
+          <map:parameter name="service" value="servlet:db:/workspace/getUsers.xml"/>
         </map:transform>
         <map:serialize type="xml"/>
       </map:match>
@@ -136,7 +136,7 @@
         </map:aggregate>
         <map:transform type="saxon" src="users/prepareSaveUser.xslt"/>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:back:/workspace/saveUser.xml"/>
+          <map:parameter name="service" value="servlet:db:/workspace/saveUser.xml"/>
         </map:transform>
         <map:serialize type="xml"/>
       </map:match>
@@ -158,7 +158,7 @@
         </map:aggregate>
         <map:transform type="saxon" src="lexicon/prepareSaveLexicon.xslt"/>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:back:/workspace/saveLexicon.xml"/>
+          <map:parameter name="service" value="servlet:db:/workspace/saveLexicon.xml"/>
         </map:transform>
         <map:serialize type="xml"/>
       </map:match>
@@ -173,7 +173,7 @@
         </map:aggregate>
         <map:transform type="saxon" src="lexicon/prepareCreateLexicon.xslt"/>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:back:/workspace/createLexicon.xml"/>
+          <map:parameter name="service" value="servlet:db:/workspace/createLexicon.xml"/>
         </map:transform>
         <map:transform type="saxon" src="lexicon/savedLexicon-2-JSON.xslt"/>
         <map:serialize type="json"/>
@@ -189,7 +189,7 @@
         </map:aggregate>
         <map:transform type="saxon" src="lexicon/prepareDeleteLexicon.xslt"/>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:back:/workspace/deleteLexicon.xml"/>
+          <map:parameter name="service" value="servlet:db:/workspace/deleteLexicon.xml"/>
         </map:transform>
         <map:transform type="saxon" src="lexicon/deletedLexicon-2-JSON.xslt"/>
         <map:serialize type="json"/>
@@ -212,7 +212,7 @@
         <!--        <map:transform type="validate" src="import/lexusLexus.rng"/>-->
         <map:transform type="saxon" src="import/prepareLexusDocumentForDatabase.xslt"/>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:back:/workspace/createLexicon.xml"/>
+          <map:parameter name="service" value="servlet:db:/workspace/createLexicon.xml"/>
         </map:transform>
         <map:transform type="saxon" src="import/reportOnImport.xslt"/>
         <map:serialize type="xml"/>
@@ -321,7 +321,7 @@
           <map:part src="cocoon://user"/>
         </map:aggregate>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:back:/workspace/queries/getQueries.xml"/>
+          <map:parameter name="service" value="servlet:db:/workspace/queries/getQueries.xml"/>
         </map:transform>
         <map:serialize type="xml"/>
       </map:match>
@@ -354,7 +354,7 @@
           src="{naming:java:comp/env/tee-folder}debug-info/front-getdc-pre2.xml"/>
         <map:transform type="servletService">
           <map:parameter name="service"
-            value="servlet:back:/workspace/queries/getDataCategories.xml"/>
+            value="servlet:db:/workspace/queries/getDataCategories.xml"/>
         </map:transform>
         <map:transform type="${tee}"
           src="{naming:java:comp/env/tee-folder}debug-info/front-getdc-post.xml"/>
@@ -372,7 +372,7 @@
         </map:aggregate>
         <map:transform type="saxon" src="queries/prepare-save-query.xslt"/>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:back:/workspace/queries/saveQuery.xml"/>
+          <map:parameter name="service" value="servlet:db:/workspace/queries/saveQuery.xml"/>
         </map:transform>
         <map:transform type="${tee}"
           src="{naming:java:comp/env/tee-folder}debug-info/front-saveq-pre.xml"/>
@@ -394,7 +394,7 @@
         <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>
         <map:transform type="saxon" src="queries/prepare-search.xslt"/>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:back:/workspace/queries/search.xml"/>
+          <map:parameter name="service" value="servlet:db:/workspace/queries/search.xml"/>
         </map:transform>
         <map:transform type="saxon" src="queries/process-search-results.xslt"/>
         <map:transform type="servletService">
@@ -416,7 +416,7 @@
           <map:parameter name="lexicon-id" value="{1}"/>
         </map:transform>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:back:/schema-editor/getListView.xml"/>
+          <map:parameter name="service" value="servlet:db:/schema-editor/getListView.xml"/>
         </map:transform>
         <map:transform type="saxon" src="../lexicon-editor/views/prepareViewForTransformation.xslt"/>
         <map:transform type="saxon" src="../lexicon-editor/views/DSL_2_XSLT.xslt"/>
