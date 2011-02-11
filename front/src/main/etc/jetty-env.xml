@@ -26,7 +26,7 @@
     -->
     <New id="lexus_user-resources-url"  class="org.mortbay.jetty.plus.naming.EnvEntry">
         <Arg>LEXUS/resourceContextPath</Arg>
-        <Arg type="java.lang.String">/resources/</Arg>
+        <Arg type="java.lang.String">resources/</Arg>
         <Arg type="boolean">false</Arg>
     </New>
     
