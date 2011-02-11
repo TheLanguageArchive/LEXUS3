@@ -75,38 +75,20 @@
             </goals>
           </execution>
         </executions>
-
         <configuration>
           <doCheck>false</doCheck>
           <doUpdate>false</doUpdate>
-
           <revisionOnScmFailure/>
         </configuration>
       </plugin>
-      <!--<plugin>
-        <groupId>com.google.code.maven-svn-revision-number-plugin</groupId>
-        <artifactId>maven-svn-revision-number-plugin</artifactId>
-        <version>1.2</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>revision</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <reportStatus>false</reportStatus>
-          <reportMixedRevisions>false</reportMixedRevisions>
-        </configuration>
-        </plugin>-->
-      
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
         <version>2.4.1</version>
         <configuration>
           <filesets>
             <fileset>
-              <directory>src/main/resources/COB-INF/flexus</directory><!--
+              <directory>src/main/resources/COB-INF/flexus</directory>
+              <!--
               <includes>
                 <include>**/*.tmp</include>
                 <include>**/*.log</include>
@@ -195,15 +177,17 @@
     <resources>
       <resource>
         <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource><!--
+        <!-- Do not filter in general, e.g. Flex source files do not like that. -->
+        <filtering>false</filtering>
+      </resource>
       <resource>
         <filtering>true</filtering>
-        <directory>${basedir}/src/main/resources/COB-INF/resource/internal</directory>
+        <directory>src/main/resources/COB-INF/resource/internal</directory>
         <includes>
           <include>**/aboutLexus.xml</include>
         </includes>
-      </resource>--></resources>
+      </resource>
+    </resources>
   </build>
 
 
