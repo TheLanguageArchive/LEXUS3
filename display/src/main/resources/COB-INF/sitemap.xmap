@@ -27,7 +27,7 @@
       <!-- 
         Get list view of lexical entries
       -->
-      <map:match pattern="lexicon.xml">
+      <map:match pattern="flexhtmlview.xml">
         <map:generate src="service-consumer:"/>
         <map:transform type="saxon" src="views/prepareFragmentsTransformer.xslt"/>
         <map:transform type="fragments"/>
