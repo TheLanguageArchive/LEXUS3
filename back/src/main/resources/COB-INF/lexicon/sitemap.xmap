@@ -26,7 +26,7 @@
     <!--+
         | Lexicon pipelines
         +-->
-    <map:pipeline id="lexicon" type="caching">
+    <map:pipeline id="lexicon" type="noncaching">
 
     <!-- 
           Create a lexical entry.
@@ -85,13 +85,14 @@
         <map:transform type="saxon" src="${xmldb.rest.transformer}">
           <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
         </map:transform>
-        
+<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/gled-back-pre.xml"/>-->
         <map:transform type="rest">
           <map:parameter name="username" value="${xmldb.rest.username}"/>
           <map:parameter name="password" value="${xmldb.rest.password}"/>
         </map:transform>
-        
+<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/gled-back-post.xml"/>-->
         <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
+<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/gled-back-post-2.xml"/>-->
         <!--        <map:transform type="validate" src="getLexicalEntryData.xsd"/>-->
         
         <map:serialize type="xml"/>
