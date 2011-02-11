@@ -24,16 +24,11 @@
                 <xsl:call-template name="permissions"/>
                 <xsl:call-template name="view-permissions"/>
                 <xsl:call-template name="log"/>
-                
-                let $user := <xsl:apply-templates select="/data/user" mode="encoded"/> 
+                 
                 let $request := <xsl:apply-templates select="." mode="encoded"/> 
                 let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $request/@lexicon]
-                return
-                    if (lexus:canReadViews($lexus/meta, $user))
-                        then 
-                            let $view := $lexus/meta/views/@lexicalEntryView
-                            return $lexus/meta/views/view[@id eq $view]
-                        else ()
+                let $view := $lexus/meta/views/@lexicalEntryView
+                return $lexus/meta/views/view[@id eq $view]
             </lexus:text>
         </lexus:query></xsl:copy>
     </xsl:template>
