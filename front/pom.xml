@@ -163,7 +163,7 @@
           </connectors>
           <webAppSourceDirectory>${project.build.directory}/rcl/webapp</webAppSourceDirectory>
           <jettyEnvXml>${basedir}/src/main/etc/jetty-env.xml</jettyEnvXml>
-          <contextPath>/</contextPath>
+          <contextPath>/mpi/lexuscc</contextPath>
           <systemProperties>
             <systemProperty>
               <name>org.apache.cocoon.mode</name>
@@ -181,8 +181,9 @@
         <filtering>false</filtering>
       </resource>
       <resource>
-        <filtering>true</filtering>
         <directory>src/main/resources/COB-INF/resource/internal</directory>
+        <filtering>true</filtering>
+        <targetPath>${project.build.outputDirectory}/COB-INF/resource/internal</targetPath>
         <includes>
           <include>**/aboutLexus.xml</include>
         </includes>
