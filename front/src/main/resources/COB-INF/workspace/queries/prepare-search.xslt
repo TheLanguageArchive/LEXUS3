@@ -40,7 +40,7 @@
     <xsl:template match="json">
         <lexus:search-with-query>
             <xsl:apply-templates select="parameters/query"/>
-            <xsl:apply-templates select="parameters/AdHocRefiner"/>
+            <xsl:apply-templates select="parameters/refiner"/>
         </lexus:search-with-query>
     </xsl:template>
 
@@ -88,9 +88,9 @@
 
 
     <!--
-        The AdHocRefiner allows for pagination and startLetter selection.
+        The refiner allows for pagination and startLetter selection.
     -->
-    <xsl:template match="AdHocRefiner">
+    <xsl:template match="refiner">
         <refiner>
             <xsl:copy-of select="node()"/>
         </refiner>

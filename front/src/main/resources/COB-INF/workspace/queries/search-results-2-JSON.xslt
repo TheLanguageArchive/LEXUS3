@@ -104,6 +104,7 @@
             <object key="lexicon">
                 <string key="description"/>
                 <string key="name"><xsl:value-of select="@name"/></string>
+                <string key="id"><xsl:value-of select="@id"/></string>
             </object>
             <array key="lexicalEntries">
                 <xsl:apply-templates select=".//lexical-entry" mode="results"/>

@@ -58,6 +58,15 @@
     <xsl:template match="result">
         <object key="result">
             <xsl:apply-templates select="lexical-entry"/>
+            <string key="lexiconId"><xsl:value-of select="@lexicon"/></string>
+            <xsl:choose>
+                <xsl:when test="permissions/write eq 'true'">
+                    <true key="isEditable"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <false key="isEditable"/>
+                </xsl:otherwise>
+            </xsl:choose>
         </object>
     </xsl:template>
 

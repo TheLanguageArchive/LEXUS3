@@ -34,14 +34,21 @@
                     <xsl:call-template name="declare-namespace"/> 
                     
                     let $data := <xsl:apply-templates select="." mode="encoded"/>
-                    let $lexiconId := $data/lexicon
                     let $id := $data/id
-                    let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
+                    let $user-id := '<xsl:value-of select="/data/user/@id"/>'
+                    let $lexus :=
+                        if ($data/lexicon ne '')
+                            then collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $data/lexicon]
+                            else
+                                let $lexica := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[meta/users/user/@ref = $user-id]
+                                return $lexica[lexicon/lexical-entry[@id eq $id]] 
+                    let $lexiconId := $lexus/@id
                     let $lexicalEntry := $lexus/lexicon/lexical-entry[@id eq $id]
                     
                     return element result {
                         attribute lexicon { $lexiconId },
                         $lexicalEntry,
+                        $lexus/meta/users/user[@ref eq $user-id]/permissions,
                         $lexus/meta/schema
                     }
                 </lexus:text>

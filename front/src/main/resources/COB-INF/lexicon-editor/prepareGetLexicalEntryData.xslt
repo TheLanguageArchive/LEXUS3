@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:rest="http://org.apache.cocoon.transformation/rest/1.0"
-    xmlns:lexus="http://www.mpi.nl/lexus"
-    version="2.0">
+    xmlns:lexus="http://www.mpi.nl/lexus" version="2.0">
     <!--
         
         Input is:
@@ -23,9 +22,12 @@
         
     -->
     <xsl:include href="../util/identity.xslt"/>
-    
+
     <xsl:template match="json">
-        <lexus:get-lexical-entry><xsl:apply-templates select="parameters/*"/></lexus:get-lexical-entry>
+        <lexus:get-lexical-entry>
+            <xsl:apply-templates select="parameters/*"/>
+            <xsl:copy-of select="../user"/>
+        </lexus:get-lexical-entry>
     </xsl:template>
 
 </xsl:stylesheet>

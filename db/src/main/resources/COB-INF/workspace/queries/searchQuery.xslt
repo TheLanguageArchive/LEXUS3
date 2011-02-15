@@ -52,7 +52,7 @@ declare function lexus:createQuery($query as node()) as node()
         <xsl:text>
             
         </xsl:text>
-        <xsl:text>let $pageSize := </xsl:text><xsl:value-of select="../refiner/count"/>
+        <xsl:text>let $pageSize := </xsl:text><xsl:value-of select="../refiner/pageSize"/>
         <xsl:text>
             
         </xsl:text>
