@@ -122,10 +122,16 @@
                 <resource>
                   <directory>${basedir}/../../../branches/flexus-for-cocoon/bin-debug</directory>
                   <filtering>false</filtering>
+                  <excludes>
+                    <exclude>.*</exclude>
+                  </excludes>
                 </resource>
                 <resource>
                   <directory>${basedir}/src/main/resources/COB-INF/webapp</directory>
                   <filtering>false</filtering>
+                  <excludes>
+                    <exclude>.*</exclude>
+                  </excludes>
                 </resource>
                 <resource>
                   <targetPath>${project.build.outputDirectory}/META-INF/</targetPath>
@@ -163,7 +169,7 @@
           </connectors>
           <webAppSourceDirectory>${project.build.directory}/rcl/webapp</webAppSourceDirectory>
           <jettyEnvXml>${basedir}/src/main/etc/jetty-env.xml</jettyEnvXml>
-          <contextPath>/mpi/lexuscc</contextPath>
+          <contextPath>/mpi/lexus</contextPath>
           <systemProperties>
             <systemProperty>
               <name>org.apache.cocoon.mode</name>
