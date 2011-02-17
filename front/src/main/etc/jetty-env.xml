@@ -12,6 +12,15 @@
         <Arg type="boolean">false</Arg>
     </New>
     
+    <!-- 
+        Path to Vicos.
+    -->
+    <New id="vicos"  class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>VICOS/contextPath</Arg>
+        <Arg type="java.lang.String">mpi/vicos</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    
     <!--
         Where the users' local resources are permanently stored.
         -->

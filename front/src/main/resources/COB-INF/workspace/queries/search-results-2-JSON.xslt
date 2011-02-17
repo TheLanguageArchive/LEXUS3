@@ -95,8 +95,8 @@
                 <xsl:value-of select="//refiner/startLetter"/>
             </string>
             <number key="total"><xsl:value-of select="ancestor::search-results/@total"/></number>
-            <number key="count">
-                <xsl:value-of select="//refiner/count"/>
+            <number key="pageSize">
+                <xsl:value-of select="//refiner/pageSize"/>
             </number>
             <number key="startPage">
                 <xsl:value-of select="//refiner/position"/>
