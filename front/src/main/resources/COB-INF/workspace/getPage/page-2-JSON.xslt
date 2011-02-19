@@ -4,6 +4,8 @@
     version="2.0">
     
     <xsl:param name="sessionId"/>
+    <xsl:param name="VICOS"/>
+    <xsl:param name="lexica-element" select="'myLexica'"/>
     
     <xsl:include href="../../stylesheets/lexicon.xslt"/>
     
@@ -42,6 +44,16 @@
     <xsl:template match="/">
         <object>
             <xsl:apply-templates select="data/lexus:get-page/lexus:result/result"/>
+            <object key="status">
+                <xsl:choose>
+                    <xsl:when test="data/lexus:get-page/lexus:result[@success eq 'true']">
+                        <true key="success"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <false key="success"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </object>
         </object>
     </xsl:template>
 
@@ -51,13 +63,16 @@
             <string key="sessionID">
                 <xsl:value-of select="$sessionId"/>
             </string>
+            <string key="VICOS">
+                <xsl:value-of select="$VICOS"/>
+            </string>
         </object>
     </xsl:template>
 
     <xsl:template match="lexus:get-page/lexus:result/result/users"/>
 
     <xsl:template match="lexus:get-page/lexus:result/result/lexica">
-        <array key="myLexica">
+        <array key="{$lexica-element}">
             <xsl:apply-templates/>
         </array>
     </xsl:template>
