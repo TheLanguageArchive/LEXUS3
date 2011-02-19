@@ -59,4 +59,34 @@
         <Arg type="boolean">false</Arg>
     </New>
     
+    
+    <!--
+        Vicos
+    -->    <!--
+    <New id="vicos-dbURL" class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>VICOS/dbURL</Arg>
+        <Arg type="java.lang.String">jdbc:postgresql://localhost:5432/vicos</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    <New id="vicos-dbUser" class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>VICOS/dbUser</Arg>
+        <Arg type="java.lang.String">postgres</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    <New id="vicos-dbPass" class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>VICOS/dbPass</Arg>
+        <Arg type="java.lang.String">b03-BOE</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    <New id="vicos-dbType" class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>VICOS/dbType</Arg>
+        <Arg type="java.lang.String">PostgreSQL</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    <New id="vicos-dbDriver" class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>VICOS/dbDriver</Arg>
+        <Arg type="java.lang.String">org.postgresql.Driver</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    -->
 </Configure>
