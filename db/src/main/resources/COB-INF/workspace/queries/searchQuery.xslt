@@ -18,7 +18,7 @@
         <expression>
             <lexicon id="uuid:eae8c847-4462-432e-bf95-56eae4831044"
             name="976b83a2-7bef-4099-9e5f-04f22bd7e98f">
-                <datacategory id="uuid:6e1f2b5f-778e-4940-b054-dc8f1e0d2dec" name="Lexeme"
+                <datacategory schema-ref="uuid:6e1f2b5f-778e-4940-b054-dc8f1e0d2dec" name="Lexeme"
                 value="test" condition="is" negation="false"/>
             </lexicon>
         </expression>
@@ -27,7 +27,7 @@
         ==>
     
     /lexus[@id eq "uuid:eae8c847-4462-432e-bf95-56eae4831044"]/lexicon/
-    lexical-entry[(.//data[@schema-ref eq "uuid:6e1f2b5f-778e-4940-b054-dc8f1e0d2dec" and value ne "test"])]) 
+    lexical-entry[(.//data[@schema-ref eq "uuid:6e1f2b5f-778e-4940-b054-dc8f1e0d2dec" and value eq "test"])]) 
 
 declare function lexus:createQuery($query as node()) as node()
 
@@ -108,13 +108,18 @@ declare function lexus:createQuery($query as node()) as node()
     
     
     <!--
-        .//data[@schema-ref eq "uuid:6e1f2b5f-778e-4940-b054-dc8f1e0d2dec" and value ne "test"]
+        .//data[@schema-ref eq "uuid:6e1f2b5f-778e-4940-b054-dc8f1e0d2dec" and value eq "test"]
         -->
     <xsl:template match="datacategory">
         <xsl:text>.//data[@schema-ref eq "</xsl:text>
-        <xsl:value-of select="@id"/>
+        <xsl:value-of select="@schema-ref"/>
         <xsl:text>" and </xsl:text>
         <xsl:apply-templates select="." mode="condition"/>
+        <xsl:if test="datacategory">
+            <xsl:text> and (</xsl:text>
+            <xsl:apply-templates select="datacategory"/>
+            <xsl:text>)</xsl:text>
+        </xsl:if>
         <xsl:text>]</xsl:text>
     </xsl:template>
     
@@ -122,20 +127,21 @@ declare function lexus:createQuery($query as node()) as node()
         Generate eq, not(eq), contains(), not(contains()) etc.
     -->
     <xsl:template match="datacategory" mode="condition">
+        <xsl:variable name="uc" select="upper-case(@value)"/>
         
         <xsl:if test="@negation eq 'true'">not(</xsl:if>
         <xsl:choose>
             <xsl:when test="@condition eq 'is'">
-                value eq '<xsl:value-of select="@value"/>' 
+                upper-case(value) eq '<xsl:value-of select="$uc"/>' 
             </xsl:when>
             <xsl:when test="@condition eq 'contains'">
-                contains(value, '<xsl:value-of select="@value"/>') 
+                contains(upper-case(value), '<xsl:value-of select="$uc"/>') 
             </xsl:when>
-            <xsl:when test="@condition eq 'begins-with'">
-                starts-with(value, '<xsl:value-of select="@value"/>') 
+            <xsl:when test="@condition eq 'begins with'">
+                starts-with(upper-case(value), '<xsl:value-of select="$uc"/>') 
             </xsl:when>
-            <xsl:when test="@condition eq 'is'">
-                ends-with(value, '<xsl:value-of select="@value"/>') 
+            <xsl:when test="@condition eq 'ends with'">
+                ends-with(upper-case(value), '<xsl:value-of select="$uc"/>') 
             </xsl:when>
         </xsl:choose>
         <xsl:if test="@negation eq 'true'">)</xsl:if>

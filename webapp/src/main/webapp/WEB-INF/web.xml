@@ -20,16 +20,18 @@
   -
   - $Id$
   -->
-<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
     <!-- Servlet Filters ================================================ -->
     <!--
     - Declare a filter for multipart MIME handling
     -->
-    <context-param>
+    <!--<context-param>
         <description>A link to the users' resources.</description>
         <param-name>LEXUS/resourceDirectory</param-name>
         <param-value>/lexus/user-resources/</param-value>
-    </context-param>
+    </context-param>-->
     <filter>
         <description>Multipart MIME handling filter for Cocoon</description>
         <display-name>Cocoon multipart filter</display-name>
@@ -37,7 +39,7 @@
         <filter-class>org.apache.cocoon.servlet.multipart.MultipartFilter</filter-class>
     </filter>
     <filter>
-    <filter-name>SetCharacterEncoding</filter-name>
+        <filter-name>SetCharacterEncoding</filter-name>
         <filter-class>org.apache.servlet.SetCharacterEncodingFilter</filter-class>
         <init-param>
             <param-name>encoding</param-name>
@@ -67,8 +69,8 @@
     </filter-mapping>
 
     <filter-mapping>
-      <filter-name>SetCharacterEncoding</filter-name>
-      <servlet-name>DispatcherServlet</servlet-name>
+        <filter-name>SetCharacterEncoding</filter-name>
+        <servlet-name>DispatcherServlet</servlet-name>
     </filter-mapping>
     <!--
     - Use the Cocoon debug filter together with the Cocoon demo webapp
@@ -104,6 +106,16 @@
         <servlet-class>org.apache.cocoon.servletservice.DispatcherServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
+
+    <!--
+    Vicos servlet -->
+    <!--<servlet>
+        <servlet-name>VicosApp</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>-->
+
+
     <!-- URL space mappings ============================================= -->
     <!--
     - Cocoon handles all the URL space assigned to the webapp using its sitemap.
@@ -115,4 +127,91 @@
         <servlet-name>DispatcherServlet</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
+<!--    <servlet-mapping>
+        <servlet-name>DispatcherServlet</servlet-name>
+        <url-pattern>*.html</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DispatcherServlet</servlet-name>
+        <url-pattern>*.htm</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DispatcherServlet</servlet-name>
+        <url-pattern>*.js</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DispatcherServlet</servlet-name>
+        <url-pattern>*.png</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DispatcherServlet</servlet-name>
+        <url-pattern>*.ico</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DispatcherServlet</servlet-name>
+        <url-pattern>*.gif</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DispatcherServlet</servlet-name>
+        <url-pattern>*.swf</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DispatcherServlet</servlet-name>
+        <url-pattern>/LexusLexicalEntryEditor/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DispatcherServlet</servlet-name>
+        <url-pattern>/LexusWorkspaceEditor/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DispatcherServlet</servlet-name>
+        <url-pattern>/LexusSchemaEditor/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DispatcherServlet</servlet-name>
+        <url-pattern>/XMLExport.zip</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DispatcherServlet</servlet-name>
+        <url-pattern>/SortOrderEditor/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DispatcherServlet</servlet-name>
+        <url-pattern>/QueryEditor/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DispatcherServlet</servlet-name>
+        <url-pattern>/toolbox/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DispatcherServlet</servlet-name>
+        <url-pattern>/vicos/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DispatcherServlet</servlet-name>
+        <url-pattern>/StagingFileHandler/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>VicosApp</servlet-name>
+        <url-pattern>/VicosApp/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>DispatcherServlet</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+-->    
+    
+    <!--<welcome-file-list>
+        <welcome-file>
+            index.jsp
+        </welcome-file>
+    </welcome-file-list>-->
+
+    <!--<taglib>
+        <taglib-uri>/spring</taglib-uri>
+        <taglib-location>/WEB-INF/spring.tld</taglib-location>
+    </taglib>-->
+
 </web-app>

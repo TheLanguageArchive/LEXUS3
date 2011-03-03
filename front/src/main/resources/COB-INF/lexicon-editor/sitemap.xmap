@@ -108,7 +108,8 @@
         <map:transform type="saxon" src="startLetterSearchResult-2-JSON.xslt">
           <map:parameter name="sessionId" value="{session:id}"/>
         </map:transform>
-        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-sls-post.xml"/>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/front-sls-post.xml"/>
         <map:serialize type="json"/>
       </map:match>
 
@@ -154,7 +155,7 @@
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:display:/flexhtmlview.xml"/>
         </map:transform>
-<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>-->
+        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>-->
         <map:transform type="saxon" src="getLexicalEntryData-2-JSON.xslt"/>
         <!--<map:transform type="${tee}"
           src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>-->
@@ -184,37 +185,37 @@
         Save lexical entry
       -->
       <map:match pattern="saveLexicalEntry.json">
-          <map:aggregate element="data">
-            <map:part src="cocoon://json"/>
-            <map:part src="cocoon://user"/>
-          </map:aggregate>
-          <map:transform type="saxon" src="prepareProcessUploads.xslt"/>
-          <map:transform type="process-upload">
-            <map:parameter name="user-resources-folder"
-              value="{naming:java:comp/env/LEXUS/resourceDirectory}"/>
-          </map:transform>
-          <map:transform type="saxon" src="prepareSaveLexicalEntry.xslt"/>
-          <map:transform type="servletService">
-            <map:parameter name="service" value="servlet:db:/lexicon/saveLexicalEntry.xml"/>
-          </map:transform>
-          <map:transform type="servletService">
-            <map:parameter name="service"
-              value="servlet:db:/lexicon/updateSortorderKeysInLexicalEntry.xml"/>
-          </map:transform>
-          <map:transform type="servletService">
-            <map:parameter name="service" value="servlet:db:/lexicon/getLexicalEntryData.xml"/>
-          </map:transform>
-          <map:transform type="saxon" src="views/prepareDisplayGeneratorForLexicalEntry.xslt"/>
-          <map:transform type="servletService">
-            <map:parameter name="service" value="servlet:display:/flexhtmlview.xml"/>
-          </map:transform>
-          <map:transform type="saxon" src="getLexicalEntryData-2-JSON.xslt"/>
-          <!-- resolve archive IDs to URIs -->
-          <map:transform type="resource-resolver">
-            <map:parameter name="resources-uri" value="{naming:java:comp/env/LEXUS/resourceContextPath}"
-            />
-          </map:transform>
-          <map:serialize type="json"/>
+        <map:aggregate element="data">
+          <map:part src="cocoon://json"/>
+          <map:part src="cocoon://user"/>
+        </map:aggregate>
+        <map:transform type="saxon" src="prepareProcessUploads.xslt"/>
+        <map:transform type="process-upload">
+          <map:parameter name="user-resources-folder"
+            value="{naming:java:comp/env/LEXUS/resourceDirectory}"/>
+        </map:transform>
+        <map:transform type="saxon" src="prepareSaveLexicalEntry.xslt"/>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:db:/lexicon/saveLexicalEntry.xml"/>
+        </map:transform>
+        <map:transform type="servletService">
+          <map:parameter name="service"
+            value="servlet:db:/lexicon/updateSortorderKeysInLexicalEntry.xml"/>
+        </map:transform>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:db:/lexicon/getLexicalEntryData.xml"/>
+        </map:transform>
+        <map:transform type="saxon" src="views/prepareDisplayGeneratorForLexicalEntry.xslt"/>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:display:/flexhtmlview.xml"/>
+        </map:transform>
+        <map:transform type="saxon" src="getLexicalEntryData-2-JSON.xslt"/>
+        <!-- resolve archive IDs to URIs -->
+        <map:transform type="resource-resolver">
+          <map:parameter name="resources-uri"
+            value="{naming:java:comp/env/LEXUS/resourceContextPath}"/>
+        </map:transform>
+        <map:serialize type="json"/>
       </map:match>
 
     </map:pipeline>

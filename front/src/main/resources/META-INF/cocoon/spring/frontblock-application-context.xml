@@ -30,7 +30,7 @@
 
   <bean name="org.apache.cocoon.auth.SecurityHandler/lexusHandler"
     class="org.apache.cocoon.auth.impl.PipelineSecurityHandler" scope="singleton">
-    <property name="authenticationResource" value="cocoon:/lexus-authuser"/>
+    <property name="authenticationResource" value="cocoon://lexus-authuser"/>
     <property name="sourceResolver" ref="org.apache.excalibur.source.SourceResolver"/>
   </bean>
 

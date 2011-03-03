@@ -17,7 +17,7 @@
     -->
     <New id="vicos"  class="org.mortbay.jetty.plus.naming.EnvEntry">
         <Arg>VICOS/contextPath</Arg>
-        <Arg type="java.lang.String">mpi/vicos</Arg>
+        <Arg type="java.lang.String">/mpi/vicos</Arg>
         <Arg type="boolean">false</Arg>
     </New>
     
@@ -62,7 +62,7 @@
     
     <!--
         Vicos
-    -->    <!--
+    -->    
     <New id="vicos-dbURL" class="org.mortbay.jetty.plus.naming.EnvEntry">
         <Arg>VICOS/dbURL</Arg>
         <Arg type="java.lang.String">jdbc:postgresql://localhost:5432/vicos</Arg>
@@ -88,5 +88,5 @@
         <Arg type="java.lang.String">org.postgresql.Driver</Arg>
         <Arg type="boolean">false</Arg>
     </New>
-    -->
+    
 </Configure>

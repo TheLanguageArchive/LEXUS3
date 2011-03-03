@@ -80,7 +80,7 @@
         Process a datacategory element from the expression.
         -->
     <xsl:template match="children">
-        <datacategory id="{id}" name="{name}" value="{value}" condition="{condition}"
+        <datacategory schema-ref="{id}" name="{name}" value="{value}" condition="{condition}"
             negation="{negation}">
             <xsl:apply-templates select="children/children"/>
         </datacategory>

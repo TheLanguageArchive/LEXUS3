@@ -98,12 +98,12 @@
           -->
       <map:match pattern="search.xml">
         <map:generate src="service-consumer:"/>
-<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-pre.xml"/>-->
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-sq-pre.xml"/>
         <map:transform type="saxon" src="searchQuery.xslt">
           <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
           <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
         </map:transform>
-<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-post.xml"/>-->
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-sq-post.xml"/>
         <map:transform type="saxon" src="../${xmldb.rest.transformer}">
           <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
         </map:transform>

@@ -153,7 +153,9 @@
     <map:pipeline id="stream">
 
       <map:match pattern="stream">
-        <map:generate type="stream"/>
+        <map:generate type="stream">
+          <map:parameter name="defaultContentType" value="text/xml"/>
+        </map:generate>
         <map:serialize type="xml"/>
       </map:match>
 
@@ -299,7 +301,7 @@
         handle file uploads.
         -->
     <map:pipeline>
-
+      
       <map:match pattern="LexusLexicalEntryEditor/**">
         <map:act type="cauth-is-logged-in">
           <map:parameter name="application" value="Lexus"/>
@@ -308,6 +310,17 @@
         <map:redirect-to uri="/index.html"/>
       </map:match>
 
+    <!--
+      Webservice.
+      -->
+      <map:match pattern="services/**"><!--
+        <map:act type="cauth-is-logged-in">
+          <map:parameter name="application" value="Lexus"/>-->
+          <map:mount uri-prefix="" src="webservice/sitemap.xmap"/><!--
+        </map:act>
+        <map:redirect-to uri="/"/>-->
+      </map:match>
+      
       <map:match pattern="XMLexport.zip">
         <map:act type="cauth-is-logged-in">
           <map:parameter name="application" value="Lexus"/>
@@ -354,7 +367,6 @@
         <map:redirect-to uri="/index.html"/>
       </map:match>
 
-
       <map:match pattern="toolbox/**">
         <!--        <map:act type="cauth-is-logged-in">
           <map:parameter name="application" value="Lexus"/> -->
@@ -363,7 +375,14 @@
         <map:redirect-to uri="index.html"/> -->
       </map:match>
 
-
+      <map:match pattern="vicos/**">
+        <map:act type="cauth-is-logged-in">
+          <map:parameter name="application" value="Lexus"/>
+          <map:mount uri-prefix="vicos/" src="vicos/sitemap.xmap"/>
+        </map:act>
+        <map:redirect-to uri="/index.html"/>
+      </map:match>
+      
       <map:match pattern="StagingFileHandler/uploadFile.json">
         <map:generate src="cocoon:/StagingFileHandler/uploadFile.xml"/>
         <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>
