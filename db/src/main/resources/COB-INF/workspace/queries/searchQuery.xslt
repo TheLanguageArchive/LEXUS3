@@ -74,6 +74,7 @@ declare function lexus:createQuery($query as node()) as node()
             <xsl:text> attribute name {'</xsl:text><xsl:value-of select="./@name"/><xsl:text>'}, </xsl:text>
             <xsl:apply-templates select="."/>
             <xsl:text> }</xsl:text>
+            <xsl:if test="position()!=last()"><xsl:text>, </xsl:text></xsl:if>
         </xsl:for-each>
         <xsl:text> )</xsl:text>
         <xsl:text>
