@@ -47,14 +47,18 @@
         <map:generate src="service-consumer:"/>
         <map:transform type="saxon" src="views/prepareFragmentsTransformer.xslt"/>
 
-        <!--<map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/display-post.xml"/>-->
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/display-htmlview-1.xml"/>
 
         <map:transform type="fragments"/>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/display-htmlview-2.xml"/>
         <map:transform type="multifragment-xslt" src="views/page2html.xslt">
           <map:parameter name="fragment.namespace" value="http://www.mpi.nl/lexus/display/1.0"/>
           <map:parameter name="fragment.element" value="page"/>
         </map:transform>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/display-htmlview-3.xml"/>
         <map:serialize type="xml"/>
       </map:match>
 
@@ -88,14 +92,19 @@
       -->
       <map:match pattern="getDisplayStylesheet.xslt/leView/*">
         <map:generate src="views/display.xml"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/display-leView-1.xml"/>
         <map:transform type="saxon" src="views/prepareGetLEView.xslt">
           <map:parameter name="lexicon" value="{1}"/>
         </map:transform>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/display-leView-2.xml"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:db:/schema-editor/getLEView.xml"/>
         </map:transform>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/display-leView-3.xml"/>
         <map:transform type="saxon" src="views/prepareViewForTransformation.xslt"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/display-leView-4.xml"/>
         <map:transform type="saxon" src="views/DSL_2_XSLT.xslt"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/display-leView-5.xml"/>
         <map:serialize type="xml"/>
       </map:match>
 

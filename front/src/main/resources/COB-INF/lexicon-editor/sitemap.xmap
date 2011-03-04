@@ -44,9 +44,21 @@
           <map:transform type="servletService">
             <map:parameter name="service" value="servlet:display:/htmlview.xml"/>
           </map:transform>
+          <map:transform type="${tee}"
+            src="{naming:java:comp/env/tee-folder}debug-info/front-htmlview-1.xml"/>
+          <map:transform type="saxon" src="views/add-lexiconId-to-resources.xslt"/>
+          <map:transform type="resource-resolver">
+            <map:parameter name="resources-uri"
+              value="{naming:java:comp/env/LEXUS/resourceContextPath}"/>
+          </map:transform>
+          <map:transform type="${tee}"
+            src="{naming:java:comp/env/tee-folder}debug-info/front-htmlview-2.xml"/>
+          <map:transform type="saxon" src="views/move-resource-url-to-src-attribute.xslt"/>
+          <map:transform type="${tee}"
+            src="{naming:java:comp/env/tee-folder}debug-info/front-htmlview-3.xml"/>
           <map:transform type="saxon" src="views/extractHTMLView.xslt"/>
-          <!--<map:transform type="${tee}"
-            src="{naming:java:comp/env/tee-folder}debug-info/front-htmlview.xml"/>-->
+          <!-- resolve archive IDs to URIs -->
+
           <map:serialize type="html"/>
         </map:act>
       </map:match>

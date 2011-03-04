@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xhtml="http://www.w3.org/1999/xhtml"
-    xmlns:display="http://www.mpi.nl/lexus/display/1.0" exclude-result-prefixes="#all" version="2.0">
+    xmlns:display="http://www.mpi.nl/lexus/display/1.0"
+    xmlns:rr="http://nl.mpi.lexus/resource-resolver" 
+    exclude-result-prefixes="#all" version="2.0">
 
     <xsl:template match="/">
-        <html xmlns="http://www.w3.org/1999/xhtml">
-            <head>
-                <title>Lexical entry</title>
+        <xhtml:html>
+            <xhtml:head>
+                <xhtml:title>Lexical entry</xhtml:title>
                  <!--<link rel="stylesheet" href="default.css" type="text/css"/>
                 <link rel="stylesheet" href="lexical-entry.css" type="text/css"/>--> 
-                <style type="text/css">&#32;<xsl:value-of select="/display:page/display:style"/></style>
-            </head>
-            <body>
-                <div>
+                <xhtml:style type="text/css">&#32;<xsl:value-of select="/display:page/display:style"/></xhtml:style>
+            </xhtml:head>
+            <xhtml:body>
+                <xhtml:div>
                     <xsl:apply-templates select="@*"/>
                     <xsl:apply-templates/>
-                </div>
-            </body>
-        </html>
+                </xhtml:div>
+            </xhtml:body>
+        </xhtml:html>
     </xsl:template>
 
     <xsl:template match="display:page">
@@ -25,29 +27,29 @@
     </xsl:template>
 
     <xsl:template match="text">
-        <div xmlns="http://www.w3.org/1999/xhtml">
+        <xhtml:div xmlns="http://www.w3.org/1999/xhtml">
             <xsl:apply-templates select="@*"/>
             <xsl:apply-templates select="text() | node()"/>
-        </div>
+        </xhtml:div>
     </xsl:template>
 
     <xsl:template match="table">
-        <table xmlns="http://www.w3.org/1999/xhtml">
+        <xhtml:table xmlns="http://www.w3.org/1999/xhtml">
             <xsl:apply-templates select="@*"/>
             <xsl:apply-templates/>
-        </table>
+        </xhtml:table>
     </xsl:template>
     <xsl:template match="row">
-        <tr xmlns="http://www.w3.org/1999/xhtml">
+        <xhtml:tr xmlns="http://www.w3.org/1999/xhtml">
             <xsl:apply-templates select="@*"/>
             <xsl:apply-templates/>
-        </tr>
+        </xhtml:tr>
     </xsl:template>
     <xsl:template match="col">
-        <td xmlns="http://www.w3.org/1999/xhtml">
+        <xhtml:td xmlns="http://www.w3.org/1999/xhtml">
             <xsl:apply-templates select="@*"/>
             <xsl:apply-templates/>
-        </td>
+        </xhtml:td>
     </xsl:template>
 
     <xsl:template match="@class | @colspan">
@@ -55,12 +57,12 @@
     </xsl:template>
 
     <xsl:template match="div">
-        <div xmlns="http://www.w3.org/1999/xhtml">
+        <xhtml:div xmlns="http://www.w3.org/1999/xhtml">
             <xsl:apply-templates select="@dsl_class"/>
             <xsl:variable name="style"><xsl:apply-templates select="@*[local-name() ne 'dsl_class']"/></xsl:variable>
-            <xsl:if test="$style ne ''"><xsl:attribute name="style" select="$style"/></xsl:if>            
+            <xsl:if test="$style ne '' or @style ne ''"><xsl:attribute name="style" select="concat(@style, $style)"/></xsl:if>            
             <xsl:apply-templates/>
-        </div>
+        </xhtml:div>
     </xsl:template>
 
     <xsl:template match="@dsl_class">
@@ -86,7 +88,19 @@
             <xsl:text>pt;</xsl:text>
         </xsl:if>
     </xsl:template>
-
+    
+    <xsl:template match="img">
+        <xhtml:img>
+            <xsl:copy-of select="@* | *"/>
+        </xhtml:img>
+    </xsl:template>
+    
+    <xsl:template match="resource" priority="1">
+        <rr:resource-id-to-url>
+            <xsl:copy-of select="@*"/>
+        </rr:resource-id-to-url>
+    </xsl:template>
+    
     <xsl:template match="@*"/>
 
     <xsl:template match="text()" priority="1">

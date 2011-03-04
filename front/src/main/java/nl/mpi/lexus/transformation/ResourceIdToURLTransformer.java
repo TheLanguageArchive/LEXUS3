@@ -35,7 +35,7 @@ import org.xml.sax.SAXException;
  * It will look for elements in the "http://nl.mpi.lexus/resource-resolver"
  * namespace. The following elements are recognized (assuming xmlns:ritu="http://apache.org/cocoon/resource-resolver"):
  * <dl>
- * <dt>&lt;ritu:resource-id archive="MPI" value="MPI316757#" mimetype="text/x-eaf+xml" type="url"/&gt;</dt>
+ * <dt>&lt;ritu:resource-id archive="MPI" value="MPI316757#" mimetype="text/x-eaf+xml" type="url" lexiconId="uuid:boe"/&gt;</dt>
  * <dd>Substitutes the element with a local or a Lamus generated URL.</dd>
  * </dl>
  */
