@@ -217,6 +217,11 @@
         </map:act>
         <map:redirect-to uri="index.html"/>
       </map:match>
+      
+      <map:handle-errors when="always">
+        <map:generate src="resource/internal/resource-not-found.xml"/>
+        <map:serialize type="xml"/>
+      </map:handle-errors>
     </map:pipeline>
     
     <!-- Get Lexical Entry View -->

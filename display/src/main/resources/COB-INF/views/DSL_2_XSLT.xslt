@@ -80,9 +80,9 @@
                     <xsl:variable name="d" select="."/>
                     <xsl:text>.//data[@schema-ref='</xsl:text>
                     <xsl:value-of select="$d/@id"/>
-                    <xsl:text>'] | </xsl:text>
+                    <xsl:text>']</xsl:text>
+                    <xsl:if test="position() ne last()"><xsl:text> | </xsl:text></xsl:if>
                 </xsl:for-each>
-                <xsl:text>()</xsl:text>
             </xsl:attribute>
             <div>
                 <xsl:copy-of select="@*[local-name(.) != 'isBranch']"/>
@@ -163,9 +163,9 @@
                     <xsl:variable name="d" select="."/>
                     <xsl:text>.//data[@schema-ref='</xsl:text>
                     <xsl:value-of select="$d/@id"/>
-                    <xsl:text>'] | </xsl:text>
+                    <xsl:text>']</xsl:text>
+                    <xsl:if test="position() ne last()"><xsl:text> | </xsl:text></xsl:if>
                 </xsl:for-each>
-                <xsl:text>()</xsl:text>
             </xsl:attribute>
 
             <xsl:copy>
@@ -174,22 +174,22 @@
             </xsl:copy>
         </target:if>
     </xsl:template>
-    <xsl:template match="thead[@type='dsl_table_heading'] | tbody[@type='dsl_table_body']">
+    <xsl:template match="thead[@type eq 'dsl_table_heading'] | tbody[@type eq 'dsl_table_body']">
         <xsl:copy>
             <xsl:apply-templates/>
         </xsl:copy>
     </xsl:template>
-    <xsl:template match="row[@type='dsl_table_row']">
+    <xsl:template match="row[@type eq 'dsl_table_row']">
         <tr>
             <xsl:apply-templates/>
         </tr>
     </xsl:template>
-    <xsl:template match="thead//col[@type='dsl_table_column']" priority="1">
+    <xsl:template match="thead//col[@type eq 'dsl_table_column']" priority="1">
         <th>
             <xsl:apply-templates/>
         </th>
     </xsl:template>
-    <xsl:template match="col[@type='dsl_table_column']">
+    <xsl:template match="col[@type eq 'dsl_table_column']">
         <td>
             <xsl:apply-templates/>
         </td>
