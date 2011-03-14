@@ -11,7 +11,7 @@
     <xsl:param name="lexica-collection"/>
     <xsl:param name="users-collection"/>
     
-    <xsl:template match="lexus:update-lexica-for-updated-schema">
+    <xsl:template match="lexus:update-lexicon-for-updated-schema">
         <xsl:copy>
             <xsl:apply-templates select="@*"/>
             <lexus:query>
@@ -23,7 +23,7 @@
                 
                 let $userId := '<xsl:value-of select="/data/user/@id"/>'       
                 let $username := '<xsl:value-of select="/data/user/name"/>'       
-                let $newSchema := <xsl:apply-templates select="/data/lexus:update-lexica-for-updated-schema" mode="encoded"/>
+                let $newSchema := <xsl:apply-templates select="." mode="encoded"/>
                 let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $newSchema/@id]
                              (: let $dummy := lexus:log($lexus/@id, 'save-schema', $userId, $username, $newData/schema) :)
                 return lexus:sort-order-processSchemaChanged($newSchema/@id, $userId)

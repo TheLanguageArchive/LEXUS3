@@ -177,7 +177,7 @@
       <!-- 
         Save schema.
       -->
-      <map:match pattern="updateLexicaForUpdatedSchema.xml">
+      <map:match pattern="updateLexiconForUpdatedSchema.xml">
         <map:generate src="service-consumer:"/>
         <map:transform type="saxon" src="updateLexicaForUpdatedSchema.xslt">
           <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
@@ -186,7 +186,7 @@
         <map:transform type="saxon" src="${xmldb.rest.transformer}">
           <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
         </map:transform>
-<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-pre.xml"/>-->
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/update-lexica-1.xml"/>
         <map:transform type="rest">
           <map:parameter name="username" value="${xmldb.rest.username}"/>
           <map:parameter name="password" value="${xmldb.rest.password}"/>
