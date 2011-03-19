@@ -216,18 +216,20 @@
             <string key="id">
                 <xsl:value-of select="@id"/>
             </string>
-            <xsl:choose>
-                <xsl:when test="@sort-order">
-                    <object key="sortOrder">
-                        <string key="id">
-                            <xsl:value-of select="@sort-order"/>
-                        </string>
-                    </object>
-                </xsl:when>
-                <xsl:otherwise>
-                    <null key="sortOrder"/>
-                </xsl:otherwise>
-            </xsl:choose>
+            <xsl:if test="$tree eq 'true'">
+                <xsl:choose>
+                    <xsl:when test="@sort-order">
+                        <object key="sortOrder">
+                            <string key="id">
+                                <xsl:value-of select="@sort-order"/>
+                            </string>
+                        </object>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <null key="sortOrder"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:if>
             <number key="min">
                 <xsl:choose>
                     <xsl:when test="@mandatory eq 'true'">
@@ -271,9 +273,11 @@
             <string key="DCRReference">
                 <xsl:value-of select="@reference"/>
             </string>
-            <string key="sortOrder">
-                <xsl:value-of select="@sortOrder"/>
-            </string>
+            <xsl:if test="$tree eq 'false'">
+                <string key="sortOrder">
+                    <xsl:value-of select="@sortOrder"/>
+                </string>
+            </xsl:if>
             <string key="adminInfo">
                 <xsl:value-of select="@admin-info"/>
             </string>
@@ -297,6 +301,20 @@
             <string key="id">
                 <xsl:value-of select="@id"/>
             </string>
+            <xsl:if test="$tree eq 'true'">
+                <xsl:choose>
+                    <xsl:when test="@sort-order">
+                        <object key="sortOrder">
+                            <string key="id">
+                                <xsl:value-of select="@sort-order"/>
+                            </string>
+                        </object>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <null key="sortOrder"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:if>
             <number key="min">
                 <xsl:choose>
                     <xsl:when test="@mandatory eq 'true'">
@@ -340,9 +358,11 @@
             <string key="DCRReference">
                 <xsl:value-of select="@reference"/>
             </string>
-            <string key="sortOrder">
-                <xsl:value-of select="@sortOrder"/>
-            </string>
+            <xsl:if test="$tree eq 'false'">
+                <string key="sortOrder">
+                    <xsl:value-of select="@sortOrder"/>
+                </string>
+            </xsl:if>
             <string key="adminInfo">
                 <xsl:value-of select="@admin-info"/>
             </string>

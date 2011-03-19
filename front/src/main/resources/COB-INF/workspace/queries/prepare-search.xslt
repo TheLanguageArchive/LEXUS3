@@ -11,7 +11,7 @@
     </xd:doc>
 
     <xsl:include href="../../util/identity.xslt"/>
-
+    <xsl:include href="json-query-to-lexus-query-format.xslt"/>
     <!-- 
         
         <REQUEST:=    {
@@ -38,61 +38,14 @@
     -->
 
     <xsl:template match="json">
-        <lexus:search-with-query>
-            <xsl:apply-templates select="parameters/query"/>
+        <lexus:search>
+            <xsl:apply-templates select="parameters/query" mode="json-query"/>
             <xsl:apply-templates select="parameters/refiner"/>
-        </lexus:search-with-query>
+        </lexus:search>
     </xsl:template>
-
-    <!--
-        Process the query element from the expression.
-        Expression are always like this:
-        <query>
-            <lexicon>
-                <datacategory>
-                    <datacategory>
-                        ...
-                    ...
-                <datacategory>*
-            <lexicon>+
-        <query>
-    -->
-    <xsl:template match="query">
-        <xsl:copy>
-            <xsl:attribute name="id" select="id"/>
-            <xsl:copy-of select="name | description"/>
-            <expression>
-                <xsl:apply-templates select="children/children" mode="lexicon"/>
-            </expression>
-        </xsl:copy>
+    
+    <xsl:template match="refiner/position">
+        <startPage><xsl:value-of select="."/></startPage>
     </xsl:template>
-
-    <!--
-        Process a lexicon element from the expression.
-    -->
-    <xsl:template match="children" mode="lexicon">
-        <lexicon id="{id}" name="{name}">
-            <xsl:apply-templates select="children/children"/>
-        </lexicon>
-    </xsl:template>
-
-    <!--
-        Process a datacategory element from the expression.
-        -->
-    <xsl:template match="children">
-        <datacategory schema-ref="{id}" name="{name}" value="{value}" condition="{condition}"
-            negation="{negation}">
-            <xsl:apply-templates select="children/children"/>
-        </datacategory>
-    </xsl:template>
-
-
-    <!--
-        The refiner allows for pagination and startLetter selection.
-    -->
-    <xsl:template match="refiner">
-        <refiner>
-            <xsl:copy-of select="node()"/>
-        </refiner>
-    </xsl:template>
+    
 </xsl:stylesheet>

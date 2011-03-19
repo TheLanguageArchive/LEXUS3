@@ -33,12 +33,14 @@
       <map:match pattern="loadWSSortOrders.json">
         <map:generate src="cocoon:/getSortOrders"/>
         <map:transform type="saxon" src="sortOrders-2-JSON.xslt"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-so-2.xml"/>
         <map:serialize type="json"/>
       </map:match>
 
       <map:match pattern="getSortOrders.json">
         <map:generate src="cocoon:/getSortOrders"/>
         <map:transform type="saxon" src="sortOrders-2-JSON.xslt"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-so-2.xml"/>
         <map:serialize type="json"/>
       </map:match>
 
@@ -48,9 +50,11 @@
           <map:part src="cocoon://user"/>
         </map:aggregate>
         <map:transform type="saxon" src="prepareGetSortOrders.xslt"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-so-0.xml"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:db:/workspace/getSortOrders.xml"/>
         </map:transform>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-so-1.xml"/>
         <map:serialize type="xml"/>
       </map:match>
 
@@ -106,7 +110,8 @@
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:db:/workspace/deleteSortOrder.xml"/>
         </map:transform>
-        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>
         <map:transform type="saxon" src="deletedSortOrder2JSON.xslt"/>
         <map:serialize type="json"/>
       </map:match>

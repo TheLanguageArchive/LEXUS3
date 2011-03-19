@@ -105,7 +105,7 @@ public class ResourceIdToURLTransformer
                             handle.setMimeType(mimetype);
                             handle.setResourceHandle(value);
                             url = resolver.resolve(handle);
-                            urlStr = url.toExternalForm();
+                            urlStr = null == url ? "" : url.toExternalForm();
                         } catch (ResolveException e) {
                             // logger.error(e);
                         }

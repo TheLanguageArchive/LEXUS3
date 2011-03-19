@@ -280,7 +280,7 @@
         </object>
     </xsl:template>
 
-    <xsl:template name="sort-order">
+    <!--<xsl:template name="sort-order">
         <xsl:param name="sort-order"/>
         <xsl:choose>
             <xsl:when test="$sort-order != ''">
@@ -292,7 +292,7 @@
                 <null key="sortOrder"/>
             </xsl:otherwise>
         </xsl:choose>
-    </xsl:template>
+    </xsl:template>-->
 
     <xsl:template match="@* | node()"/>
 

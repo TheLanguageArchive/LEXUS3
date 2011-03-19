@@ -34,7 +34,7 @@
         query is the top level query element.
     -->
     <xsl:template match="query">
-        <object key="query">
+        <object key="result">
             <string key="id">
                 <xsl:value-of select="@id"/>
             </string>

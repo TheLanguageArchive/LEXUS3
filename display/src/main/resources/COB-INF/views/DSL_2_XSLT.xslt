@@ -81,7 +81,9 @@
                     <xsl:text>.//data[@schema-ref='</xsl:text>
                     <xsl:value-of select="$d/@id"/>
                     <xsl:text>']</xsl:text>
-                    <xsl:if test="position() ne last()"><xsl:text> | </xsl:text></xsl:if>
+                    <xsl:if test="position() ne last()">
+                        <xsl:text> | </xsl:text>
+                    </xsl:if>
                 </xsl:for-each>
             </xsl:attribute>
             <div>
@@ -164,7 +166,9 @@
                     <xsl:text>.//data[@schema-ref='</xsl:text>
                     <xsl:value-of select="$d/@id"/>
                     <xsl:text>']</xsl:text>
-                    <xsl:if test="position() ne last()"><xsl:text> | </xsl:text></xsl:if>
+                    <xsl:if test="position() ne last()">
+                        <xsl:text> | </xsl:text>
+                    </xsl:if>
                 </xsl:for-each>
             </xsl:attribute>
 
@@ -180,9 +184,32 @@
         </xsl:copy>
     </xsl:template>
     <xsl:template match="row[@type eq 'dsl_table_row']">
-        <tr>
-            <xsl:apply-templates/>
-        </tr>
+        <xsl:choose>
+            <xsl:when test="(not(@optional) or @optional eq 'true') and .//data">
+                <target:if>
+                    <xsl:attribute name="test">
+                        <xsl:for-each select=".//data">
+                            <xsl:variable name="d" select="."/>
+                            <xsl:text>.//data[@schema-ref='</xsl:text>
+                            <xsl:value-of select="$d/@id"/>
+                            <xsl:text>']</xsl:text>
+                            <xsl:if test="position() ne last()">
+                                <xsl:text> | </xsl:text>
+                            </xsl:if>
+                        </xsl:for-each>
+                    </xsl:attribute>
+
+                    <tr>
+                        <xsl:apply-templates/>
+                    </tr>
+                </target:if>
+            </xsl:when>
+            <xsl:otherwise>
+                <tr>
+                    <xsl:apply-templates/>
+                </tr>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     <xsl:template match="thead//col[@type eq 'dsl_table_column']" priority="1">
         <th>

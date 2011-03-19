@@ -119,6 +119,7 @@
         <map:transform type="saxon" src="sortOrders/getSortOrders.xslt">
           <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
         </map:transform>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-so-1.xml"/>
         <map:transform type="saxon" src="${xmldb.rest.transformer}">
           <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
         </map:transform>
@@ -126,7 +127,9 @@
           <map:parameter name="username" value="${xmldb.rest.username}"/>
           <map:parameter name="password" value="${xmldb.rest.password}"/>
         </map:transform>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-so-2.xml"/>
         <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-so-3.xml"/>
         <map:serialize type="xml"/>
       </map:match>
 

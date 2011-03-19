@@ -66,6 +66,7 @@ public class JSONSerializer extends AbstractTextSerializer {
     public final static int FALSE = 4;
     public final static int TRUE = 5;
     public final static int NULL = 6;
+    private int DEBUG_OUTPUT_LENGTH = 200;
 
     private static class JSONSerializationException extends SAXException {
 
@@ -79,7 +80,7 @@ public class JSONSerializer extends AbstractTextSerializer {
     protected JSONElement currentElement = null;
     protected Stack<Integer> objectStack = new Stack<Integer>();
     protected Stack<Integer> isNotFirst = new Stack<Integer>();
-    StringBuffer currentText;
+    StringBuffer currentText, debugText;
 
     /* (non-Javadoc)
      * @see org.apache.cocoon.serialization.AbstractTextSerializer#init()
@@ -87,6 +88,7 @@ public class JSONSerializer extends AbstractTextSerializer {
     public void init() throws Exception {
         super.init();
         this.format.put(OutputKeys.METHOD, "text");
+        debugText = new StringBuffer("");
     }
 
     /**
@@ -207,7 +209,7 @@ public class JSONSerializer extends AbstractTextSerializer {
                 && !localName.equals("number") && !localName.equals("string")
                 && !localName.equals("false") && !localName.equals("true")
                 && !localName.equals("null")) {
-            throw new JSONSerializationException("Element name not one of object, array, number, string, false, true or null!");
+            throw new JSONSerializationException("Element name not one of object, array, number, string, false, true or null."+", preceding text=" + debugText);
         }
 
         if (startTagOpen) {
@@ -216,12 +218,12 @@ public class JSONSerializer extends AbstractTextSerializer {
 
         if (objectStack.empty()) {
             if (!localName.equals("array") && !localName.equals("object")) {
-                throw new JSONSerializationException("Only objects and arrays are allowed as top-level elements!");
+                throw new JSONSerializationException("Only objects and arrays are allowed as top-level elements."+", preceding text=" + debugText);
             }
         } else {
             int type = objectStack.peek().intValue();
             if (type != OBJECT && type != ARRAY) {
-                throw new JSONSerializationException("Only objects and arrays may contain subelements!");
+                throw new JSONSerializationException("Only objects and arrays may contain subelements."+", preceding text=" + debugText);
             }
         }
 
@@ -278,20 +280,20 @@ public class JSONSerializer extends AbstractTextSerializer {
             return;
         }
         if (objectStack.empty()) {
-            throw new JSONSerializationException("Character data is not allowed outside <number> and <string>!");
+            throw new JSONSerializationException("Character data is not allowed outside <number> and <string>."+", preceding text=" + debugText);
         }
         int type = objectStack.peek().intValue();
         if (type == NUMBER || type == STRING) {
             currentText.append(chars);
         } else {
-            throw new JSONSerializationException("Character data is not allowed outside <number> and <string>!");
+            throw new JSONSerializationException("Character data is not allowed outside <number> and <string>."+", preceding text=" + debugText);
         }
     }
 
     @Override
     public void endDocument() throws JSONSerializationException {
         if (!objectStack.isEmpty()) {
-            throw new JSONSerializationException("Attempt to end document in serializer when elements are unclosed");
+            throw new JSONSerializationException("Attempt to end document in serializer when elements are unclosed"+", preceding text=" + debugText);
         }
         try {
             super.endDocument();
@@ -314,7 +316,7 @@ public class JSONSerializer extends AbstractTextSerializer {
                 write(e.key);
                 write("\":");
             } else if (e.key == null && !objectStack.empty() && objectStack.peek().intValue() == OBJECT) {
-                throw new JSONSerializationException("key attribute for child of object not given: e.name="+e.name+", currentText=" + currentText);
+                throw new JSONSerializationException("key attribute for child of object not given: e.name="+e.name+", preceding text=" + debugText);
             }
 
             startTagOpen = false;
@@ -349,24 +351,24 @@ public class JSONSerializer extends AbstractTextSerializer {
                 type = STRING;
             } else if (e.name.equals("true")) {
                 if (!empty) {
-                    throw new JSONSerializationException("true, false and null elements must be empty!");
+                    throw new JSONSerializationException("true, false and null elements must be empty."+", preceding text=" + debugText);
                 }
                 write("true");
                 return;
             } else if (e.name.equals("false")) {
                 if (!empty) {
-                    throw new JSONSerializationException("true, false and null elements must be empty!");
+                    throw new JSONSerializationException("true, false and null elements must be empty."+", preceding text=" + debugText);
                 }
                 write("false");
                 return;
             } else if (e.name.equals("null")) {
                 if (!empty) {
-                    throw new JSONSerializationException("true, false and null elements must be empty!");
+                    throw new JSONSerializationException("true, false and null elements must be empty."+", preceding text=" + debugText);
                 }
                 write("null");
                 return;
             } else {
-                throw new JSONSerializationException("Element name not one of object, array, number, string, false, true or null!");
+                throw new JSONSerializationException("Element name not one of object, array, number, string, false, true or null."+", preceding text=" + debugText);
             }
             objectStack.push(new Integer(type));
             isNotFirst.push(new Integer(0));
@@ -400,6 +402,10 @@ public class JSONSerializer extends AbstractTextSerializer {
         c = out.toCharArray();
         try {
             super.characters(c, 0, c.length);
+            debugText.append(out);
+            if (debugText.length() > DEBUG_OUTPUT_LENGTH) {
+                debugText = new StringBuffer(debugText.substring(DEBUG_OUTPUT_LENGTH - (DEBUG_OUTPUT_LENGTH / 10), DEBUG_OUTPUT_LENGTH ));
+            }
         } catch (SAXException ex) {
             throw (JSONSerializationException) ex;
         }

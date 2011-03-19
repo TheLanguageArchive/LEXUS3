@@ -24,8 +24,8 @@
                 <xsl:call-template name="declare-namespace"/>
                 <xsl:call-template name="permissions"/>
                 <xsl:call-template name="schema-permissions"/>
-                <xsl:call-template name="sort-order"/>
-                <xsl:call-template name="log"/>
+<!--                <xsl:call-template name="sort-order"/>
+                <xsl:call-template name="log"/> -->
                 
                 (: replace the schema in the db :)
                 declare updating function lexus:updateSchema($newSchema as node(), $lexus as node()) {

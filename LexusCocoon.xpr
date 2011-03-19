@@ -672,24 +672,24 @@
                         <scenarioAssociation-array>
                             <scenarioAssociation>
                                 <field name="name">
-                                    <String xml:space="preserve">createAltFormatForLexicon</String>
+                                    <String xml:space="preserve">buildSearchQuery</String>
                                 </field>
                                 <field name="type">
                                     <String xml:space="preserve">text/xsl</String>
                                 </field>
                                 <field name="url">
-                                    <String xml:space="preserve">front/src/main/resources/COB-INF/lexicon-editor/export/createAltFormatForLexicon.xsl</String>
+                                    <String xml:space="preserve">db/src/main/resources/COB-INF/workspace/queries/buildSearchQuery.xslt</String>
                                 </field>
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="name">
-                                    <String xml:space="preserve">xquery-components</String>
+                                    <String xml:space="preserve">sort-order</String>
                                 </field>
                                 <field name="type">
                                     <String xml:space="preserve">text/xsl</String>
                                 </field>
                                 <field name="url">
-                                    <String xml:space="preserve">back/src/main/resources/COB-INF/util/xquery-components.xslt</String>
+                                    <String xml:space="preserve">back/src/main/resources/COB-INF/util/sort-order.xslt</String>
                                 </field>
                             </scenarioAssociation>
                             <scenarioAssociation>
@@ -705,13 +705,24 @@
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="name">
-                                    <String xml:space="preserve">sort-order</String>
+                                    <String xml:space="preserve">xquery-components</String>
                                 </field>
                                 <field name="type">
                                     <String xml:space="preserve">text/xsl</String>
                                 </field>
                                 <field name="url">
-                                    <String xml:space="preserve">back/src/main/resources/COB-INF/util/sort-order.xslt</String>
+                                    <String xml:space="preserve">back/src/main/resources/COB-INF/util/xquery-components.xslt</String>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="name">
+                                    <String xml:space="preserve">createAltFormatForLexicon</String>
+                                </field>
+                                <field name="type">
+                                    <String xml:space="preserve">text/xsl</String>
+                                </field>
+                                <field name="url">
+                                    <String xml:space="preserve">front/src/main/resources/COB-INF/lexicon-editor/export/createAltFormatForLexicon.xsl</String>
                                 </field>
                             </scenarioAssociation>
                         </scenarioAssociation-array>
@@ -762,6 +773,51 @@
                                 </field>
                                 <field name="name">
                                     <String xml:space="preserve">2c9090a2167c21d701168046989d4a42</String>
+                                </field>
+                            </validationScenario>
+                            <validationScenario>
+                                <field name="pairs">
+                                    <list>
+                                    <validationUnit>
+                                    <field name="validationType">
+                                    <validationUnitType>
+                                    <field name="validationInputType">
+                                    <String xml:space="preserve">text/xsl</String>
+                                    </field>
+                                    </validationUnitType>
+                                    </field>
+                                    <field name="url">
+                                    <String xml:space="preserve">file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/db/src/main/resources/COB-INF/workspace/queries/searchQuery.xslt</String>
+                                    </field>
+                                    <field name="validationEngine">
+                                    <validationEngine>
+                                    <field name="engineType">
+                                    <String xml:space="preserve">&lt;Default engine&gt;</String>
+                                    </field>
+                                    <field
+                                    name="allowsAutomaticValidation">
+                                    <Boolean xml:space="preserve">true</Boolean>
+                                    </field>
+                                    </validationEngine>
+                                    </field>
+                                    <field
+                                    name="allowAutomaticValidation">
+                                    <Boolean xml:space="preserve">true</Boolean>
+                                    </field>
+                                    <field name="extensions">
+                                    <null/>
+                                    </field>
+                                    <field name="validationSchema">
+                                    <null/>
+                                    </field>
+                                    </validationUnit>
+                                    </list>
+                                </field>
+                                <field name="type">
+                                    <String xml:space="preserve">text/xsl</String>
+                                </field>
+                                <field name="name">
+                                    <String xml:space="preserve">buildSearchQuery</String>
                                 </field>
                             </validationScenario>
                             <validationScenario>

@@ -5,107 +5,34 @@
         
         Input is:
         <data>
-        <lexus:search>
-        <lexicon>1</lexicon>
-        <refiner>
-        <startLetter/>
-        <pageSize>25</pageSize>
-        <startPage>0</startPage>
-        </refiner>
-        </lexus:search>
-        <user>...</user>
+            <lexus:search>
+                <query xmlns:json="http://apache.org/cocoon/json/1.0"
+                    id="uuid:9c061431-140a-49ea-96e9-3b964fb91884">
+                    <description/>
+                    <name>testje 2</name>
+                    <expression>
+                        <lexicon id="uuid:eae8c847-4462-432e-bf95-56eae4831044"
+                            name="976b83a2-7bef-4099-9e5f-04f22bd7e98f">
+                            <datacategory schema-ref="uuid:6e1f2b5f-778e-4940-b054-dc8f1e0d2dec" name="Lexeme"
+                                value="test" condition="is" negation="false"/>
+                        </lexicon>
+                    </expression>
+                </query>
+                <refiner>
+                    <startLetter/>
+                    <searchTerm/>
+                    <pageSize>25</pageSize>
+                    <startPage>0</startPage>
+                </refiner>
+            </lexus:search>
+            <user>...</user>
         </data>
         
-        Generate the following information from the database:
-        
-        {
-        "id": "Tue Apr 27 08:24:25 CEST 2010",
-        "result":         {
-            "lexus": null,
-            "myResult":             {
-                "total": 2,
-                "startLetter": "",
-                "lexicon":                 {
-                    "id": "MmM5MDk5ODQyNzFlMDBkYjAxMjcxZTAxODQ3ODAwYzY=",
-                    "todos": [],
-                    "description": "Uses Standard Format markers as defined in          \r\r_Making Dictionaries:\r\rA guide to lexicography and\r\rthe Multi-Dictionary Formatter_.\r\rDavid F. Coward, Charles E. Grimes, and\r\rMark Pedrotti.\r\rWaxhaw, NC: SIL, 1998. (Version 2.0)",
-                    "administrator": false,
-                    "writable": true,
-                    "name": "???????? ???????????????? ???????? ",
-                    "type": "myLexicon",
-                    "note": null,
-                    "shared": false
-                },
-                "count": 25,
-                "lexicalEntries":                 [
-                                        {
-                        "id": "NTEyYWFkNmMtODQxMy00YjAzLWE1YzctZDIxODNhYmFjMzQ3",
-                        "listView": {"value": "'aekw kasdf asd???? ??????????????????????????????"},
-                        "entryView": "entryLayout.htm?id=NTEyYWFkNmMtODQxMy00YjAzLWE1YzctZDIxODNhYmFjMzQ3"
-                    },
-                                        {
-                        "id": "NWNiYTM5YTYtYzYyMi00ZDc4LTk2ZGMtNDE3OWZlZDU2NDA1",
-                        "listView": {"value": "'anu"},
-                        "entryView": "entryLayout.htm?id=NWNiYTM5YTYtYzYyMi00ZDc4LTk2ZGMtNDE3OWZlZDU2NDA1"
-                    }
-                ],
-                "startPage": 0
-            },
-            "sessionID": "EC1B6CADFBADD462065268D1CC601736",
-            "lexica":             [
-                                {
-                    "id": "MmM5MDkwYTIxNjdjMjFkNzAxMTY4MDQ3ZmRjZTRhNDU=",
-                    "todos": [],
-                    "description": "???? ?????????????",
-                    "administrator": false,
-                    "writable": true,
-                    "name": "???????? 89 ?? Yeli D'nye!",
-                    "type": "myLexicon",
-                    "note": null
-                }
-            ],
-            "VICOS": "http://localhost:8080/mpi/vicos",
-            "startLetters":             [
-                                {
-                    "values": "Aa",
-                    "label": "a"
-                },
-                                {
-                    "values": "Bb",
-                    "label": "b"
-                }            ],
-            "queries": [],
-            "mySchema":             [
-                                {
-                    "min": 0,
-                    "max": null,
-                    "sortOrder": null,
-                    "parent": "MmM5MDk5ODQyNzFlMDBkYjAxMjcxZTAxN2VjNDAwNDA=",
-                    "DCRReference": "xe",
-                    "type": "data category",
-                    "id": "MmM5MDk5ODQyNzFlMDBkYjAxMjcxZTAxN2VjNDAwNDI=",
-                    "adminInfo": null,
-                    "valuedomain": [],
-                    "description": "This provides the English translation of the example sentence given in the \\xv field.",
-                    "DCR": "user defined",
-                    "name": "Example free trans. (E)",
-                    "note": null
-                },
-            ]
-        },
-        "requester": "LexiconBrowser16395",
-        "status":         {
-            "message": "At your service",
-            "duration": "7715",
-            "insync": true,
-            "success": true
-        },
-        "requestId": "5C5BFF7E-8E42-7605-6C75-3DF01974EED6"
-    }
         -->
     <xsl:include href="../util/identity.xslt"/>
     <xsl:include href="../util/encodeXML.xslt"/>
     <xsl:include href="../util/xquery-components.xslt"/>
+    <xsl:include href="../workspace/queries/buildSearchQuery.xslt"/>
     
     <xsl:param name="lexica-collection"/>
     <xsl:param name="users-collection"/>
@@ -115,14 +42,20 @@
             <xsl:apply-templates select="@*"/>
             <lexus:query>
                <lexus:text>
+                   (: <xsl:value-of select="base-uri(document(''))"/> :)
                    <xsl:call-template name="declare-namespace"/>                        
                    <xsl:call-template name="users"/>                       
                    <xsl:call-template name="lexicon"/>                       
                    <xsl:call-template name="lexica"/>
+
+                   <!-- Insert lexus:search() function here. --> 
+                   <xsl:apply-templates select="query" mode="build-query">
+                       <xsl:with-param name="lexica" select="../lexus:search-lexica/lexus"/>
+                   </xsl:apply-templates>
                    
-                   let $search := <xsl:apply-templates select="/data/lexus:search" mode="encoded"/>
+                   let $search := <xsl:apply-templates select="." mode="encoded"/>
                    let $user-id := '<xsl:value-of select="/data/user/@id"/>'
-                   let $lexiconId := $search/lexicon
+                   let $lexiconId := $search/query/expression/lexicon/@id
                    let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
                    let $startLetter := data($search/refiner/startLetter)
                    let $searchTerm := data($search/refiner/searchTerm)
@@ -130,17 +63,61 @@
                    let $startPage := number($search//refiner/startPage)
                    let $lexi := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[meta/users/user/@ref = $user-id]
                    let $listView := $lexus/meta/views/view[@id eq $lexus/meta/views/@listView]
-                   let $firstDataCategoryId := ($listView//data[@type eq 'data category'])[1]/@id
                    
-                   let $sortOrderDCs := for $le in $lexus/lexicon/lexical-entry return ($le//data[@schema-ref eq $firstDataCategoryId])[1]
-                   let $sLValues := for $sodc in $sortOrderDCs return substring($sodc/value, 1, 1)
-                   let $startLetters := for $sl in distinct-values($sLValues) return element startLetter { $sl }
-                   let $lexicalEntries := if ($startLetter ne '') 
-                        then for $sodc in $sortOrderDCs return if (substring($sodc/value, 1, 1) eq $startLetter) then $sodc/ancestor::lexical-entry else ()
-                        else for $l in $lexus/lexicon/lexical-entry let $d := $l//data[@sort-key] order by $d[1]/@sort-key return $l
-                   let $searchedLexicalEntries := if ($searchTerm eq '')
-                        then $lexicalEntries
-                        else for $l in $lexicalEntries return if ($l//value[text() contains text {concat('.*', $searchTerm, '.*')} using wildcards]) then $l else ()
+                   <!--
+                       Possible situations:
+                       1   There is a listview with a DC, DC has sort-order
+                       2   There is a listview with a DC, DC has NO sort-order
+                       3   There is no listview, but there is a (first) DC that has a sort-order
+                       4   There is no listview, NO DC that has a sort-order
+                       
+                       DC to use:
+                       1   Use DC from listview
+                       2   Use DC from listview
+                       3   Use first DC with @sort-order
+                       4   Use first DC in schema.
+                       
+                       Having determined the DC to use for filtering/ordering:
+                       
+                       The startLetter list is dependent on the presence of a sort-order:
+                       1   sort-order/mappings/to
+                       2   unique first characters of data/value elementen
+                       3   sort-order/mappings/to
+                       4   unique first characters of data/value elementen
+                       
+                       Ordering of lexical entries:
+                       1   Use data[@schema-ref eq DC]/@sort-key
+                       2   Use data[@schema-ref eq DC]/value
+                       3   Use data[@schema-ref eq DC]/@sort-key
+                       4   Use data[@schema-ref eq DC]/value
+                       
+                       The startLetter filter is also dependent on the presence of a sort-order:
+                       1   DC starts with same number as the position of startLetter in the sort-order/mappings/mapping/to sequence
+                       2   DC starts with startLetter
+                       3   DC starts with same number as the position of startLetter in the sort-order/mappings/mapping/to sequence
+                       4   DC starts with startLetter
+                       
+                   -->
+                   
+                    (: Returns a list of lexicon elements, containing ($firstDC, (lexical-entry)*) :)
+                   let $search-results := lexus:search() 
+
+
+                    (: Return $sortOrder//mapping/to character(s) when a sort order is defined,
+                        otherwise return distinct-values(first characters of all data values) :)
+                   
+                   let $firstDC := $search-results/firstDC/container
+                   let $sortOrderId := $firstDC/@sort-order
+                   let $startLetters := if ($sortOrderId ne '')
+                        then for $sl in collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $user-id]/workspace/sortorders/sortorder[@id eq $sortOrderId]/mappings/mapping/to  return element startLetter { $sl/text() }
+                        else 
+                            (: Look for data elements with the same schema-ref as the first data element :)
+                            let $sortOrderDCs := for $le in $lexus/lexicon/lexical-entry return ($le//data[@schema-ref eq $firstDC/@id])[1]
+                            (: Return their values :)
+                            let $sLValues := for $sodc in $sortOrderDCs return upper-case(substring($sodc/value, 1, 1))
+                            (: Create a list of startLetters from the values :)
+                            return for $sl in distinct-values($sLValues) return element startLetter { $sl }
+                   
                    let $schema := $lexus/meta/schema
                    let $users := lexus:users(collection('<xsl:value-of select="$users-collection"/>')/user[@id = distinct-values($lexus/meta/users/user/@ref)])
                    
@@ -148,15 +125,16 @@
                        element results {
                            element startLetter { $startLetter },
                            lexus:lexicon($lexus),
-                           element lexical-entries { subsequence($searchedLexicalEntries,($startPage * $pageSize), $pageSize) },
+                           element lexical-entries { subsequence($search-results/lexical-entries/lexical-entry,($startPage * $pageSize), $pageSize) },
                            element startPage { $startPage },
                            element searchTerm { $searchTerm },
-                           element count { count($searchedLexicalEntries) },
-                           element pageSize {$pageSize}
-                       },                                        
+                           element count { count($search-results/lexical-entries/lexical-entry) },
+                           element pageSize { $pageSize },
+                           element query { attribute id { '<xsl:value-of select="query/@id"/>' } }
+                            },                                        
                        lexus:lexica($lexi),
                        element startLetters { $startLetters },
-                       element queries { },
+                       $lexus/meta/queries,
                        $schema,
                        $users
                    }

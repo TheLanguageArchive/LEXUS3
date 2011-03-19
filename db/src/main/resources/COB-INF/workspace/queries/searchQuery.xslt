@@ -5,146 +5,59 @@
     <xsl:include href="../../util/identity.xslt"/>
     <xsl:include href="../../util/encodeXML.xslt"/>
     <xsl:include href="../../util/xquery-components.xslt"/>
+    <xsl:include href="buildSearchQuery.xslt"/>
     
     <xsl:param name="lexica-collection"/>
     <xsl:param name="users-collection"/>
 
 
-<!--
-    <query xmlns:json="http://apache.org/cocoon/json/1.0"
-        id="uuid:9c061431-140a-49ea-96e9-3b964fb91884">
-        <description/>
-        <name>testje 2</name>
-        <expression>
-            <lexicon id="uuid:eae8c847-4462-432e-bf95-56eae4831044"
-            name="976b83a2-7bef-4099-9e5f-04f22bd7e98f">
-                <datacategory schema-ref="uuid:6e1f2b5f-778e-4940-b054-dc8f1e0d2dec" name="Lexeme"
-                value="test" condition="is" negation="false"/>
-            </lexicon>
-        </expression>
-    </query>
-    
-        ==>
-    
-    /lexus[@id eq "uuid:eae8c847-4462-432e-bf95-56eae4831044"]/lexicon/
-    lexical-entry[(.//data[@schema-ref eq "uuid:6e1f2b5f-778e-4940-b054-dc8f1e0d2dec" and value eq "test"])]) 
-
-declare function lexus:createQuery($query as node()) as node()
-
--->
+    <!--
+        Create db query and send it off, return the results.
+    -->
     
     
-    <xsl:template match="lexus:search-with-query">
+    <xsl:template match="lexus:search">
         <xsl:copy>
             <lexus:query>
-            <lexus:text>
+                <lexus:text>
+                    (: <xsl:value-of select="base-uri(document(''))"/> :)
                 <xsl:call-template name="declare-namespace"/>
                 <xsl:call-template name="permissions"/>
-
-                <xsl:apply-templates select="query"/> 
+                    
+                    
+                    <!-- Insert lexus:search() function here. --> 
+                    <xsl:apply-templates select="query" mode="build-query">
+                        <xsl:with-param name="lexica" select="../lexus:search-lexica/lexus"/>
+                    </xsl:apply-templates>
+            
+                    let $search := <xsl:apply-templates select="." mode="encoded"/>
+                    let $user-id := '<xsl:value-of select="/data/user/@id"/>'
+                    let $startLetter := data($search/refiner/startLetter)
+                    let $searchTerm := data($search/refiner/searchTerm)
+                    let $pageSize := number($search/refiner/pageSize)
+                    let $startPage := number($search//refiner/startPage)
+                   
+                    let $from := ($startPage) * $pageSize
+                    let $to := ($startPage + 1) * $pageSize
+                    
+                    
+                    (: Returns a list of lexicon elements, containing ($firstDC, (lexical-entry)*) :)
+                    let $search-results := lexus:search() 
+        
+                    <xsl:text>return element search-results { </xsl:text>
+                    <xsl:text> attribute total { count($search-results//lexical-entry) }, </xsl:text>
+                    <xsl:apply-templates select="query" mode="encoded"/>
+                    <xsl:text>, </xsl:text>
+                    <xsl:apply-templates select="refiner" mode="encoded"/>
+                    <xsl:text>, for $l in $search-results 
+                        return element lexicon { $l/@*, subsequence($l/lexical-entries/lexical-entry, $from, $to) }</xsl:text>
+                    <xsl:text>, element boe {$search-results} }</xsl:text>
             </lexus:text>
             </lexus:query>
             </xsl:copy>
     </xsl:template>
 
     <xsl:template match="query">
-        <xsl:text>let $startPage := </xsl:text><xsl:value-of select="../refiner/position"/>
-        <xsl:text>
-            
-        </xsl:text>
-        <xsl:text>let $pageSize := </xsl:text><xsl:value-of select="../refiner/pageSize"/>
-        <xsl:text>
-            
-        </xsl:text>
-        <xsl:text>let $from := ($startPage) * $pageSize</xsl:text>
-        
-        <xsl:text>
-            
-        </xsl:text>
-        <xsl:text>let $to := ($startPage + 1) * $pageSize</xsl:text>
-        
-        <xsl:text>
-            
-        </xsl:text>
-        
-        <xsl:text>let $search-results := (</xsl:text>
-        <xsl:for-each select="expression/lexicon">
-            <xsl:text>element lexicon {</xsl:text>
-            <xsl:text> attribute id {'</xsl:text><xsl:value-of select="./@id"/><xsl:text>'}, </xsl:text>
-            <xsl:text> attribute name {'</xsl:text><xsl:value-of select="./@name"/><xsl:text>'}, </xsl:text>
-            <xsl:apply-templates select="."/>
-            <xsl:text> }</xsl:text>
-            <xsl:if test="position()!=last()"><xsl:text>, </xsl:text></xsl:if>
-        </xsl:for-each>
-        <xsl:text> )</xsl:text>
-        <xsl:text>
-            
-        </xsl:text>
-        <xsl:text>return element search-results { </xsl:text>
-        <xsl:text> attribute total { count($search-results//lexical-entry) }, </xsl:text>
-        <xsl:apply-templates select="." mode="encoded"/>
-        <xsl:text>, </xsl:text>
-        <xsl:apply-templates select="../refiner" mode="encoded"/>
-        <xsl:text>, for $l in $search-results return element lexicon { $l/@*, subsequence($l/lexical-entry, $from, $to) }</xsl:text>
-        <xsl:text> }</xsl:text>
     </xsl:template>
-    
-    
-    <!--
-        /lexus[@id eq "uuid:eae8c847-4462-432e-bf95-56eae4831044"]/lexicon/lexical-entry[...]
-        -->
-    <xsl:template match="lexicon">
-        <xsl:text>collection('</xsl:text><xsl:value-of select="$lexica-collection"/><xsl:text>')</xsl:text>
-        <xsl:text>/lexus[@id eq "</xsl:text>
-        <xsl:value-of select="@id"/>
-        <xsl:text>"]/lexicon/lexical-entry[</xsl:text>
-        <xsl:for-each select="datacategory">
-            <xsl:text>(</xsl:text>
-            <xsl:apply-templates select="." />
-            <xsl:text>)</xsl:text>
-            <xsl:if test="position()!=last()"><xsl:text> or </xsl:text></xsl:if>
-        </xsl:for-each>
-        <xsl:text>]</xsl:text>
-    </xsl:template>
-    
-    
-    <!--
-        .//data[@schema-ref eq "uuid:6e1f2b5f-778e-4940-b054-dc8f1e0d2dec" and value eq "test"]
-        -->
-    <xsl:template match="datacategory">
-        <xsl:text>.//data[@schema-ref eq "</xsl:text>
-        <xsl:value-of select="@schema-ref"/>
-        <xsl:text>" and </xsl:text>
-        <xsl:apply-templates select="." mode="condition"/>
-        <xsl:if test="datacategory">
-            <xsl:text> and (</xsl:text>
-            <xsl:apply-templates select="datacategory"/>
-            <xsl:text>)</xsl:text>
-        </xsl:if>
-        <xsl:text>]</xsl:text>
-    </xsl:template>
-    
-    <!--
-        Generate eq, not(eq), contains(), not(contains()) etc.
-    -->
-    <xsl:template match="datacategory" mode="condition">
-        <xsl:variable name="uc" select="upper-case(@value)"/>
-        
-        <xsl:if test="@negation eq 'true'">not(</xsl:if>
-        <xsl:choose>
-            <xsl:when test="@condition eq 'is'">
-                upper-case(value) eq '<xsl:value-of select="$uc"/>' 
-            </xsl:when>
-            <xsl:when test="@condition eq 'contains'">
-                contains(upper-case(value), '<xsl:value-of select="$uc"/>') 
-            </xsl:when>
-            <xsl:when test="@condition eq 'begins with'">
-                starts-with(upper-case(value), '<xsl:value-of select="$uc"/>') 
-            </xsl:when>
-            <xsl:when test="@condition eq 'ends with'">
-                ends-with(upper-case(value), '<xsl:value-of select="$uc"/>') 
-            </xsl:when>
-        </xsl:choose>
-        <xsl:if test="@negation eq 'true'">)</xsl:if>
-    </xsl:template>
+
 </xsl:stylesheet>

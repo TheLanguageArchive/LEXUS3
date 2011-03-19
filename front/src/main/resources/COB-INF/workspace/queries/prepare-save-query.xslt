@@ -7,7 +7,7 @@
         <xd:desc>
             <xd:p><xd:b>Created on:</xd:b> Feb 5, 2011</xd:p>
             <xd:p><xd:b>Author:</xd:b> huiver</xd:p>
-            <xd:p>Save a query.</xd:p>
+            <xd:p>Save a query or filter.</xd:p>
         </xd:desc>
     </xd:doc>
 
@@ -184,6 +184,10 @@
         </xsl:variable>
         
         <lexus:save-query>
+            <!--
+                If a lexicon id is present then it's a lexiconbrowser's filter, otherwise it's a workspace query.
+                -->
+            <xsl:copy-of select="parameters/lexicon"/>
             <xsl:apply-templates select="parameters/query">
                 <xsl:with-param name="id" select="$id"/>
             </xsl:apply-templates>

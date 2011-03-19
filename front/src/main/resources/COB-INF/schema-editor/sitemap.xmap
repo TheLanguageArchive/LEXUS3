@@ -60,14 +60,14 @@
           <map:part src="cocoon://json"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>
-        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-schema-pre.xml"/>-->
+<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-schema-1.xml"/>-->
         <map:transform type="saxon" src="saveSchema/prepareSaveSchema.xslt"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:db:/schema-editor/saveSchema.xml"/>
         </map:transform>
         <map:transform type="servletService">
           <map:parameter name="service"
-            value="servlet:db:/schema-editor/updateLexicaForUpdatedSchema.xml"/>
+            value="servlet:db:/schema-editor/updateSortOrderKeysInChunksForUpdatedSchema.xml"/>
         </map:transform>
         <map:transform type="${tee}"
           src="{naming:java:comp/env/tee-folder}debug-info/save-schema-post.xml"/>

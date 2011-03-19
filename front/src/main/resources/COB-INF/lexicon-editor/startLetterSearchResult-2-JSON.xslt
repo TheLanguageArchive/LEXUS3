@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:lexus="http://www.mpi.nl/lexus"
-    xmlns:display="http://www.mpi.nl/lexus/display/1.0"
-    xmlns:xhtml="http://www.w3.org/1999/xhtml" exclude-result-prefixes="xs" version="2.0">
+    xmlns:display="http://www.mpi.nl/lexus/display/1.0" xmlns:xhtml="http://www.w3.org/1999/xhtml"
+    exclude-result-prefixes="xs" version="2.0">
 
     <xsl:param name="sessionId"/>
 
     <xsl:include href="../stylesheets/lexicon.xslt"/>
     <xsl:include href="../stylesheets/schema.xslt"/>
     <xsl:include href="../util/encodeXML.xslt"/>
+    <xsl:include href="../workspace/queries/element-queries-2-JSON.xslt"/>
 
     <!-- 
         JSON to produce:
@@ -172,11 +173,19 @@
             <xsl:apply-templates select="schema">
                 <xsl:with-param name="tree" select="'false'"/>
             </xsl:apply-templates>
+            <xsl:if test="results/query/@id ne 'adhoc'">
+                <object key="query">
+                    <string key="id">
+                        <xsl:value-of select="results/query/@id"/>
+                    </string>
+                </object>
+            </xsl:if>
             <string key="sessionID">
                 <xsl:value-of select="$sessionId"/>
             </string>
         </object>
     </xsl:template>
+
 
     <xsl:template match="results">
         <object key="myResult">

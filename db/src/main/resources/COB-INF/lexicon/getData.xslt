@@ -30,6 +30,7 @@
             <xsl:apply-templates select="@*"/>
             <lexus:query>
                 <lexus:text>
+                    (: <xsl:value-of select="base-uri(document(''))"/> :)
                     <xsl:call-template name="declare-namespace"/> 
                     
                     let $data := <xsl:apply-templates select="." mode="encoded"/>

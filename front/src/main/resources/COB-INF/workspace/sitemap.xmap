@@ -258,14 +258,14 @@
           <map:part src="{naming:java:comp/env/LEXUS/tempDir}/{1}.xml"/>
         </map:aggregate>
         <map:transform type="stx" src="import/add-meta-and-ids.stx"/>
-        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/import-1.xml"/>
         <map:transform type="stx" src="import/add-cincludes-lexus.stx"/>
         <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>
+          src="{naming:java:comp/env/tee-folder}debug-info/import-2.xml"/>
         <map:transform type="cinclude"/>
         <map:transform type="stx" src="import/add-cincludes-lexical-entries.stx"/>
         <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/front-post2.xml"/>
+          src="{naming:java:comp/env/tee-folder}debug-info/import-3.xml"/>
         <!--        <map:transform type="cinclude"/>-->
         <!--        <map:transform type="stx" src="import/count-ids.stx"/>-->
         <map:serialize type="xml"/>
@@ -312,7 +312,7 @@
         <map:generate src="cocoon:/getQueries"/>
         <map:transform type="saxon" src="queries/queries-2-JSON.xslt"/>
         <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>
+          src="{naming:java:comp/env/tee-folder}debug-info/queries-load-1.xml"/>
         <map:serialize type="json"/>
       </map:match>
 
@@ -329,7 +329,7 @@
 
       <map:match pattern="QueryBuilder/getLexica.json">
         <map:generate src="cocoon:/getPage"/>
-        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>-->
+        
         <map:transform type="saxon" src="queries/lexica-2-JSON.xslt"/>
         <map:serialize type="json"/>
       </map:match>
@@ -371,18 +371,37 @@
           <map:part src="cocoon://json"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-save-query-1.xml"/>
         <map:transform type="saxon" src="queries/prepare-save-query.xslt"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-save-query-2.xml"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:db:/workspace/queries/saveQuery.xml"/>
         </map:transform>
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/front-saveq-pre.xml"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-save-query-3.xml"/>
         <map:transform type="saxon" src="queries/saved-query-2-JSON.xslt"/>
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/front-saveq-post.xml"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-save-query-4.xml"/>
         <map:serialize type="json"/>
       </map:match>
-
+      
+      <!--
+        Delete a query.
+      -->
+      <map:match pattern="QueryBuilder/deleteQuery.json">
+        <map:aggregate element="data">
+          <map:part src="cocoon://json"/>
+          <map:part src="cocoon://user"/>
+        </map:aggregate>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/delete-query-1.xml"/>
+        <map:transform type="saxon" src="queries/prepare-delete-query.xslt"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/delete-query-2.xml"/>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:db:/workspace/queries/deleteQuery.xml"/>
+        </map:transform>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/delete-query-3.xml"/>
+        <map:transform type="saxon" src="queries/deleted-query-2-JSON.xslt"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/delete-query-4.xml"/>
+        <map:serialize type="json"/>
+      </map:match>
 
       <!--
           Use given query to search the users' lexica.

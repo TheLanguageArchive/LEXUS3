@@ -49,9 +49,9 @@
         <lexus:save-schema id="{parameters/viewId}">
             <xsl:apply-templates select="parameters/schema"/>
         </lexus:save-schema>
-        <lexus:update-lexica-for-updated-schema id="{parameters/viewId}">
+        <lexus:update-lexicon-for-updated-schema id="{parameters/viewId}">
             <xsl:apply-templates select="parameters/schema"/>
-        </lexus:update-lexica-for-updated-schema>
+        </lexus:update-lexicon-for-updated-schema>
     </xsl:template>
 
     <xsl:template match="schema">
