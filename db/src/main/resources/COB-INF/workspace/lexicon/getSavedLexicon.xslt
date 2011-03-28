@@ -26,12 +26,11 @@
                 return element result
                 {
                     $users,
-                    element lexicon
-                    {$lexus/lexicon/@*,
-                    $lexus/lexicon/lexicon-information,
-                    element size {count($lexus/lexicon/lexical-entry)}},
-                    $lexus,
-                    $user
+                    element lexicon {
+                        $lexus/lexicon/@*,
+                        element meta {$lexus/meta/*[local-name() ne 'schema']},
+                        element size {count($lexus/lexicon/lexical-entry)}
+                    }
                 }
             </lexus:text>
             </lexus:query>

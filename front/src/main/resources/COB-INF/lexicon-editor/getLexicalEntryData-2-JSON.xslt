@@ -111,7 +111,7 @@
                 />
             </string>
         </object>
-        <xsl:apply-templates select="schema"/>
+<!--        <xsl:apply-templates select="schema"/>-->
     </xsl:template>
 
     <xsl:template match="container|data">

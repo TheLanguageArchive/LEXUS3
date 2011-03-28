@@ -61,12 +61,14 @@
 
     <xsl:template match="query" mode="build-query">
         <xsl:param name="lexica" select="()"/>
+        <xsl:param name="user" select="()"/>
         <xsl:text>declare function lexus:search() {
             (
         </xsl:text>
         <xsl:for-each select="expression/lexicon">
             <xsl:apply-templates select="." mode="build-query">
                 <xsl:with-param name="meta" select="$lexica[@id eq current()/@id]/meta"/>
+                <xsl:with-param name="sortOrders" select="$user/workspace/sortorders"/>
             </xsl:apply-templates>
             <xsl:if test="position()!=last()">
                 <xsl:text>, 
@@ -85,42 +87,31 @@
         -->
     <xsl:template match="lexicon" mode="build-query">
         <xsl:param name="meta" select="()"/>
+        <xsl:param name="sortOrders" select="()"/>
+
         <xsl:variable name="firstDC">
             <xsl:call-template name="determineFirstDC">
                 <xsl:with-param name="meta" select="$meta"/>
             </xsl:call-template>
         </xsl:variable>
+
         <xsl:variable name="matchText">
             <xsl:call-template name="determineMatchText">
                 <xsl:with-param name="firstDC" select="$firstDC"/>
                 <xsl:with-param name="meta" select="$meta"/>
+                <xsl:with-param name="sortOrders" select="$sortOrders"/>
             </xsl:call-template>
         </xsl:variable>
-        <xsl:text>element lexicon {
-            </xsl:text>
-        <xsl:text> attribute id {'</xsl:text>
-        <xsl:value-of select="@id"/>
-        <xsl:text>'},
-                </xsl:text>
-        <xsl:text> attribute name {'</xsl:text>
-        <xsl:value-of select="$meta/name"/>
-        <xsl:text>'},
-                </xsl:text>
-            <xsl:text>let $lexus := collection('</xsl:text>
-            <xsl:value-of select="$lexica-collection"/>
-            <xsl:text>')</xsl:text>
-            <xsl:text>/lexus[@id eq "</xsl:text>
-            <xsl:value-of select="@id"/>
-            <xsl:text>"]
+
+            element lexicon {
+                attribute id {'<xsl:value-of select="@id"/>'}, attribute name {'<xsl:value-of select="$meta/name"/>'},
+                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq "<xsl:value-of select="@id"/>"]
             
-            let $firstDC := </xsl:text><xsl:apply-templates select="$firstDC" mode="encoded"/>
-            <xsl:text>
-            
-               </xsl:text>
-                   <xsl:if test=".//datacategory[@ref eq 'lexus:start-letter-search']">
-                        <xsl:text>let $matchText := '</xsl:text><xsl:value-of select="$matchText"/>
-                       <xsl:text>'
-                        </xsl:text>
+                let $firstDC := <xsl:apply-templates select="$firstDC" mode="encoded"/>
+                <xsl:text>            
+                </xsl:text>
+                <xsl:if test=".//datacategory[@ref eq 'lexus:start-letter-search']">
+                    let $matchText := '<xsl:value-of select="$matchText"/>'
                </xsl:if>
             <xsl:text>
             return (element firstDC { </xsl:text><xsl:apply-templates select="$firstDC" mode="encoded"/><xsl:text> },</xsl:text>
@@ -253,14 +244,15 @@
     <xsl:template name="determineMatchText">
         <xsl:param name="firstDC"/>
         <xsl:param name="meta" select="()"/>
+        <xsl:param name="sortOrders" select="()"/>
         <xsl:choose>
             <xsl:when test="$firstDC/container/@sort-order">
-                <xsl:variable name="sortOrder" select="$meta/sort-orders/sort-order[@id eq $firstDC/container/@sort-order]"/>
+                <xsl:variable name="sortOrder" select="$sortOrders/sortorder[@id eq $firstDC/container/@sort-order]"/>
                 <xsl:variable name="nrOfMappings" select="count($sortOrder/mappings/mapping)"/>
-                <xsl:variable name="pos" select="count($sortOrder/mappings/mapping/to[. eq .//datacategory[@ref eq 'lexus:start-letter-search']/@value]/../preceding::mapping) + 1"/>
+                <xsl:variable name="pos" select="count($sortOrder/mappings/mapping/to[. eq current()//datacategory[@ref eq 'lexus:start-letter-search']/@value]/../preceding::mapping) + 1"/>
                 <xsl:variable name="paddedValue" select="concat('000', string($pos))"/>
                 <!-- Need to pad it with zeroes! -->
-                <xsl:value-of select="substring($paddedValue, string-length($paddedValue) - string-length(string($nrOfMappings)))"/>
+                <xsl:value-of select="substring($paddedValue, string-length($paddedValue) - string-length(string($nrOfMappings)) + 1)"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:value-of select="replace(upper-case(.//datacategory[@ref eq 'lexus:start-letter-search']/@value), '&quot;', '&amp;quot;')"/>

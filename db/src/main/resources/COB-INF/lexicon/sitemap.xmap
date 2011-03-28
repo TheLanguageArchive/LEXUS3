@@ -59,8 +59,9 @@
           src="{naming:java:comp/env/tee-folder}debug-info/back-sls-1.xml"/>
         <!-- Get /lexus/meta elements in there first, it will ease query construction and
               speed up the actual searching. --> 
-        <map:transform type="saxon" src="getMetaForLexicaInQuery.xslt">
+        <map:transform type="saxon" src="getSortOrdersAndMetaForLexicaInQuery.xslt">
           <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
+          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
         </map:transform>
         <map:transform type="${tee}"
           src="{naming:java:comp/env/tee-folder}debug-info/back-sls-2.xml"/>

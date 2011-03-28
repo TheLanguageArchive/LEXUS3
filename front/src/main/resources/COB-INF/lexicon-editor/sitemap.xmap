@@ -117,6 +117,7 @@
       -->
       <map:match pattern="startLetterSearch.json">
         <map:generate src="cocoon:/startLetterSearch"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-sls-4.xml"/>
         <map:transform type="saxon" src="startLetterSearchResult-2-JSON.xslt">
           <map:parameter name="sessionId" value="{session:id}"/>
         </map:transform>
@@ -168,7 +169,9 @@
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:display:/flexhtmlview.xml"/>
         </map:transform>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-gled-3.xml"/>
         <map:transform type="saxon" src="getLexicalEntryData-2-JSON.xslt"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-gled-4.xml"/>
         <!-- resolve archive IDs to URIs -->
         <map:transform type="resource-resolver">
           <map:parameter name="resources-uri"
@@ -203,11 +206,11 @@
           <map:part src="cocoon://user"/>
         </map:aggregate>
         <map:transform type="saxon" src="prepareGetLexicalEntryData.xslt"/>
-<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-lle-3.xml"/>-->
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-gled-3.xml"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:db:/lexicon/getLexicalEntryData.xml"/>
         </map:transform>
-<!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-lle-4.xml"/>-->
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-gled-4.xml"/>
         <map:serialize type="xml"/>
       </map:match>
 

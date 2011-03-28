@@ -2,8 +2,11 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:lexus="http://www.mpi.nl/lexus" version="2.0">
 
+
+    <xsl:include href="../../stylesheets/lexicon.xslt"/>
+
     <!-- 
-        JSON source to mimic:
+        JSON to mimic:
         {
         "id": "Mon Feb 15 11:05:27 CET 2010",
         "result": {"lexicon":         {
@@ -38,16 +41,22 @@
         "requestId": "EDCB71FE-5D9E-797F-42F2-D116F299FB86"
         }
     -->
-    
+
     <xsl:template match="/">
-        <object><xsl:apply-templates select="/data/lexus:get-saved-lexicon/lexus:result/result"/></object>
+        <object>
+            <xsl:apply-templates select="/data/lexus:get-saved-lexicon/lexus:result/result"/>
+        </object>
     </xsl:template>
-    
+
     <xsl:template match="result">
-        <object key="result"><xsl:apply-templates /></object>
+        <object key="result">
+            <xsl:apply-templates select="lexicon">
+                <xsl:with-param name="key" select="'lexicon'"/>
+            </xsl:apply-templates>
+        </object>
     </xsl:template>
-    
-    <xsl:template match="lexicon">
+
+    <!--<xsl:template match="lexicon">
         <xsl:variable name="userId" select="/data/user/@id"/>
         <object key="lexicon">
             <string key="id">
@@ -95,11 +104,11 @@
             
         </object>
         
-    </xsl:template>
-    
+    </xsl:template>-->
+
     <xsl:template match="user | users"/>
-        
-    <xsl:template match="user[@ref]">
+
+    <!--<xsl:template match="user[@ref]">
         <xsl:variable name="id" select="@ref"/>
         <object>
             <string key="id">
@@ -120,9 +129,9 @@
                 </xsl:otherwise>
             </xsl:choose>
         </object>
-    </xsl:template>
-    
+    </xsl:template>-->
+
     <xsl:template match="@* | node()"/>
-        
-    
+
+
 </xsl:stylesheet>

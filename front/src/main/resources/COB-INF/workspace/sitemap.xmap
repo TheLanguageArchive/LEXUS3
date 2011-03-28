@@ -173,10 +173,13 @@
           <map:part src="cocoon://user"/>
         </map:aggregate>
         <map:transform type="saxon" src="lexicon/prepareCreateLexicon.xslt"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-create-lexicon-1.xml"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:db:/workspace/createLexicon.xml"/>
         </map:transform>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-create-lexicon-2.xml"/>
         <map:transform type="saxon" src="lexicon/savedLexicon-2-JSON.xslt"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-create-lexicon-3.xml"/>
         <map:serialize type="json"/>
       </map:match>
 

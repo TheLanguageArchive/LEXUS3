@@ -51,6 +51,7 @@
                    <!-- Insert lexus:search() function here. --> 
                    <xsl:apply-templates select="query" mode="build-query">
                        <xsl:with-param name="lexica" select="../lexus:search-lexica/lexus"/>
+                       <xsl:with-param name="user" select="../lexus:search-lexica/user"/>
                    </xsl:apply-templates>
                    
                    let $search := <xsl:apply-templates select="." mode="encoded"/>
@@ -99,6 +100,8 @@
                        
                    -->
                    
+                   let $sortOrders := collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $user-id]/workspace/sortorders
+                   
                     (: Returns a list of lexicon elements, containing ($firstDC, (lexical-entry)*) :)
                    let $search-results := lexus:search() 
 
@@ -109,7 +112,7 @@
                    let $firstDC := $search-results/firstDC/container
                    let $sortOrderId := $firstDC/@sort-order
                    let $startLetters := if ($sortOrderId ne '')
-                        then for $sl in collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $user-id]/workspace/sortorders/sortorder[@id eq $sortOrderId]/mappings/mapping/to  return element startLetter { $sl/text() }
+                        then for $sl in $sortOrders/sortorder[@id eq $sortOrderId]/mappings/mapping/to  return element startLetter { $sl/text() }
                         else 
                             (: Look for data elements with the same schema-ref as the first data element :)
                             let $sortOrderDCs := for $le in $lexus/lexicon/lexical-entry return ($le//data[@schema-ref eq $firstDC/@id])[1]

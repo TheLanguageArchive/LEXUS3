@@ -295,7 +295,7 @@
         </object>
     </xsl:template>
 
-    <xsl:template match="container[container]" priority="1">
+    <xsl:template match="container" priority="1">
         <xsl:param name="tree"/>
         <object>
             <string key="id">
@@ -366,7 +366,7 @@
             <string key="adminInfo">
                 <xsl:value-of select="@admin-info"/>
             </string>
-            <xsl:if test="$tree eq 'true'">
+            <xsl:if test="$tree eq 'true' and container">
                 <array key="children">
                     <xsl:apply-templates select="container">
                         <xsl:with-param name="tree" select="$tree"/>

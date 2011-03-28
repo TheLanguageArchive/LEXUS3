@@ -98,9 +98,10 @@
             let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
             let $les := $lexus/lexicon/lexical-entry[position() ge $start][position() lt ($start + $chunk-size)]
             let $sortOrderIds := distinct-values($lexus/meta/schema//container[@sort-order ne '']/@sort-order)
-            return for $sortOrderId in $sortOrderIds
-                let $data := $les//data[@schema-ref = $lexus/meta/schema//container[@sort-order eq $sortOrderId]/@id]
-                return lexus:processDataNodes($data, $user/workspace/sortorders/sortorder[@id eq $sortOrderId])
+            return for $le in $les 
+                for $sortOrderId in $sortOrderIds
+                    let $data := $le//data[@schema-ref = $lexus/meta/schema//container[@sort-order eq $sortOrderId]/@id]
+                    return lexus:processDataNodes($data, $user/workspace/sortorders/sortorder[@id eq $sortOrderId])
         };
 
         (: A schema changed, so process all data from the lexicon that have a sort order :)
