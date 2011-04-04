@@ -16,329 +16,275 @@
   limitations under the License.
 -->
 <map:sitemap xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://apache.org/cocoon/sitemap/1.0 http://cocoon.apache.org/schema/sitemap/cocoon-sitemap-1.0.xsd"
-  xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+    xsi:schemaLocation="http://apache.org/cocoon/sitemap/1.0 http://cocoon.apache.org/schema/sitemap/cocoon-sitemap-1.0.xsd"
+    xmlns:map="http://apache.org/cocoon/sitemap/1.0">
 
 
-  <map:pipelines>
+    <map:pipelines>
 
 
-    <!--+
+        <!--+
         | Workspace pipelines
         +-->
-    <map:pipeline id="schema-editor" type="caching">
+        <map:pipeline id="schema-editor" type="caching">
 
 
-      <!-- 
+            <!-- 
           Generate schema.
           -->
-      <map:match pattern="getSchema.xml">
-        <map:generate src="service-consumer:"/>
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/demo-back-1.xml"/>
-        <map:transform type="saxon" src="getSchema.xslt">
-          <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
-        </map:transform>
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/demo-back-2.xml"/>
-        <map:transform type="saxon" src="${xmldb.rest.transformer}">
-          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
-        </map:transform>
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/demo-back-3.xml"/>
-        <map:transform type="rest">
-          <map:parameter name="username" value="${xmldb.rest.username}"/>
-          <map:parameter name="password" value="${xmldb.rest.password}"/>
-        </map:transform>
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/demo-back-4.xml"/>
-        <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
-        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/demo-back-5.xml"/>-->
-        <map:serialize type="xml"/>
-      </map:match>
+            <map:match pattern="getSchema.xml">
+                <map:generate src="service-consumer:"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/demo-back-1.xml"/>
+                <map:transform type="saxon" src="getSchema.xslt">
+                    <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"
+                    />
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/demo-back-2.xml"/>
+                <map:call resource="rest"/>
+                <map:serialize type="xml"/>
+            </map:match>
 
 
-      <!-- 
+            <!-- 
         Get all views of a lexicon.
       -->
-      <map:match pattern="getViews.xml">
-        <map:generate src="service-consumer:"/>
-        <map:transform type="saxon" src="getViews.xslt">
-          <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
-          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
-        </map:transform>
-        <map:transform type="saxon" src="${xmldb.rest.transformer}">
-          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
-        </map:transform>
-        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-pre.xml"/>-->
-        <map:transform type="rest">
-          <map:parameter name="username" value="${xmldb.rest.username}"/>
-          <map:parameter name="password" value="${xmldb.rest.password}"/>
-        </map:transform>
-        <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
-        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-post.xml"/>-->
-        <map:serialize type="xml"/>
-      </map:match>
+            <map:match pattern="getViews.xml">
+                <map:generate src="service-consumer:"/>
+                <map:transform type="saxon" src="getViews.xslt">
+                    <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
+                    <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+                </map:transform>
+                <map:call resource="rest"/>
+                <map:serialize type="xml"/>
+            </map:match>
 
 
-      <!-- 
+            <!-- 
         Get listView of a lexicon.
       -->
-      <map:match pattern="getListView.xml">
-        <map:generate src="service-consumer:"/>
-        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-pre.xml"/>-->
-        <map:transform type="saxon" src="getListView.xslt">
-          <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
-          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
-        </map:transform>
-        <map:transform type="saxon" src="${xmldb.rest.transformer}">
-          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
-        </map:transform>
-        <map:transform type="rest">
-          <map:parameter name="cache" value="true"/>
-          <map:parameter name="username" value="${xmldb.rest.username}"/>
-          <map:parameter name="password" value="${xmldb.rest.password}"/>
-        </map:transform>
-        <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
-        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-post.xml"/>-->
-        <map:serialize type="xml"/>
-      </map:match>
+            <map:match pattern="getListView.xml">
+                <map:generate src="service-consumer:"/>
+                <map:transform type="saxon" src="getListView.xslt">
+                    <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
+                    <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+                </map:transform>
+                <map:call resource="rest"/>
+                <map:serialize type="xml"/>
+            </map:match>
 
 
-      <!-- 
+            <!-- 
         Get Lexcial Entry View of a lexicon.
       -->
-      <map:match pattern="getLEView.xml">
-        <map:generate src="service-consumer:"/>
-        <map:transform type="saxon" src="getLEView.xslt">
-          <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
-          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
-        </map:transform>
-        <map:transform type="saxon" src="${xmldb.rest.transformer}">
-          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
-        </map:transform>
-        <!--<map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/back-pre-leview.xml"/>-->
-        <map:transform type="rest">
-          <map:parameter name="username" value="${xmldb.rest.username}"/>
-          <map:parameter name="password" value="${xmldb.rest.password}"/>
-        </map:transform>
-        <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
-        <!--<map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/back-post-leview.xml"/>-->
-        <map:serialize type="xml"/>
-      </map:match>
+            <map:match pattern="getLEView.xml">
+                <map:generate src="service-consumer:"/>
+                <map:transform type="saxon" src="getLEView.xslt">
+                    <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
+                    <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+                </map:transform>
+                <map:call resource="rest"/>
+                <map:serialize type="xml"/>
+            </map:match>
 
-      <!-- 
+            <!-- 
         Get a view.
       -->
-      <map:match pattern="getView.xml">
-        <map:generate src="service-consumer:"/>
-        <map:transform type="saxon" src="getView.xslt">
-          <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
-          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
-        </map:transform>
-        <map:transform type="saxon" src="${xmldb.rest.transformer}">
-          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
-        </map:transform>
-        <!--<map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-pre.xml"/>-->
-        <map:transform type="rest">
-          <map:parameter name="username" value="${xmldb.rest.username}"/>
-          <map:parameter name="password" value="${xmldb.rest.password}"/>
-        </map:transform>
-        <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
-        <!--<map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-post.xml"/>-->
-        <map:serialize type="xml"/>
-      </map:match>
+            <map:match pattern="getView.xml">
+                <map:generate src="service-consumer:"/>
+                <map:transform type="saxon" src="getView.xslt">
+                    <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
+                    <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+                </map:transform>
+                <map:call resource="rest"/>
+                <map:serialize type="xml"/>
+            </map:match>
 
-    </map:pipeline>
+        </map:pipeline>
 
-    <map:pipeline>
+        <map:pipeline>
 
-      <!-- 
+            <!-- 
         Save schema.
       -->
-      <map:match pattern="saveSchema.xml">
-        <map:generate src="service-consumer:"/>
-        <map:transform type="saxon" src="saveSchema.xslt">
-          <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
-          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
-        </map:transform>
-        <map:transform type="saxon" src="${xmldb.rest.transformer}">
-          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
-        </map:transform>
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/back-save-schema-1.xml"/>
-        <map:transform type="rest">
-          <map:parameter name="username" value="${xmldb.rest.username}"/>
-          <map:parameter name="password" value="${xmldb.rest.password}"/>
-        </map:transform>
-        <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/back-save-schema-2.xml"/>
-        <map:serialize type="xml"/>
-      </map:match>
+            <map:match pattern="saveSchema.xml">
+                <map:generate src="service-consumer:"/>
+                <map:transform type="saxon" src="saveSchema.xslt">
+                    <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
+                    <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+                </map:transform>
+                <map:call resource="rest"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-save-schema-2.xml"/>
+                <map:serialize type="xml"/>
+            </map:match>
 
-      <!-- 
+            <!-- 
         Calculate sort order keys when schema has changed.
       -->
-      <map:match pattern="updateSortOrderKeysInChunksForUpdatedSchema.xml">
-        <map:generate src="service-consumer:"/>
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexica-1.xml"/>
-        <map:transform type="saxon" src="nrOfLexicalEntries.xslt">
-          <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
-        </map:transform>
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexica-2.xml"/>
-        <map:transform type="saxon" src="${xmldb.rest.transformer}">
-          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
-        </map:transform>
-        <map:transform type="rest">
-          <map:parameter name="username" value="${xmldb.rest.username}"/>
-          <map:parameter name="password" value="${xmldb.rest.password}"/>
-        </map:transform>
-        <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexica-3.xml"/>
-        <map:transform type="saxon" src="chunkLexiconUpdate.xslt"/>
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexica-4.xml"/>
-        <map:transform type="include">
-          <map:parameter name="parallel" value="true"/>
-        </map:transform>
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexica-5.xml"/>
-        <map:serialize type="xml"/>
-      </map:match>
+            <map:match pattern="updateSortOrderKeysInChunksForUpdatedSchema.xml">
+                <map:generate src="service-consumer:"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexica-1.xml"/>
+                <map:transform type="saxon" src="nrOfLexicalEntries.xslt">
+                    <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"
+                    />
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexica-2.xml"/>
+                <map:call resource="rest"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexica-3.xml"/>
+                <map:transform type="saxon" src="chunkLexiconUpdate.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexica-4.xml"/>
+                <map:transform type="include">
+                    <map:parameter name="parallel" value="true"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexica-5.xml"/>
+                <map:serialize type="xml"/>
+            </map:match>
 
-      <!--
-        Update $3 lexical entries from lexicon $1 starting at lexical entry $2.
+            <!--
+        Update lexical entries {3} - {3}+{4} from lexicon {2} using user-id {1}.
         -->
-      <map:match pattern="updateChunkOfLexiconForUpdatedSchema/*/*/*/*">
-        <map:generate src="update-lexicon-for-updated-schema.xml"/>
-        <map:transform type="saxon" src="updateChunkOfLexiconForUpdatedSchema.xslt">
-          <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
-          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
-          <map:parameter name="user-id" value="{1}"/>
-          <map:parameter name="lexicon-id" value="{2}"/>
-          <map:parameter name="start" value="{3}"/>
-          <map:parameter name="chunk-size" value="{4}"/>
-        </map:transform>
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexicon-chunk-1.xml"/>
-        
-        <map:transform type="saxon" src="${xmldb.rest.transformer}">
-          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
-        </map:transform>
-        <map:transform type="rest">
-          <map:parameter name="username" value="${xmldb.rest.username}"/>
-          <map:parameter name="password" value="${xmldb.rest.password}"/>
-        </map:transform>
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexicon-chunk-2.xml"/>
-        <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
-        <map:serialize type="xml"/>
-      </map:match>
+            <map:match pattern="updateChunkOfLexiconForUpdatedSchema/*/*/*/*">
+                <map:generate src="update-lexicon-for-updated-schema.xml"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexicon-chunk-1.xml"/>
+                <!-- First get the sort orders that are used by this lexicon. -->
+                <map:transform type="saxon" src="getSortOrdersForLexicon.xslt">
+                    <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
+                    <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+                    <map:parameter name="user-id" value="{1}"/>
+                    <map:parameter name="lexicon-id" value="{2}"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexicon-chunk-2.xml"/>
+                <map:call resource="rest"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexicon-chunk-4.xml"/>
+               <!-- <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexicon-chunk-5.xml"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexicon-chunk-6.xml"/>-->
+                <!-- Then call the function to update a chunk of the lexicon -->
+                <map:transform type="saxon" src="updateChunkOfLexiconForUpdatedSchema.xslt">
+                    <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
+                    <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+                    <map:parameter name="user-id" value="{1}"/>
+                    <map:parameter name="lexicon-id" value="{2}"/>
+                    <map:parameter name="start" value="{3}"/>
+                    <map:parameter name="chunk-size" value="{4}"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexicon-chunk-7.xml"/>
+                <map:call resource="rest"/>
+                <map:serialize type="xml"/>
+            </map:match>
 
 
 
-      <!-- 
+            <!-- 
         Calculate sort order keys when schema has changed.
       -->
-      <map:match pattern="updateLexiconForUpdatedSchema.xml">
-        <map:generate src="service-consumer:"/>
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexica-1.xml"/>
-        <map:transform type="saxon" src="updateLexiconForUpdatedSchema.xslt">
-          <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
-          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
-        </map:transform>
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexica-3.xml"/>
-        <map:transform type="saxon" src="${xmldb.rest.transformer}">
-          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
-        </map:transform>
-        <map:transform type="rest">
-          <map:parameter name="username" value="${xmldb.rest.username}"/>
-          <map:parameter name="password" value="${xmldb.rest.password}"/>
-        </map:transform>
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexica-4.xml"/>
-        <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
-        <map:serialize type="xml"/>
-      </map:match>
+            <map:match pattern="updateLexiconForUpdatedSchema.xml">
+                <map:generate src="service-consumer:"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexicon-1.xml"/>
+                
+                <!-- First get the sort orders that are used by this lexicon. -->
+                <map:transform type="saxon" src="getSortOrdersForLexicon2.xslt">
+                    <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
+                    <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+                </map:transform>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexicon-2.xml"/>
+
+                <map:call resource="rest"/>
+                
+                <map:transform type="saxon" src="updateLexiconForUpdatedSchema.xslt">
+                    <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
+                    <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+                </map:transform>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexicon-3.xml"/>
+                
+                <map:call resource="rest"/>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexicon-4.xml"/>
+                
+                <map:serialize type="xml"/>
+            </map:match>
 
 
 
-      <!-- 
+            <!-- 
         Create a view.
       -->
-      <map:match pattern="saveView.xml">
-        <map:generate src="service-consumer:"/>
-        <map:transform type="saxon" src="saveView.xslt">
-          <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
-          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
-        </map:transform>
-        <map:transform type="saxon" src="${xmldb.rest.transformer}">
-          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
-        </map:transform>
-        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-pre.xml"/>-->
-        <map:transform type="rest">
-          <map:parameter name="username" value="${xmldb.rest.username}"/>
-          <map:parameter name="password" value="${xmldb.rest.password}"/>
-        </map:transform>
-        <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
-        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-post.xml"/>-->
-        <map:serialize type="xml"/>
-      </map:match>
+            <map:match pattern="saveView.xml">
+                <map:generate src="service-consumer:"/>
+                <map:transform type="saxon" src="saveView.xslt">
+                    <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
+                    <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+                </map:transform>
+                <map:call resource="rest"/>
+                <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-post.xml"/>-->
+                <map:serialize type="xml"/>
+            </map:match>
 
 
 
-      <!-- 
+            <!-- 
         Delete a view.
       -->
-      <map:match pattern="deleteView.xml">
-        <map:generate src="service-consumer:"/>
-        <map:transform type="saxon" src="deleteView.xslt">
-          <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
-          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
-        </map:transform>
-        <map:transform type="saxon" src="${xmldb.rest.transformer}">
-          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
-        </map:transform>
-        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-pre.xml"/>-->
-        <map:transform type="rest">
-          <map:parameter name="username" value="${xmldb.rest.username}"/>
-          <map:parameter name="password" value="${xmldb.rest.password}"/>
-        </map:transform>
-        <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
-        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-post.xml"/>-->
-        <map:serialize type="xml"/>
-      </map:match>
+            <map:match pattern="deleteView.xml">
+                <map:generate src="service-consumer:"/>
+                <map:transform type="saxon" src="deleteView.xslt">
+                    <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
+                    <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+                </map:transform>
+                <map:call resource="rest"/>
+                <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-post.xml"/>-->
+                <map:serialize type="xml"/>
+            </map:match>
 
-      <map:match pattern="saveStandardView.xml">
-        <map:generate src="service-consumer:"/>
-        <map:transform type="saxon" src="saveStandardView.xslt">
-          <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
-          <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
-        </map:transform>
-        <map:transform type="saxon" src="${xmldb.rest.transformer}">
-          <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
-        </map:transform>
-        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-pre.xml"/>-->
-        <map:transform type="rest">
-          <map:parameter name="username" value="${xmldb.rest.username}"/>
-          <map:parameter name="password" value="${xmldb.rest.password}"/>
-        </map:transform>
-        <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
-        <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-post.xml"/>-->
-        <map:serialize type="xml"/>
-      </map:match>
-    </map:pipeline>
+            <map:match pattern="saveStandardView.xml">
+                <map:generate src="service-consumer:"/>
+                <map:transform type="saxon" src="saveStandardView.xslt">
+                    <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
+                    <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+                </map:transform>                
+                <map:call resource="rest"/>
+                <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-post.xml"/>-->
+                <map:serialize type="xml"/>
+            </map:match>
+        </map:pipeline>
 
 
 
-  </map:pipelines>
-
+    </map:pipelines>
+    
+    <map:resources>
+        <map:resource name="rest">
+            
+            <!--<map:transform type="servletService">
+                <map:parameter name="service" value="servlet:nl.mpi.lexus.db.service+:/rest"/>
+                </map:transform>-->
+            
+            <map:transform type="saxon" src="../util/${xmldb.rest.transformer}">
+                <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
+            </map:transform>
+            <map:transform type="rest">
+                <map:parameter name="username" value="${xmldb.rest.username}"/>
+                <map:parameter name="password" value="${xmldb.rest.password}"/>
+            </map:transform>
+            <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
+        </map:resource>
+    </map:resources>
 </map:sitemap>

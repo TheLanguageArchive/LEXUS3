@@ -54,14 +54,13 @@
                        <xsl:with-param name="user" select="../lexus:search-lexica/user"/>
                    </xsl:apply-templates>
                    
-                   let $search := <xsl:apply-templates select="." mode="encoded"/>
                    let $user-id := '<xsl:value-of select="/data/user/@id"/>'
-                   let $lexiconId := $search/query/expression/lexicon/@id
+                   let $lexiconId := '<xsl:value-of select="replace(query/expression/lexicon/@id,'''','''''')"/>'
                    let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
-                   let $startLetter := data($search/refiner/startLetter)
-                   let $searchTerm := data($search/refiner/searchTerm)
-                   let $pageSize := number($search/refiner/pageSize)
-                   let $startPage := number($search//refiner/startPage)
+                   let $startLetter := '<xsl:value-of select="replace(refiner/startLetter,'''','''''')"/>'
+                   let $searchTerm := '<xsl:value-of select="replace(refiner/searchTerm,'''','''''')"/>'
+                   let $pageSize := number('<xsl:value-of select="replace(refiner/pageSize,'''','''''')"/>')
+                   let $startPage := number('<xsl:value-of select="replace(refiner/startPage,'''','''''')"/>')
                    let $lexi := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[meta/users/user/@ref = $user-id]
                    let $listView := $lexus/meta/views/view[@id eq $lexus/meta/views/@listView]
                    
@@ -93,9 +92,9 @@
                        4   Use data[@schema-ref eq DC]/value
                        
                        The startLetter filter is also dependent on the presence of a sort-order:
-                       1   DC starts with same number as the position of startLetter in the sort-order/mappings/mapping/to sequence
+                       1   data[@schema-ref eq DC]/@start-letter
                        2   DC starts with startLetter
-                       3   DC starts with same number as the position of startLetter in the sort-order/mappings/mapping/to sequence
+                       3   data[@schema-ref eq DC]/@start-letter
                        4   DC starts with startLetter
                        
                    -->
@@ -103,7 +102,7 @@
                    let $sortOrders := collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $user-id]/workspace/sortorders
                    
                     (: Returns a list of lexicon elements, containing ($firstDC, (lexical-entry)*) :)
-                   let $search-results := lexus:search() 
+                   let $search-results := lexus:search($startLetter, $searchTerm) 
 
 
                     (: Return $sortOrder//mapping/to character(s) when a sort order is defined,
@@ -128,11 +127,12 @@
                        element results {
                            element startLetter { $startLetter },
                            lexus:lexicon($lexus),
-                           element lexical-entries { subsequence($search-results/lexical-entries/lexical-entry,($startPage * $pageSize), $pageSize) },
+                           element lexical-entries { subsequence($search-results/lexical-entries/lexical-entry,($startPage * $pageSize) + 1, $pageSize) },
                            element startPage { $startPage },
                            element searchTerm { $searchTerm },
                            element count { count($search-results/lexical-entries/lexical-entry) },
                            element pageSize { $pageSize },
+                           element sr { $search-results/lexical-entries/lexical-entry[position() ge ($startPage * $pageSize) + 1][position() lt (($startPage+1) *  $pageSize)] },
                            element query { attribute id { '<xsl:value-of select="query/@id"/>' } }
                             },                                        
                        lexus:lexica($lexi),

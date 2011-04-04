@@ -42,7 +42,7 @@
                     
                     
                     (: Returns a list of lexicon elements, containing ($firstDC, (lexical-entry)*) :)
-                    let $search-results := lexus:search() 
+                    let $search-results := lexus:search($startLetter, $searchTerm) 
         
                     <xsl:text>return element search-results { </xsl:text>
                     <xsl:text> attribute total { count($search-results//lexical-entry) }, </xsl:text>

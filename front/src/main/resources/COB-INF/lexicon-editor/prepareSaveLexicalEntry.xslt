@@ -23,7 +23,7 @@
         <!-- 
             Update the sort-order keys in the lexical entry previously saved.
         -->
-        <lexus:update-sort-order-keys-in-lexical-entry lexicon="{parameters/lexicon}">
+        <lexus:update-sort-order-keys-in-lexical-entry lexicon="{parameters/lexicon}" user-id="{/data/user/@id}">
             <xsl:apply-templates select="parameters/lexicalEntry" mode="update-sort-order-keys"/>
         </lexus:update-sort-order-keys-in-lexical-entry>
         

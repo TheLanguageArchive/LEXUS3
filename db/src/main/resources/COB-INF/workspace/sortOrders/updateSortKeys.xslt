@@ -15,7 +15,9 @@
             <lexus:query>
             <lexus:text>
                 <xsl:call-template name="declare-namespace"/>
-                <xsl:call-template name="sort-order"/>
+                <xsl:call-template name="sort-order">
+                    <xsl:with-param name="sortorders" select="sortorder"/>
+                </xsl:call-template>
 
                 let $userId := '<xsl:value-of select="/data/user/@id"/>'                        
                 let $sortOrderId := '<xsl:value-of select="sortorder/@id"/>'

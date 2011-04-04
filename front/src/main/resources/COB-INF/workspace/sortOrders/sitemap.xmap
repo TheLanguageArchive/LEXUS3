@@ -44,17 +44,26 @@
         <map:serialize type="json"/>
       </map:match>
 
+
+      <map:match pattern="loadSortOrder.json">
+        <map:generate src="cocoon:/getSortOrders"/>
+        <map:transform type="saxon" src="sortOrder-2-JSON.xslt"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-so-2.xml"/>
+        <map:serialize type="json"/>
+      </map:match>
+      
       <map:match pattern="getSortOrders">
         <map:aggregate element="data">
-          <map:part src="cocoon://request"/>
+          <map:part src="cocoon://json"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>
-        <map:transform type="saxon" src="prepareGetSortOrders.xslt"/>
         <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-so-0.xml"/>
+        <map:transform type="saxon" src="prepareGetSortOrders.xslt"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-so-1.xml"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:db:/workspace/getSortOrders.xml"/>
         </map:transform>
-        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-so-1.xml"/>
+        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-so-2.xml"/>
         <map:serialize type="xml"/>
       </map:match>
 

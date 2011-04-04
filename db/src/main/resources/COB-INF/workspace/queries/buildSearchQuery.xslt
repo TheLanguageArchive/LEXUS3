@@ -4,6 +4,10 @@
 
 
     <!--
+        
+        
+    Build an XQuery function using the search parameters the user specified.
+    
     <query xmlns:json="http://apache.org/cocoon/json/1.0"
         id="uuid:9c061431-140a-49ea-96e9-3b964fb91884">
         <description/>
@@ -19,9 +23,16 @@
     
         ==>
     
-    /lexus[@id eq "uuid:eae8c847-4462-432e-bf95-56eae4831044"]/lexicon/
-    lexical-entry[(.//data[@schema-ref eq "uuid:6e1f2b5f-778e-4940-b054-dc8f1e0d2dec" and value eq "test"])]) 
-
+    declare function lexus:search() {
+        (
+            (
+                let $lexus := collection('lexus')/lexus[@id eq "uuid:2c9090a2134ee53d01136379321006d3"]
+    
+                return element lexicon {
+                    attribute id {'uuid:2c9090a2134ee53d01136379321006d3'}, attribute name {'Main Rossel lexicon'},
+    
+                    ......
+    };
     -->
     
     <!--
@@ -52,9 +63,9 @@
         4   Use data[@schema-ref eq DC]/value
         
         The startLetter filter is also dependent on the presence of a sort-order:
-        1   DC starts with same number as the position of startLetter in the sort-order/mappings/mapping/to sequence
+        1   DC starts with same number as one of the positions of startLetter in the sort-order/mappings/mapping/to sequence
         2   DC starts with startLetter
-        3   DC starts with same number as the position of startLetter in the sort-order/mappings/mapping/to sequence
+        3   DC starts with same number as one of the positions of startLetter in the sort-order/mappings/mapping/to sequence
         4   DC starts with startLetter
         
     -->
@@ -62,8 +73,8 @@
     <xsl:template match="query" mode="build-query">
         <xsl:param name="lexica" select="()"/>
         <xsl:param name="user" select="()"/>
-        <xsl:text>declare function lexus:search() {
-            (
+        <xsl:text>declare function lexus:search($startLetter as xs:string, $searchTerm as xs:string) {
+        (
         </xsl:text>
         <xsl:for-each select="expression/lexicon">
             <xsl:apply-templates select="." mode="build-query">
@@ -76,19 +87,21 @@
             </xsl:if>
         </xsl:for-each>
         <xsl:text>
-            )
-            };
+        )
+    };
         </xsl:text>
     </xsl:template>
 
 
     <!--
-        /lexus[@id eq "uuid:eae8c847-4462-432e-bf95-56eae4831044"]/lexicon/lexical-entry[...]
+        Build an XQuery using the search parameters the user specified.
         -->
     <xsl:template match="lexicon" mode="build-query">
         <xsl:param name="meta" select="()"/>
         <xsl:param name="sortOrders" select="()"/>
 
+        <xsl:variable name="sl" select=".//datacategory[@ref eq 'lexus:start-letter-search']/@value"/>
+        
         <xsl:variable name="firstDC">
             <xsl:call-template name="determineFirstDC">
                 <xsl:with-param name="meta" select="$meta"/>
@@ -96,34 +109,37 @@
         </xsl:variable>
 
         <xsl:variable name="matchText">
-            <xsl:call-template name="determineMatchText">
-                <xsl:with-param name="firstDC" select="$firstDC"/>
-                <xsl:with-param name="meta" select="$meta"/>
-                <xsl:with-param name="sortOrders" select="$sortOrders"/>
-            </xsl:call-template>
+            <xsl:choose>
+                <xsl:when test="$firstDC/container/@sort-order and $sl ne ''">
+                    <xsl:call-template name="determineMatchText">
+                        <xsl:with-param name="firstDC" select="$firstDC"/>
+                        <xsl:with-param name="meta" select="$meta"/>
+                        <xsl:with-param name="sortOrders" select="$sortOrders"/>
+                        <xsl:with-param name="sl" select="$sl"/>
+                    </xsl:call-template>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="replace(ancestor::query/../refiner/startLetter,'''','''''')"></xsl:value-of>
+                </xsl:otherwise>
+            </xsl:choose>
         </xsl:variable>
-
-            element lexicon {
-                attribute id {'<xsl:value-of select="@id"/>'}, attribute name {'<xsl:value-of select="$meta/name"/>'},
+            (
                 let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq "<xsl:value-of select="@id"/>"]
-            
-                let $firstDC := <xsl:apply-templates select="$firstDC" mode="encoded"/>
-                <xsl:text>            
-                </xsl:text>
-                <xsl:if test=".//datacategory[@ref eq 'lexus:start-letter-search']">
-                    let $matchText := '<xsl:value-of select="$matchText"/>'
-               </xsl:if>
-            <xsl:text>
-            return (element firstDC { </xsl:text><xsl:apply-templates select="$firstDC" mode="encoded"/><xsl:text> },</xsl:text>
-                    <xsl:if test=".//datacategory[@ref eq 'lexus:start-letter-search']"> element matchText { '<xsl:value-of select="$matchText"/>' },</xsl:if>
-                    <xsl:text> element lexical-entries {
+                
+                return element lexicon {
+                    attribute id {'<xsl:value-of select="@id"/>'}, attribute name {'<xsl:value-of select="$meta/name"/>'},
+                    <xsl:text>
+                    element firstDC { </xsl:text><xsl:apply-templates select="$firstDC" mode="encoded"/><xsl:text> },</xsl:text>
+                    <xsl:text>
+                    element matchText { '</xsl:text><xsl:value-of select="$matchText"/><xsl:text>' },</xsl:text>
+                    <xsl:text>
+                    element lexical-entries {
                         for $l in $lexus/lexicon/lexical-entry</xsl:text>
                     <xsl:if test="ancestor::query/../refiner/searchTerm ne ''">
-                        <xsl:text>[.//value[text() contains text {'.*</xsl:text><xsl:value-of select="ancestor::query/../refiner/searchTerm"/><xsl:text>.*'} using wildcards]]</xsl:text>
+                        <xsl:text>[.//value[text() contains text {'.*</xsl:text><xsl:value-of select="replace(ancestor::query/../refiner/searchTerm,'''','''''')"/><xsl:text>.*'} using wildcards]]</xsl:text>
                     </xsl:if>
                     <xsl:if test="datacategory">
-                        <xsl:text>[
-                        </xsl:text>
+                        <xsl:text>[</xsl:text>
                         <xsl:for-each select="datacategory">
                             <xsl:text>(</xsl:text>
                             <xsl:apply-templates select="." mode="build-query">
@@ -136,25 +152,25 @@
                                 </xsl:text>
                             </xsl:if>
                         </xsl:for-each>
-                        <xsl:text>
-                            ]</xsl:text>
+                        <xsl:text>]</xsl:text>
                     </xsl:if>
                     <xsl:text>
                         order by </xsl:text>
                         <xsl:choose>
                             <xsl:when test="$firstDC/container/@sort-order">
-                                ($l//data[@schema-ref eq '<xsl:value-of select="$firstDC/container/@id"/>'])[1]/@sort-key
+                                <xsl:text>$l//data[@schema-ref eq '</xsl:text><xsl:value-of select="$firstDC/container/@id"/><xsl:text>']/@sort-key</xsl:text>
                             </xsl:when>
                             <xsl:otherwise>
-                                ($l//data[@schema-ref eq '<xsl:value-of select="$firstDC/container/@id"/>'])[1]/value 
+                                <xsl:text>($l//data[@schema-ref eq '</xsl:text><xsl:value-of select="$firstDC/container/@id"/><xsl:text>'])[1]/value</xsl:text> 
                             </xsl:otherwise>
                         </xsl:choose> 
-        <xsl:text>
+                    <xsl:text>
                         return $l
-                    }
-                )
-            </xsl:text>
-        <xsl:text> }</xsl:text>
+                    }                
+                </xsl:text>
+            <xsl:text>
+                }
+            )</xsl:text>
     </xsl:template>
 
     <!--
@@ -164,13 +180,13 @@
         <xsl:param name="firstDC"/>
         <xsl:param name="matchText"/>
         <xsl:text>.//data[@schema-ref eq '</xsl:text><xsl:value-of select="$firstDC/container/@id"/><xsl:text>' and </xsl:text>
-        <!-- Now we either check the @sort-key or the first caharacter of the value element -->
+        <!-- Now we either check the @start-letter or the first character of the value element -->
         <xsl:choose>
             <xsl:when test="$firstDC/container/@sort-order">
-                <xsl:text>starts-with(@sort-key, $matchText)</xsl:text>
+                <xsl:text>@start-letter eq '</xsl:text><xsl:value-of select="$matchText"/><xsl:text>'</xsl:text>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:text>starts-with(upper-case(value), $matchText)</xsl:text>
+                <xsl:text>starts-with(upper-case(value), '</xsl:text><xsl:value-of select="$matchText"/><xsl:text>')</xsl:text>
             </xsl:otherwise>
         </xsl:choose>
         <xsl:text>]</xsl:text>
@@ -180,8 +196,6 @@
         .//data[@schema-ref eq "uuid:6e1f2b5f-778e-4940-b054-dc8f1e0d2dec" and value eq "test"]
         -->
     <xsl:template match="datacategory" mode="build-query">
-        <xsl:param name="firstDC"/>
-        <xsl:param name="matchText"/>
         <xsl:text>.//data[@schema-ref eq &quot;</xsl:text><xsl:value-of select="@schema-ref"/><xsl:text>&quot;</xsl:text>
         <xsl:apply-templates select="." mode="condition"/>
         <xsl:text>]
@@ -245,11 +259,12 @@
         <xsl:param name="firstDC"/>
         <xsl:param name="meta" select="()"/>
         <xsl:param name="sortOrders" select="()"/>
+        <xsl:param name="sl" select="''"/>
         <xsl:choose>
             <xsl:when test="$firstDC/container/@sort-order">
                 <xsl:variable name="sortOrder" select="$sortOrders/sortorder[@id eq $firstDC/container/@sort-order]"/>
                 <xsl:variable name="nrOfMappings" select="count($sortOrder/mappings/mapping)"/>
-                <xsl:variable name="pos" select="count($sortOrder/mappings/mapping/to[. eq current()//datacategory[@ref eq 'lexus:start-letter-search']/@value]/../preceding::mapping) + 1"/>
+                <xsl:variable name="pos" select="count($sortOrder/mappings/mapping[to eq $sl]/preceding-sibling::mapping) + 1"/>
                 <xsl:variable name="paddedValue" select="concat('000', string($pos))"/>
                 <!-- Need to pad it with zeroes! -->
                 <xsl:value-of select="substring($paddedValue, string-length($paddedValue) - string-length(string($nrOfMappings)) + 1)"/>

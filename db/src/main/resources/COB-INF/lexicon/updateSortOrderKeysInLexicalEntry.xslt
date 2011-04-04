@@ -23,13 +23,14 @@
                   
                   <xsl:call-template name="declare-namespace"/>
                   <xsl:call-template name="permissions"/>
-                  <xsl:call-template name="sort-order"/>
+                  <xsl:call-template name="sort-order">
+                      <xsl:with-param name="sortorders" select=".//sortorder"/>
+                  </xsl:call-template>
                   
                   let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>
-                  let $request := <xsl:apply-templates select="/data/lexus:update-sort-order-keys-in-lexical-entry" mode="encoded"/>
-                  let $lexiconId:= $request/@lexicon
+                  let $lexiconId:= '<xsl:value-of select="@lexicon"/>'
                   let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
-                  let $leId := $request/lexical-entry/@id
+                  let $leId := '<xsl:value-of select="lexical-entry/@id"/>'
                   return 
                       if (lexus:canWrite($lexus/meta, $user))
                           then lexus:sort-order-processLexicalEntryChanged($lexiconId, $leId, $user/@id) 

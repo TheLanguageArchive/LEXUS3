@@ -6,7 +6,6 @@
     <xsl:include href="../util/identity.xslt"/>
     <xsl:include href="../util/encodeXML.xslt"/>
     <xsl:include href="../util/xquery-components.xslt"/>
-    <xsl:include href="../util/sort-order.xslt"/>
     
     <xsl:param name="lexica-collection"/>
     <xsl:param name="users-collection"/>

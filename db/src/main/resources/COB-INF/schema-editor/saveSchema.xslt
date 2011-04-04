@@ -6,7 +6,6 @@
     <xsl:include href="../util/identity.xslt"/>
     <xsl:include href="../util/encodeXML.xslt"/>
     <xsl:include href="../util/xquery-components.xslt"/>
-    <xsl:include href="../util/sort-order.xslt"/>
     
     <xsl:param name="lexica-collection"/>
     <xsl:param name="users-collection"/>
@@ -24,8 +23,6 @@
                 <xsl:call-template name="declare-namespace"/>
                 <xsl:call-template name="permissions"/>
                 <xsl:call-template name="schema-permissions"/>
-<!--                <xsl:call-template name="sort-order"/>
-                <xsl:call-template name="log"/> -->
                 
                 (: replace the schema in the db :)
                 declare updating function lexus:updateSchema($newSchema as node(), $lexus as node()) {

@@ -67,7 +67,7 @@
         </map:transform>
         <map:transform type="servletService">
           <map:parameter name="service"
-            value="servlet:db:/schema-editor/updateSortOrderKeysInChunksForUpdatedSchema.xml"/>
+              value="servlet:db:/schema-editor/updateLexiconForUpdatedSchema.xml"/>
         </map:transform>
         <map:transform type="${tee}"
           src="{naming:java:comp/env/tee-folder}debug-info/save-schema-post.xml"/>

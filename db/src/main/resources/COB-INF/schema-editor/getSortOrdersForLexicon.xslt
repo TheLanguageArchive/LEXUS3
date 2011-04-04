@@ -4,27 +4,24 @@
     version="2.0">
 
     <xsl:include href="../util/identity.xslt"/>
-    <xsl:include href="../util/encodeXML.xslt"/>
     <xsl:include href="../util/xquery-components.xslt"/>
-    <xsl:include href="../util/sort-order.xslt"/>
     
     <xsl:param name="lexica-collection"/>
     <xsl:param name="users-collection"/>
+    <xsl:param name="user-id"/>
+    <xsl:param name="lexicon-id"/>
     
     <xsl:template match="lexus:update-lexicon-for-updated-schema">
         <xsl:copy>
             <xsl:apply-templates select="@*"/>
             <lexus:query>
             <lexus:text>
-                
+                (: getSortOrders :)
                 <xsl:call-template name="declare-namespace"/>
-                <xsl:call-template name="sort-order">
-                    <xsl:with-param name="sortorders" select=".//sortorder"/>
-                </xsl:call-template>
                 
-                let $userId := '<xsl:value-of select="@user-id"/>'
-                let $lexicon-id := '<xsl:value-of select="@lexicon"/>'
-                return lexus:sort-order-processSchemaChanged($lexicon-id, $userId)
+                let $userId := '<xsl:value-of select="$user-id"/>'
+                let $sortorder-ids := distinct-values(collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq '<xsl:value-of select="$lexicon-id"/>']/meta/schema//container/@sort-order)
+                return collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $userId]/workspace/sortorders/sortorder[@id = $sortorder-ids]
             </lexus:text>
             </lexus:query>
         </xsl:copy>

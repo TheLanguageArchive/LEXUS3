@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="12.1">
     <meta>
-        <filters directoryPatterns="" filePatterns=""
+        <filters directoryPatterns="target" filePatterns=""
             positiveFilePatterns="" showHiddenFiles="false"/>
         <options>
             <serialized version="12.1">
