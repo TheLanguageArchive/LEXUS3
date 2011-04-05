@@ -80,7 +80,7 @@
         <!-- 
           Login failed, redirect to index.html.
         -->
-        <map:redirect-to uri="index.html"/>
+        <map:redirect-to uri="index.html?msg=2"/>
       </map:match>
 
 
@@ -215,7 +215,7 @@
           <map:parameter name="application" value="Lexus"/>
           <map:read src="{naming:java:comp/env/LEXUS/resourceDirectory}/{../2}"/>
         </map:act>
-        <map:redirect-to uri="index.html"/>
+        <map:redirect-to uri="index.html?msg=1"/>
       </map:match>
       
       <map:handle-errors when="always">
@@ -250,7 +250,7 @@
           <map:parameter name="application" value="Lexus"/>
           <map:read src="flexus/{../1}.swf"/>
         </map:act>
-        <map:redirect-to uri="index.html"/>
+        <map:redirect-to uri="index.html?msg=1"/>
       </map:match>
 
       <map:match pattern="Lexus.html">
@@ -258,13 +258,22 @@
           <map:parameter name="application" value="Lexus"/>
           <map:read src="flexus/Lexus.html"/>
         </map:act>
-        <map:redirect-to uri="index.html"/>
+        <map:redirect-to uri="index.html?msg=1"/>
       </map:match>
 
       <map:match pattern="aboutLexus.xml">
         <map:read src="resource/internal/aboutLexus.xml"/>
       </map:match>
 
+
+        <map:match pattern="index.html">
+            <map:generate src="resource/external/index.xml"/>
+            <map:transform type="saxon" src="stylesheets/index.xslt">
+                <map:parameter name="msg" value="{request-param:msg}"/>
+            </map:transform>
+            <map:serialize type="html"/>
+        </map:match>
+        
       <map:match pattern="*.html">
         <map:read src="flexus/{1}.html"/>
       </map:match>

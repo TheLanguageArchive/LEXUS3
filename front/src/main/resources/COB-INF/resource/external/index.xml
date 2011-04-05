@@ -1,0 +1,154 @@
+<html>
+    <head>
+        <title>LEXUS</title>
+
+        <!--<link rel="stylesheet" type="text/css" href="styles/ConventionsLana.css" />-->
+        <script type="text/javascript">
+    <![CDATA[
+            var bannerMsg = "LEXUS &#160;lexical &#160;resource &#160;&#160;&#160;&#160;&#160;&#160;&#160;tool"
+            var pos = 0
+            var maxlength = bannerMsg.length + 1
+            
+            function writebanner() {
+                if (pos == 0) {
+                    var banner = document.getElementById("banner");
+                    if (banner.style.filter) {
+                        banner.style.filter = "revealTrans(Duration=15,Transition=12)";
+                        banner.filters[0].Apply();
+                        banner.style.visibility = "visible";
+                        banner.filters[0].Play();
+                    }
+                }
+                if (pos < maxlength) {
+                    txt = bannerMsg.substring(0, pos)
+                    document.getElementById("banner").innerHTML = txt
+                    // alert(bannerMsg.substring(++pos, 0));
+                    while (bannerMsg.substring(pos + 1, pos + 7) == '&#160;') {
+                        pos += 6;
+                    }
+                    ++pos;
+                    timer = setTimeout("writebanner()", 25)
+                }
+            }
+            function stoptimer() {
+                clearTimeout(timer)
+            }
+            function setFocus() {
+                var userField = document.getElementById('user');
+                userField.focus();
+            }
+            
+            function displayMessage() {
+                var msg = document.getElementById("msg");
+                msg.style.display = "]]><display-msg/><![CDATA[";
+            }
+            ]]>
+        </script>
+
+
+        <style type="text/css">
+            body {
+                font-family : Arial, Helvetica, sans-serif;
+                color : white;
+                background-image : url('images/LEXUS_IKON.png');
+                background-repeat : no-repeat;
+            }
+            h1 {
+                color : white;
+            }
+            .banner {
+                font-family : Arial, Helvetica, sans-serif;
+                font-size : 60px;
+                font-style : bold;
+                color : white;
+                position : absolute;
+                top : 130px;
+                left : 95px;
+                width : 200px;
+                height : 500px;
+                text-shadow : #000 0px 0px 5px;
+            }
+            .register {
+                color : white;
+                font-size : 100%;
+                text-decoration : none;
+            }
+            .register:hover {
+                color : white;
+                font-size : 150%;
+                text-decoration : none;
+            }
+            .info {
+                position : absolute;
+                left : 630px;
+                top : 300px;
+                width : 400px;
+                font-size : 10pt;
+                color : white;
+                text-shadow : white 0px 0px 20px;
+                text-align : center;
+            }
+            .fieldlabel2 {
+                color : white;
+                font-size : 10pt;
+                text-align : right;
+            }
+            
+            .msg {
+                position:absolute;
+                left:664px;
+                top:114px;
+                width:300px;
+                height:40px;
+                border:2px solid white;
+                padding: 4px;
+                text-align: center;
+            }
+            /*
+                @-webkit-keyframes greenPulse {
+                from { background-color: #749a02; -webkit-box-shadow:: 0 0 9px #333; }
+                50% { background-color: #91bd09; -webkit-box-shadow:: 0 0 18px #91bd09; }
+                to { background-color: #749a02; -webkit-box-shadow:: 0 0 9px #333; }
+                }
+                
+                div.info b i {
+                -webkit-animation-name: greenPulse;
+                -webkit-animation-duration: 2s;
+                -webkit-animation-iteration-count: infinite;
+                }
+                */
+        </style>
+
+    </head>
+
+    <body onload="setFocus(); writebanner(); displayMessage();" onunload="stoptimer()">
+
+        <div id="banner" class="banner"></div>
+
+        <div id="msg" class="msg"></div>
+
+        <form action="signon.htm" method="post">
+
+            <table border="0" style="position:absolute;left:720px;top:214px">
+                <tr>
+                    <td class="fieldlabel2"><span>Username</span></td>
+                    <td><input id="user" type="text" name="username" /></td>
+                </tr>
+                <tr>
+                    <td class="fieldlabel2"><span>Password</span></td>
+                    <td><input type="password" name="password" /></td>
+                </tr>
+                <tr>
+                    <td>&#160;</td>
+                    <td><input type="submit" name="update" value="Login" />
+                    </td>
+                </tr>
+            </table>
+        </form>
+
+        <msgs>
+            <msg id="1">Please log in first.</msg>
+            <msg id="2">Login unsuccessful, please try again.</msg>
+        </msgs>
+    </body>
+</html>
