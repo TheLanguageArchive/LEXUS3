@@ -33,7 +33,7 @@
                     let $search := <xsl:apply-templates select="." mode="encoded"/>
                     let $user-id := '<xsl:value-of select="/data/user/@id"/>'
                     let $startLetter := data($search/refiner/startLetter)
-                    let $searchTerm := data($search/refiner/searchTerm)
+                    let $searchTerm := data(if (not(empty($search/refiner/searchTerm))) then $search/refiner/searchTerm else '')
                     let $pageSize := number($search/refiner/pageSize)
                     let $startPage := number($search//refiner/startPage)
                    

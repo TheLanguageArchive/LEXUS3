@@ -19,39 +19,41 @@
 -->
 <!-- $Id: pom.xml 642118 2008-03-28 08:04:16Z reinhard $ -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
-  <packaging>war</packaging>
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>war</packaging>
 
-  <parent>
-    <groupId>nl.mpi.lexus</groupId>
-    <artifactId>lexus</artifactId>
-    <version>3.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>nl.mpi.lexus</groupId>
+        <artifactId>lexus</artifactId>
+        <version>3.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>webapp</artifactId>
-  <name>webapp</name>
+    <artifactId>webapp</artifactId>
+    <name>webapp</name>
+    <version>3.0-SNAPSHOT-r${buildNumber}</version>
 
-  <dependencies>
-    <dependency>
-      <groupId>nl.mpi.lexus</groupId>
-      <artifactId>front</artifactId>
-      <version>3.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>nl.mpi.lexus</groupId>
-      <artifactId>display</artifactId>
-      <version>3.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>nl.mpi.lexus</groupId>
-      <artifactId>db</artifactId>
-      <version>3.0-SNAPSHOT</version>
-    </dependency>
-  </dependencies>
-  <properties>
-    <netbeans.hint.deploy.server>Tomcat55</netbeans.hint.deploy.server>
-  </properties>
+    <dependencies>
+        <dependency>
+            <groupId>nl.mpi.lexus</groupId>
+            <artifactId>front</artifactId>
+            <version>3.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.mpi.lexus</groupId>
+            <artifactId>display</artifactId>
+            <version>3.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.mpi.lexus</groupId>
+            <artifactId>db</artifactId>
+            <version>3.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+    <properties>
+        <netbeans.hint.deploy.server>Tomcat55</netbeans.hint.deploy.server>
+    </properties>
+
 </project>

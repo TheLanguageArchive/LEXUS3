@@ -66,24 +66,6 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>buildnumber-maven-plugin</artifactId>
-        <version>1.0-beta-4</version>
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>create</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <doCheck>false</doCheck>
-          <doUpdate>false</doUpdate>
-          <revisionOnScmFailure/>
-        </configuration>
-      </plugin>
-      <plugin>
         <artifactId>maven-clean-plugin</artifactId>
         <version>2.4.1</version>
         <configuration>
@@ -212,12 +194,5 @@
       </resource>
     </resources>
   </build>
-
-
-  <scm>
-    <connection>scm:svn:https://svn.mpi.nl/LAT/lexus/trunk/LexusCocoon/front</connection>
-    <developerConnection>scm:svn:file:///D:/repos1</developerConnection>
-    <url>scm:svn:https://svn.mpi.nl/LAT/lexus/trunk/LexusCocoon/front</url>
-  </scm>
 
 </project>

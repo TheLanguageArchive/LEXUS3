@@ -63,6 +63,30 @@
       </map:match>
 
 
+
+
+        <!-- 
+            Get XSL-FO view of lexical entry
+        -->
+        <map:match pattern="xsl-fo-view.xml">
+            <map:generate src="service-consumer:"/>
+            <map:transform type="saxon" src="views/prepareFragmentsTransformer.xslt"/>
+            
+            <map:transform type="${tee}"
+                src="{naming:java:comp/env/tee-folder}debug-info/display-xsl-fo-view-1.xml"/>
+            
+            <map:transform type="fragments"/>
+            <map:transform type="${tee}"
+                src="{naming:java:comp/env/tee-folder}debug-info/display-xsl-fo-view-2.xml"/>
+            <map:transform type="multifragment-xslt" src="views/page2fo.xslt">
+                <map:parameter name="fragment.namespace" value="http://www.mpi.nl/lexus/display/1.0"/>
+                <map:parameter name="fragment.element" value="page"/>
+            </map:transform>
+            <map:transform type="${tee}"
+                src="{naming:java:comp/env/tee-folder}debug-info/display-xsl-fo-view-3.xml"/>
+            <map:serialize type="xml"/>
+        </map:match>
+
     </map:pipeline>
 
     <map:pipeline type="caching">

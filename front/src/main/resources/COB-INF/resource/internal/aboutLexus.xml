@@ -10,6 +10,6 @@
 
 <about>
     <name>Lexus</name>
-    <version>3.0-alpha</version>  <!-- ${project.version} -->
+    <version>3.0-SNAPSHOT</version>  <!-- ${project.version} -->
     <scm><revision>${buildNumber}</revision></scm> <!-- ${prefix.revision} -->
 </about>
