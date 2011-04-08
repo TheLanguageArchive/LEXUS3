@@ -5,10 +5,12 @@
 
     <xsl:include href="../../util/identity.xslt"/>
 
+    <xsl:param name="view" />
+    
     <xsl:template match="/data">
         <xsl:copy>
             <xsl:apply-templates select="@* | node()"/>
-            <display:lexicon id="{lexus:search/lexus:result/result/results/lexicon/@id}" view="list-view">
+            <display:lexicon id="{lexus:search/lexus:result/result/results/lexicon/@id}" view="{$view}">
                 <xsl:apply-templates select="lexus:search/lexus:result/result/results/lexical-entries"/>
             </display:lexicon>
         </xsl:copy>

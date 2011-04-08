@@ -3,13 +3,16 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fo="http://www.w3.org/1999/XSL/Format"
     exclude-result-prefixes="#all" version="2.0">
 
+    <xsl:preserve-space elements="*"/>
+    
     <xsl:template match="/page">
         <xsl:apply-templates select="*"/>
     </xsl:template>
 
     <xsl:template match="text">
-        <xsl:value-of select="."/>
+        <fo:inline><xsl:value-of select="translate(. , ' ', '&#160;')"/></fo:inline>
     </xsl:template>
+    
     <xsl:template match="div[@type eq 'dsl_show']">
         <fo:inline>
             <xsl:apply-templates select="@* | node()"/>
@@ -24,10 +27,18 @@
         <xsl:attribute name="font-style">italic</xsl:attribute>
     </xsl:template>
 
-    <xsl:template match="@font-size">
+    <xsl:template match="@fontSize">
         <xsl:attribute name="font-size"><xsl:value-of select="."/></xsl:attribute>
     </xsl:template>
-
+    
+    <xsl:template match="@fontFamily">
+        <xsl:attribute name="font-family"><xsl:value-of select="."/></xsl:attribute>
+    </xsl:template>
+    
+    <xsl:template match="@color">
+        <xsl:attribute name="color"><xsl:value-of select="."/></xsl:attribute>
+    </xsl:template>
+    
     <xsl:template match="@background-color">
         <xsl:attribute name="background-color"><xsl:value-of select="."/></xsl:attribute>
     </xsl:template>

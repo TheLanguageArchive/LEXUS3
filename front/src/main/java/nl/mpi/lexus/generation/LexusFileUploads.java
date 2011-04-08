@@ -67,36 +67,39 @@ public class LexusFileUploads extends ServiceableGenerator {
             if (value != null) {
                 map.put(key, value);
             }
-            try {
-                String id = UUID.randomUUID().toString();
+            String id = UUID.randomUUID().toString();
 
-                map.put("id", id);
-                int extSeparatorLastIndex = value.lastIndexOf(".");
-                logger.debug("pathSeparatorLastIndex="+extSeparatorLastIndex + ", value="+value);
-                String ext = (extSeparatorLastIndex == -1)
-                        ? ""
-                        : value.substring(extSeparatorLastIndex + 1, value.length());
-                File tmpFile = new File(this.uploadDir + "/" + id + "." + ext); 
+            int extSeparatorLastIndex = value.lastIndexOf(".");
+            logger.debug("pathSeparatorLastIndex=" + extSeparatorLastIndex + ", value=" + value);
+            String ext = (extSeparatorLastIndex == -1)
+                    ? ""
+                    : value.substring(extSeparatorLastIndex + 1, value.length());
+            File tmpFile = new File(this.uploadDir + "/" + id + "." + ext);
 
-                File file = new File(value);
-                org.apache.commons.io.FileUtils.copyFile(file, tmpFile);
-
-
-                map.put("tmpFile", tmpFile.getAbsolutePath());
-
-                logger.debug("session = " + request.getSession());
-                request.getSession().setAttribute(id, tmpFile.getAbsolutePath());
-
-                String mimeType = null;
-                MimetypesFileTypeMap handler = new MimetypesFileTypeMap();
-                mimeType = handler.getContentType(tmpFile);
-
-                map.put("mimeType", mimeType);
-                map.put(key, id);
-
-            } catch (Exception ex) {
-                logger.fatal("(" + key + "," + value + ") cannot be saved, error=" + ex.getMessage());
+            File file = new File(value);
+            if (file.exists()) {
+                try {
+                    org.apache.commons.io.FileUtils.copyFile(file, tmpFile);
+                    logger.info("Copied uploaded file " + file + " to " + tmpFile);
+                    map.put("id", id + "." + ext);
+                } catch (Exception ex) {
+                    logger.fatal(file + " cannot be copied to " + tmpFile + ", error=" + ex.getMessage());
+                }
             }
+
+
+        //    map.put("tmpFile", tmpFile.getAbsolutePath());
+
+            logger.debug("session = " + request.getSession());
+            request.getSession().setAttribute(id, tmpFile.getAbsolutePath());
+
+            String mimeType = null;
+            MimetypesFileTypeMap handler = new MimetypesFileTypeMap();
+            mimeType = handler.getContentType(tmpFile);
+
+            map.put("mimeType", mimeType);
+            map.put(key, id);
+
         }
         AttributesImpl attr = new AttributesImpl();
         contentHandler.startDocument();

@@ -4,11 +4,8 @@
     
     <xsl:include href="../util/identity.xslt"/>
 
-    <xsl:template match="lexus:get-listview | lexus:get-leview"><lexus:display>
+    <xsl:template match="lexus:get-listview | lexus:get-leview| lexus:get-view"><lexus:display>
         <xsl:choose>
-            <xsl:when test="lexus:result/view">
-                <xsl:apply-templates select="lexus:result/view"/>
-            </xsl:when>
             <xsl:when test="lexus:result/view">
                 <xsl:apply-templates select="lexus:result/view"/>
             </xsl:when>

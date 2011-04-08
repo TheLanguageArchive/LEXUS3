@@ -6,12 +6,14 @@
 
     <xsl:namespace-alias stylesheet-prefix="target" result-prefix="xsl"/>
     <xsl:strip-space elements="*"/>
+    <xsl:preserve-space elements="text"/>
     <xsl:output indent="yes"/>
 
     <xsl:template match="lexus:display">
         <target:stylesheet version="1.0">
 
             <target:strip-space elements="*"/>
+            <target:preserve-space elements="text"/>
 
             <target:output indent="yes"/>
 
@@ -101,7 +103,7 @@
     <xsl:template match="text">
         <xsl:copy>
             <xsl:copy-of select="@dsl_class"/>
-            <xsl:value-of select="@value"/>
+            <xsl:value-of select="translate(@value, ' ', '&#160;')"/>
         </xsl:copy>
     </xsl:template>
     <!-- 

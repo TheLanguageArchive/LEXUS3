@@ -76,7 +76,7 @@
 
 
             <!-- 
-        Get Lexcial Entry View of a lexicon.
+        Get Lexical Entry View of a lexicon.
       -->
             <map:match pattern="getLEView.xml">
                 <map:generate src="service-consumer:"/>
@@ -89,7 +89,7 @@
             </map:match>
 
             <!-- 
-        Get a view.
+        Get view by id.
       -->
             <map:match pattern="getView.xml">
                 <map:generate src="service-consumer:"/>

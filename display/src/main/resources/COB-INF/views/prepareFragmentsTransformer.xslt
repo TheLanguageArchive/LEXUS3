@@ -5,7 +5,7 @@
 
     <xsl:include href="../util/identity.xslt"/>
 
-    <xsl:template match="display:lexicon[@view eq 'list-view'][@id ne '']">
+    <xsl:template match="display:lexicon[@view eq 'list-view'][@id ne '']" priority="1">
         <display:lexicon>
             <xsl:apply-templates select="@*"/>
             <fragments:transform stylesheet-uri="cocoon:/getDisplayStylesheet.xslt/listView/{@id}"
@@ -17,7 +17,7 @@
     </xsl:template>
     
     
-    <xsl:template match="display:lexicon[@view eq 'le-view'][@id ne '']">
+    <xsl:template match="display:lexicon[@view eq 'le-view'][@id ne '']" priority="1">
         <display:lexicon>
             <xsl:apply-templates select="@*"/>
             <fragments:transform stylesheet-uri="cocoon:/getDisplayStylesheet.xslt/leView/{@id}"
@@ -28,6 +28,18 @@
         </display:lexicon>
     </xsl:template>
 
+
+    <xsl:template match="display:lexicon[@view ne ''][@id ne '']">
+        <display:lexicon>
+            <xsl:apply-templates select="@*"/>
+            <fragments:transform stylesheet-uri="cocoon:/getDisplayStylesheet.xslt/{@view}/{@id}"
+                fragment-name="lexical-entry"
+                fragment-namespace="http://www.mpi.nl/lexus/display/1.0">
+                <xsl:apply-templates/>
+            </fragments:transform>
+        </display:lexicon>
+    </xsl:template>
+    
     <xsl:template match="display:lexicon//lexical-entry">
         <xsl:copy>
             <xsl:apply-templates select="@*"/>

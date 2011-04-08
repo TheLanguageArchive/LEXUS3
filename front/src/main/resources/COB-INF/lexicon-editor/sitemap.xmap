@@ -322,9 +322,11 @@
                     <map:parameter name="service" value="servlet:db:/lexicon/startLetterSearch.xml"
                     />
                 </map:transform>
-                <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-4.xml"/>-->
-                <map:transform type="saxon" src="views/prepareDisplayGeneratorForPDF.xslt"/>
-                <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-5.xml"/>-->
+                                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-4.xml"/>
+                <map:transform type="saxon" src="views/prepareDisplayGeneratorForPDF.xslt">
+                    <map:parameter name="view" value="{request-param:view}"/>
+                </map:transform>
+                                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-5.xml"/>
                 <map:transform type="servletService">
                     <map:parameter name="service" value="servlet:display:/xsl-fo-view.xml"/>
                 </map:transform>
