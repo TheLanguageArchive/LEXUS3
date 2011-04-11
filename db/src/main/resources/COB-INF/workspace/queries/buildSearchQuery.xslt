@@ -155,13 +155,14 @@
                         <xsl:text>]</xsl:text>
                     </xsl:if>
                     <xsl:text>
+                        let $d := ($l//data[@schema-ref eq '</xsl:text><xsl:value-of select="$firstDC/container/@id"/><xsl:text>'])[1]
                         order by </xsl:text>
                         <xsl:choose>
                             <xsl:when test="$firstDC/container/@sort-order">
-                                <xsl:text>$l//data[@schema-ref eq '</xsl:text><xsl:value-of select="$firstDC/container/@id"/><xsl:text>']/@sort-key</xsl:text>
+                                <xsl:text>$d/@sort-key</xsl:text>
                             </xsl:when>
                             <xsl:otherwise>
-                                <xsl:text>($l//data[@schema-ref eq '</xsl:text><xsl:value-of select="$firstDC/container/@id"/><xsl:text>'])[1]/value</xsl:text> 
+                                <xsl:text>$d/value</xsl:text> 
                             </xsl:otherwise>
                         </xsl:choose> 
                     <xsl:text>

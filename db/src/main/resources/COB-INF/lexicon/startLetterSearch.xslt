@@ -127,12 +127,11 @@
                        element results {
                            element startLetter { $startLetter },
                            lexus:lexicon($lexus),
-                           element lexical-entries { subsequence($search-results/lexical-entries/lexical-entry,($startPage * $pageSize) + 1, $pageSize) },
                            element startPage { $startPage },
                            element searchTerm { $searchTerm },
                            element count { count($search-results/lexical-entries/lexical-entry) },
                            element pageSize { $pageSize },
-                           element sr { $search-results/lexical-entries/lexical-entry[position() ge ($startPage * $pageSize) + 1][position() lt (($startPage+1) *  $pageSize)] },
+                           element lexical-entries { $search-results/lexical-entries/lexical-entry[position() ge ($startPage * $pageSize) + 1][position() lt (($startPage+1) *  $pageSize)] },
                            element query { attribute id { '<xsl:value-of select="query/@id"/>' } }
                             },                                        
                        lexus:lexica($lexi),
