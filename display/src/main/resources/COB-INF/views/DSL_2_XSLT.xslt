@@ -35,7 +35,7 @@
             -->
             <target:template match="data[resource[@type = 'image']]" priority="1">
                 <div class="resource">
-                    <div style="clear:left;">
+                    <div style="clear:left;" block="true">
                         <target:attribute name="id">
                             <target:value-of select="@id"/>
                         </target:attribute>
@@ -57,7 +57,7 @@
                             </target:element>
                         </img>
                     </div>
-                    <div class="caption">
+                    <div class="caption" block="true">
                         <text>
                             <target:value-of select="value"/>
                         </text>

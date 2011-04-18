@@ -15,7 +15,42 @@
         <fo:inline><xsl:value-of select="translate(. , ' ', '&#160;')"/></fo:inline>
     </xsl:template>
     
-    <xsl:template match="div[@type eq 'dsl_show']">
+    
+    <!--
+        An inline decorator element. 
+        -->
+    <xsl:template match="div[@type eq 'dsl_show'][@block eq 'false']" priority="1">
+        <fo:inline>
+            <xsl:apply-templates select="@* | node()"/>
+        </fo:inline>
+    </xsl:template>
+    
+    
+    <!--
+        A block decorator element. 
+    -->
+    <xsl:template match="div[@type eq 'dsl_show'][@block eq 'true']" priority="1">
+        <fo:block>
+            <xsl:apply-templates select="@* | node()"/>
+        </fo:block>
+    </xsl:template>
+
+
+
+    <!--
+        A block div element. 
+    -->
+    <xsl:template match="div[@block eq 'true']">
+        <fo:block>
+            <xsl:apply-templates select="@* | node()"/>
+        </fo:block>
+    </xsl:template>
+    
+    
+    <!--
+        An inline div element. 
+    -->
+    <xsl:template match="div[@block eq 'false']">
         <fo:inline>
             <xsl:apply-templates select="@* | node()"/>
         </fo:inline>
@@ -25,38 +60,49 @@
         <xsl:attribute name="font-weight">bold</xsl:attribute>
     </xsl:template>
 
+
     <xsl:template match="@italic[.='true']">
         <xsl:attribute name="font-style">italic</xsl:attribute>
     </xsl:template>
 
+
     <xsl:template match="@fontSize">
         <xsl:attribute name="font-size"><xsl:value-of select="."/></xsl:attribute>
     </xsl:template>
-    
+
+
     <xsl:template match="@fontFamily">
         <xsl:attribute name="font-family"><xsl:value-of select="."/></xsl:attribute>
     </xsl:template>
-    
+
+
     <xsl:template match="@color[starts-with(., '0x')]">
         <xsl:attribute name="color"><xsl:value-of select="concat('#', substring-after(., '0x'))"/></xsl:attribute>
     </xsl:template>
     <xsl:template match="@color[starts-with(., '#')]">
         <xsl:attribute name="color"><xsl:value-of select="."/></xsl:attribute>
     </xsl:template>
-    
+
+
     <xsl:template match="@background-color">
         <xsl:attribute name="background-color"><xsl:value-of select="concat('#', substring-after(., '0x'))"/></xsl:attribute>
     </xsl:template>
+
 
     <xsl:template match="@border">
         <xsl:attribute name="border"><xsl:value-of select="."/></xsl:attribute>
     </xsl:template>
     
     
+    
     <xsl:template match="@font-family">
         <xsl:attribute name="font-family"><xsl:value-of select="."/></xsl:attribute>
     </xsl:template>
 
+
+    <xsl:template match="@block"/>
+    
+    
     <xsl:template match="table">
         <fo:table-and-caption>
             <fo:table>
