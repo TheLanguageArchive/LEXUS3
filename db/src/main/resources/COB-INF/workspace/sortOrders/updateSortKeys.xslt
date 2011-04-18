@@ -13,7 +13,10 @@
         <xsl:copy>
             <xsl:apply-templates select="@*"/>
             <lexus:query>
-            <lexus:text>
+                <lexus:text>
+                    
+                    (: <xsl:value-of select="base-uri(document(''))"/> :)
+                    
                 <xsl:call-template name="declare-namespace"/>
                 <xsl:call-template name="sort-order">
                     <xsl:with-param name="sortorders" select="sortorder"/>

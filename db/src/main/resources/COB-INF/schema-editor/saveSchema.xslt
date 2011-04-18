@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:lexus="http://www.mpi.nl/lexus"
+    xmlns:xquery="xquery-dialect"
     version="2.0">
 
     <xsl:include href="../util/identity.xslt"/>
@@ -20,13 +21,18 @@
               -->
             <lexus:text>
                 
+                (: <xsl:value-of select="base-uri(document(''))"/> :)
+                                
                 <xsl:call-template name="declare-namespace"/>
                 <xsl:call-template name="permissions"/>
                 <xsl:call-template name="schema-permissions"/>
                 
                 (: replace the schema in the db :)
-                declare updating function lexus:updateSchema($newSchema as node(), $lexus as node()) {
-                    replace node collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexus/@id]/meta/schema with $newSchema
+                <xquery:declare-updating-function/> lexus:updateSchema($newSchema as node(), $lexus as node()) {
+                    <xquery:replace>
+                        <xquery:node>collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexus/@id]/meta/schema</xquery:node>
+                        <xquery:with>$newSchema</xquery:with>
+                    </xquery:replace>
                 };
                 
 

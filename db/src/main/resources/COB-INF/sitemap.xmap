@@ -46,6 +46,9 @@
         -->
             <map:match pattern="rest">
                 <map:generate src="service-consumer:"/>
+                <map:transform type="saxon" src="util/xquery-dialect.xslt">
+                    <map:parameter name="xmldb" value="${xmldb}"/>
+                </map:transform>
                 <map:transform type="saxon" src="util/${xmldb.rest.transformer}">
                     <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
                 </map:transform>

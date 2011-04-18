@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:lexus="http://www.mpi.nl/lexus" version="2.0">
+    xmlns:lexus="http://www.mpi.nl/lexus"
+    xmlns:xquery="xquery-dialect"
+    version="2.0">
 
     <xsl:include href="../../util/identity.xslt"/>
     <xsl:include href="../../util/encodeXML.xslt"/>
@@ -33,16 +35,28 @@
                 <xsl:call-template name="users"/>
                 <xsl:call-template name="permissions"/>
                 
-                declare updating function lexus:updateLexicon($newData as node(), $lexus as node()) {
+                <xquery:declare-updating-function/> lexus:updateLexicon($newData as node(), $lexus as node()) {
                     (
-                        delete node $lexus/meta/name,
-                        insert node $newData/meta/name into $lexus/meta,
-                        delete node $lexus/meta/description,
-                        insert node $newData/meta/description into $lexus/meta,
-                        delete node $lexus/meta/note,
-                        insert node $newData/meta/note into $lexus/meta,
-                        delete node $lexus/meta/users,
-                        insert node $newData/meta/users into $lexus/meta
+                        <xquery:delete><xquery:node>$lexus/meta/name</xquery:node></xquery:delete>,
+                        <xquery:insert-into>
+                            <xquery:node>$newData/meta/name</xquery:node>
+                            <xquery:into>$lexus/meta</xquery:into>
+                        </xquery:insert-into>,
+                        <xquery:delete><xquery:node>$lexus/meta/description</xquery:node></xquery:delete>,
+                        <xquery:insert-into>
+                            <xquery:node>$newData/meta/description</xquery:node>
+                            <xquery:into>$lexus/meta</xquery:into>
+                        </xquery:insert-into>,
+                        <xquery:delete><xquery:node>$lexus/meta/note</xquery:node></xquery:delete>,
+                        <xquery:insert-into>
+                            <xquery:node>$newData/meta/note</xquery:node>
+                            <xquery:into>$lexus/meta</xquery:into>
+                        </xquery:insert-into>,
+                        <xquery:delete><xquery:node>$lexus/meta/users</xquery:node></xquery:delete>,
+                        <xquery:insert-into>
+                            <xquery:node>$newData/meta/users</xquery:node>
+                            <xquery:into>$lexus/meta</xquery:into>
+                        </xquery:insert-into>
                     )                    
                 };
 

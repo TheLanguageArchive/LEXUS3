@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:lexus="http://www.mpi.nl/lexus"
+    xmlns:xquery="xquery-dialect"
     version="2.0">
 
     <xsl:include href="../util/identity.xslt"/>
@@ -24,11 +25,19 @@
                     <xsl:call-template name="permissions"/>
                     
                     (: replace the lexical entry in the db :)
-                    declare updating function lexus:updateLexicalEntry($lexus, $newLE as node(), $lexicalEntry as node()*) {
+                    <xquery:declare-updating-function/> lexus:updateLexicalEntry($lexus, $newLE as node(), $lexicalEntry as node()*) {
                         if (not(empty($newLE)))
                         then if (empty($lexicalEntry))
-                                then insert node $newLE into $lexus/lexicon
-                                else replace node $lexicalEntry with $newLE
+                                then
+                                    <xquery:insert-into>
+                                        <xquery:node>$newLE</xquery:node>
+                                        <xquery:into>$lexus/lexicon</xquery:into>
+                                    </xquery:insert-into>
+                                else
+                                    <xquery:replace>
+                                        <xquery:node>$lexicalEntry</xquery:node>
+                                        <xquery:with>$newLE</xquery:with>
+                                    </xquery:replace>
                         else ()
                     };
                     

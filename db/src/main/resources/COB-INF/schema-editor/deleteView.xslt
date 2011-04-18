@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:lexus="http://www.mpi.nl/lexus" xmlns:util="java:java.util.UUID" 
+    xmlns:xquery="xquery-dialect"
     version="2.0">
 
     <xsl:include href="../util/identity.xslt"/>
@@ -25,8 +26,10 @@
                 <xsl:call-template name="log"/>
                 
                 (: create the view in the db :)
-                declare updating function lexus:deleteView($newView as node(), $lexus as node()) {
-                    delete node $lexus/meta/views/view[@id eq $newView/@id][1]
+                <xquery:declare-updating-function/> lexus:deleteView($newView as node(), $lexus as node()) {
+                    <xquery:delete>
+                        <xquery:node>$lexus/meta/views/view[@id eq $newView/@id][1]</xquery:node>
+                    </xquery:delete>
                 };
                 
                 let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>

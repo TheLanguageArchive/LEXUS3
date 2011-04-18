@@ -19,6 +19,7 @@ import org.apache.cocoon.transformation.AbstractTransformer;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Convert a resource ID in a data element to a URL.
@@ -33,16 +34,17 @@ import org.xml.sax.SAXException;
  *  &lt;map:transform type="resource-id-to-url"/&gt;
  * </pre>
  * It will look for elements in the "http://nl.mpi.lexus/resource-resolver"
- * namespace. The following elements are recognized (assuming xmlns:ritu="http://apache.org/cocoon/resource-resolver"):
+ * namespace. The following elements are recognized (assuming xmlns:rr="http://apache.org/cocoon/resource-resolver"):
  * <dl>
- * <dt>&lt;ritu:resource-id archive="MPI" value="MPI316757#" mimetype="text/x-eaf+xml" type="url" lexiconId="uuid:boe"/&gt;</dt>
- * <dd>Substitutes the element with a local or a Lamus generated URL.</dd>
+ * <dt>&lt;rr:resource-id archive="MPI" value="MPI316757#" mimetype="text/x-eaf+xml" type="url" lexiconId="uuid:boe"/&gt;</dt>
+ * <dd>Adds to the element a local and/or a remote (Lamus) generated URL.</dd>
  * </dl>
  */
 public class ResourceIdToURLTransformer
         extends AbstractTransformer {
 
     private static final String NAMESPACE = "http://nl.mpi.lexus/resource-resolver";
+    private static final String PREFIX = "rr";
     private static final String RESOURCEID_ELEMENT = "resource-id-to-url";
     private static final String VALUE = "value";
     private static final String ARCHIVE = "archive";
@@ -53,9 +55,13 @@ public class ResourceIdToURLTransformer
     private static final String LOCAL_COPY = "local";
     private static final String MPI = "MPI";
     private static final String RESOURCES_URI = "resources-uri";
+    private static final String LOCAL_RESOURCES_FOLDER = "local-resources-folder";
     private Parameters par;
     private Map objectModel;
     private String resources_uri = "";
+    private String local_folder = "";
+    private String LOCAL_ELEMENT = "local";
+    private String REMOTE_ELEMENT = "remote";
 
     public void setup(SourceResolver resolver, Map objectModel, String src, Parameters par)
             throws ProcessingException, SAXException, IOException {
@@ -63,6 +69,9 @@ public class ResourceIdToURLTransformer
         this.par = par;
         if (null != par.getParameter(RESOURCES_URI, null)) {
             resources_uri = par.getParameter(RESOURCES_URI, "");
+        }
+        if (null != par.getParameter(LOCAL_RESOURCES_FOLDER, null)) {
+            local_folder = par.getParameter(LOCAL_RESOURCES_FOLDER, "");
         }
 
         this.objectModel = objectModel;
@@ -92,6 +101,19 @@ public class ResourceIdToURLTransformer
                                 "/" + request.getContextPath() + "/";
                         urlStr = reqURI + resources_uri + "/" + lexiconId + "/" + value;
                         urlStr = urlStr.replaceAll("//", "/");
+                        if (getLogger().isDebugEnabled()) {
+                            getLogger().debug("ResourceIdToURLTransformer result=" + urlStr);
+                        }
+                        String localStr = "";
+                        localStr = local_folder + "/" + value;
+                        super.contentHandler.startElement(NAMESPACE, RESOURCEID_ELEMENT, PREFIX+":"+RESOURCEID_ELEMENT, attributes);
+                        super.contentHandler.startElement(NAMESPACE, LOCAL_ELEMENT, PREFIX+":"+LOCAL_ELEMENT, new AttributesImpl());
+                        super.contentHandler.characters(localStr.toCharArray(), 0, localStr.length());
+                        super.endElement(NAMESPACE, LOCAL_ELEMENT, PREFIX+":"+LOCAL_ELEMENT);
+                        super.contentHandler.startElement(NAMESPACE, REMOTE_ELEMENT, PREFIX+":"+REMOTE_ELEMENT, new AttributesImpl());
+                        super.contentHandler.characters(urlStr.toCharArray(), 0, urlStr.length());
+                        super.endElement(NAMESPACE, REMOTE_ELEMENT, PREFIX+":"+REMOTE_ELEMENT);
+                        super.endElement(NAMESPACE, RESOURCEID_ELEMENT, PREFIX+":"+RESOURCEID_ELEMENT);
                     } else if (archive.equals(MPI)) {
                         IResolver resolver = new LamusResolver();
 
@@ -106,6 +128,14 @@ public class ResourceIdToURLTransformer
                             handle.setResourceHandle(value);
                             url = resolver.resolve(handle);
                             urlStr = null == url ? "" : url.toExternalForm();
+                            if (getLogger().isDebugEnabled()) {
+                                getLogger().debug("ResourceIdToURLTransformer result=" + urlStr);
+                            }
+                            super.contentHandler.startElement(NAMESPACE, RESOURCEID_ELEMENT, PREFIX+":"+RESOURCEID_ELEMENT, attributes);
+                            super.contentHandler.startElement(NAMESPACE, REMOTE_ELEMENT, PREFIX+":"+REMOTE_ELEMENT, new AttributesImpl());
+                            super.contentHandler.characters(urlStr.toCharArray(), 0, urlStr.length());
+                            super.endElement(NAMESPACE, REMOTE_ELEMENT, PREFIX+":"+REMOTE_ELEMENT);
+                            super.endElement(NAMESPACE, RESOURCEID_ELEMENT, PREFIX+":"+RESOURCEID_ELEMENT);
                         } catch (ResolveException e) {
                             // logger.error(e);
                         }
@@ -113,10 +143,6 @@ public class ResourceIdToURLTransformer
                         // throw new RuntimeException("Unknown archive type[" + archive + "] encountered");
                     }
                 }
-                if (getLogger().isDebugEnabled()) {
-                    getLogger().debug("ResourceIdToURLTransformer result=" + urlStr);
-                }
-                super.contentHandler.characters(urlStr.toCharArray(), 0, urlStr.length());
             }
         } else {
             super.startElement(namespaceURI, lName, qName, attributes);

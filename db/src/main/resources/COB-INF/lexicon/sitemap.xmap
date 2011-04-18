@@ -213,11 +213,18 @@
 
     </map:pipelines>
     <map:resources>
-        <map:resource name="rest">
-            
-            <!--<map:transform type="servletService">
+        
+        <!--
+            HHV: Instead of this resource, you cqn also call
+            <map:transform type="servletService">
                 <map:parameter name="service" value="servlet:nl.mpi.lexus.db.service+:/rest"/>
-                </map:transform>-->
+            </map:transform>
+            which would be slightly neater, but I'm unsure about the performance. This will do for now.
+        -->
+        <map:resource name="rest">
+            <map:transform type="saxon" src="../util/xquery-dialect.xslt">
+                <map:parameter name="xmldb" value="${xmldb}"/>
+            </map:transform>
             <map:transform type="saxon" src="../util/${xmldb.rest.transformer}">
                 <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
             </map:transform>

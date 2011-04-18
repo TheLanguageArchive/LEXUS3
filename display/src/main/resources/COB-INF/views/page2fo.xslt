@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fo="http://www.w3.org/1999/XSL/Format"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:fo="http://www.w3.org/1999/XSL/Format"
+    xmlns:rr="http://nl.mpi.lexus/resource-resolver" 
     exclude-result-prefixes="#all" version="2.0">
 
     <xsl:preserve-space elements="*"/>
@@ -35,12 +37,15 @@
         <xsl:attribute name="font-family"><xsl:value-of select="."/></xsl:attribute>
     </xsl:template>
     
-    <xsl:template match="@color">
+    <xsl:template match="@color[starts-with(., '0x')]">
+        <xsl:attribute name="color"><xsl:value-of select="concat('#', substring-after(., '0x'))"/></xsl:attribute>
+    </xsl:template>
+    <xsl:template match="@color[starts-with(., '#')]">
         <xsl:attribute name="color"><xsl:value-of select="."/></xsl:attribute>
     </xsl:template>
     
     <xsl:template match="@background-color">
-        <xsl:attribute name="background-color"><xsl:value-of select="."/></xsl:attribute>
+        <xsl:attribute name="background-color"><xsl:value-of select="concat('#', substring-after(., '0x'))"/></xsl:attribute>
     </xsl:template>
 
     <xsl:template match="@border">
@@ -72,6 +77,21 @@
         </fo:table-cell>
     </xsl:template>
 
+
+
+    <xsl:template match="img">
+        <fo:external-graphic>
+            <xsl:copy-of select="@src | *"/>
+        </fo:external-graphic>
+    </xsl:template>
+    
+    <xsl:template match="resource" priority="1">
+        <rr:resource-id-to-url>
+            <xsl:copy-of select="@*"/>
+        </rr:resource-id-to-url>
+    </xsl:template>
+    
+    
     <xsl:template match="@*"/>
 
 

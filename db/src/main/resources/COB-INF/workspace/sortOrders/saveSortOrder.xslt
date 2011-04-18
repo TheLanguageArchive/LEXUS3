@@ -2,6 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:lexus="http://www.mpi.nl/lexus"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xquery="xquery-dialect"
     version="2.0">
 
     <xsl:include href="../../util/identity.xslt"/>
@@ -23,11 +24,23 @@
             <xsl:apply-templates select="@*"/>
             <lexus:query>
                 <lexus:text>
+                    
+                    (: <xsl:value-of select="base-uri(document(''))"/> :)
+                    
                     <xsl:call-template name="declare-namespace"/>
-                    declare updating function lexus:updateSortOrder($sortOrder as node(), $user as node()) {
+                    <xquery:declare-updating-function/> lexus:updateSortOrder($sortOrder as node(), $user as node()) {
                         if ($user/workspace/sortorders/sortorder[@id eq $sortOrder/@id])
-                            then replace node $user/workspace/sortorders/sortorder[@id eq $sortOrder/@id] with $sortOrder
-                            else insert node $sortOrder into $user/workspace/sortorders
+                            then 
+                                <xquery:replace>
+                                    <xquery:node>$user/workspace/sortorders/sortorder[@id eq $sortOrder/@id]</xquery:node>
+                                    <xquery:with>$sortOrder</xquery:with>
+                                </xquery:replace>
+                            else
+                                <xquery:insert-into>
+                                    <xquery:node>$sortOrder</xquery:node>
+                                    <xquery:into>$user/workspace/sortorders</xquery:into>
+                                </xquery:insert-into>
+                    
                     };
                     
                     let $userId := '<xsl:value-of select="/data/user/@id"/>'

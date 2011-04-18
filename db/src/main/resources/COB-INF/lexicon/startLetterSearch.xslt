@@ -131,7 +131,7 @@
                            element searchTerm { $searchTerm },
                            element count { count($search-results/lexical-entries/lexical-entry) },
                            element pageSize { $pageSize },
-                           element lexical-entries { $search-results/lexical-entries/lexical-entry[position() ge ($startPage * $pageSize) + 1][position() lt (($startPage+1) *  $pageSize)] },
+                           element lexical-entries { subsequence($search-results/lexical-entries/lexical-entry,($startPage * $pageSize) + 1, $pageSize) },
                            element query { attribute id { '<xsl:value-of select="query/@id"/>' } }
                             },                                        
                        lexus:lexica($lexi),
@@ -140,6 +140,8 @@
                        $schema,
                        $users
                    }
+                   (: subsequence($search-results/lexical-entries/lexical-entry,($startPage * $pageSize) + 1, $pageSize)  :)
+                   (: $search-results/lexical-entries/lexical-entry[position() ge ($startPage * $pageSize) + 1][position() le (($startPage+1) *  $pageSize)] :)
                </lexus:text>
           </lexus:query>
         </xsl:copy>

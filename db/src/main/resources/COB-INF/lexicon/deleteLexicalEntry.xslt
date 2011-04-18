@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:lexus="http://www.mpi.nl/lexus" version="2.0">
+    xmlns:lexus="http://www.mpi.nl/lexus"
+    xmlns:xquery="xquery-dialect"
+    version="2.0">
 
     <xsl:include href="../util/identity.xslt"/>
     <xsl:include href="../util/encodeXML.xslt"/>
@@ -23,8 +25,13 @@
                     <xsl:call-template name="permissions"/>
                     
                     (: replace the lexical entry in the db :)
-                    declare updating function lexus:deleteLexicalEntry($lexicalEntry as node()*) {
-                        if (not(empty($lexicalEntry))) then delete node $lexicalEntry else ()
+                    <xquery:declare-updating-function/> lexus:deleteLexicalEntry($lexicalEntry as node()*) {
+                        if (not(empty($lexicalEntry)))
+                            then 
+                                <xquery:delete>
+                                    <xquery:node>$lexicalEntry</xquery:node>
+                                </xquery:delete>
+                            else ()
                     };
                     
                     let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>

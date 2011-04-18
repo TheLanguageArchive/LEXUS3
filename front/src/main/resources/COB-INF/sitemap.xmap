@@ -215,6 +215,7 @@
                     <map:parameter name="application" value="Lexus"/>
                     <map:read src="{naming:java:comp/env/LEXUS/resourceDirectory}/{../2}"/>
                 </map:act>
+<!--                <map:read src="{naming:java:comp/env/LEXUS/resourceDirectory}/{2}"/>-->
                 <map:redirect-to uri="index.html?msg=1"/>
             </map:match>
 

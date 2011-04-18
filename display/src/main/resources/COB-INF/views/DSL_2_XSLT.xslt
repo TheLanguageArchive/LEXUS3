@@ -9,6 +9,8 @@
     <xsl:preserve-space elements="text"/>
     <xsl:output indent="yes"/>
 
+    <xsl:param name="lexicon-id" select="''"/>
+
     <xsl:template match="lexus:display">
         <target:stylesheet version="1.0">
 
@@ -32,7 +34,7 @@
                 <resource value="409dff22-1629-44b6-a294-687355d52ca4.jpg" archive="local" mimetype="image/jpeg" type="image"/>
             -->
             <target:template match="data[resource[@type = 'image']]" priority="1">
-                <div>
+                <div class="resource">
                     <div style="clear:left;">
                         <target:attribute name="id">
                             <target:value-of select="@id"/>
@@ -49,12 +51,17 @@
                             <target:element name="resource-id-to-url"
                                 namespace="http://nl.mpi.lexus/resource-resolver">
                                 <target:copy-of select="resource/@*"/>
+                                <target:attribute name="lexiconId">
+                                    <target:value-of select="'{$lexicon-id}'"/>
+                                </target:attribute>
                             </target:element>
                         </img>
                     </div>
-                    <text>
-                        <target:value-of select="value"/>
-                    </text>
+                    <div class="caption">
+                        <text>
+                            <target:value-of select="value"/>
+                        </text>
+                    </div>
                 </div>
             </target:template>
 

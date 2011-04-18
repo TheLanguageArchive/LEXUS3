@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:lexus="http://www.mpi.nl/lexus" version="2.0">
+    xmlns:lexus="http://www.mpi.nl/lexus" 
+    xmlns:xquery="xquery-dialect"
+    version="2.0">
 
     <xsl:include href="../../util/identity.xslt"/>
     <xsl:include href="../../util/encodeXML.xslt"/>
@@ -19,25 +21,45 @@
                 (:
                     Save a workspace query.
                     :)
-                declare updating function lexus:updateQuery($query as node(), $user as node()) {
+                <xquery:declare-updating-function/> lexus:updateQuery($query as node(), $user as node()) {
                     (
-                        if ($user/workspace/queries/query[@id eq $query/@id]) 
-                        then replace node $user/workspace/queries/query[@id eq $query/@id] with $query
-                        else insert node $query into $user/workspace/queries
+                        if ($user/workspace/queries/query[@id eq $query/@id])                        
+                            then
+                                <xquery:replace>
+                                    <xquery:node>$user/workspace/queries/query[@id eq $query/@id]</xquery:node>
+                                    <xquery:with>$query</xquery:with>
+                                </xquery:replace>                
+                            else                
+                                <xquery:insert-into>
+                                    <xquery:node>$query</xquery:node>
+                                    <xquery:into>$user/workspace/queries</xquery:into>
+                                </xquery:insert-into>
                     )
                 };
                 
                 (:
                     Save a lexicon filter.
                     :)
-                declare updating function lexus:updateFilter($query as node(), $lexicon as node()) {
+                <xquery:declare-updating-function/> lexus:updateFilter($query as node(), $lexicon as node()) {
                 (
                     if (empty($lexicon/meta/queries))
-                        then insert node element queries { $query } into $lexicon/meta
+                        then
+                            <xquery:insert-into>
+                                <xquery:node>element queries { $query }</xquery:node>
+                                <xquery:into>$lexicon/meta</xquery:into>
+                            </xquery:insert-into>
                         else
                             if ($lexicon/meta/queries/query[@id eq $query/@id]) 
-                                then replace node $lexicon/meta/queries/query[@id eq $query/@id] with $query
-                                else insert node $query into $lexicon/meta/queries
+                                then 
+                                    <xquery:replace>
+                                        <xquery:node>$lexicon/meta/queries/query[@id eq $query/@id]</xquery:node>
+                                        <xquery:with>$query</xquery:with>
+                                    </xquery:replace>
+                                else
+                                    <xquery:insert-into>
+                                        <xquery:node>$query</xquery:node>
+                                        <xquery:into>$lexicon/meta/queries</xquery:into>
+                                    </xquery:insert-into>
                 
                 )
                 };

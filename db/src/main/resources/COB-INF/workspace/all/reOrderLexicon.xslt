@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:lexus="http://www.mpi.nl/lexus" version="2.0">
+    xmlns:lexus="http://www.mpi.nl/lexus"
+    xmlns:xquery="xquery-dialect"
+    version="2.0">
     
     <xsl:include href="../../util/identity.xslt"/>
     <xsl:include href="../../util/encodeXML.xslt"/>
@@ -38,12 +40,15 @@
                 };
                 
                 (: replace the lexical entry with an ordered one :)
-                declare updating function lexus:updateLE($le as node(), $schema as node()*) {
-                    replace node $le with lexus:orderLE($le, $schema)
+                <xquery:declare-updating-function/> lexus:updateLE($le as node(), $schema as node()*) {
+                    <xquery:replace>
+                        <xquery:node>$le</xquery:node>
+                        <xquery:with>lexus:orderLE($le, $schema)</xquery:with>
+                    </xquery:replace>
                 };
                 
                 (: process all lexical entries in a lexicon :)
-                declare updating function lexus:updateLexicon($lexus as node()) {
+                <xquery:declare-updating-function/> lexus:updateLexicon($lexus as node()) {
                     let $schema := $lexus/meta/schema//container[@type eq 'lexical-entry']/*
                     for $le in $lexus/lexicon/lexical-entry
                         return lexus:updateLE($le, $schema)

@@ -2,7 +2,9 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:h="http://apache.org/cocoon/request/2.0"
     xmlns:rest="http://org.apache.cocoon.transformation/rest/1.0"
-    xmlns:json="http://apache.org/cocoon/json/1.0" version="2.0">
+    xmlns:json="http://apache.org/cocoon/json/1.0"
+    xmlns:xquery="xquery-dialect"
+    version="2.0">
 
 
     <!--
@@ -170,7 +172,7 @@
     -->
     <xsl:template name="log">
         
-        (: declare updating function lexus:log-entry($log as node(), $entry as node()) {
+        (: <xquery:declare-updating-function/> lexus:log-entry($log as node(), $entry as node()) {
             insert node $entry into $log
             };  :)
             

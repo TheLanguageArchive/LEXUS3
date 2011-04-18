@@ -18,7 +18,11 @@
                 <xsl:call-template name="declare-namespace"/>                        
                 <xsl:call-template name="user-permissions"/>
                 
-                declare function lexus:updateUser($existingUser as node(), $newData as node()) as node() {
+                <!-- HHV: This does NOT work yet.
+                    See xmldb:store further on!
+                    Also, it is an updating function so it can't return a value.
+                    -->
+                declare functio lexus:updateUser($existingUser as node(), $newData as node()) as node() {
                     let $dummy := (
                         update replace $existingUser/account with $newData/account,
                         update replace $existingUser/name with $newData/name,

@@ -187,12 +187,15 @@
                     src="{naming:java:comp/env/tee-folder}debug-info/front-gled-3.xml"/>
                 <map:transform type="saxon" src="getLexicalEntryData-2-JSON.xslt"/>
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/front-gled-4.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-gled-5.xml"/>
                 <!-- resolve archive IDs to URIs -->
                 <map:transform type="resource-resolver">
                     <map:parameter name="resources-uri"
                         value="{naming:java:comp/env/LEXUS/resourceContextPath}"/>
                 </map:transform>
+                <map:transform type="saxon" src="../util/extract-remote-resource.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-gled-6.xml"/>
                 <map:serialize type="json"/>
             </map:match>
 
@@ -214,6 +217,10 @@
                     <map:parameter name="resources-uri"
                         value="{naming:java:comp/env/LEXUS/resourceContextPath}"/>
                 </map:transform>
+                <map:transform type="saxon" src="../util/extract-remote-resource.xslt"/>
+
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-lle-3.xml"/>
                 <map:serialize type="json"/>
             </map:match>
 
@@ -271,6 +278,8 @@
                     <map:parameter name="resources-uri"
                         value="{naming:java:comp/env/LEXUS/resourceContextPath}"/>
                 </map:transform>
+                <map:transform type="saxon" src="../util/extract-remote-resource.xslt"/>
+
                 <map:serialize type="json"/>
             </map:match>
 
@@ -322,19 +331,43 @@
                     <map:parameter name="service" value="servlet:db:/lexicon/startLetterSearch.xml"
                     />
                 </map:transform>
-                                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-4.xml"/>
+
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-4.xml"/>
+
                 <map:transform type="saxon" src="views/prepareDisplayGeneratorForPDF.xslt">
                     <map:parameter name="view" value="{request-param:view}"/>
                 </map:transform>
-                                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-5.xml"/>
+
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-5.xml"/>
+
                 <map:transform type="servletService">
                     <map:parameter name="service" value="servlet:display:/xsl-fo-view.xml"/>
                 </map:transform>
+
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-6.xml"/>
-                <map:transform type="saxon" src="views/xsl-fo-document.xslt"/>
+
+                <map:transform type="resource-resolver">
+                    <map:parameter name="resources-uri"
+                        value="{naming:java:comp/env/LEXUS/resourceContextPath}"/>
+                    <map:parameter name="local-resources-folder"
+                        value="{naming:java:comp/env/LEXUS/resourceDirectory}"/>
+                </map:transform>
+
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-7.xml"/>
+
+                <map:transform type="saxon"
+                    src="views/move-resource-url-to-src-attribute-in-xsl-fo.xslt"/>
+
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-8.xml"/>
+
+                <map:transform type="saxon" src="views/xsl-fo-document.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-9.xml"/>
                 <map:serialize type="fo2pdf"/>
             </map:match>
 

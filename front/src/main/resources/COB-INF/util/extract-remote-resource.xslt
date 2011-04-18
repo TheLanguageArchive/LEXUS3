@@ -7,13 +7,10 @@
     exclude-result-prefixes="#all"
     version="2.0">
 
-    <xsl:include href="../../util/identity.xslt"/>
+    <xsl:include href="identity.xslt"/>
     
-    <xsl:template match="xhtml:img[starts-with(@src, 'resource:')]">
-        <xsl:copy copy-namespaces="no">
-            <xsl:attribute name="src" select="rr:resource-id-to-url/rr:remote"/>
-            <xsl:copy-of select="@*[local-name() ne 'src']"/>
-        </xsl:copy>
+    <xsl:template match="rr:resource-id-to-url">
+        <xsl:value-of select="rr:remote"/>
     </xsl:template>
     
 </xsl:stylesheet>

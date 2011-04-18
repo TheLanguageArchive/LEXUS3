@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:lexus="http://www.mpi.nl/lexus" xmlns:util="java:java.util.UUID" 
+    xmlns:xquery="xquery-dialect"
     version="2.0">
 
     <xsl:include href="../util/identity.xslt"/>
@@ -26,13 +27,30 @@
                 <xsl:call-template name="log"/>
                 
                 (: create the view in the db :)
-                declare updating function lexus:saveStandardViews($standardViews as node(), $lexus as node()) {
+                <xquery:declare-updating-function/> lexus:saveStandardViews($standardViews as node(), $lexus as node()) {
                     (if (empty($lexus/meta/views/@listView))
-                        then insert node $standardViews/@listView into $lexus/meta/views
-                        else replace node $lexus/meta/views/@listView with $standardViews/@listView,
+                        then
+                            <xquery:insert-into>
+                                <xquery:node>$standardViews/@listView</xquery:node>
+                                <xquery:into>$lexus/meta/views</xquery:into>
+                            </xquery:insert-into>
+                        else
+                            <xquery:replace>
+                                <xquery:node>$lexus/meta/views/@listView</xquery:node>
+                                <xquery:with>$standardViews/@listView</xquery:with>
+                            </xquery:replace>
+                        ,
                      if (empty($lexus/meta/views/@lexicalEntryView))
-                        then insert node $standardViews/@lexicalEntryView into $lexus/meta/views
-                        else replace node $lexus/meta/views/@lexicalEntryView with $standardViews/@lexicalEntryView
+                         then
+                            <xquery:insert-into>
+                                <xquery:node>$standardViews/@lexicalEntryView</xquery:node>
+                                <xquery:into>$lexus/meta/views</xquery:into>
+                            </xquery:insert-into>
+                        else
+                            <xquery:replace>
+                                <xquery:node>$lexus/meta/views/@lexicalEntryView</xquery:node>
+                                <xquery:with>$standardViews/@lexicalEntryView</xquery:with>
+                            </xquery:replace>
                     )
                 };
                 
