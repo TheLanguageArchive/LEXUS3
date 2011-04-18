@@ -10,7 +10,33 @@
     <artifactId>lexus</artifactId>
     <version>3.0-SNAPSHOT</version>
     <name>Lexus</name>
+    <url>http://www.lat-mpi.eu/tools/lexus</url>
+    <description>
+        Lexus is a web-based tool to create and edit lexical databases.
+        Lexus is currently being developed by the The Language Achive at the Max Planck Institute for Psycholinguistics in Nijmegen.
+        
+        Lexus is XML based, using a XML database as a store for lexica.
+    </description>
 
+    <issueManagement>
+        <system>Trac</system>
+        <url>https://trac.mpi.nl/wiki</url>
+    </issueManagement>
+    
+    <developers>
+        <developer>
+            <id>huiver</id>
+            <name>Huib Verweij</name>
+            <email>huiver@mpi.nl</email>
+            <roles>
+                <role>Developer</role>
+                <role>Architect</role>
+            </roles>
+            <organization>MPI</organization>
+            <timezone>+1</timezone>
+        </developer>         
+    </developers>
+    
     <dependencies>
         <dependency>
             <groupId>org.apache.cocoon</groupId>
@@ -105,7 +131,7 @@
             <artifactId>maven-war-plugin</artifactId>
             <version>2.0.2</version>
         </dependency>
-        
+
         <!-- MPI dependencies -->
         <dependency>
             <groupId>nl.mpi</groupId>
@@ -117,7 +143,7 @@
             <artifactId>typecheck</artifactId>
             <version>1.5.16611</version>
         </dependency>
-        
+
     </dependencies>
 
     <modules>
@@ -176,7 +202,7 @@
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
-            </plugin>            
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
