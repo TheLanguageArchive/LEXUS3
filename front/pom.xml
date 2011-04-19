@@ -77,8 +77,9 @@
                 <include>**/*.tmp</include>
                 <include>**/*.log</include>
                 </includes>-->
-              <excludes>
-                <exclude>.svn</exclude>
+              <excludes>                  
+                  <exclude>.svn</exclude>
+                  <exclude>.svn/*</exclude>
               </excludes>
               <followSymlinks>false</followSymlinks>
             </fileset>
