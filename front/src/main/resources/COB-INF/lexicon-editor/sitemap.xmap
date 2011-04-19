@@ -321,7 +321,7 @@
                 </map:aggregate>
                 <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-1.xml"/>-->
 
-                <map:transform type="saxon" src="export/fillInLexiconIdForPDFExport.xslt">
+                <map:transform type="saxon" src="export/fillInLexiconIDForPDFExport.xslt">
                     <map:parameter name="id" value="{request-param:id}"/>
                 </map:transform>
                 <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-2.xml"/>-->
