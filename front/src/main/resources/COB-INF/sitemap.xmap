@@ -268,7 +268,7 @@
 
 
             <map:match pattern="index.html">
-                <map:generate src="resource/external/index.xml"/>
+                <map:generate src="resource/internal/index.xml"/>
                 <map:transform type="saxon" src="stylesheets/index.xslt">
                     <map:parameter name="msg" value="{request-param:msg}"/>
                 </map:transform>

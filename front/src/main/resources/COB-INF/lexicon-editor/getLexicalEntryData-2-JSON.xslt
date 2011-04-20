@@ -127,7 +127,7 @@
             <string key="schemaElementId">
                 <xsl:value-of select="@schema-ref"/>
             </string>
-            <xsl:if test="container|data">
+            <xsl:if test="container|data or //lexus:get-lexical-entry/lexus:result/result/schema//container[@id eq current()/@schema-ref]/@type eq 'component'">
                 <array key="children">
                     <xsl:apply-templates select="container|data"/>
                 </array>

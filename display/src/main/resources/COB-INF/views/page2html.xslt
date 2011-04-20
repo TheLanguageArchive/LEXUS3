@@ -9,8 +9,6 @@
         <xhtml:html>
             <xhtml:head>
                 <xhtml:title>Lexical entry</xhtml:title>
-                 <!--<link rel="stylesheet" href="default.css" type="text/css"/>
-                <link rel="stylesheet" href="lexical-entry.css" type="text/css"/>--> 
                 <xhtml:style type="text/css">&#32;<xsl:value-of select="/display:page/display:style"/></xhtml:style>
             </xhtml:head>
             <xhtml:body>
@@ -27,7 +25,7 @@
     </xsl:template>
 
     <xsl:template match="text">
-        <xhtml:div xmlns="http://www.w3.org/1999/xhtml">
+        <xhtml:div xmlns="http://www.w3.org/1999/xhtml" style="display:inline;">
             <xsl:apply-templates select="@*"/>
             <xsl:apply-templates select="text() | node()"/>
         </xhtml:div>
@@ -56,10 +54,19 @@
         <xsl:copy-of select="."/>
     </xsl:template>
 
-    <xsl:template match="div">
+    <xsl:template match="div[@block = 'true']" priority="1">
         <xhtml:div xmlns="http://www.w3.org/1999/xhtml">
             <xsl:apply-templates select="@dsl_class"/>
             <xsl:variable name="style"><xsl:apply-templates select="@*[local-name() ne 'dsl_class']"/></xsl:variable>
+            <xsl:if test="$style ne '' or @style ne ''"><xsl:attribute name="style" select="concat(@style, $style)"/></xsl:if>            
+            <xsl:apply-templates/>
+        </xhtml:div>
+    </xsl:template>
+    
+    <xsl:template match="div">
+        <xhtml:div xmlns="http://www.w3.org/1999/xhtml">
+            <xsl:apply-templates select="@dsl_class"/>
+            <xsl:variable name="style"><xsl:apply-templates select="@*[local-name() ne 'dsl_class']"/> display:inline;</xsl:variable>
             <xsl:if test="$style ne '' or @style ne ''"><xsl:attribute name="style" select="concat(@style, $style)"/></xsl:if>            
             <xsl:apply-templates/>
         </xhtml:div>

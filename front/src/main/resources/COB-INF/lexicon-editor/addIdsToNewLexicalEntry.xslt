@@ -65,14 +65,14 @@
         </lexical-entry>
     </xsl:template>
 
-    <xsl:template match="container[container]">
+    <xsl:template match="container[@type eq 'component']">
         <xsl:variable name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
         <container id="{$id}" schema-ref="{@id}" name="{@name}">
             <xsl:apply-templates/>
         </container>
     </xsl:template>
 
-    <xsl:template match="container[not(container)]">
+    <xsl:template match="container[@type ne 'component']">
         <xsl:variable name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
         <data id="{$id}" schema-ref="{@id}" name="{@name}">
             <value/>

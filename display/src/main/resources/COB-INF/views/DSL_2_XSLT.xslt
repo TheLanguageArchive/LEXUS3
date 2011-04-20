@@ -122,11 +122,7 @@
     <!-- Process lists -->
     <xsl:template match="list">
         <target:for-each select=".//container[@schema-ref = '{@id}']">
-            <!--
-            <div>
-                <xsl:copy-of select="@*[local-name(.) != 'isBranch']"/>-->
             <xsl:apply-templates/>
-            <!--            </div>-->
         </target:for-each>
     </xsl:template>
     <xsl:template match="container[@id]">
