@@ -153,7 +153,7 @@
                             </xsl:if>
                         </xsl:for-each>
                         <xsl:text>]</xsl:text>
-                    </xsl:if>
+                    </xsl:if><!--
                     <xsl:text>
                         let $d := ($l//data[@schema-ref eq '</xsl:text><xsl:value-of select="$firstDC/container/@id"/><xsl:text>'])[1]
                         order by </xsl:text>
@@ -164,7 +164,7 @@
                             <xsl:otherwise>
                                 <xsl:text>$d/value</xsl:text> 
                             </xsl:otherwise>
-                        </xsl:choose> 
+                        </xsl:choose>--> 
                     <xsl:text>
                         return $l
                     }                

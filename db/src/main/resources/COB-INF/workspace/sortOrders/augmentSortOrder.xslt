@@ -315,7 +315,10 @@
         <xsl:param name="chars" as="xs:string"/>
         <xsl:param name="pos" as="xs:integer"/>
 
-        <xsl:variable name="char-list" select="lexus:longest-string-first(lexus:char-list($chars))" as="xs:string*"/>
+<!-- HHV: longest first not needed because we surround the text with ^ and $ anyway for whole matches
+    and chunk together all the matches for all other occurrences.
+    <xsl:variable name="char-list" select="lexus:longest-string-first(lexus:char-list($chars))" as="xs:string*"/>-->
+        <xsl:variable name="char-list" select="lexus:char-list($chars)" as="xs:string*"/>
         <xsl:variable name="charmaps" select="lexus:h($char-list, $pos, 1, '^', '$')" as="node()*"/>
         <xsl:variable name="chars-in-words" as="node()">
             <char value="{string-join($char-list, '|')}" pos="{$pos + count($charmaps)}"/>

@@ -123,6 +123,10 @@
                    let $schema := $lexus/meta/schema
                    let $users := lexus:users(collection('<xsl:value-of select="$users-collection"/>')/user[@id = distinct-values($lexus/meta/users/user/@ref)])
                    
+                   let $firstDCId := $firstDC/@id
+                   
+                   let $les := for $le in $search-results/lexical-entries/lexical-entry let $d := $le//data[@schema-ref eq $firstDCId] order by $d/@sort-key, $d/value return $le
+                   
                    return element result {
                        element results {
                            element startLetter { $startLetter },
@@ -131,7 +135,7 @@
                            element searchTerm { $searchTerm },
                            element count { count($search-results/lexical-entries/lexical-entry) },
                            element pageSize { $pageSize },
-                           element lexical-entries { subsequence($search-results/lexical-entries/lexical-entry,($startPage * $pageSize) + 1, $pageSize) },
+                           element lexical-entries { subsequence($les, ($startPage * $pageSize) + 1, $pageSize) },
                            element query { attribute id { '<xsl:value-of select="query/@id"/>' } }
                             },                                        
                        lexus:lexica($lexi),

@@ -21,6 +21,7 @@
                 -->
               <lexus:text>
                   
+                  (: <xsl:value-of select="base-uri(document(''))"/> :)
                   <xsl:call-template name="declare-namespace"/>
                   <xsl:call-template name="permissions"/>
                   <xsl:call-template name="sort-order">

@@ -96,7 +96,8 @@
             let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
             return (
                 <xsl:for-each select="$sortorders">
-                    for $d in $lexus/lexicon[@id eq $lexiconId]/lexical-entry[@id eq $leId]//data[@schema-ref = $lexus/meta/schema//container[@sort-order eq '<xsl:value-of select="@id"/>']/@id]
+                    let $schemaRefs := collection('<xsl:value-of select="$lexica-collection"/>')/lexus/meta/schema//container[@sort-order eq '<xsl:value-of select="@id"/>']/@id
+                    for $d in $lexus/lexicon[@id eq $lexiconId]/lexical-entry[@id eq $leId]//data[@schema-ref = $schemaRefs]
                         let $sok := <xsl:value-of select="concat('lexus:get-key-for-sort-order-', substring-after(@id, 'uuid:'))"/>(data($d/value))
                         let $slk := <xsl:value-of select="concat('lexus:get-start-letter-for-sort-order-', substring-after(@id, 'uuid:'))"/>(data($d/value))
                         return lexus:sort-order-update-data($d, $sok, $slk)

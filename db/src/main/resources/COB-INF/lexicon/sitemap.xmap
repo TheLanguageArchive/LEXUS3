@@ -29,19 +29,6 @@
         <map:pipeline id="lexicon" type="noncaching">
 
             <!-- 
-          Create a lexical entry.
-      -->
-            <map:match pattern="createLexicalEntry.xml">
-                <map:generate src="service-consumer:"/>
-                <map:transform type="saxon" src="createLexicalEntry.xslt">
-                    <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"
-                    />
-                </map:transform>
-                <map:call resource="rest"/>
-                <map:serialize type="xml"/>
-            </map:match>
-
-            <!-- 
           Generate main workspace data
           -->
             <map:match pattern="startLetterSearch.xml">
@@ -112,11 +99,14 @@
           -->
             <map:match pattern="saveLexicalEntry.xml">
                 <map:generate src="service-consumer:"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-sle-1.xml"/>
                 <map:transform type="saxon" src="saveLexicalEntry.xslt">
                     <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"
                     />
                 </map:transform>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-sle-2.xml"/>
                 <map:call resource="rest"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-sle-3.xml"/>
                 <map:serialize type="xml"/>
             </map:match>
 
@@ -144,34 +134,34 @@
 
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/back-usole-1.xml"/>
-                
+
                 <!-- First get the sort orders that are used by this lexical entry. -->
                 <map:transform type="saxon" src="getSortOrdersForLexicalEntry.xslt">
                     <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
                     <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
                 </map:transform>
-                
+
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/back-usole-2.xml"/>
-                
+
                 <map:call resource="rest"/>
-                
+
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/back-usole-3.xml"/>
-                
+
                 <map:transform type="saxon" src="updateSortOrderKeysInLexicalEntry.xslt">
                     <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
                     <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
                 </map:transform>
-                
+
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/back-usole-4.xml"/>
-                
+
                 <map:call resource="rest"/>
-                
+
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/back-usole-5.xml"/>
-                
+
                 <map:serialize type="xml"/>
             </map:match>
 
@@ -213,7 +203,7 @@
 
     </map:pipelines>
     <map:resources>
-        
+
         <!--
             HHV: Instead of this resource, you cqn also call
             <map:transform type="servletService">
