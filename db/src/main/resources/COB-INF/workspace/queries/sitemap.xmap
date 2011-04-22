@@ -129,18 +129,19 @@
     </map:pipelines>
     <map:resources>
         <map:resource name="rest">
-
-            <!--<map:transform type="servletService">
-                <map:parameter name="service" value="servlet:nl.mpi.lexus.db.service+:/rest"/>
-                </map:transform>-->
-            
+            <map:transform type="saxon" src="../../util/xquery-dialect.xslt">
+                <map:parameter name="xmldb" value="${xmldb}"/>
+            </map:transform>
+            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-rest-1.xml"/>
             <map:transform type="saxon" src="../../util/${xmldb.rest.transformer}">
                 <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
             </map:transform>
+                        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-rest-2.xml"/>
             <map:transform type="rest">
                 <map:parameter name="username" value="${xmldb.rest.username}"/>
                 <map:parameter name="password" value="${xmldb.rest.password}"/>
             </map:transform>
+            <!--            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-rest-3.xml"/>-->
             <map:transform type="saxon" src="../../util/extractDataFromRestResponse.xslt"/>
         </map:resource>
     </map:resources>

@@ -43,14 +43,19 @@
                     
                     (: Returns a list of lexicon elements, containing ($firstDC, (lexical-entry)*) :)
                     let $search-results := lexus:search($startLetter, $searchTerm) 
-        
+
                     <xsl:text>return element search-results { </xsl:text>
                     <xsl:text> attribute total { count($search-results//lexical-entry) }, </xsl:text>
                     <xsl:apply-templates select="query" mode="encoded"/>
                     <xsl:text>, </xsl:text>
                     <xsl:apply-templates select="refiner" mode="encoded"/>
-                    <xsl:text>, for $l in $search-results 
-                        return element lexicon { $l/@*, subsequence($l/lexical-entries/lexical-entry, $from, $to) }</xsl:text>
+                    <xsl:text>, for $l in $search-results
+                        
+                                    let $firstDCId := $l/lexicon/firstDC/@id
+                   
+                                    let $les := for $le in $l/lexical-entries/lexical-entry let $d := $le//data[@schema-ref eq $firstDCId] order by $d/@sort-key, $d/value return $le
+                   
+                                    return element lexicon { $l/@*, subsequence($les, $from, $to) }</xsl:text>
                     <xsl:text>, element boe {$search-results} }</xsl:text>
             </lexus:text>
             </lexus:query>
