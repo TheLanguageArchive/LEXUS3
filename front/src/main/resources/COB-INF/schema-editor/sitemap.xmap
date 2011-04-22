@@ -25,6 +25,23 @@
 
     <map:pipeline id="schema-editor">
 
+
+        <!-- 
+            Get MDF data
+        -->
+        <map:match pattern="getMDF.json">
+            <map:generate type="text" src="../resource/internal/ShbxMDF.typ"/>
+            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-mdf-1.xml"/>
+            <map:transform type="servletService">
+                <map:parameter name="service" value="servlet:nl.mpi.lexus.front.service+:/toolbox/toolbox.typ.xml"/>
+            </map:transform>
+            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-mdf-2.xml"/>
+            <map:transform src="MDF-2-JSON.xslt"/>
+            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-mdf-3.xml"/>
+            <map:serialize type="json"/>
+        </map:match>
+        
+        
       <!-- 
           Get schema data
           -->
