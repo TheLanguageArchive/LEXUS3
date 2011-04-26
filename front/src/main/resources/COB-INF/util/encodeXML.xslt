@@ -8,7 +8,24 @@
     </xsl:template>
     
     <xsl:template match="@*" mode="encoded" priority="1">
-        <xsl:text> </xsl:text><xsl:value-of select="local-name()"/>=&quot;<xsl:value-of select="fn:replace(fn:replace(., '\{', '&amp;#x7b;'), '\}', '&amp;#x7d;')"/>&quot;<xsl:text> </xsl:text>
+        <xsl:text> </xsl:text><xsl:value-of select="local-name()"/>=&quot;<xsl:value-of select="fn:replace(fn:replace(fn:replace(., '\{', '&amp;#x7b;'), '\}', '&amp;#x7d;'), '&quot;', '&amp;quot;')"/>&quot;<xsl:text> </xsl:text>
+    </xsl:template>
+    
+    
+    <xsl:template match="node()[namespace-uri() ne '']" mode="encoded" priority="1">
+        <xsl:text>&lt;</xsl:text>
+        <xsl:value-of select="generate-id()"/>
+        <xsl:text>:</xsl:text>
+        <xsl:value-of select="local-name()"/>
+        <xsl:text> xmlns:</xsl:text><xsl:value-of select="generate-id()"/><xsl:text>="</xsl:text><xsl:value-of select="namespace-uri()"/><xsl:text>" </xsl:text>
+        <xsl:apply-templates select="@*" mode="encoded"/>
+        <xsl:text>&gt;</xsl:text>
+        <xsl:apply-templates select="node() | text()" mode="encoded"/>
+        <xsl:text>&lt;/</xsl:text>
+        <xsl:value-of select="generate-id()"/>
+        <xsl:text>:</xsl:text>
+        <xsl:value-of select="local-name()"/>
+        <xsl:text>&gt;</xsl:text>
     </xsl:template>
     
     <xsl:template match="node()" mode="encoded">

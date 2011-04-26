@@ -42,6 +42,28 @@
         </map:match>
         
         
+        
+        <!-- 
+            Search ISOCAT repository.
+        -->
+        <map:match pattern="ISOCAT/search.json">            
+            <map:aggregate element="data">
+                <map:part src="cocoon://json"/>
+                <map:part src="cocoon://user"/>
+            </map:aggregate>
+            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-isocat-1.xml"/>
+            <map:transform type="saxon" src="prepare-ISOCAT-query.xslt">
+                <map:parameter name="endpoint" value="http://www.isocat.org/rest/search"/>
+            </map:transform>
+            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-isocat-2.xml"/>
+            <map:transform type="rest"/>
+            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-isocat-3.xml"/>
+            <map:transform type="saxon" src="ISOCAT-2-JSON.xslt"/>
+            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-isocat-4.xml"/>
+            <map:serialize type="json"/>
+        </map:match>
+        
+        
       <!-- 
           Get schema data
           -->
