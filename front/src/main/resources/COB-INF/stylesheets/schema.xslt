@@ -366,14 +366,13 @@
             <string key="adminInfo">
                 <xsl:value-of select="@admin-info"/>
             </string>
-            <xsl:if test="$tree eq 'true' and container">
-                <array key="children">
+            <array key="children">
+                <xsl:if test="$tree eq 'true' and container">
                     <xsl:apply-templates select="container">
                         <xsl:with-param name="tree" select="$tree"/>
                     </xsl:apply-templates>
-                </array>
-            </xsl:if>
-
+                </xsl:if>
+            </array>
         </object>
     </xsl:template>
 

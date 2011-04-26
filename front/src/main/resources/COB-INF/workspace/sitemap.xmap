@@ -26,7 +26,12 @@
 
 
     <map:pipeline id="workspace">
-
+<!--
+    
+    HHV: This is no longer necessary (I think). It was used to reorder lexical entries, but with Andres new export
+    function LE are correctly exported (I Think)....
+    Lots of thinking going on, not much knowing...
+    
       <map:match pattern="reOrder.xml">
         <map:generate src="all/getAllLexiconIds.xml"/>
         <map:transform type="servletService">
@@ -46,7 +51,7 @@
           <map:parameter name="service" value="servlet:db:/workspace/reOrderLexicon.xml"/>
         </map:transform>
         <map:serialize/>
-      </map:match>
+      </map:match>-->
 
       <!-- 
           Main workspace data
