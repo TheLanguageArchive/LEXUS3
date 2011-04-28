@@ -14,7 +14,7 @@
             <lexus:query>
             <lexus:text>
                 let $user-id := '<xsl:value-of select="/data/user/@id"/>'
-                let $users := for $user in collection('<xsl:value-of select="$users-collection"/>/users')/user
+                let $users := for $user in collection('<xsl:value-of select="$users-collection"/>')/user
                     order by $user/name
                     return $user
                 return element result { element users { $users } }
