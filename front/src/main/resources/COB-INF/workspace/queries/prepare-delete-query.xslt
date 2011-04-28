@@ -17,6 +17,7 @@
         <xsl:copy-of select="."/>
         <lexus:delete-query>
             <xsl:copy-of select="parameters/query/id"/>
+            <xsl:copy-of select="parameters/lexicon"/>
         </lexus:delete-query>
     </xsl:template>
     

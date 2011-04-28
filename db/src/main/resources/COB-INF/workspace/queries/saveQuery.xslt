@@ -14,7 +14,8 @@
     <xsl:template match="lexus:save-query">
         <xsl:copy>
             <lexus:query>
-            <lexus:text>
+                <lexus:text>
+                    (: <xsl:value-of select="base-uri(document(''))"/> :)
                 <xsl:call-template name="declare-namespace"/>
                 <xsl:call-template name="permissions"/>                        
                 

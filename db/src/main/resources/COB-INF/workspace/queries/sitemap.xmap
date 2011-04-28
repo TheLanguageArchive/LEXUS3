@@ -61,8 +61,8 @@
 
 
             <!-- 
-        Save query.
-      -->
+                Save query.
+                -->
             <map:match pattern="saveQuery.xml">
                 <map:generate src="service-consumer:"/>
                 <map:transform type="saxon" src="saveQuery.xslt">
@@ -79,18 +79,21 @@
 
 
             <!-- 
-        Save query.
-      -->
+                Delete query.
+                -->
             <map:match pattern="deleteQuery.xml">
                 <map:generate src="service-consumer:"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-delq-1.xml"/>
                 <map:transform type="saxon" src="deleteQuery.xslt">
+                    <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
                     <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
                 </map:transform>
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/back-pre.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-delq-2.xml"/>
                 <map:call resource="rest"/>
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/back-post.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-delq-3.xml"/>
                 <map:serialize type="xml"/>
             </map:match>
 
