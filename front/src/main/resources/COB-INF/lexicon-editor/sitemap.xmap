@@ -273,11 +273,13 @@
                     <map:parameter name="service" value="servlet:display:/flexhtmlview.xml"/>
                 </map:transform>
                 <map:transform type="saxon" src="getLexicalEntryData-2-JSON.xslt"/>
+<!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-le-1.xml"/>-->
                 <!-- resolve archive IDs to URIs -->
                 <map:transform type="resource-resolver">
                     <map:parameter name="resources-uri"
                         value="{naming:java:comp/env/LEXUS/resourceContextPath}"/>
                 </map:transform>
+<!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-le-2.xml"/>-->
                 <map:transform type="saxon" src="../util/extract-remote-resource.xslt"/>
 
                 <map:serialize type="json"/>

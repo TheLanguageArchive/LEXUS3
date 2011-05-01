@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xhtml="http://www.w3.org/1999/xhtml"
+    xmlns:rr="http://nl.mpi.lexus/resource-resolver" 
     xmlns:display="http://www.mpi.nl/lexus/display/1.0" exclude-result-prefixes="#all" version="2.0">
 
-
+    <xsl:include href="../util/encodeXML.xslt"/>
 
     <xsl:template match="/">
         <html xmlns="http://www.w3.org/1999/xhtml">
@@ -25,63 +26,41 @@
         <xsl:value-of select="."/>
     </xsl:template>
 
-    <xsl:template match="table">
-        &lt;table&gt;
-            <xsl:apply-templates select="@*"/>
-            <xsl:apply-templates/>
-        &lt;/table&gt;
-    </xsl:template>
-    <xsl:template match="thead">
-        &lt;head&gt;
-            <xsl:apply-templates />
-        &lt;/head&gt;
-    </xsl:template>
-    <xsl:template match="tbody">
-        &lt;body&gt;
-            <xsl:apply-templates />
-        &lt;/body&gt;
-    </xsl:template>
-    <xsl:template match="tr">
-        &lt;tr&gt;
-            <xsl:apply-templates select="@*"/>
-            <xsl:apply-templates/>
-        &lt;/tr&gt;
-    </xsl:template>
-    <xsl:template match="td">
-        &lt;td&gt;
-            <xsl:apply-templates select="@*"/>
-            <xsl:apply-templates/>
-        &lt;/td&gt;
-    </xsl:template>
-    <xsl:template match="th">
-        &lt;th&gt;
-            <xsl:apply-templates select="@*"/>
-            <xsl:apply-templates/>
-        &lt;/th&gt;
-    </xsl:template>
-    
-    <xsl:template match="@class | @colspan">
-        <xsl:copy-of select="."/>
+    <xsl:template match="table"> &lt;table&gt; <xsl:apply-templates select="@*"/>
+        <xsl:apply-templates/> &lt;/table&gt; </xsl:template>
+    <xsl:template match="thead"> &lt;head&gt; <xsl:apply-templates/> &lt;/head&gt; </xsl:template>
+    <xsl:template match="tbody"> &lt;body&gt; <xsl:apply-templates/> &lt;/body&gt; </xsl:template>
+    <xsl:template match="tr"> &lt;tr&gt; <xsl:apply-templates select="@*"/>
+        <xsl:apply-templates/> &lt;/tr&gt; </xsl:template>
+    <xsl:template match="td"> &lt;td&gt; <xsl:apply-templates select="@*"/>
+        <xsl:apply-templates/> &lt;/td&gt; </xsl:template>
+    <xsl:template match="th"> &lt;th&gt; <xsl:apply-templates select="@*"/>
+        <xsl:apply-templates/> &lt;/th&gt; </xsl:template>
+
+    <xsl:template match="@class | @colspan">        
+        <xsl:apply-templates select="." mode="encoded"/>
     </xsl:template>
 
-    <xsl:template match="div">
-        &lt;font
-            <xsl:apply-templates select="@*"/>&gt;
-            <xsl:apply-templates/>
-        &lt;/font&gt;
-    </xsl:template>
+
+    <xsl:template match="div"> &lt;font <xsl:apply-templates select="@*"/>&gt;
+        <xsl:apply-templates/> &lt;/font&gt; </xsl:template>
+
 
     <xsl:template match="@dsl_class">
         <xsl:text>class=&apos;#</xsl:text>
         <xsl:value-of select="."/>
         <xsl:text>&apos; </xsl:text>
     </xsl:template>
+
+
+    <xsl:template match="@type | @optional | @name | @block" priority="2"/>
+        
     
     <xsl:template match="@color[not(../@localStyle) or ../@localStyle eq 'true']">
         <!--<xsl:attribute name="color">
             <xsl:value-of select="."/>
         </xsl:attribute>-->
-        
+
         <xsl:text>color=&apos;#</xsl:text>
         <xsl:value-of select="substring-after(., '0x')"/>
         <xsl:text>&apos; </xsl:text>
@@ -110,13 +89,21 @@
         <xsl:copy/>
     </xsl:template>
 
-    <xsl:template match="node()">
-        <xsl:element name="{local-name(.)}" namespace="http://www.w3.org/1999/xhtml">
-            <xsl:apply-templates select="@* | node()"/>
-        </xsl:element>
+
+    <xsl:template match="img"><xsl:text> &lt;img </xsl:text><xsl:apply-templates select="@*"/><xsl:text>&gt;</xsl:text>
+        <xsl:apply-templates/><xsl:text> &lt;/img&gt; </xsl:text></xsl:template>
+    
+    
+    <xsl:template match="rr:*" priority="1">
+        <xsl:copy>
+            <xsl:copy-of select="@*"/>
+            <xsl:apply-templates select="node()"/>
+        </xsl:copy>
     </xsl:template>
 
-    <xsl:template match="@*"/>
-    
-    
+    <xsl:template match="@* | node()">
+        <xsl:apply-templates select="." mode="encoded"/>
+    </xsl:template>
+
+
 </xsl:stylesheet>

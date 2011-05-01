@@ -1,1 +1,1 @@
-mvn -Dorg.apache.cocoon.log4j.loglevel=debug -Dorg.apache.cocoon.mode=dev $1 $2 $3 $4
+mvn -Dorg.apache.cocoon.log4j.loglevel=$1 -Dorg.apache.cocoon.mode=$2 $3 $4

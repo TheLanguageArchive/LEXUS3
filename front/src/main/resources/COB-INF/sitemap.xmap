@@ -207,6 +207,34 @@
 
         </map:pipeline>
 
+        <!--
+            Fortune cookies!
+            -->
+        <map:pipeline type="noncaching">
+            <map:match pattern="fortune">
+                <map:generate src="cocoon:/fortunes.xml"/>
+                <map:transform type="saxon" src="fortunes/random-fortune.xslt">
+                    <map:parameter name="random" value="{random:}"/>
+                </map:transform>
+                <!--<map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-fortune-4.xml"/>-->
+                <map:serialize type="xml"/>
+            </map:match>
+        </map:pipeline>
+
+        <map:pipeline type="caching">
+            <map:match pattern="fortunes.xml">
+                <map:generate type="text" src="resource/internal/fortunes"/>
+                <map:transform type="lexer" src="fortunes/fortunes.lex"/>
+                <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-fortune-1.xml"/>-->
+                <map:transform type="parser" src="fortunes/fortunes.grm"/>
+                <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-fortune-2.xml"/>-->
+                <map:transform type="saxon" src="fortunes/normalize-parser-output.xslt"/>
+                <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-fortune-3.xml"/>-->
+                <map:serialize type="xml"/>
+            </map:match>
+        </map:pipeline>
+
         <!-- Serve users' resources. -->
         <map:pipeline>
             <map:match pattern="resources/*/*">
@@ -215,7 +243,7 @@
                     <map:parameter name="application" value="Lexus"/>
                     <map:read src="{naming:java:comp/env/LEXUS/resourceDirectory}/{../2}"/>
                 </map:act>
-<!--                <map:read src="{naming:java:comp/env/LEXUS/resourceDirectory}/{2}"/>-->
+                <!--                <map:read src="{naming:java:comp/env/LEXUS/resourceDirectory}/{2}"/>-->
                 <map:redirect-to uri="index.html?msg=1"/>
             </map:match>
 
