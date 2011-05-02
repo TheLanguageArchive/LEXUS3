@@ -124,8 +124,11 @@
                     <map:parameter name="service" value="servlet:db:/schema-editor/getListView.xml"
                     />
                 </map:transform>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/display-listview-1.xml"/>
                 <map:transform type="saxon" src="views/prepareViewForTransformation.xslt"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/display-listview-2.xml"/>
                 <map:transform type="saxon" src="views/DSL_2_XSLT.xslt"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/display-listview-3.xml"/>
                 <map:serialize type="xml"/>
             </map:match>
 
