@@ -167,10 +167,17 @@
                 <xsl:value-of select="@archive"/>
             </string>
             <string key="url">
-                <rr:resource-id-to-url>
-                    <xsl:copy-of select="@*"/>
-                    <xsl:attribute name="lexiconId" select="ancestor::lexus:get-lexical-entry/lexus:result/result/@lexicon"/>
-                </rr:resource-id-to-url>
+                <xsl:choose>
+                    <xsl:when test="@archive eq 'local'">
+                        <rr:resource-id-to-url>
+                            <xsl:copy-of select="@*"/>
+                            <xsl:attribute name="lexiconId" select="ancestor::lexus:get-lexical-entry/lexus:result/result/@lexicon"/>
+                        </rr:resource-id-to-url>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="url"/>
+                    </xsl:otherwise>
+                </xsl:choose>
             </string>
         </object>
     </xsl:template>

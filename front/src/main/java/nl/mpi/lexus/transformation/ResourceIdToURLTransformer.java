@@ -51,11 +51,11 @@ public class ResourceIdToURLTransformer
     private static final String MIMETYPE = "mimetype";
     private static final String TYPE = "type";
     private static final String LEXICONID = "lexiconId";
-    private Response response;
     private static final String LOCAL_COPY = "local";
     private static final String MPI = "MPI";
     private static final String RESOURCES_URI = "resources-uri";
     private static final String LOCAL_RESOURCES_FOLDER = "local-resources-folder";
+    private Response response;
     private Parameters par;
     private Map objectModel;
     private String resources_uri = "";

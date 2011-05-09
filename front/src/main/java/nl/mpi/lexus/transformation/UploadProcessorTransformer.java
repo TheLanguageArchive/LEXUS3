@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import javax.activation.MimetypesFileTypeMap;
 import mpi.bcarchive.typecheck.FileType;
+import nl.mpi.lexus.resource.ResourceType;
 import org.apache.avalon.framework.parameters.ParameterException;
 
 import org.apache.avalon.framework.parameters.Parameters;
@@ -36,18 +37,18 @@ import org.xml.sax.helpers.AttributesImpl;
 public class UploadProcessorTransformer extends AbstractTransformer {
 
     // Identifies the namespace used for the copy transformation
-    public static final String PROCESS_UPLOAD_NS =
+    private static final String PROCESS_UPLOAD_NS =
             "http://www.mpi.nl/lexus/process-upload/1.0";
     // The file element that holds the source
-    public static final String TO_RESOURCE_ELEMENT = "to-resource";
+    private static final String TO_RESOURCE_ELEMENT = "to-resource";
     
     // Attributes
-    public static final String VALUE_ATTRIBUTE = "value";
-    public static final String ARCHIVE_ATTRIBUTE = "archive";
-    public static final String FRAGMENTIDENTIFIER_ATTRIBUTE = "fragmentIdentifier";
-    public static final String URL_ATTRIBUTE = "url";
-    public static final String MIMETYPE_ATTRIBUTE = "mimetype";
-    public static final String TYPE_ATTRIBUTE = "type";
+    private static final String VALUE_ATTRIBUTE = "value";
+    private static final String ARCHIVE_ATTRIBUTE = "archive";
+    private static final String FRAGMENTIDENTIFIER_ATTRIBUTE = "fragmentIdentifier";
+    private static final String URL_ATTRIBUTE = "url";
+    private static final String MIMETYPE_ATTRIBUTE = "mimetype";
+    private static final String TYPE_ATTRIBUTE = "type";
 
     // Output elements
     private static final String RESOURCE_ELEMENT_NAMESPACE = "";
@@ -57,11 +58,6 @@ public class UploadProcessorTransformer extends AbstractTransformer {
     private final String USER_RESOURCES_FOLDER_PARAMETERS = "user-resources-folder";
 
     private static final String ARCHIVE_LOCAL = "local";
-
-    private static final String TYPE_VIDEO = "video";
-    private static final String TYPE_AUDIO = "audio";
-    private static final String TYPE_IMAGE = "image";
-    private static final String TYPE_URL = "url";
 
     private String usersResourcesFolder = "";
     private Map objectModel;
@@ -134,7 +130,7 @@ public class UploadProcessorTransformer extends AbstractTransformer {
                 tf.delete();
 
                 /* Determine general type */
-                type = determineType(mimeType);
+                type = ResourceType.determineType(mimeType);
 
                 /* Add the attributes. */
                 AttributesImpl attr = new AttributesImpl();
@@ -188,22 +184,4 @@ public class UploadProcessorTransformer extends AbstractTransformer {
         }
     }
 
-    
-    /* This determines the general type (?) according to mimetype.
-        HHV: It's a bit limited I suspect, copied it from nl.mpi.lexicon.domain.LMF.instance.Resource. */
-    private String determineType(String mimeType) {
-
-        if (mimeType.startsWith("video/")) {
-            return TYPE_VIDEO;
-        } else if (mimeType.startsWith("audio/")) {
-            return TYPE_AUDIO;
-        } else if (mimeType.startsWith("image/")) {
-            return TYPE_IMAGE;
-        } else if (mimeType.equals("application/smil+xml")) {
-            return TYPE_VIDEO;
-        } else if (mimeType.equals("application/ogg")) {
-            return TYPE_AUDIO;
-        }
-        return TYPE_URL;
-    }
 }

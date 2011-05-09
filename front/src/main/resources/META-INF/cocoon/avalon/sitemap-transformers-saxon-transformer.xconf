@@ -44,5 +44,12 @@
         
         <map:transformer name="resource-resolver" src="nl.mpi.lexus.transformation.ResourceIdToURLTransformer"
             logger="sitemap.transformer.resource-resolver"/>
+        
+        
+        <map:transformer name="imdi-archive" src="nl.mpi.lexus.transformation.ImdiArchiveTransformer"
+            logger="sitemap.transformer.imdi-archive">
+<!--            <eaf-handler>${env.LEXUS/EAF-Handler}</eaf-handler>-->
+        </map:transformer>
+        
     </map:transformers>
 </map:components>
