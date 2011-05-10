@@ -41,7 +41,6 @@ public class UploadProcessorTransformer extends AbstractTransformer {
             "http://www.mpi.nl/lexus/process-upload/1.0";
     // The file element that holds the source
     private static final String TO_RESOURCE_ELEMENT = "to-resource";
-    
     // Attributes
     private static final String VALUE_ATTRIBUTE = "value";
     private static final String ARCHIVE_ATTRIBUTE = "archive";
@@ -49,16 +48,13 @@ public class UploadProcessorTransformer extends AbstractTransformer {
     private static final String URL_ATTRIBUTE = "url";
     private static final String MIMETYPE_ATTRIBUTE = "mimetype";
     private static final String TYPE_ATTRIBUTE = "type";
-
     // Output elements
     private static final String RESOURCE_ELEMENT_NAMESPACE = "";
     private static final String RESOURCE_ELEMENT = "resource";
 
     /* Parameter for the transformer */
     private final String USER_RESOURCES_FOLDER_PARAMETERS = "user-resources-folder";
-
     private static final String ARCHIVE_LOCAL = "local";
-
     private String usersResourcesFolder = "";
     private Map objectModel;
 
@@ -95,7 +91,7 @@ public class UploadProcessorTransformer extends AbstractTransformer {
             String tmpFile = (String) session.getAttribute(id);
             try {
                 tf = new File(tmpFile);
-            } catch(Exception ioex) {
+            } catch (Exception ioex) {
                 getLogger().error("Failed to access uploaded file " + tmpFile);
             }
             if (null != tf) {
@@ -110,11 +106,10 @@ public class UploadProcessorTransformer extends AbstractTransformer {
 
                 /* determine mimetype */
                 FileType ft = new FileType();
-                FileInputStream tmpStr;
+                FileInputStream tmpStr = null;
                 try {
                     tmpStr = new FileInputStream(tmpFile);
                     String str = ft.checkStream(tmpStr, fileName);
-                    tmpStr.close();
                     mimeType = FileType.resultToMimeType(str);
                     if (mimeType == null) {
                         //We switch to the 'standard' java mime type maper here
@@ -124,10 +119,20 @@ public class UploadProcessorTransformer extends AbstractTransformer {
                     }
                 } catch (Exception ex) {
                     getLogger().error("Failed to establish mimetype: " + ex.getLocalizedMessage());
+                } finally {
+                    if (null != tmpStr) {
+                        try {
+                            tmpStr.close();
+                        } catch (IOException ex) {
+                            Logger.getLogger(UploadProcessorTransformer.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
                 }
 
                 /* Delete the file from scratch area. */
-                tf.delete();
+                if (!tf.delete()) {
+                    // Ignore it, it's only a temp file.
+                }
 
                 /* Determine general type */
                 type = ResourceType.determineType(mimeType);
@@ -183,5 +188,4 @@ public class UploadProcessorTransformer extends AbstractTransformer {
             }
         }
     }
-
 }

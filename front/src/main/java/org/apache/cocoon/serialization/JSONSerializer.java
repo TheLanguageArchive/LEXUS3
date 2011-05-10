@@ -22,8 +22,6 @@ package org.apache.cocoon.serialization;
 //import org.apache.avalon.framework.configuration.Configuration;
 //import org.apache.avalon.framework.configuration.ConfigurationException;
 //import org.apache.cocoon.CascadingIOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.Attributes;
@@ -308,7 +306,7 @@ public class JSONSerializer extends AbstractTextSerializer {
                 write(",");
             } else if (!isNotFirst.empty()) {
                 isNotFirst.pop();
-                isNotFirst.push(new Integer(1));
+                isNotFirst.push(Integer.valueOf(1));
             }
             if (e.key != null) {
                 // sanity checking is done before e.key is set

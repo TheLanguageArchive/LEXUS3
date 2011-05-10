@@ -68,7 +68,7 @@ public class JSONGenerator extends ServiceableGenerator implements CacheableProc
     private String requestParameter;
     private Boolean useNamespace;
     private String rootElement;
-    protected static AttributesImpl attributes;
+    private AttributesImpl attributes;
     private String jsonSource;
     private JSONValidity validity;
 
@@ -91,9 +91,6 @@ public class JSONGenerator extends ServiceableGenerator implements CacheableProc
      */
     public void generate()
             throws SAXException {
-        final Request request = ObjectModelHelper.getRequest(objectModel);
-        final AttributesImpl attr = new AttributesImpl();
-
         try {
             getLogger().debug("JSON source =" + jsonSource);
             JSONObject json = new JSONObject(jsonSource);

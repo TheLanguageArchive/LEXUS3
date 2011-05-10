@@ -14,7 +14,6 @@ import org.apache.cocoon.environment.ObjectModelHelper;
 import org.apache.cocoon.environment.Redirector;
 import org.apache.cocoon.environment.Request;
 import org.apache.cocoon.environment.SourceResolver;
-import org.apache.cocoon.xml.AttributesImpl;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,8 +40,8 @@ public class JSONField extends AbstractAction {
     public static final String SITEMAPPARAMETER = "sitemap-parameter";
 
     private String requestParameter;
-    private String jsonParameter;
 
+    @Override
     public Map act(Redirector redirector,
             SourceResolver resolver,
             Map objectModel,
@@ -56,13 +55,12 @@ public class JSONField extends AbstractAction {
             String jsonField = params.getParameter(JSONFIELD);
             String sitemapParameter = params.getParameter( SITEMAPPARAMETER, jsonField);
             final Request request = ObjectModelHelper.getRequest(objectModel);
-            final AttributesImpl attr = new AttributesImpl();
             String jsonSource = request.getParameter(jsonParameter);
             getLogger().debug(JSONField.class + ": JSON source =" + jsonSource);
             JSONObject json = new JSONObject(jsonSource);
             String field = json.getJSONObject("parameters").getString(jsonField);
             if (field.startsWith("uuid:")) field = field.substring(5);
-            sitemapParams.put(jsonField, field);
+            sitemapParams.put(sitemapParameter, field);
         } catch (JSONException ex) {
             Logger.getLogger(JSONField.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParameterException ex) {

@@ -56,7 +56,6 @@ public class ResourceIdToURLTransformer
     private static final String RESOURCES_URI = "resources-uri";
     private static final String LOCAL_RESOURCES_FOLDER = "local-resources-folder";
     private Response response;
-    private Parameters par;
     private Map objectModel;
     private String resources_uri = "";
     private String local_folder = "";
@@ -65,8 +64,6 @@ public class ResourceIdToURLTransformer
 
     public void setup(SourceResolver resolver, Map objectModel, String src, Parameters par)
             throws ProcessingException, SAXException, IOException {
-        response = ObjectModelHelper.getResponse(objectModel);
-        this.par = par;
         if (null != par.getParameter(RESOURCES_URI, null)) {
             resources_uri = par.getParameter(RESOURCES_URI, "");
         }
