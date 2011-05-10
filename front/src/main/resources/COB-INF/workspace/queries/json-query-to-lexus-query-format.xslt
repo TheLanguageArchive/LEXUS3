@@ -62,7 +62,7 @@
             <!-- If a start character was chosen in the UI, add a datacategory element for it,
                 match the first datacategory element used in the list view. -->
             <xsl:if test="$startLetter ne ''">
-                <datacategory schema-ref="" ref="lexus:first-datacategory-in-listview" name=""
+                <datacategory schema-ref="" ref="lexus:start-letter-search" name=""
                     value="{$startLetter}" condition="begins with"
                     negation="false"/>
             </xsl:if>

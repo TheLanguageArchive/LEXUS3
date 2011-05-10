@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:lexus="http://www.mpi.nl/lexus" version="2.0">
+    xmlns:lexus="http://www.mpi.nl/lexus"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    version="2.0">
 
 
     <!--
@@ -153,18 +155,7 @@
                             </xsl:if>
                         </xsl:for-each>
                         <xsl:text>]</xsl:text>
-                    </xsl:if><!--
-                    <xsl:text>
-                        let $d := ($l//data[@schema-ref eq '</xsl:text><xsl:value-of select="$firstDC/container/@id"/><xsl:text>'])[1]
-                        order by </xsl:text>
-                        <xsl:choose>
-                            <xsl:when test="$firstDC/container/@sort-order">
-                                <xsl:text>$d/@sort-key</xsl:text>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:text>$d/value</xsl:text> 
-                            </xsl:otherwise>
-                        </xsl:choose>--> 
+                    </xsl:if>
                     <xsl:text>
                         return $l
                     }                
@@ -175,12 +166,12 @@
     </xsl:template>
 
     <!--
-        StartLetter searching is a special simple case.
+        StartLetter searching is a special simple case. 
         -->
     <xsl:template match="datacategory[@ref eq 'lexus:start-letter-search']" mode="build-query"  priority="1">
-        <xsl:param name="firstDC"/>
-        <xsl:param name="matchText"/>
-        <xsl:text>.//data[@schema-ref eq '</xsl:text><xsl:value-of select="$firstDC/container/@id"/><xsl:text>' and </xsl:text>
+        <xsl:param name="firstDC" as="node()*" />
+        <xsl:param name="matchText" as="xs:string" />
+        <xsl:text>.//data[@schema-ref eq &quot;</xsl:text><xsl:value-of select="$firstDC/container/@id"/><xsl:text>&quot; and </xsl:text>
         <!-- Now we either check the @start-letter or the first character of the value element -->
         <xsl:choose>
             <xsl:when test="$firstDC/container/@sort-order">
@@ -197,6 +188,8 @@
         .//data[@schema-ref eq "uuid:6e1f2b5f-778e-4940-b054-dc8f1e0d2dec" and value eq "test"]
         -->
     <xsl:template match="datacategory" mode="build-query">
+        <xsl:param name="firstDC" as="node()*" />
+        <xsl:param name="matchText" as="xs:string" />
         <xsl:text>.//data[@schema-ref eq &quot;</xsl:text><xsl:value-of select="@schema-ref"/><xsl:text>&quot;</xsl:text>
         <xsl:apply-templates select="." mode="condition"/>
         <xsl:text>]
@@ -204,7 +197,10 @@
         <xsl:if test="datacategory">
             <xsl:text> and
                 (</xsl:text>
-            <xsl:apply-templates select="datacategory" mode="build-query"/>
+            <xsl:apply-templates select="datacategory" mode="build-query">                
+                <xsl:with-param name="firstDC" select="$firstDC"/>
+                <xsl:with-param name="matchText" select="$matchText"/>
+            </xsl:apply-templates>
             <xsl:text>)</xsl:text>
         </xsl:if>
     </xsl:template>
