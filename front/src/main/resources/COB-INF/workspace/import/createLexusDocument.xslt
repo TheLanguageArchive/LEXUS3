@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl" xmlns:lexus="http://www.mpi.nl/lexus"
-    xmlns:mdf="http://lexus.mpi.nl/datcat/mdf/"
-    xmlns:ex="http://apache.org/cocoon/exception/1.0" xmlns:util="java:java.util.UUID"
-    exclude-result-prefixes="#all" version="2.0">
+    xmlns:mdf="http://lexus.mpi.nl/datcat/mdf/" xmlns:ex="http://apache.org/cocoon/exception/1.0"
+    xmlns:util="java:java.util.UUID" exclude-result-prefixes="#all" version="2.0">
     <xd:doc scope="stylesheet">
         <xd:desc>
             <xd:p><xd:b>Created on:</xd:b> Jan 6, 2011</xd:p>
@@ -11,7 +10,7 @@
             <xd:p/>
             <xd:p>Create an id for the lexus:lexus, lexus:meta and lexus:lexicon elements. Also, add
                 ids to all the lexical entries, containers and data elements in the lexicon,
-                existing ids are preserved. Add owner and user information to the meta
+                existing ids are NOT preserved. Add owner and user information to the meta
                 element.</xd:p>
         </xd:desc>
     </xd:doc>
@@ -19,20 +18,12 @@
 
     <!--
         Define id for the lexus, meta and lexicon elements, overwriting existing @id attributes.
-        If lexus:meta has an id attribute that starts with 'uuid:', use that, otherwise generate a new id.
         -->
     <xsl:template match="lexus:import-lexicon">
         <xsl:variable name="lexiconId">
-            <xsl:choose>
-                <xsl:when
-                    test="starts-with(lexus:meta[@id], 'uuid:') and (string-length(lexus:meta[@id]) gt 5)">
-                    <xsl:value-of select="lexus:meta[@id]"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="concat('uuid:',util:toString(util:randomUUID()))"/>
-                </xsl:otherwise>
-            </xsl:choose>
+            <xsl:value-of select="concat('uuid:',util:toString(util:randomUUID()))"/>
         </xsl:variable>
+
         <lexus id="{$lexiconId}" xmlns="http://www.mpi.nl/lexus">
             <xsl:apply-templates select="lexus:meta | lexus:lexicon">
                 <xsl:with-param name="lexiconId" select="$lexiconId"/>
@@ -82,39 +73,37 @@
     <!--
         Add @type='lexical-entry' to second lexus:container.
     -->
-    <xsl:template match="lexus:container[count(ancestor::lexus:container) eq 1]" mode="meta" priority="2">
+    <xsl:template match="lexus:container[count(ancestor::lexus:container) eq 1]" mode="meta"
+        priority="2">
         <xsl:copy>
-            <xsl:apply-templates select="@*"/>
+            <xsl:apply-templates select="@*[local-name() ne 'id']"/>
             <xsl:attribute name="type" select="'lexical-entry'"/>
-            <xsl:if test="not(@id)">
-                <xsl:attribute name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
-            </xsl:if>
+            <xsl:attribute name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
+
             <xsl:apply-templates select="node()" mode="meta"/>
         </xsl:copy>
     </xsl:template>
     <!--
-        Add @type and possibly @id to lexus:container.
+        Add @type and @id to lexus:container.
     -->
     <xsl:template match="lexus:container" mode="meta" priority="1">
         <xsl:copy>
-            <xsl:apply-templates select="@*"/>
-            <xsl:if test="not(@id)">
-                <xsl:attribute name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
-            </xsl:if>
+            <xsl:apply-templates select="@*[local-name() ne 'id']"/>
+            <xsl:attribute name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
+
             <xsl:attribute name="type" select="'container'"/>
             <xsl:apply-templates select="node()" mode="meta"/>
         </xsl:copy>
     </xsl:template>
     <!--
-        Create lexus:container with @type and possibly @id for lexus:datacategory.
+        Create lexus:container with @type and @id for lexus:datacategory.
     -->
     <xsl:template match="lexus:datacategory" mode="meta" priority="1">
         <lexus:container>
-            <xsl:apply-templates select="@*"/>
+            <xsl:apply-templates select="@*[local-name() ne 'id']"/>
             <xsl:attribute name="type" select="'data'"/>
-            <xsl:if test="not(@id)">
-                <xsl:attribute name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
-            </xsl:if>
+            <xsl:attribute name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
+
             <xsl:if test="lexus:value">
                 <lexus:valuedomain>
                     <xsl:apply-templates select="lexus:value" mode="meta"/>
@@ -147,16 +136,15 @@
             <xsl:apply-templates select="lexus:lexical-entry" mode="add-ids"/>
         </xsl:copy>
     </xsl:template>
-    
+
     <!--
         Add missing @id attributes.
     -->
     <xsl:template match="lexus:container|lexus:data|lexus:lexical-entry" mode="add-ids">
         <xsl:copy>
-            <xsl:apply-templates select="@*"/>
-            <xsl:if test="not(@id)">
-                <xsl:attribute name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
-            </xsl:if>
+            <xsl:apply-templates select="@*[local-name() ne 'id']"/>
+            <xsl:attribute name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
+
             <xsl:apply-templates select="node()" mode="add-ids"/>
         </xsl:copy>
     </xsl:template>
