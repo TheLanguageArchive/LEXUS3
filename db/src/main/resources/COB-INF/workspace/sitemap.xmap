@@ -163,9 +163,9 @@
                     <map:parameter name="username" value="${xmldb.rest.username}"/>
                     <map:parameter name="password" value="${xmldb.rest.password}"/>
                 </map:transform>
-                <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/back-create-lexicon-2.xml"/>
+                <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
                 <map:transform type="saxon" src="lexicon/getSavedLexicon.xslt">
                     <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
                     <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>

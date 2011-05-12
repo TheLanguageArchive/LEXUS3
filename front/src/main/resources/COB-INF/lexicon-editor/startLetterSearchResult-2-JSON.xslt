@@ -192,7 +192,7 @@
             <number key="total">
                 <xsl:value-of select="count"/>
             </number>
-            <xsl:apply-templates select="startLetter, lexical-entries, startPage, searchTerm"/>
+            <xsl:apply-templates select="startLetter, lexical-entries, startPage, searchTerm, caseSensitive"/>
             <xsl:apply-templates select="lexicon">
                 <xsl:with-param name="key" select="'lexicon'"/>
             </xsl:apply-templates>
@@ -209,6 +209,18 @@
         <string key="searchTerm">
             <xsl:value-of select="."/>
         </string>
+    </xsl:template>
+    
+    <xsl:template match="caseSensitive">
+        <xsl:choose>
+            <xsl:when test=". = 'true'">
+                <true key="caseSensitive"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <false key="caseSensitive"/>
+            </xsl:otherwise>
+        </xsl:choose>
+        
     </xsl:template>
 
     <xsl:template match="startPage">

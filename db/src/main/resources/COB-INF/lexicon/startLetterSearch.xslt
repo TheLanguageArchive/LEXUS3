@@ -59,6 +59,14 @@
                    let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
                    let $startLetter := '<xsl:value-of select="replace(refiner/startLetter,'''','''''')"/>'
                    let $searchTerm := '<xsl:value-of select="replace(refiner/searchTerm,'''','''''')"/>'
+                   let $caseSensitive := <xsl:choose>
+                       <xsl:when test="refiner/caseSensitive eq 'true'">
+                           <xsl:text>true()</xsl:text>
+                       </xsl:when>
+                       <xsl:otherwise>
+                           <xsl:text>false()</xsl:text>
+                       </xsl:otherwise>
+                   </xsl:choose>
                    let $pageSize := number('<xsl:value-of select="replace(refiner/pageSize,'''','''''')"/>')
                    let $startPage := number('<xsl:value-of select="replace(refiner/startPage,'''','''''')"/>')
                    let $lexi := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[meta/users/user/@ref = $user-id]
@@ -133,6 +141,7 @@
                            lexus:lexicon($lexus),
                            element startPage { $startPage },
                            element searchTerm { $searchTerm },
+                           element caseSensitive { $caseSensitive },
                            element count { count($search-results/lexical-entries/lexical-entry) },
                            element pageSize { $pageSize },
                            element lexical-entries { subsequence($les, ($startPage * $pageSize) + 1, $pageSize) },
