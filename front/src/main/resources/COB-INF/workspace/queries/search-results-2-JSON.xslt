@@ -99,7 +99,7 @@
                 <xsl:value-of select="//refiner/pageSize"/>
             </number>
             <number key="startPage">
-                <xsl:value-of select="//refiner/position"/>
+                <xsl:value-of select="//refiner/startPage"/>
             </number>
             <object key="lexicon">
                 <string key="description"/>

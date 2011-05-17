@@ -56,7 +56,7 @@
                                     let $les := for $le in $l/lexical-entries/lexical-entry let $d := $le//data[@schema-ref eq $firstDCId] order by $d/@sort-key, $d/value return $le
                    
                                     return element lexicon { $l/@*, subsequence($les, $from, $to) }</xsl:text>
-                    <xsl:text>, element boe {$search-results} }</xsl:text>
+                    <xsl:text> }</xsl:text>
             </lexus:text>
             </lexus:query>
             </xsl:copy>
