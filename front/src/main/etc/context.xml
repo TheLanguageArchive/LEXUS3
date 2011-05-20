@@ -8,7 +8,7 @@
     <Manager pathname="" />
   -->
   <!--VICOS VARIABLES-->
-  <Environment name="VICOS/contextPath" override="false" type="java.lang.String" value="mpi/vicos"/>
+  <Environment name="VICOS/contextPath" override="false" type="java.lang.String" value="lex/vicos"/>
   <!--LEXUS Environment variables -->
   <!--ISO12620 DCR settings-->
   <!--Refers to the location of the ISO 12620 DCR -->
