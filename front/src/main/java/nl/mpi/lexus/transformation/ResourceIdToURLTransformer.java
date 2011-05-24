@@ -11,7 +11,6 @@ import nl.mpi.lexicon.domain.LMF.instance.ArchiveHandle;
 
 import org.apache.avalon.framework.parameters.Parameters;
 import org.apache.cocoon.environment.ObjectModelHelper;
-import org.apache.cocoon.environment.Response;
 import org.apache.cocoon.ProcessingException;
 import org.apache.cocoon.environment.Request;
 import org.apache.cocoon.environment.SourceResolver;
@@ -55,7 +54,6 @@ public class ResourceIdToURLTransformer
     private static final String MPI = "MPI";
     private static final String RESOURCES_URI = "resources-uri";
     private static final String LOCAL_RESOURCES_FOLDER = "local-resources-folder";
-    private Response response;
     private Map objectModel;
     private String resources_uri = "";
     private String local_folder = "";
