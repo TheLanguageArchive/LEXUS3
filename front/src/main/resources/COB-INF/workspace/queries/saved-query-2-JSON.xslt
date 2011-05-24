@@ -74,11 +74,9 @@
             <string key="type">
                 <xsl:text>lexicon</xsl:text>
             </string>
-            <xsl:if test="datacategory">
                 <array key="children">
                     <xsl:apply-templates select="datacategory"/>
                 </array>
-            </xsl:if>
         </object>
     </xsl:template>
     
@@ -106,11 +104,9 @@
             <string key="negation">
                 <xsl:value-of select="@negation"/>
             </string>
-            <xsl:if test="datacategory">
                 <array key="children">
                     <xsl:apply-templates select="datacategory"/>
                 </array>
-            </xsl:if>
         </object>
     </xsl:template>
     
