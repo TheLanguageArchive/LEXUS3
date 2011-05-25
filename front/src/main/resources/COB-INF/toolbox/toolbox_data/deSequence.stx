@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<stx:transform
+    xmlns:stx="http://stx.sourceforge.net/2002/ns"
+    xmlns:lexus="http://www.mpi.nl/lexus"
+    xmlns:chaperon="http://chaperon.sourceforge.net/schema/syntaxtree/2.0"
+    version="1.0">
+
+    <stx:template match="chaperon:lexicalEntrySequence">
+        <stx:process-children/>
+    </stx:template>
+    
+    <stx:template match="chaperon:attributeSequence">
+        <stx:process-children/>
+    </stx:template>
+
+
+    <!-- Copy everything else -->
+    
+    <stx:template match="@* | node()">
+        <stx:copy attributes="@*">
+            <stx:process-children/>
+        </stx:copy>
+    </stx:template>
+    
+</stx:transform>

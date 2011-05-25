@@ -31,7 +31,17 @@
 
     <!-- Any character . -->
     <lexeme symbol="text">
-        <cuniversal/>
+        <concat>
+            <cclass exclusive="true" minOccurs="1" maxOccurs="1">
+                <cset content="&#10;"/>
+                <cset content="\"/>
+            </cclass>
+            <cclass exclusive="true" minOccurs="0" maxOccurs="*">
+                <cset content="&#10;"/>
+            </cclass>
+            <eol/>
+        </concat>
+        <!--        <cuniversal/>-->
     </lexeme>
 
 </lexicon>
