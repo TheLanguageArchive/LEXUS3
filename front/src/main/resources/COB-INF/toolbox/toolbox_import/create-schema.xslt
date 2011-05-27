@@ -40,7 +40,7 @@
         <xsl:variable name="containerId" select="concat('uuid:',util:toString(util:randomUUID()))"/>
         <xsl:variable name="dataId" select="concat('uuid:',util:toString(util:randomUUID()))"/>
         <lexus:container description="Group added for marker '{@marker}'"
-            name="{concat(@nam, 'Group')}" type="container" id="{$containerId}"
+            name="{concat(@nam, 'Group')}" type="component" id="{$containerId}"
             mdf:marker="{@marker}">
             <lexus:container description="{@desc}" name="{@nam}" type="data" id="{$dataId}"
                 mdf:marker="{@marker}" mdf:lng="{@lng}"/>

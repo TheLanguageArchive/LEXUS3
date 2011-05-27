@@ -137,13 +137,13 @@
                     <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
                     <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
                 </map:transform>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-savelexicon-1.xml"/>
                 <map:call resource="rest"/>
                 <map:transform type="saxon" src="lexicon/getSavedLexicon.xslt">
                     <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
                     <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
                 </map:transform>
-                <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/back-pre2.xml"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-savelexicon-2.xml"/>
                 <map:call resource="rest"/>
 
                 <!--        <map:transform type="validate" src="saveLexicon/saveLexicon.xsd"/>-->

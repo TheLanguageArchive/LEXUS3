@@ -41,7 +41,8 @@
                             <container id="{concat('uuid:',util:toString(util:randomUUID()))}" name="Form"
                                 schema-ref="{$schema-form-id}">
                                 <data id="{concat('uuid:',util:toString(util:randomUUID()))}"
-                                    schema-ref="{$schema-lexeme-id}" name="Lexeme">
+                                    schema-ref="{$schema-lexeme-id}" name="Lexeme" 
+                                    reference="http://www.isocat.org/datcat/DC-1325"  registry="12620" >
                                     <value>Lexeme</value>
                                 </data>
                             </container>
@@ -79,7 +80,7 @@
                                     type="lexical-entry" admin-info="">
                                     <container id="{$schema-form-id}"
                                         description="Represents one lexical variant of the written or spoken form of the lexical entry"
-                                        name="Form" mandatory="true" multiple="false" type="container"
+                                        name="Form" mandatory="true" multiple="false" type="component"
                                         admin-info="">
                                         <container id="{$schema-lexeme-id}"
                                             description="Main word of the lexical entry"
@@ -88,7 +89,7 @@
                                     </container>
                                     <container id="{$schema-sense-id}"
                                         description="Contains attributes that describe meanings of a lexical entry"
-                                        name="Sense" mandatory="false" multiple="true" type="container"
+                                        name="Sense" mandatory="false" multiple="true" type="component"
                                         admin-info=""/>
                                 </container>
                             </container>
