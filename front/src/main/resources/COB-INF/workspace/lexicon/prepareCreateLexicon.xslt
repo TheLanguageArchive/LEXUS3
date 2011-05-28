@@ -21,16 +21,20 @@
     <xsl:param name="users-collection"/>
 
     <xsl:variable name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
-    <xsl:variable name="schema-lexicon-information-id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
+    <xsl:variable name="schema-lexicon-information-id"
+        select="concat('uuid:',util:toString(util:randomUUID()))"/>
     <xsl:variable name="lexicon-name-id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
-    <xsl:variable name="lexicon-description-id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
+    <xsl:variable name="lexicon-description-id"
+        select="concat('uuid:',util:toString(util:randomUUID()))"/>
     <xsl:variable name="lexicon-note-id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
-    <xsl:variable name="schema-lexical-entry-id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
+    <xsl:variable name="schema-lexical-entry-id"
+        select="concat('uuid:',util:toString(util:randomUUID()))"/>
     <xsl:variable name="schema-form-id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
     <xsl:variable name="schema-sense-id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
     <xsl:variable name="schema-lexeme-id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
     <xsl:variable name="listViewId" select="concat('uuid:',util:toString(util:randomUUID()))"/>
-    
+    <xsl:variable name="leViewId" select="concat('uuid:',util:toString(util:randomUUID()))"/>
+
     <xsl:template match="/data">
         <data>
             <lexus:create-lexicon>
@@ -38,16 +42,17 @@
                     <lexicon id="{$id}">
                         <lexical-entry id="{concat('uuid:',util:toString(util:randomUUID()))}"
                             schema-ref="{$schema-lexical-entry-id}">
-                            <container id="{concat('uuid:',util:toString(util:randomUUID()))}" name="Form"
-                                schema-ref="{$schema-form-id}">
+                            <container id="{concat('uuid:',util:toString(util:randomUUID()))}"
+                                name="Form" schema-ref="{$schema-form-id}">
                                 <data id="{concat('uuid:',util:toString(util:randomUUID()))}"
-                                    schema-ref="{$schema-lexeme-id}" name="Lexeme" 
-                                    reference="http://www.isocat.org/datcat/DC-1325"  registry="12620" >
+                                    schema-ref="{$schema-lexeme-id}" name="Lexeme"
+                                    reference="http://www.isocat.org/datcat/DC-1325"
+                                    registry="12620">
                                     <value>Lexeme</value>
                                 </data>
                             </container>
-                            <container id="{concat('uuid:',util:toString(util:randomUUID()))}" name="Sense"
-                                schema-ref="{$schema-sense-id}"/>
+                            <container id="{concat('uuid:',util:toString(util:randomUUID()))}"
+                                name="Sense" schema-ref="{$schema-sense-id}"/>
                         </lexical-entry>
                     </lexicon>
                     <meta id="{$id}">
@@ -80,26 +85,48 @@
                                     type="lexical-entry" admin-info="">
                                     <container id="{$schema-form-id}"
                                         description="Represents one lexical variant of the written or spoken form of the lexical entry"
-                                        name="Form" mandatory="true" multiple="false" type="component"
-                                        admin-info="">
+                                        name="Form" mandatory="true" multiple="false"
+                                        type="component" admin-info="">
                                         <container id="{$schema-lexeme-id}"
                                             description="Main word of the lexical entry"
-                                            name="Lexeme" mandatory="true" multiple="false" type="data"
-                                            admin-info=""/>
+                                            name="Lexeme" mandatory="true" multiple="false"
+                                            type="data" admin-info=""/>
                                     </container>
                                     <container id="{$schema-sense-id}"
                                         description="Contains attributes that describe meanings of a lexical entry"
-                                        name="Sense" mandatory="false" multiple="true" type="component"
-                                        admin-info=""/>
+                                        name="Sense" mandatory="false" multiple="true"
+                                        type="component" admin-info=""/>
                                 </container>
                             </container>
                         </schema>
-                        <views listView="{$listViewId}">
-                            <view  id="{$listViewId}" type="dsl_view" isBranch="true" name="List view" description="This view is the list view.">
-                                <style isBranch="false" />
+                        <views listView="{$listViewId}" lexicalEntryView="{$leViewId}">
+                            <view id="{$listViewId}" type="dsl_view" isBranch="true"
+                                name="List view" description="Created by Lexus.">
+                                <style isBranch="false"/>
                                 <structure isBranch="true">
-                                    <show optional="false" isBranch="true" type="dsl_show" name="Container">
-                                        <data isBranch="false" type="data category" name="Lexeme" id="{$schema-lexeme-id}"/>
+                                    <show optional="false" isBranch="true" type="dsl_show"
+                                        name="Container">
+                                        <data isBranch="false" type="data category" name="Lexeme"
+                                            id="{$schema-lexeme-id}"/>
+                                    </show>
+                                </structure>
+                            </view>
+                            <view id="{$leViewId}" isBranch="true" name="Lexical Entry View"
+                                description="Created by Lexus." type="dsl_view">
+                                <style type="dsl_style">
+                                    body {
+                                        background-color : #333333;
+                                    }
+                                    .lexeme {
+                                        font-size : 20pt;
+                                        color : grey;
+                                    }</style>
+                                <structure isBranch="true" type="dsl_structure">
+                                    <show type="dsl_show" name="Decorator" 
+                                        isBranch="true" dsl_class="lexeme" optional="false"
+                                        block="false" localStyle="false">
+                                        <data isBranch="false" type="data category" name="Lexeme"
+                                            id="{$schema-lexeme-id}"/>
                                     </show>
                                 </structure>
                             </view>
