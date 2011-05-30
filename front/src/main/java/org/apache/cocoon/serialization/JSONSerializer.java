@@ -368,7 +368,7 @@ public class JSONSerializer extends AbstractTextSerializer {
             } else {
                 throw new JSONSerializationException("Element name not one of object, array, number, string, false, true or null."+", preceding text=" + debugText);
             }
-            objectStack.push(new Integer(type));
+            objectStack.push(Integer.valueOf(type));
             isNotFirst.push(Integer.valueOf(0));
         }
     }
