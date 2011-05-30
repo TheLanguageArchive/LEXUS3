@@ -33,7 +33,8 @@
 
     <artifactId>webapp</artifactId>
     <name>webapp</name>
-    <version>3.0-SNAPSHOT-r${buildNumber}</version>
+    <version>3.0-SNAPSHOT</version>
+    <!-- -r${buildNumber} -->
 
     <dependencies>
         <dependency>
