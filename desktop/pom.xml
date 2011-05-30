@@ -39,10 +39,47 @@
     <dependency>
       <groupId>nl.mpi.lexus</groupId>
       <artifactId>webapp</artifactId>
-      <version>3.0-SNAPSHOT-r${buildNumber}</version>
+      <version>3.0-SNAPSHOT</version>
+      <type>war</type>
     </dependency>
   </dependencies>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+  
+  
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/src/main/resources</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/../webapp/target/</directory>
+                                    <filtering>false</filtering>
+                                    <includes>
+                                        <include>webapp-${project.version}.war</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
