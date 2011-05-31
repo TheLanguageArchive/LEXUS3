@@ -166,8 +166,7 @@
         <module>display</module>
         <!--        <module>VicosApp</module>-->
         <!--    <module>bl</module> -->
-<!--    <module>desktop</module>
-    <module>desktopapp</module>-->
+	      <module>desktop</module>
   </modules>
 
     <build>
