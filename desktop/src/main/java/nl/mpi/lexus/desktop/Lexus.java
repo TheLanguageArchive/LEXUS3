@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
+import org.basex.api.jaxrx.JaxRxServer;
 
 
 import org.mortbay.jetty.Connector;
@@ -23,6 +24,7 @@ import org.mortbay.jetty.webapp.WebAppContext;
 public class Lexus {
 
     private static Server server = null;
+    private static org.basex.api.jaxrx.JaxRxServer db = null;
     private static Desktop desktop = null;
 
     public static void main(String[] args) {
@@ -58,13 +60,15 @@ public class Lexus {
 
         // Create a popup menu components
         MenuItem aboutItem = new MenuItem("About");
-        MenuItem cb1 = new MenuItem("Start");
+        MenuItem start = new MenuItem("Start");
+        MenuItem open = new MenuItem("Open Lexus");
         MenuItem exitItem = new MenuItem("Exit");
 
         //Add components to popup menu
         popup.add(aboutItem);
         popup.addSeparator();
-        popup.add(cb1);
+        popup.add(start);
+        popup.add(open);
         popup.addSeparator();
         popup.add(exitItem);
 
@@ -95,12 +99,20 @@ public class Lexus {
             }
         });
 
-        cb1.addActionListener(new ActionListener() {
+        start.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 startDb();
                 startWebserver();
+                openLexus();
+            }
+        });
+        
+        open.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 openLexus();
             }
         });
@@ -116,6 +128,9 @@ public class Lexus {
                 } catch (Exception ex) {
                     Logger.getLogger(Lexus.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                
+                db.quit(true);
+                
                 tray.remove(trayIcon);
                 System.exit(0);
             }
@@ -137,6 +152,7 @@ public class Lexus {
 
     // Start the database.
     protected static Boolean startDb() {
+        db = new JaxRxServer();
         return true;
     }
 
@@ -171,7 +187,7 @@ public class Lexus {
     protected static Boolean openLexus() {
         if (null != desktop) {
             try {
-                URI lexusHome = new java.net.URI("http://localhost:8080/");
+                URI lexusHome = new java.net.URI("http://localhost:8080/index.html");
                 System.out.println("lexusHome=" + lexusHome.toString());
                 desktop.browse(lexusHome);
             } catch (URISyntaxException ex) {
