@@ -34,7 +34,7 @@
                 <map:generate src="cocoon:/getSortOrders"/>
                 <map:transform type="saxon" src="sortOrders-2-JSON.xslt"/>
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/front-so-2.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-so-5.xml"/>
                 <map:serialize type="json"/>
             </map:match>
 
@@ -42,7 +42,7 @@
                 <map:generate src="cocoon:/getSortOrders"/>
                 <map:transform type="saxon" src="sortOrders-2-JSON.xslt"/>
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/front-so-2.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-so-4.xml"/>
                 <map:serialize type="json"/>
             </map:match>
 
@@ -51,7 +51,7 @@
                 <map:generate src="cocoon:/getSortOrders"/>
                 <map:transform type="saxon" src="sortOrder-2-JSON.xslt"/>
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/front-so-2.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-so-3.xml"/>
                 <map:serialize type="json"/>
             </map:match>
 
