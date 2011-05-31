@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+    title="About Lexus" creationComplete="init()"
+    showCloseButton="true"
+    close="PopUpManager.removePopUp(this);" width="300" height="400">
+
+    <mx:Script>
+        <![CDATA[
+			import mx.core.FlexGlobals;
+			import mx.events.ValidationResultEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			import nl.mpi.lexus.YesNo;
+			import nl.mpi.lexus.service.LexusService;
+                    
+            [Bindable]
+            public var lexusInfo:XML;
+            
+			[Bindable][Embed(source="../assets/images/MPI-logo.gif")] public var MPIlogo:Class;
+			
+			private var lexusService:LexusService = new LexusService();
+
+            private function onKeyUpOk(event:KeyboardEvent):void {
+            	//Enter pressed
+            	if (event.keyCode == 13)
+	               PopUpManager.removePopUp(this);
+            }
+			
+			
+			public function init():void {
+				lexusService.send("aboutLexus.xml", null, "", loadAboutLexus);
+				okBtn.setFocus();
+			}
+			
+			private function loadAboutLexus(event:ResultEvent):void {
+				lexusInfo = XML(event.result);
+			}
+        ]]>
+    </mx:Script>
+
+    <mx:Canvas width="100%" height="100%">
+	     <mx:VBox width="100%" height="100%" horizontalAlign="center" textAlign="center" borderColor="green"> <!--  borderThickness="1" -->
+	     	<mx:Image source="{MPIlogo}"/>
+ 			<mx:HBox verticalAlign="middle">
+		     	<mx:Image source="{FlexGlobals.topLevelApplication.lexusIconSmall}"/>
+ 				<mx:Text styleName="aboutLexusName" text="Lexus" />
+ 			</mx:HBox>
+	     	<mx:HBox styleName="aboutLexusVersion">
+	     		<mx:Text text="Version {lexusInfo.version}"/> 
+				<mx:Text text="(revision {lexusInfo.scm.revision})"/>
+	     	</mx:HBox>
+	     	<mx:TextArea styleName="aboutLexusDescription" width="100%" height="100%" textAlign="center"
+	     		text="Lexus is a lexicon tool developed by The Language Archive at the Max Planck Institute for Psycholinguistics (MPI), Nijmegen, The Netherlands."/>
+     		<mx:Text styleName="aboutLexusExternalCredits">
+     			<mx:htmlText>
+     				<![CDATA[Some of the icons are from <a href="http://iconza.com/" target="_blank">http://iconza.com/</a>]]>
+     			</mx:htmlText>
+     		</mx:Text>
+	     </mx:VBox>
+    </mx:Canvas>
+	
+    <mx:ControlBar horizontalAlign="center" width="100%">
+        <mx:Button id="okBtn" label="Ok" click="PopUpManager.removePopUp(this);" keyUp="onKeyUpOk(event)" enabled="true"/>
+    </mx:ControlBar>
+	
+</mx:TitleWindow>

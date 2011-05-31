@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:view="nl.mpi.lexus.view.*">
+	
+	<mx:Script>
+		
+		<![CDATA[
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			
+			import nl.mpi.lexus.event.ValueChangeEvent;
+			
+			public static const NODE_EDITOR_FINISHED:String = "NODEEDITOREVENT.FINISHED";
+			public static const NODE_EDITOR_CANCELLED:String = "NODEEDITOREVENT.CANCELLED";
+
+			[Bindable] protected var _value:Object;
+			
+			protected function hide(object:Object):void {
+				object.includeInLayout = false;
+				object.visible = false;
+			}
+			protected function reveal(object:Object):void {
+				object.includeInLayout = true;
+				object.visible = true;
+			}
+			
+			override public function set data(value:Object):void {      
+				if(value != null)  {
+					super.data = value;
+					_value = value;
+				}
+			}
+			
+			override public function get data():Object {
+				return _value;
+			}
+			
+			/* Send a message to the vieweditor that the user finished the operation. */
+			protected function done():void {
+				var event:Event = new ValueChangeEvent(NODE_EDITOR_FINISHED, this);
+				this.dispatchEvent(event);
+				PopUpManager.removePopUp(this);
+			}
+			
+			/* Send a message to the vieweditor that the user cancelled the operation. */
+			protected function quit():void {
+				var event:Event = new ValueChangeEvent(NODE_EDITOR_CANCELLED, this);
+				this.dispatchEvent(event);
+				PopUpManager.removePopUp(this);
+			}
+		]]>     
+	</mx:Script>
+	
+</mx:Panel>

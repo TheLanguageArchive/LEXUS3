@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+		   xmlns:mpi="nl.mpi.lexus.*"
+		   width="100%" height="100%"
+		   initialize="init();"
+		   xmlns:local="*" xmlns:mx1="library://ns.adobe.com/flex/mx"
+		   xmlns:event="nl.mpi.lexus.event.*"
+		   xmlns:view="nl.mpi.lexus.view.*">
+	
+	<mx:Script>
+		<![CDATA[			
+			
+			import mx.binding.utils.BindingUtils;
+			import mx.collections.ArrayCollection;
+			import mx.collections.ICollectionView;
+			import mx.collections.IViewCursor;
+			import mx.collections.XMLListCollection;
+			import mx.controls.Alert;
+			import mx.controls.Label;
+			import mx.controls.Text;
+			import mx.controls.textClasses.TextRange;
+			import mx.core.Container;
+			import mx.core.FlexGlobals;
+			import mx.core.IUIComponent;
+			import mx.events.CloseEvent;
+			import mx.events.CollectionEvent;
+			import mx.events.DragEvent;
+			import mx.events.IndexChangedEvent;
+			import mx.events.ListEvent;
+			import mx.events.MenuEvent;
+			import mx.managers.DragManager;
+			import mx.managers.PopUpManager;
+			import mx.messaging.SubscriptionInfo;
+			import mx.rpc.events.ResultEvent;
+			
+			import nl.mpi.lexus.AutoSizeTree;
+			import nl.mpi.lexus.LexusUtil;
+			import nl.mpi.lexus.YesNo;
+			import nl.mpi.lexus.event.ViewChangeEvent;
+			import nl.mpi.lexus.service.LexusService;
+			
+			[Bindable] public var lexiconId:String = "";
+			[Bindable] public var editable:Boolean = false;
+			[Bindable] private var views:XML;
+			
+			private var lexusView:XML;
+			
+			private var unsavedViewIndex:int = -1;
+			
+			[Bindable] private var _schemaElementsTree:AutoSizeTree = null;
+			
+			
+			// Define public setter. 
+			public function get schemaElementsTree():AutoSizeTree {
+				return _schemaElementsTree;
+			}
+			
+			// Define public setter. 
+			public function set schemaElementsTree(value:AutoSizeTree):void {
+				_schemaElementsTree = value;
+			}
+			
+			public function init():void {
+				viewEditor.addEventListener(ViewChangeEvent.SAVED_VIEW, savedViewHandler);
+			}
+			
+			public function getViews():void {
+				var lexusService:LexusService = new LexusService();
+				LexusUtil.showWait(this, "Loading views");
+				FlexGlobals.topLevelApplication.enabled = false;
+				lexusService.sendXMLAndParseXML("LexusSchemaEditor/getViews.xml?lexiconId="+this.lexiconId, <dummy/>,
+					function(data:XML):void {
+						views = data;
+						FlexGlobals.topLevelApplication.enabled = true;
+						var vl:XMLList = views.view;
+						var size:int = vl.length();
+						var v:XML = vl[0];
+						if (size > 0) {
+							viewsList.selectedIndex = 0;
+							viewEditor.visible = true;
+							callLater(getView, [v]);
+						}
+						callLater(initStandardViews);
+						LexusUtil.removeWait();						
+					}
+				);
+			}
+			
+			private function initStandardViews():void {
+				/* Select proper listView and lexicalEntryView options */
+				var id:String = views.@listView;
+				var view:XMLList = views.view.(@id == id);
+				if (view.length() > 0)
+					list_view.selectedItem = view[0];
+				
+				id = views.@lexicalEntryView;
+				view = views.view.(@id == id);
+				if (view.length() > 0) {
+					lexical_entry_view.selectedItem = view[0];
+				}
+			}
+			
+			/**
+			 * Returns the icon identifying a view
+			 **/ 
+			private function getViewIcon(item:Object):Class{
+				return FlexGlobals.topLevelApplication.viewIconClass;
+			}
+			private function onViewListChange(evt:ListEvent):void {
+				var loadItem:Function = function():void {
+					var item:XML = viewsList.selectedItem as XML;
+					viewEditor.visible = true;
+					getView(item);
+					unsavedViewIndex = viewsList.selectedIndex;
+				};
+				
+				if (viewEditor.needsSave) {
+					YesNo.confirmSave("Do you want to save the view?", 
+						function(event:CloseEvent):void {
+							if (event.detail == Alert.YES) {
+								viewEditor.save();
+							}
+							else if (event.detail == Alert.NO) {
+								viewEditor.discard();
+								loadItem.call();
+							}
+						}
+					);
+				}
+				else {
+					loadItem.call();
+				}
+			}
+			
+			/*
+			 * A view has been saved by the viewEditor, the resulting view (XML) is sent to
+			 * this component through an event, so we can update the list.
+			 * This is necessary, because when a new view is saved,
+			 * it acquires an @id attribute. The @id needs to be in our list.
+			 */
+			public function savedViewHandler(event:ViewChangeEvent):void {
+				if (unsavedViewIndex != -1) {
+					viewsListDataProvider.setItemAt(event.view, unsavedViewIndex);
+					unsavedViewIndex = -1;
+				}
+			}
+			
+			private function getView(view:XML):void {
+				var lexusService:LexusService = new LexusService();
+				LexusUtil.showWait(this, "Loading view");
+				FlexGlobals.topLevelApplication.enabled = false;
+				lexusService.sendXMLAndParseXML("LexusSchemaEditor/getView.xml", view,
+					function(data:XML):void {
+						viewEditor.viewXML = data;
+						viewEditor.needsSave = false;
+						viewEditor.lexiconId = lexiconId;
+						LexusUtil.removeWait();
+						FlexGlobals.topLevelApplication.enabled = true;
+					}
+				);
+			}
+			
+			private function removeView(event:MouseEvent):void {
+				if (list_view.selectedIndex == viewsList.selectedIndex) {
+					YesNo.alert("The list view cannot be deleted. Pick another list view, then delete this view.");
+					return;
+				}
+				if (lexical_entry_view.selectedIndex == viewsList.selectedIndex) {
+					YesNo.alert("The lexical entry view cannot be deleted. Pick another lexical entry view, then delete this view.");
+					return;
+				}
+				YesNo.confirmDelete("Are you sure you want to remove this view?",
+					function(event:CloseEvent):void {
+						if (event.detail == Alert.YES) {
+							var lexusService:LexusService = new LexusService();
+							FlexGlobals.topLevelApplication.enabled = false;
+							LexusUtil.showWaitWindow("Removing view");
+							var idx:int = viewsList.selectedIndex;
+							lexusService.sendXMLAndParseXML("LexusSchemaEditor/deleteView.xml", viewsList.selectedItem as XML, function(data:XML):void { onDeleteViewResult(idx, data) });	
+						} 
+					}
+				);
+			}
+			
+			private function onDeleteViewResult(idx:int, data:XML):void {
+				var success:String = data.@success;
+				var done:Boolean = success == "true";
+				var id:String = data.view.@id;
+				if (done) {
+					// var idx:int = views.view.(@id == id).childIndex();
+					viewsListDataProvider.removeItemAt(idx);
+					var newIndex:int = idx;
+					if (newIndex >= viewsListDataProvider.length) {
+						newIndex = viewsListDataProvider.length -1;
+					}
+					if (newIndex > -1) {
+						viewsList.selectedIndex = newIndex;
+						unsavedViewIndex = newIndex;
+						getView(viewsList.selectedItem as XML);
+					}
+					else { 
+						viewEditor.visible = false;
+						unsavedViewIndex = -1;
+					}
+				}
+				FlexGlobals.topLevelApplication.enabled = true;
+				LexusUtil.removeWait();
+			}
+			
+			private function newView(event: MouseEvent):void {
+				if (viewEditor.needsSave) {
+					YesNo.confirmSave("Do you want to save the view?", 
+						function(event:CloseEvent):void {
+							if (event.detail == Alert.YES) {
+								viewEditor.save();  
+							}
+						}
+					);
+				}
+
+				var newView:XML = viewEditor.newView(this.lexiconId);
+				viewsListDataProvider.addItemAt(newView, 0);
+				viewsList.selectedIndex = 0;
+				unsavedViewIndex = viewsList.selectedIndex;
+				viewEditor.visible = true;
+			}
+			
+			protected function standard_view_changeHandler(event:ListEvent):void {
+				var lexusService:LexusService = new LexusService();
+				var sv:XML = <standardViews/>;
+				sv.@listView = list_view.selectedItem.@id;
+				sv.@lexicalEntryView = lexical_entry_view.selectedItem.@id;
+				if (sv.@listView == sv.@lexicalEntryView) {
+					YesNo.alert("List view and lexical entry view must be different.");
+					initStandardViews();
+				}
+				else {
+					lexusService.sendXMLAndParseXML(
+						"LexusSchemaEditor/saveStandardView.xml?lexiconId="+this.lexiconId, sv,
+						function(data:XML):void {
+							views.@listView = sv.@listView;
+							views.@lexicalEntryView = sv.@lexicalEntryView;
+						}
+					);
+				}
+			}
+
+		]]>
+	</mx:Script>
+	
+	<mx:Canvas id="viewEditorTab" label="View editor"  width="100%" height="100%" enabled="{editable}">
+		<mx:HBox width="100%" height="100%">
+			<mx:VBox width="15%" height="100%">
+				<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="70%" title="Available views">
+					<mpi:AutoSizeList id="viewsList" width="100%" height="100%" 
+									  dataProvider="{viewsListDataProvider}"
+									  change="onViewListChange(event)" labelField="@name"
+									  iconFunction="getViewIcon" selectedIndex="-1"/>
+					<mx:ControlBar horizontalAlign="left" width="100%">
+						<mx:Image
+							source="{FlexGlobals.topLevelApplication.addIcon}"
+							click="newView(event)" toolTip="Add view"/>
+						<mx:Image
+							source="{FlexGlobals.topLevelApplication.removeIcon}"
+							click="removeView(event)" toolTip="Remove view"/>
+					</mx:ControlBar>
+				</mx:Panel>
+				<mx:Panel width="100%" height="100%" maxHeight="160" title="Standard views">
+					<mx:VBox width="100%" height="100%">
+						<mx:Label text="List view"/>
+						<mx:ComboBox id="list_view" dataProvider="{viewsListDataProvider}" labelField="@name" change="standard_view_changeHandler(event)"/>
+					</mx:VBox>
+					<mx:VBox width="100%" height="100%">
+						<mx:Label text="Lexical entry view"/>
+						<mx:ComboBox id="lexical_entry_view" dataProvider="{viewsListDataProvider}" labelField="@name" change="standard_view_changeHandler(event)"/>
+					</mx:VBox>
+				</mx:Panel>
+			</mx:VBox>
+			<view:ViewEditor id="viewEditor" visible="false" width="85%" height="100%" schemaElementsTree="{_schemaElementsTree}"/>
+		</mx:HBox> 
+	</mx:Canvas>
+	
+	<mx:XMLListCollection id="viewsListDataProvider" source="{views.view}" />
+	<!-- Trying to be smart...
+	<mx:XMLListCollection id="listViewDataProvider" source="{views.view.(@id != views.@lexicalEntryView)}" />
+	<mx:XMLListCollection id="lexicalEntryViewDataProvider" source="{views.view.(@id != views.@listView)}" />
+	-->
+
+</mx:Canvas>
