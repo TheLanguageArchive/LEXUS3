@@ -76,7 +76,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/../target/</outputDirectory>
+                            <outputDirectory>${basedir}/target/classes/</outputDirectory>
                             <overwrite>true</overwrite>
                             <resources>
                                 <resource>
