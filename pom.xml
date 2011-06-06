@@ -254,7 +254,7 @@
         <url>scm:svn:https://svn.mpi.nl/LAT/lexus/trunk/LexusCocoon/</url>
     </scm>
 
-
+<!--
     <reporting>
         <plugins>
             <plugin>
@@ -263,7 +263,7 @@
                 <version>2.3.1</version>
             </plugin>
         </plugins>
-    </reporting>
+    </reporting>-->
 
 
 </project>
