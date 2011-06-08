@@ -25,17 +25,17 @@ import org.xml.sax.helpers.AttributesImpl;
  * Declaration in sitemap:
  * <pre>
  *  &lt;map:transformers default="xslt"&gt;
- *    &lt;map:transformer name="resource-id-to-url" src="nl.mpi.lexus.transformation.ResourceIdToURLTransformer"/&gt;
+ *    &lt;map:transformer name="lexus-resources" src="nl.mpi.lexus.transformation.ResourceIdToURLTransformer"/&gt;
  *  &lt;/map:transformers&gt;
  * </pre>
  * Usage in pipeline:
  * <pre>
- *  &lt;map:transform type="resource-id-to-url"/&gt;
+ *  &lt;map:transform type="lexus-resources"/&gt;
  * </pre>
  * It will look for elements in the "http://nl.mpi.lexus/resource-resolver"
  * namespace. The following elements are recognized (assuming xmlns:rr="http://apache.org/cocoon/resource-resolver"):
  * <dl>
- * <dt>&lt;rr:resource-id archive="MPI" value="MPI316757#" mimetype="text/x-eaf+xml" type="url" lexiconId="uuid:boe"/&gt;</dt>
+ * <dt>&lt;rr:resource-id-to-url archive="MPI" value="MPI316757#" mimetype="text/x-eaf+xml" type="url" lexiconId="uuid:boe"/&gt;</dt>
  * <dd>Adds to the element a local and/or a remote (Lamus) generated URL.</dd>
  * </dl>
  */
