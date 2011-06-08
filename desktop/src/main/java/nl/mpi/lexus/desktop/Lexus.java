@@ -8,9 +8,14 @@ import java.net.URI;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipException;
 import javax.swing.*;
+import java.security.ProtectionDomain;
+import java.util.zip.ZipFile;
+
 import org.basex.api.jaxrx.JaxRxServer;
 
+import com.google.common.io.Files;
 
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Server;
@@ -18,12 +23,12 @@ import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.webapp.WebAppContext;
 
 /**
- * Hello world!
+ * Create a system tray icon from where Lexus can be started.
  *
  */
 public class Lexus {
 
-    private static Server server = null;
+    private static Server webServer = null;
     private static org.basex.api.jaxrx.JaxRxServer db = null;
     private static Desktop desktop = null;
 
@@ -60,14 +65,12 @@ public class Lexus {
 
         // Create a popup menu components
         MenuItem aboutItem = new MenuItem("About");
-        MenuItem start = new MenuItem("Start");
-        MenuItem open = new MenuItem("Open Lexus");
+        final MenuItem open = new MenuItem("Open Lexus");
         MenuItem exitItem = new MenuItem("Exit");
 
         //Add components to popup menu
         popup.add(aboutItem);
         popup.addSeparator();
-        popup.add(start);
         popup.add(open);
         popup.addSeparator();
         popup.add(exitItem);
@@ -81,6 +84,7 @@ public class Lexus {
             return;
         }
 
+
         trayIcon.addActionListener(new ActionListener() {
 
             @Override
@@ -89,6 +93,7 @@ public class Lexus {
                         "This dialog box is run from System Tray");
             }
         });
+
 
         aboutItem.addActionListener(new ActionListener() {
 
@@ -99,21 +104,38 @@ public class Lexus {
             }
         });
 
-        start.addActionListener(new ActionListener() {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                startDb();
-                startWebserver();
-                openLexus();
-            }
-        });
-        
         open.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                openLexus();
+                if (!lexusStarted()) {
+                    open.setEnabled(false);
+                    try {
+                        startDb();
+                        try {
+                            startWebserver();
+                        } catch (URISyntaxException ex) {
+                            Logger.getLogger(Lexus.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    } catch (ZipException ex) {
+                        Logger.getLogger(Lexus.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(Lexus.class.getName()).log(Level.SEVERE, null, ex);
+                    } finally {
+                        open.setEnabled(true);
+                    }
+                }
+                if (lexusStarted()) {
+                    openLexus();
+                } else {
+                    JOptionPane.showMessageDialog(null,
+                            "Could not start Lexus because: "
+                            + (dbStarted() ? "the database could not start " : "")
+                            + (webServerStarted() ? "the webserver could not start " : "")
+                            + ".");
+                    stopLexus();
+                }
             }
         });
 
@@ -122,15 +144,9 @@ public class Lexus {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    server.stop();
-                    server.join();
-                } catch (Exception ex) {
-                    Logger.getLogger(Lexus.class.getName()).log(Level.SEVERE, null, ex);
+                if (lexusStarted()) {
+                    stopLexus();
                 }
-                
-                db.quit(true);
-                
                 tray.remove(trayIcon);
                 System.exit(0);
             }
@@ -150,6 +166,32 @@ public class Lexus {
         }
     }
 
+    private static Boolean dbStarted() {
+        return null != db;
+    }
+
+    private static Boolean webServerStarted() {
+        return null != webServer;
+    }
+
+    private static Boolean lexusStarted() {
+        return dbStarted() && webServerStarted();
+    }
+
+    private static void stopLexus() {
+        try {
+            if (webServerStarted()) {
+                webServer.stop();
+                webServer.join();
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(Lexus.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (dbStarted()) {
+            db.quit(true);
+        }
+    }
+
     // Start the database.
     protected static Boolean startDb() {
         db = new JaxRxServer();
@@ -157,26 +199,40 @@ public class Lexus {
     }
 
     // Start the webserver.
-    protected static Boolean startWebserver() {
+    protected static Boolean startWebserver() throws ZipException, IOException, URISyntaxException {
 
-        String jetty_default = new java.io.File("./start.jar").exists() ? "." : "../..";;
+        String webappFilename = "webapp-3.0-SNAPSHOT.war";
+        String jetty_default = ".";
         String jetty_home = System.getProperty("jetty.home", jetty_default);
 
-        server = new Server();
+        webServer = new Server();
+
+        ProtectionDomain domain = Lexus.class.getProtectionDomain();
+        URL location = domain.getCodeSource().getLocation();
+
 
         Connector connector = new SelectChannelConnector();
         connector.setPort(Integer.getInteger("jetty.port", 8080).intValue());
-        server.setConnectors(new Connector[]{connector});
+        webServer.setConnectors(new Connector[]{connector});
 
         WebAppContext webapp = new WebAppContext();
         webapp.setContextPath("/");
-        webapp.setWar(Lexus.class.getResource("/webapp-3.0-SNAPSHOT.war").toString());
-        //webapp.setDefaultsDescriptor(jetty_home+"/etc/webdefault.xml");
+        webapp.setServer(webServer);
+        webapp.setExtractWAR(true);
 
-        server.setHandler(webapp);
+        File tempFolder = Files.createTempDir();
+        System.out.println("tempFolder=" + tempFolder);
+        File moduleFile = new File(Lexus.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+
+        Unzip.unzip(new ZipFile(moduleFile), tempFolder, webappFilename);
+
+        File warFile = new File(tempFolder, "/" + webappFilename);
+        System.out.println("warFile=" + warFile);
+        webapp.setWar(warFile.getAbsolutePath());
+        webServer.setHandler(webapp);
+
         try {
-            server.start();
-            //    server.join();
+            webServer.start();
         } catch (Exception ex) {
             Logger.getLogger(Lexus.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -185,7 +241,7 @@ public class Lexus {
 
     // Open Lexus in the browser.
     protected static Boolean openLexus() {
-        if (null != desktop) {
+        if (null != desktop && null != webServer) {
             try {
                 URI lexusHome = new java.net.URI("http://localhost:8080/index.html");
                 System.out.println("lexusHome=" + lexusHome.toString());

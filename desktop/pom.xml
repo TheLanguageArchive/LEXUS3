@@ -40,20 +40,21 @@
         <dependency>
             <groupId>org.basex</groupId>
             <artifactId>basex</artifactId>
-            <version>6.6.2</version>
+            <version>6.6.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.basex</groupId>
             <artifactId>basex-api</artifactId>
-            <version>6.6.2</version>
+            <version>6.6.3-SNAPSHOT</version>
         </dependency>
-
+        
         <dependency>
-            <groupId>nl.mpi.lexus</groupId>
-            <artifactId>webapp</artifactId>
-            <version>3.0-SNAPSHOT</version>
-            <type>war</type>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava-io</artifactId>
+            <version>r03</version>
+            <type>jar</type>
         </dependency>
+        
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -91,11 +92,17 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+
+                    <!--<descriptors>
+                        <descriptor>src/main/assembly/lexus-desktop.xml</descriptor>
+                    </descriptors>-->
                 </configuration>
                 <executions>
                     <execution>
-                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
-                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <id>make-assembly</id>
+                        <!-- this is used for inheritance merges -->
+                        <phase>package</phase>
+                        <!-- bind to the packaging phase -->
                         <goals>
                             <goal>single</goal>
                         </goals>
