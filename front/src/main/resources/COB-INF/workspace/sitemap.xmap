@@ -311,7 +311,7 @@
 
 
 
-        <map:pipeline id="querybuilder">
+        <map:pipeline id="querybuilder" type="noncaching">
 
             <!-- 
         No idea why this is necessary, i.e. what it is used for,
