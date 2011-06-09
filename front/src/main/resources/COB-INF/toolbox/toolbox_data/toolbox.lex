@@ -28,15 +28,27 @@
             <cset content="&#10;"/>
         </cclass>
     </lexeme>
+    <lexeme symbol="lf">
+        <concat>
+            <cclass minOccurs="1" maxOccurs="1">
+                <cset content="&#13;"/>
+            </cclass>
+            <cclass minOccurs="1" maxOccurs="1">
+                <cset content="&#10;"/>
+            </cclass>
+        </concat>
+    </lexeme>
 
     <!-- Any character . -->
     <lexeme symbol="text">
         <concat>
             <cclass exclusive="true" minOccurs="1" maxOccurs="1">
+                <cset content="&#13;"/>
                 <cset content="&#10;"/>
                 <cset content="\"/>
             </cclass>
             <cclass exclusive="true" minOccurs="0" maxOccurs="*">
+                <cset content="&#13;"/>
                 <cset content="&#10;"/>
             </cclass>
             <eol/>
