@@ -114,17 +114,17 @@
                 <map:generate type="text" src="{1}">
                     <map:parameter name="encoding" value="UTF-8"/>
                 </map:generate>
-                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre-toolbox-1.xml"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-data-toolbox-1.xml"/>
                 <map:transform type="lexer" src="toolbox_data/toolbox.lex"/>
-                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre-toolbox-2.xml"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-data-toolbox-2.xml"/>
                 <map:transform type="saxon" src="toolbox_data/post-lexer.xslt"/>
-                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre-toolbox-3.xml"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-data-toolbox-3.xml"/>
                 <map:transform type="parser" src="toolbox_data/toolbox.grm"/>
-                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre-toolbox-4.xml"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-data-toolbox-4.xml"/>
                 <map:transform type="stx" src="toolbox_data/deSequence.stx"/>
-                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre-toolbox-5.xml"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-data-toolbox-5.xml"/>
                 <map:transform type="saxon" src="toolbox_data/post-parser.xslt"/>
-                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre-toolbox-6.xml"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-data-toolbox-6.xml"/>
                 <map:serialize type="xml"/>
             </map:match>
         </map:pipeline>

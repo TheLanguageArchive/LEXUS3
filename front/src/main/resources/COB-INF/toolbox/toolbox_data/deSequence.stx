@@ -3,8 +3,7 @@
     xmlns:stx="http://stx.sourceforge.net/2002/ns"
     xmlns:lexus="http://www.mpi.nl/lexus"
     xmlns:chaperon="http://chaperon.sourceforge.net/schema/syntaxtree/2.0"
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    version="1.0" xsl:version="1.0">
+    version="1.0">
 
 
     <stx:template match="chaperon:lexicalEntrySequence">

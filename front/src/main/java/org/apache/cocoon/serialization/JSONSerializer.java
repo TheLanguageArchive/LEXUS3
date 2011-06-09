@@ -83,6 +83,7 @@ public class JSONSerializer extends AbstractTextSerializer {
     /* (non-Javadoc)
      * @see org.apache.cocoon.serialization.AbstractTextSerializer#init()
      */
+    @Override
     public void init() throws Exception {
         super.init();
         this.format.put(OutputKeys.METHOD, "text");
@@ -92,6 +93,7 @@ public class JSONSerializer extends AbstractTextSerializer {
     /**
      * Set the configurations for this serializer.
      */
+    @Override
     public void configure(Configuration conf) throws ConfigurationException {
         super.configure(conf);
         this.format.put(OutputKeys.METHOD, "text");
@@ -101,6 +103,7 @@ public class JSONSerializer extends AbstractTextSerializer {
      * Set the {@link OutputStream} where the requested resource should
      * be serialized.
      */
+    @Override
     public void setOutputStream(OutputStream out) throws IOException {
         super.setOutputStream(out);
         try {
@@ -200,6 +203,7 @@ public class JSONSerializer extends AbstractTextSerializer {
     };
 
 
+    @Override
     public void startElement(String uri, String localName, String raw, Attributes a)
             throws JSONSerializationException {
         // Logger.getLogger(JSONSerializer.class.getName()).log(Level.SEVERE, "startElement " + localName + ", key=" + a.getValue("key")+", stackSize="+objectStack.size());

@@ -83,6 +83,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>net.sf.joost</groupId>
+            <artifactId>joost</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+        <dependency>
             <groupId>net.sf.saxon</groupId>
             <artifactId>saxon</artifactId>
             <version>9.1.0.8</version>
@@ -202,9 +207,80 @@
                             </excludes>
                             <followSymlinks>false</followSymlinks>
                         </fileset>
+                        <fileset>
+                            <directory>debug-info</directory>
+                            <excludes>
+                                <exclude>.svn</exclude>
+                                <exclude>.svn/*</exclude>
+                            </excludes>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
                     </filesets>
                 </configuration>
             </plugin>
+            <!--<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <!-\-
+                                    HHV: I'm copying the .swf files to the ***src/../flexus*** folder,
+                                    so they can be used when Lexus is started with
+                                    mvn jetty:run from the front module directory.
+                                    When building a jar they will be copied from the src/../flexus 
+                                    directory. The src/../flexus directory is cleaned with mvn clean.
+                                    -\->
+                                <artifactItem>
+                                    <groupId>nl.mpi.lexus</groupId>
+                                    <artifactId>flexus</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>swf</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${basedir}/src/main/resources/COB-INF/flexus/</outputDirectory>
+                                    <destFileName>Lexus.swf</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>nl.mpi.lexus</groupId>
+                                    <artifactId>flexus</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>swf</type>
+                                    <classifier>LexiconBrowser</classifier>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${basedir}/src/main/resources/COB-INF/flexus/</outputDirectory>
+                                    <destFileName>LexiconBrowser.swf</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>nl.mpi.lexus</groupId>
+                                    <artifactId>flexus</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>swf</type>
+                                    <classifier>Workspace</classifier>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${basedir}/src/main/resources/COB-INF/flexus/</outputDirectory>
+                                    <destFileName>Workspace.swf</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>nl.mpi.lexus</groupId>
+                                    <artifactId>flexus</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>swf</type>
+                                    <classifier>SchemaEditor</classifier>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${basedir}/src/main/resources/COB-INF/flexus/</outputDirectory>
+                                    <destFileName>SchemaEditor.swf</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
