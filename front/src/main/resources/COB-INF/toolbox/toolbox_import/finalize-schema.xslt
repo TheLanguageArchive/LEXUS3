@@ -46,7 +46,7 @@
         </xsl:copy>
     </xsl:template>
 
-    <xsl:template match="lexus:schema//lexus:container[@type eq 'container'][@mdf:marker]">
+    <xsl:template match="lexus:schema//lexus:container[@type eq 'component'][@mdf:marker]">
         <xsl:copy>
             <xsl:apply-templates select="@*[local-name() ne 'marker']"/>
             <xsl:apply-templates/>

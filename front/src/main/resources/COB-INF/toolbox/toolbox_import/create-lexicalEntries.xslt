@@ -13,7 +13,7 @@
 
     <xsl:key name="markers" match="/toolbox-import/lexus:meta/lexus:schema//lexus:container[@type='data']"
         use="@mdf:marker"/>
-    <xsl:key name="groups" match="/toolbox-import/lexus:meta/lexus:schema//lexus:container[@type='container']"
+    <xsl:key name="groups" match="/toolbox-import/lexus:meta/lexus:schema//lexus:container[@type='component']"
         use="@mdf:marker"/>
 
     <xsl:template match="toolbox-import">

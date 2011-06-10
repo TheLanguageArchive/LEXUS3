@@ -13,7 +13,7 @@
 
     <xsl:key name="markers" match="/toolbox-import/lexus:meta/lexus:schema//lexus:container[@type='data']"
         use="@mdf:marker"/>
-    <xsl:key name="groups" match="/toolbox-import/lexus:meta/lexus:schema//lexus:container[@type='container']"
+    <xsl:key name="groups" match="/toolbox-import/lexus:meta/lexus:schema//lexus:container[@type='component']"
         use="@mdf:marker"/>
 
     <xsl:template match="toolbox-import">
@@ -67,7 +67,7 @@
             <xsl:when test="key('groups', @name)/lexus:container">
                 <xsl:variable name="follower" select="following-sibling::marker[1]/@name"/>
                 <xsl:variable name="nextMarkerAncestorMarkers"
-                    select="key('markers', $follower)/ancestor::lexus:container[@type eq 'container'][@mdf:marker ne $follower]/@mdf:marker"/>
+                    select="key('markers', $follower)/ancestor::lexus:container[@type eq 'component'][@mdf:marker ne $follower]/@mdf:marker"/>
 
                 <!-- If next marker is a descendant then process it and include in container element -->
                 <xsl:choose>
@@ -136,7 +136,7 @@
         <xsl:param name="parent"/>
         <xsl:param name="nextMarker"/>
         <xsl:variable name="nextMarkersAncestors"
-            select="key('markers', $nextMarker/@name)/ancestor::lexus:container[@type eq 'container'][@mdf:marker ne $nextMarker/@name]/@mdf:marker"/>
+            select="key('markers', $nextMarker/@name)/ancestor::lexus:container[@type eq 'component'][@mdf:marker ne $nextMarker/@name]/@mdf:marker"/>
 
         <xsl:if test="$nextMarkersAncestors = $parent or $parent eq ''">
             <xsl:apply-templates select="$nextMarker">
