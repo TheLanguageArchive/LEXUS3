@@ -175,6 +175,10 @@
 <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/display-view-5.xml"/>-->
                 <map:serialize type="xml"/>
             </map:match>
+            
+            <map:handle-errors when="always">                
+                <map:read src="error-stylesheet.xslt"/>
+            </map:handle-errors>
         </map:pipeline>
 
     </map:pipelines>
