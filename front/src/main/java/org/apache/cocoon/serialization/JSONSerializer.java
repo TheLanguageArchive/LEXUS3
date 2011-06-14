@@ -377,23 +377,31 @@ public class JSONSerializer extends AbstractTextSerializer {
         }
     }
 
-    protected void writeNumber(String s) throws JSONSerializationException {
+protected void writeNumber(String s) throws JSONSerializationException {
         // make sure value's numeric
-        String res;
+        String res = null;
+
+        //try to parse the number as an integer
         try {
-            /*
-             * Here's some smarty pants code to generate an integer string when the string is parseable as an integer.
-             */
-            Integer i = Integer.parseInt(s);
-            double d = Double.parseDouble(s);
-            if ((int)d == i) {
-                res = i.toString();
+            Integer i = Integer.valueOf(s);
+            res = i.toString();
+        } catch(NumberFormatException ex) {
+        }
+
+        if(res == null) {
+            //If the number has not been parsed succesfully, try to parse it as
+            //a double
+            try {
+                Double d = Double.parseDouble(s);
+                res = d.toString();
+            } catch (NumberFormatException e) {
             }
-            else {
-                res = new Double(d).toString();
-            }
-        } catch (Exception e) {
-            res = "0";
+        }
+
+        //the number has not been parsed succesfully, since we are out of options,
+        //throw an exception since s is not a valid number.
+        if(res == null) {
+          throw new JSONSerializationException("Not a valid number: " + s);
         }
 
         write(res);
