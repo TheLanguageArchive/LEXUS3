@@ -28,14 +28,14 @@
     <parent>
         <groupId>nl.mpi.lexus</groupId>
         <artifactId>lexus</artifactId>
-        <version>3.0-SNAPSHOT</version>
+        <version>3.0-beta-1</version>
     </parent>
 
     <artifactId>front</artifactId>
     <name>front</name>
 
     <dependencies>
-        
+
         <dependency>
             <groupId>org.apache.cocoon</groupId>
             <artifactId>cocoon-core</artifactId>
@@ -132,7 +132,7 @@
             <artifactId>cocooncomponents</artifactId>
             <version>1.0.8</version>
         </dependency>
-        
+
         <dependency>
             <groupId>nl.mpi.lexus</groupId>
             <artifactId>db</artifactId>
@@ -143,38 +143,12 @@
             <artifactId>display</artifactId>
             <version>3.0-SNAPSHOT</version>
         </dependency>
-        <!--<dependency>
-            <groupId>nl.mpi.lexus</groupId>
-            <artifactId>flexus</artifactId>
-            <version>3.0-SNAPSHOT</version>
-            <type>swf</type>
-        </dependency>--><!--
         <dependency>
             <groupId>nl.mpi.lexus</groupId>
             <artifactId>flexus</artifactId>
             <version>3.0-SNAPSHOT</version>
-            <classifier>Workspace</classifier>
             <type>swf</type>
-        </dependency>
-        <dependency>
-            <groupId>nl.mpi.lexus</groupId>
-            <artifactId>flexus</artifactId>
-            <version>3.0-SNAPSHOT</version>
-            <classifier>SchemaEditor</classifier>
-            <type>swf</type>
-        </dependency>
-        <dependency>
-            <groupId>nl.mpi.lexus</groupId>
-            <artifactId>flexus</artifactId>
-            <version>3.0-SNAPSHOT</version>
-            <classifier>LexiconBrowser</classifier>
-            <type>swf</type>
-        </dependency>-->
-
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20090211</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -306,6 +280,13 @@
                                         <exclude>.*</exclude>
                                     </excludes>
                                 </resource>
+                                <!--<resource>
+                                    <directory>${basedir}/../flexus/target/html-wrapper-template</directory>
+                                    <filtering>false</filtering>
+                                    <excludes>
+                                        <exclude>.*</exclude>
+                                    </excludes>
+                                </resource>-->
                                 <resource>
                                     <directory>${basedir}/src/main/resources/COB-INF/webapp</directory>
                                     <filtering>false</filtering>
