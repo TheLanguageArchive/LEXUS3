@@ -8,14 +8,13 @@
 
     <groupId>nl.mpi.lexus</groupId>
     <artifactId>lexus</artifactId>
-    <version>3.0-SNAPSHOT</version>
+    <version>3.0-beta-1</version>
     <name>Lexus</name>
     <url>http://www.lat-mpi.eu/tools/lexus</url>
     <description>
         Lexus is a web-based tool to create and edit lexical databases.
-        Lexus is currently being developed by the The Language Achive at the Max Planck Institute for Psycholinguistics in Nijmegen.
-        
-        Lexus is XML based, using a XML database as a store for lexica.
+        Lexus is currently being developed by The Language Achive at the Max Planck Institute for Psycholinguistics in Nijmegen.
+        Lexus is XML based on the server, using a XML database as a store for lexica.
     </description>
     <organization>
         <name>The Language Archive, Max Planck Institute for PsychoLinguistics</name>
@@ -71,13 +70,13 @@
     </dependencies>
 
     <modules>
-        <module>webapp</module>
-        <module>front</module>
         <module>db</module>
         <module>display</module>
-        <!--        <module>VicosApp</module>-->
+        <!--        <module>flexus</module>-->
+        <module>front</module>
+        <module>webapp</module>
         <module>desktop</module>
-<!--        <module>flexus</module>-->
+        <!--        <module>VicosApp</module>-->
     </modules>
 
     <build>
@@ -114,7 +113,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Cocoon-Block-Name>${pom.artifactId}</Cocoon-Block-Name>
+                            <Cocoon-Block-Name>${project.artifactId}</Cocoon-Block-Name>
                         </manifestEntries>
                     </archive>
                 </configuration>

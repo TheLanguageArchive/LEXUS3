@@ -1,154 +1,153 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project version="12.1">
+<project version="12.2">
     <meta>
-        <filters directoryPatterns="target" filePatterns=""
-            positiveFilePatterns="" showHiddenFiles="false"/>
+        <filters directoryPatterns="target" filePatterns="" positiveFilePatterns="" showHiddenFiles="false"/>
         <options>
-            <serialized version="12.1">
+            <serialized version="12.2" xml:space="preserve">
                 <map>
                     <entry>
-                        <String xml:space="preserve">scenario.associations</String>
+                        <String>scenario.associations</String>
                         <scenarioAssociation-array>
                             <scenarioAssociation>
                                 <field name="name">
-                                    <String xml:space="preserve">htmlViewToDsl</String>
+                                    <String>convert2-lexus</String>
                                 </field>
                                 <field name="type">
-                                    <String xml:space="preserve">XML</String>
+                                    <String>XML</String>
                                 </field>
                                 <field name="url">
-                                    <String xml:space="preserve">../../../../../../../private/tmp/lexus-export/lexica/2c9090a212d67e360112f6a690060711_465bce4a-a06f-4417-bf98-d16f729c37c1.xml</String>
+                                    <String>../../../../../Documents/MPI/elexicon/convert2-lexus.xslt</String>
                                 </field>
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="name">
-                                    <String xml:space="preserve">htmlViewToDsl</String>
+                                    <String>DSL_2_XSLT2</String>
                                 </field>
                                 <field name="type">
-                                    <String xml:space="preserve">XML</String>
+                                    <String>XML</String>
                                 </field>
                                 <field name="url">
-                                    <String xml:space="preserve">../lexus-war/src/main/webapp/WEB-INF/resources/xslt/htmlViewToDsl.xsl</String>
+                                    <String>../../../Documents/MPI/Planning/DSL_2_XSLT2.xsl</String>
                                 </field>
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="name">
-                                    <String xml:space="preserve">typ-structure-from-schema</String>
+                                    <String>add-missing-parents</String>
                                 </field>
                                 <field name="type">
-                                    <String xml:space="preserve">XML</String>
+                                    <String>XML</String>
                                 </field>
                                 <field name="url">
-                                    <String xml:space="preserve">front/src/main/resources/COB-INF/toolbox/toolbox_import/typ-structure-from-schema.xslt</String>
+                                    <String>front/src/main/resources/COB-INF/toolbox/toolbox_import/add-missing-parents.xslt</String>
                                 </field>
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="name">
-                                    <String xml:space="preserve">add-missing-parents</String>
+                                    <String>typ-structure-from-schema</String>
                                 </field>
                                 <field name="type">
-                                    <String xml:space="preserve">XML</String>
+                                    <String>XML</String>
                                 </field>
                                 <field name="url">
-                                    <String xml:space="preserve">front/src/main/resources/COB-INF/toolbox/toolbox_import/add-missing-parents.xslt</String>
+                                    <String>front/src/main/resources/COB-INF/toolbox/toolbox_import/typ-structure-from-schema.xslt</String>
                                 </field>
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="name">
-                                    <String xml:space="preserve">DSL_2_XSLT2</String>
+                                    <String>htmlViewToDsl</String>
                                 </field>
                                 <field name="type">
-                                    <String xml:space="preserve">XML</String>
+                                    <String>XML</String>
                                 </field>
                                 <field name="url">
-                                    <String xml:space="preserve">../../../Documents/MPI/Planning/DSL_2_XSLT2.xsl</String>
+                                    <String>../lexus-war/src/main/webapp/WEB-INF/resources/xslt/htmlViewToDsl.xsl</String>
                                 </field>
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="name">
-                                    <String xml:space="preserve">convert2-lexus</String>
+                                    <String>htmlViewToDsl</String>
                                 </field>
                                 <field name="type">
-                                    <String xml:space="preserve">XML</String>
+                                    <String>XML</String>
                                 </field>
                                 <field name="url">
-                                    <String xml:space="preserve">../../../../../Documents/MPI/elexicon/convert2-lexus.xslt</String>
+                                    <String>../../../../../../../private/tmp/lexus-export/lexica/2c9090a212d67e360112f6a690060711_465bce4a-a06f-4417-bf98-d16f729c37c1.xml</String>
                                 </field>
                             </scenarioAssociation>
                         </scenarioAssociation-array>
                     </entry>
                     <entry>
-                        <String xml:space="preserve">scenarios</String>
+                        <String>scenarios</String>
                         <scenario-array>
                             <scenario>
                                 <field name="advancedOptionsMap">
                                     <null/>
                                 </field>
                                 <field name="name">
-                                    <String xml:space="preserve">DSL_2_XSLT2</String>
+                                    <String>Execute SQL</String>
                                 </field>
                                 <field name="baseURL">
-                                    <String xml:space="preserve"></String>
+                                    <String></String>
                                 </field>
                                 <field name="footerURL">
-                                    <String xml:space="preserve"></String>
+                                    <String></String>
                                 </field>
                                 <field name="fOPMethod">
-                                    <String xml:space="preserve">pdf</String>
-                                </field>
-                                <field name="fOProcessorName">
-                                    <String xml:space="preserve">Apache FOP</String>
-                                </field>
-                                <field name="headerURL">
-                                    <String xml:space="preserve"></String>
-                                </field>
-                                <field name="inputXSLURL">
-                                    <String xml:space="preserve">file:/Users/huiver/Documents/MPI/Planning/DSL_2_XSLT2.xsl</String>
-                                </field>
-                                <field name="inputXMLURL">
-                                    <String xml:space="preserve">file:/Users/huiver/Documents/MPI/Planning/example_DSL-marquesan2.xml</String>
-                                </field>
-                                <field name="defaultScenario">
-                                    <Boolean xml:space="preserve">false</Boolean>
-                                </field>
-                                <field name="isFOPPerforming">
-                                    <Boolean xml:space="preserve">false</Boolean>
-                                </field>
-                                <field name="type">
-                                    <String xml:space="preserve">XML</String>
-                                </field>
-                                <field name="saveAs">
-                                    <Boolean xml:space="preserve">true</Boolean>
-                                </field>
-                                <field name="openInBrowser">
-                                    <Boolean xml:space="preserve">false</Boolean>
-                                </field>
-                                <field name="outputFile">
-                                    <File xml:space="preserve">kanweg.xslt</File>
-                                </field>
-                                <field name="openOtherLocationInBrowser">
-                                    <Boolean xml:space="preserve">false</Boolean>
-                                </field>
-                                <field name="locationToOpenInBrowserURL">
                                     <null/>
                                 </field>
+                                <field name="fOProcessorName">
+                                    <null/>
+                                </field>
+                                <field name="headerURL">
+                                    <String></String>
+                                </field>
+                                <field name="inputXSLURL">
+                                    <String>${currentFileURL}</String>
+                                </field>
+                                <field name="inputXMLURL">
+                                    <String></String>
+                                </field>
+                                <field name="defaultScenario">
+                                    <Boolean>false</Boolean>
+                                </field>
+                                <field name="isFOPPerforming">
+                                    <Boolean>false</Boolean>
+                                </field>
+                                <field name="type">
+                                    <String>SQL</String>
+                                </field>
+                                <field name="saveAs">
+                                    <Boolean>true</Boolean>
+                                </field>
+                                <field name="openInBrowser">
+                                    <Boolean>false</Boolean>
+                                </field>
+                                <field name="outputFile">
+                                    <null/>
+                                </field>
+                                <field name="openOtherLocationInBrowser">
+                                    <Boolean>false</Boolean>
+                                </field>
+                                <field name="locationToOpenInBrowserURL">
+                                    <String></String>
+                                </field>
                                 <field name="openInEditor">
-                                    <Boolean xml:space="preserve">true</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="showInHTMLPane">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="showInXMLPane">
-                                    <Boolean xml:space="preserve">true</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="showInSVGPane">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="showInResultSetPane">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="useXSLTInput">
-                                    <Boolean xml:space="preserve">true</Boolean>
+                                    <Boolean>true</Boolean>
                                 </field>
                                 <field name="xsltParams">
                                     <list/>
@@ -157,7 +156,7 @@
                                     <String-array/>
                                 </field>
                                 <field name="xslTransformer">
-                                    <String xml:space="preserve">Saxon-PE</String>
+                                    <String>JDBC</String>
                                 </field>
                                 <field name="extensionURLs">
                                     <String-array/>
@@ -168,70 +167,70 @@
                                     <null/>
                                 </field>
                                 <field name="name">
-                                    <String xml:space="preserve">add-missing-parents</String>
+                                    <String>DSL_2_XSLT2</String>
                                 </field>
                                 <field name="baseURL">
-                                    <String xml:space="preserve"></String>
+                                    <String></String>
                                 </field>
                                 <field name="footerURL">
-                                    <String xml:space="preserve"></String>
+                                    <String></String>
                                 </field>
                                 <field name="fOPMethod">
-                                    <String xml:space="preserve">pdf</String>
+                                    <String>pdf</String>
                                 </field>
                                 <field name="fOProcessorName">
-                                    <String xml:space="preserve">Apache FOP</String>
+                                    <String>Apache FOP</String>
                                 </field>
                                 <field name="headerURL">
-                                    <String xml:space="preserve"></String>
+                                    <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String xml:space="preserve">file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/front/src/main/resources/COB-INF/toolbox/toolbox_import/add-missing-parents.xslt</String>
+                                    <String>file:/Users/huiver/Documents/MPI/Planning/DSL_2_XSLT2.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
-                                    <String xml:space="preserve">file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/front/debug-info/front-pre.xml</String>
+                                    <String>file:/Users/huiver/Documents/MPI/Planning/example_DSL-marquesan2.xml</String>
                                 </field>
                                 <field name="defaultScenario">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="isFOPPerforming">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="type">
-                                    <String xml:space="preserve">XML</String>
+                                    <String>XML</String>
                                 </field>
                                 <field name="saveAs">
-                                    <Boolean xml:space="preserve">true</Boolean>
+                                    <Boolean>true</Boolean>
                                 </field>
                                 <field name="openInBrowser">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="outputFile">
-                                    <File xml:space="preserve">azaz.xml</File>
+                                    <File>kanweg.xslt</File>
                                 </field>
                                 <field name="openOtherLocationInBrowser">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="locationToOpenInBrowserURL">
                                     <null/>
                                 </field>
                                 <field name="openInEditor">
-                                    <Boolean xml:space="preserve">true</Boolean>
+                                    <Boolean>true</Boolean>
                                 </field>
                                 <field name="showInHTMLPane">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="showInXMLPane">
-                                    <Boolean xml:space="preserve">true</Boolean>
+                                    <Boolean>true</Boolean>
                                 </field>
                                 <field name="showInSVGPane">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="showInResultSetPane">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="useXSLTInput">
-                                    <Boolean xml:space="preserve">true</Boolean>
+                                    <Boolean>true</Boolean>
                                 </field>
                                 <field name="xsltParams">
                                     <list/>
@@ -240,7 +239,7 @@
                                     <String-array/>
                                 </field>
                                 <field name="xslTransformer">
-                                    <String xml:space="preserve">Saxon-PE</String>
+                                    <String>Saxon-PE</String>
                                 </field>
                                 <field name="extensionURLs">
                                     <String-array/>
@@ -251,70 +250,70 @@
                                     <null/>
                                 </field>
                                 <field name="name">
-                                    <String xml:space="preserve">convert2-lexus</String>
+                                    <String>add-missing-parents</String>
                                 </field>
                                 <field name="baseURL">
-                                    <String xml:space="preserve"></String>
+                                    <String></String>
                                 </field>
                                 <field name="footerURL">
-                                    <String xml:space="preserve"></String>
+                                    <String></String>
                                 </field>
                                 <field name="fOPMethod">
-                                    <String xml:space="preserve">pdf</String>
+                                    <String>pdf</String>
                                 </field>
                                 <field name="fOProcessorName">
-                                    <String xml:space="preserve">Apache FOP</String>
+                                    <String>Apache FOP</String>
                                 </field>
                                 <field name="headerURL">
-                                    <String xml:space="preserve"></String>
+                                    <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String xml:space="preserve">${currentFileURL}</String>
+                                    <String>file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/front/src/main/resources/COB-INF/toolbox/toolbox_import/add-missing-parents.xslt</String>
                                 </field>
                                 <field name="inputXMLURL">
-                                    <String xml:space="preserve">file:/Users/huiver/Documents/MPI/elexicon/elexicon.xml</String>
+                                    <String>file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/front/debug-info/front-pre.xml</String>
                                 </field>
                                 <field name="defaultScenario">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="isFOPPerforming">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="type">
-                                    <String xml:space="preserve">XML</String>
+                                    <String>XML</String>
                                 </field>
                                 <field name="saveAs">
-                                    <Boolean xml:space="preserve">true</Boolean>
+                                    <Boolean>true</Boolean>
                                 </field>
                                 <field name="openInBrowser">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="outputFile">
-                                    <File xml:space="preserve">a</File>
+                                    <File>azaz.xml</File>
                                 </field>
                                 <field name="openOtherLocationInBrowser">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="locationToOpenInBrowserURL">
                                     <null/>
                                 </field>
                                 <field name="openInEditor">
-                                    <Boolean xml:space="preserve">true</Boolean>
+                                    <Boolean>true</Boolean>
                                 </field>
                                 <field name="showInHTMLPane">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="showInXMLPane">
-                                    <Boolean xml:space="preserve">true</Boolean>
+                                    <Boolean>true</Boolean>
                                 </field>
                                 <field name="showInSVGPane">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="showInResultSetPane">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="useXSLTInput">
-                                    <Boolean xml:space="preserve">true</Boolean>
+                                    <Boolean>true</Boolean>
                                 </field>
                                 <field name="xsltParams">
                                     <list/>
@@ -323,7 +322,7 @@
                                     <String-array/>
                                 </field>
                                 <field name="xslTransformer">
-                                    <String xml:space="preserve">Saxon-PE</String>
+                                    <String>Saxon-PE</String>
                                 </field>
                                 <field name="extensionURLs">
                                     <String-array/>
@@ -334,70 +333,70 @@
                                     <null/>
                                 </field>
                                 <field name="name">
-                                    <String xml:space="preserve">htmlViewToDsl</String>
+                                    <String>convert2-lexus</String>
                                 </field>
                                 <field name="baseURL">
-                                    <String xml:space="preserve"></String>
+                                    <String></String>
                                 </field>
                                 <field name="footerURL">
-                                    <String xml:space="preserve"></String>
+                                    <String></String>
                                 </field>
                                 <field name="fOPMethod">
-                                    <String xml:space="preserve">pdf</String>
+                                    <String>pdf</String>
                                 </field>
                                 <field name="fOProcessorName">
-                                    <String xml:space="preserve">Apache FOP</String>
+                                    <String>Apache FOP</String>
                                 </field>
                                 <field name="headerURL">
-                                    <String xml:space="preserve"></String>
+                                    <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String xml:space="preserve">file:/Users/huiver/Projecten/LAT/lexus/trunk/lexus-war/src/main/webapp/WEB-INF/resources/xslt/htmlViewToDsl.xsl</String>
+                                    <String>${currentFileURL}</String>
                                 </field>
                                 <field name="inputXMLURL">
-                                    <String xml:space="preserve">${currentFileURL}</String>
+                                    <String>file:/Users/huiver/Documents/MPI/elexicon/elexicon.xml</String>
                                 </field>
                                 <field name="defaultScenario">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="isFOPPerforming">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="type">
-                                    <String xml:space="preserve">XML</String>
+                                    <String>XML</String>
                                 </field>
                                 <field name="saveAs">
-                                    <Boolean xml:space="preserve">true</Boolean>
+                                    <Boolean>true</Boolean>
                                 </field>
                                 <field name="openInBrowser">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="outputFile">
-                                    <null/>
+                                    <File>a</File>
                                 </field>
                                 <field name="openOtherLocationInBrowser">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="locationToOpenInBrowserURL">
                                     <null/>
                                 </field>
                                 <field name="openInEditor">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>true</Boolean>
                                 </field>
                                 <field name="showInHTMLPane">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="showInXMLPane">
-                                    <Boolean xml:space="preserve">true</Boolean>
+                                    <Boolean>true</Boolean>
                                 </field>
                                 <field name="showInSVGPane">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="showInResultSetPane">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="useXSLTInput">
-                                    <Boolean xml:space="preserve">true</Boolean>
+                                    <Boolean>true</Boolean>
                                 </field>
                                 <field name="xsltParams">
                                     <list/>
@@ -406,7 +405,7 @@
                                     <String-array/>
                                 </field>
                                 <field name="xslTransformer">
-                                    <String xml:space="preserve">Saxon6.5.5</String>
+                                    <String>Saxon-PE</String>
                                 </field>
                                 <field name="extensionURLs">
                                     <String-array/>
@@ -417,70 +416,70 @@
                                     <null/>
                                 </field>
                                 <field name="name">
-                                    <String xml:space="preserve">typ-structure-from-schema</String>
+                                    <String>htmlViewToDsl</String>
                                 </field>
                                 <field name="baseURL">
-                                    <String xml:space="preserve"></String>
+                                    <String></String>
                                 </field>
                                 <field name="footerURL">
-                                    <String xml:space="preserve"></String>
+                                    <String></String>
                                 </field>
                                 <field name="fOPMethod">
-                                    <String xml:space="preserve">pdf</String>
+                                    <String>pdf</String>
                                 </field>
                                 <field name="fOProcessorName">
-                                    <String xml:space="preserve">Apache FOP</String>
+                                    <String>Apache FOP</String>
                                 </field>
                                 <field name="headerURL">
-                                    <String xml:space="preserve"></String>
+                                    <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String xml:space="preserve">file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/front/src/main/resources/COB-INF/toolbox/toolbox_import/typ-structure-from-schema.xslt</String>
+                                    <String>file:/Users/huiver/Projecten/LAT/lexus/trunk/lexus-war/src/main/webapp/WEB-INF/resources/xslt/htmlViewToDsl.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
-                                    <String xml:space="preserve">file:/Users/huiver/Documents/MPI/Toolbox/Conversies/Udish%20export/ConvertedToolbox/typ-generated-schema.xml</String>
+                                    <String>${currentFileURL}</String>
                                 </field>
                                 <field name="defaultScenario">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="isFOPPerforming">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="type">
-                                    <String xml:space="preserve">XML</String>
+                                    <String>XML</String>
                                 </field>
                                 <field name="saveAs">
-                                    <Boolean xml:space="preserve">true</Boolean>
+                                    <Boolean>true</Boolean>
                                 </field>
                                 <field name="openInBrowser">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="outputFile">
-                                    <File xml:space="preserve">sxsx</File>
+                                    <null/>
                                 </field>
                                 <field name="openOtherLocationInBrowser">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="locationToOpenInBrowserURL">
                                     <null/>
                                 </field>
                                 <field name="openInEditor">
-                                    <Boolean xml:space="preserve">true</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="showInHTMLPane">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="showInXMLPane">
-                                    <Boolean xml:space="preserve">true</Boolean>
+                                    <Boolean>true</Boolean>
                                 </field>
                                 <field name="showInSVGPane">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="showInResultSetPane">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="useXSLTInput">
-                                    <Boolean xml:space="preserve">true</Boolean>
+                                    <Boolean>true</Boolean>
                                 </field>
                                 <field name="xsltParams">
                                     <list/>
@@ -489,7 +488,7 @@
                                     <String-array/>
                                 </field>
                                 <field name="xslTransformer">
-                                    <String xml:space="preserve">Saxon-PE</String>
+                                    <String>Saxon6.5.5</String>
                                 </field>
                                 <field name="extensionURLs">
                                     <String-array/>
@@ -500,70 +499,70 @@
                                     <null/>
                                 </field>
                                 <field name="name">
-                                    <String xml:space="preserve">Execute XQuery</String>
+                                    <String>typ-structure-from-schema</String>
                                 </field>
                                 <field name="baseURL">
-                                    <String xml:space="preserve"></String>
+                                    <String></String>
                                 </field>
                                 <field name="footerURL">
-                                    <String xml:space="preserve"></String>
+                                    <String></String>
                                 </field>
                                 <field name="fOPMethod">
-                                    <null/>
+                                    <String>pdf</String>
                                 </field>
                                 <field name="fOProcessorName">
-                                    <null/>
+                                    <String>Apache FOP</String>
                                 </field>
                                 <field name="headerURL">
-                                    <String xml:space="preserve"></String>
+                                    <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String xml:space="preserve">${currentFileURL}</String>
+                                    <String>file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/front/src/main/resources/COB-INF/toolbox/toolbox_import/typ-structure-from-schema.xslt</String>
                                 </field>
                                 <field name="inputXMLURL">
-                                    <String xml:space="preserve"></String>
+                                    <String>file:/Users/huiver/Documents/MPI/Toolbox/Conversies/Udish%20export/ConvertedToolbox/typ-generated-schema.xml</String>
                                 </field>
                                 <field name="defaultScenario">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="isFOPPerforming">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="type">
-                                    <String xml:space="preserve">XQUERY</String>
+                                    <String>XML</String>
                                 </field>
                                 <field name="saveAs">
-                                    <Boolean xml:space="preserve">true</Boolean>
+                                    <Boolean>true</Boolean>
                                 </field>
                                 <field name="openInBrowser">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="outputFile">
-                                    <null/>
+                                    <File>sxsx</File>
                                 </field>
                                 <field name="openOtherLocationInBrowser">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="locationToOpenInBrowserURL">
-                                    <String xml:space="preserve"></String>
+                                    <null/>
                                 </field>
                                 <field name="openInEditor">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>true</Boolean>
                                 </field>
                                 <field name="showInHTMLPane">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="showInXMLPane">
-                                    <Boolean xml:space="preserve">true</Boolean>
+                                    <Boolean>true</Boolean>
                                 </field>
                                 <field name="showInSVGPane">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="showInResultSetPane">
-                                    <Boolean xml:space="preserve">true</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="useXSLTInput">
-                                    <Boolean xml:space="preserve">true</Boolean>
+                                    <Boolean>true</Boolean>
                                 </field>
                                 <field name="xsltParams">
                                     <list/>
@@ -572,7 +571,7 @@
                                     <String-array/>
                                 </field>
                                 <field name="xslTransformer">
-                                    <String xml:space="preserve">Saxon-PE XQuery</String>
+                                    <String>Saxon-PE</String>
                                 </field>
                                 <field name="extensionURLs">
                                     <String-array/>
@@ -583,13 +582,13 @@
                                     <null/>
                                 </field>
                                 <field name="name">
-                                    <String xml:space="preserve">Execute SQL</String>
+                                    <String>Execute XQuery</String>
                                 </field>
                                 <field name="baseURL">
-                                    <String xml:space="preserve"></String>
+                                    <String></String>
                                 </field>
                                 <field name="footerURL">
-                                    <String xml:space="preserve"></String>
+                                    <String></String>
                                 </field>
                                 <field name="fOPMethod">
                                     <null/>
@@ -598,55 +597,55 @@
                                     <null/>
                                 </field>
                                 <field name="headerURL">
-                                    <String xml:space="preserve"></String>
+                                    <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String xml:space="preserve">${currentFileURL}</String>
+                                    <String>${currentFileURL}</String>
                                 </field>
                                 <field name="inputXMLURL">
-                                    <String xml:space="preserve"></String>
+                                    <String></String>
                                 </field>
                                 <field name="defaultScenario">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="isFOPPerforming">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="type">
-                                    <String xml:space="preserve">SQL</String>
+                                    <String>XQUERY</String>
                                 </field>
                                 <field name="saveAs">
-                                    <Boolean xml:space="preserve">true</Boolean>
+                                    <Boolean>true</Boolean>
                                 </field>
                                 <field name="openInBrowser">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="outputFile">
                                     <null/>
                                 </field>
                                 <field name="openOtherLocationInBrowser">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="locationToOpenInBrowserURL">
-                                    <String xml:space="preserve"></String>
+                                    <String></String>
                                 </field>
                                 <field name="openInEditor">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="showInHTMLPane">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="showInXMLPane">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>true</Boolean>
                                 </field>
                                 <field name="showInSVGPane">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>false</Boolean>
                                 </field>
                                 <field name="showInResultSetPane">
-                                    <Boolean xml:space="preserve">false</Boolean>
+                                    <Boolean>true</Boolean>
                                 </field>
                                 <field name="useXSLTInput">
-                                    <Boolean xml:space="preserve">true</Boolean>
+                                    <Boolean>true</Boolean>
                                 </field>
                                 <field name="xsltParams">
                                     <list/>
@@ -655,7 +654,7 @@
                                     <String-array/>
                                 </field>
                                 <field name="xslTransformer">
-                                    <String xml:space="preserve">JDBC</String>
+                                    <String>Saxon-PE XQuery</String>
                                 </field>
                                 <field name="extensionURLs">
                                     <String-array/>
@@ -664,302 +663,292 @@
                         </scenario-array>
                     </entry>
                     <entry>
-                        <String xml:space="preserve">scenarios.load.from.project</String>
-                        <Boolean xml:space="preserve">true</Boolean>
+                        <String>scenarios.load.from.project</String>
+                        <Boolean>true</Boolean>
                     </entry>
                     <entry>
-                        <String xml:space="preserve">validation.scenario.associations</String>
+                        <String>validation.scenario.associations</String>
                         <scenarioAssociation-array>
                             <scenarioAssociation>
                                 <field name="name">
-                                    <String xml:space="preserve">buildSearchQuery</String>
+                                    <String>createAltFormatForLexicon</String>
                                 </field>
                                 <field name="type">
-                                    <String xml:space="preserve">text/xsl</String>
+                                    <String>Validation_scenario</String>
                                 </field>
                                 <field name="url">
-                                    <String xml:space="preserve">db/src/main/resources/COB-INF/workspace/queries/buildSearchQuery.xslt</String>
+                                    <String>front/src/main/resources/COB-INF/lexicon-editor/export/createAltFormatForLexicon.xsl</String>
                                 </field>
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="name">
-                                    <String xml:space="preserve">sort-order</String>
+                                    <String>xquery-components</String>
                                 </field>
                                 <field name="type">
-                                    <String xml:space="preserve">text/xsl</String>
+                                    <String>Validation_scenario</String>
                                 </field>
                                 <field name="url">
-                                    <String xml:space="preserve">back/src/main/resources/COB-INF/util/sort-order.xslt</String>
+                                    <String>back/src/main/resources/COB-INF/util/xquery-components.xslt</String>
                                 </field>
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="name">
-                                    <String xml:space="preserve">2c9090a2167c21d701168046989d4a42</String>
+                                    <String>2c9090a2167c21d701168046989d4a42</String>
                                 </field>
                                 <field name="type">
-                                    <String xml:space="preserve">text/xml</String>
+                                    <String>Validation_scenario</String>
                                 </field>
                                 <field name="url">
-                                    <String xml:space="preserve">../../../../../Desktop/XMLexport/2c9090a2167c21d701168046989d4a42.xml</String>
+                                    <String>../../../../../Desktop/XMLexport/2c9090a2167c21d701168046989d4a42.xml</String>
                                 </field>
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="name">
-                                    <String xml:space="preserve">xquery-components</String>
+                                    <String>sort-order</String>
                                 </field>
                                 <field name="type">
-                                    <String xml:space="preserve">text/xsl</String>
+                                    <String>Validation_scenario</String>
                                 </field>
                                 <field name="url">
-                                    <String xml:space="preserve">back/src/main/resources/COB-INF/util/xquery-components.xslt</String>
+                                    <String>back/src/main/resources/COB-INF/util/sort-order.xslt</String>
                                 </field>
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="name">
-                                    <String xml:space="preserve">createAltFormatForLexicon</String>
+                                    <String>buildSearchQuery</String>
                                 </field>
                                 <field name="type">
-                                    <String xml:space="preserve">text/xsl</String>
+                                    <String>Validation_scenario</String>
                                 </field>
                                 <field name="url">
-                                    <String xml:space="preserve">front/src/main/resources/COB-INF/lexicon-editor/export/createAltFormatForLexicon.xsl</String>
+                                    <String>db/src/main/resources/COB-INF/workspace/queries/buildSearchQuery.xslt</String>
                                 </field>
                             </scenarioAssociation>
                         </scenarioAssociation-array>
                     </entry>
                     <entry>
-                        <String xml:space="preserve">validation.scenarios</String>
+                        <String>validation.scenarios</String>
                         <validationScenario-array>
                             <validationScenario>
                                 <field name="pairs">
                                     <list>
-                                    <validationUnit>
-                                    <field name="validationType">
-                                    <validationUnitType>
-                                    <field name="validationInputType">
-                                    <String xml:space="preserve">text/any</String>
-                                    </field>
-                                    </validationUnitType>
-                                    </field>
-                                    <field name="url">
-                                    <String xml:space="preserve">${currentFileURL}</String>
-                                    </field>
-                                    <field name="validationEngine">
-                                    <validationEngine>
-                                    <field name="engineType">
-                                    <String xml:space="preserve">&lt;Default engine&gt;</String>
-                                    </field>
-                                    <field
-                                    name="allowsAutomaticValidation">
-                                    <Boolean xml:space="preserve">true</Boolean>
-                                    </field>
-                                    </validationEngine>
-                                    </field>
-                                    <field
-                                    name="allowAutomaticValidation">
-                                    <Boolean xml:space="preserve">true</Boolean>
-                                    </field>
-                                    <field name="extensions">
-                                    <null/>
-                                    </field>
-                                    <field name="validationSchema">
-                                    <null/>
-                                    </field>
-                                    </validationUnit>
+                                        <validationUnit>
+                                            <field name="validationType">
+                                                <validationUnitType>
+                                                    <field name="validationInputType">
+                                                        <String>text/any</String>
+                                                    </field>
+                                                </validationUnitType>
+                                            </field>
+                                            <field name="url">
+                                                <String>${currentFileURL}</String>
+                                            </field>
+                                            <field name="validationEngine">
+                                                <validationEngine>
+                                                    <field name="engineType">
+                                                        <String>&lt;Default engine></String>
+                                                    </field>
+                                                    <field name="allowsAutomaticValidation">
+                                                        <Boolean>true</Boolean>
+                                                    </field>
+                                                </validationEngine>
+                                            </field>
+                                            <field name="allowAutomaticValidation">
+                                                <Boolean>true</Boolean>
+                                            </field>
+                                            <field name="extensions">
+                                                <null/>
+                                            </field>
+                                            <field name="validationSchema">
+                                                <null/>
+                                            </field>
+                                        </validationUnit>
                                     </list>
                                 </field>
                                 <field name="type">
-                                    <String xml:space="preserve">text/xml</String>
+                                    <String>Validation_scenario</String>
                                 </field>
                                 <field name="name">
-                                    <String xml:space="preserve">2c9090a2167c21d701168046989d4a42</String>
+                                    <String>2c9090a2167c21d701168046989d4a42</String>
                                 </field>
                             </validationScenario>
                             <validationScenario>
                                 <field name="pairs">
                                     <list>
-                                    <validationUnit>
-                                    <field name="validationType">
-                                    <validationUnitType>
-                                    <field name="validationInputType">
-                                    <String xml:space="preserve">text/xsl</String>
-                                    </field>
-                                    </validationUnitType>
-                                    </field>
-                                    <field name="url">
-                                    <String xml:space="preserve">file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/db/src/main/resources/COB-INF/workspace/queries/searchQuery.xslt</String>
-                                    </field>
-                                    <field name="validationEngine">
-                                    <validationEngine>
-                                    <field name="engineType">
-                                    <String xml:space="preserve">&lt;Default engine&gt;</String>
-                                    </field>
-                                    <field
-                                    name="allowsAutomaticValidation">
-                                    <Boolean xml:space="preserve">true</Boolean>
-                                    </field>
-                                    </validationEngine>
-                                    </field>
-                                    <field
-                                    name="allowAutomaticValidation">
-                                    <Boolean xml:space="preserve">true</Boolean>
-                                    </field>
-                                    <field name="extensions">
-                                    <null/>
-                                    </field>
-                                    <field name="validationSchema">
-                                    <null/>
-                                    </field>
-                                    </validationUnit>
+                                        <validationUnit>
+                                            <field name="validationType">
+                                                <validationUnitType>
+                                                    <field name="validationInputType">
+                                                        <String>text/xsl</String>
+                                                    </field>
+                                                </validationUnitType>
+                                            </field>
+                                            <field name="url">
+                                                <String>file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/db/src/main/resources/COB-INF/workspace/queries/searchQuery.xslt</String>
+                                            </field>
+                                            <field name="validationEngine">
+                                                <validationEngine>
+                                                    <field name="engineType">
+                                                        <String>&lt;Default engine></String>
+                                                    </field>
+                                                    <field name="allowsAutomaticValidation">
+                                                        <Boolean>true</Boolean>
+                                                    </field>
+                                                </validationEngine>
+                                            </field>
+                                            <field name="allowAutomaticValidation">
+                                                <Boolean>true</Boolean>
+                                            </field>
+                                            <field name="extensions">
+                                                <null/>
+                                            </field>
+                                            <field name="validationSchema">
+                                                <null/>
+                                            </field>
+                                        </validationUnit>
                                     </list>
                                 </field>
                                 <field name="type">
-                                    <String xml:space="preserve">text/xsl</String>
+                                    <String>Validation_scenario</String>
                                 </field>
                                 <field name="name">
-                                    <String xml:space="preserve">buildSearchQuery</String>
+                                    <String>buildSearchQuery</String>
                                 </field>
                             </validationScenario>
                             <validationScenario>
                                 <field name="pairs">
                                     <list>
-                                    <validationUnit>
-                                    <field name="validationType">
-                                    <validationUnitType>
-                                    <field name="validationInputType">
-                                    <String xml:space="preserve">text/xsl</String>
-                                    </field>
-                                    </validationUnitType>
-                                    </field>
-                                    <field name="url">
-                                    <String xml:space="preserve">file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/front/src/main/resources/COB-INF/lexicon-editor/export/createRELISHExportZip.xslt</String>
-                                    </field>
-                                    <field name="validationEngine">
-                                    <validationEngine>
-                                    <field name="engineType">
-                                    <String xml:space="preserve">&lt;Default engine&gt;</String>
-                                    </field>
-                                    <field
-                                    name="allowsAutomaticValidation">
-                                    <Boolean xml:space="preserve">true</Boolean>
-                                    </field>
-                                    </validationEngine>
-                                    </field>
-                                    <field
-                                    name="allowAutomaticValidation">
-                                    <Boolean xml:space="preserve">true</Boolean>
-                                    </field>
-                                    <field name="extensions">
-                                    <null/>
-                                    </field>
-                                    <field name="validationSchema">
-                                    <null/>
-                                    </field>
-                                    </validationUnit>
+                                        <validationUnit>
+                                            <field name="validationType">
+                                                <validationUnitType>
+                                                    <field name="validationInputType">
+                                                        <String>text/xsl</String>
+                                                    </field>
+                                                </validationUnitType>
+                                            </field>
+                                            <field name="url">
+                                                <String>file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/front/src/main/resources/COB-INF/lexicon-editor/export/createRELISHExportZip.xslt</String>
+                                            </field>
+                                            <field name="validationEngine">
+                                                <validationEngine>
+                                                    <field name="engineType">
+                                                        <String>&lt;Default engine></String>
+                                                    </field>
+                                                    <field name="allowsAutomaticValidation">
+                                                        <Boolean>true</Boolean>
+                                                    </field>
+                                                </validationEngine>
+                                            </field>
+                                            <field name="allowAutomaticValidation">
+                                                <Boolean>true</Boolean>
+                                            </field>
+                                            <field name="extensions">
+                                                <null/>
+                                            </field>
+                                            <field name="validationSchema">
+                                                <null/>
+                                            </field>
+                                        </validationUnit>
                                     </list>
                                 </field>
                                 <field name="type">
-                                    <String xml:space="preserve">text/xsl</String>
+                                    <String>Validation_scenario</String>
                                 </field>
                                 <field name="name">
-                                    <String xml:space="preserve">createAltFormatForLexicon</String>
+                                    <String>createAltFormatForLexicon</String>
                                 </field>
                             </validationScenario>
                             <validationScenario>
                                 <field name="pairs">
                                     <list>
-                                    <validationUnit>
-                                    <field name="validationType">
-                                    <validationUnitType>
-                                    <field name="validationInputType">
-                                    <String xml:space="preserve">text/xsl</String>
-                                    </field>
-                                    </validationUnitType>
-                                    </field>
-                                    <field name="url">
-                                    <String xml:space="preserve">file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/back/src/main/resources/COB-INF/schema-editor/saveSchema.xslt</String>
-                                    </field>
-                                    <field name="validationEngine">
-                                    <validationEngine>
-                                    <field name="engineType">
-                                    <String xml:space="preserve">&lt;Default engine&gt;</String>
-                                    </field>
-                                    <field
-                                    name="allowsAutomaticValidation">
-                                    <Boolean xml:space="preserve">true</Boolean>
-                                    </field>
-                                    </validationEngine>
-                                    </field>
-                                    <field
-                                    name="allowAutomaticValidation">
-                                    <Boolean xml:space="preserve">true</Boolean>
-                                    </field>
-                                    <field name="extensions">
-                                    <null/>
-                                    </field>
-                                    <field name="validationSchema">
-                                    <null/>
-                                    </field>
-                                    </validationUnit>
+                                        <validationUnit>
+                                            <field name="validationType">
+                                                <validationUnitType>
+                                                    <field name="validationInputType">
+                                                        <String>text/xsl</String>
+                                                    </field>
+                                                </validationUnitType>
+                                            </field>
+                                            <field name="url">
+                                                <String>file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/back/src/main/resources/COB-INF/schema-editor/saveSchema.xslt</String>
+                                            </field>
+                                            <field name="validationEngine">
+                                                <validationEngine>
+                                                    <field name="engineType">
+                                                        <String>&lt;Default engine></String>
+                                                    </field>
+                                                    <field name="allowsAutomaticValidation">
+                                                        <Boolean>true</Boolean>
+                                                    </field>
+                                                </validationEngine>
+                                            </field>
+                                            <field name="allowAutomaticValidation">
+                                                <Boolean>true</Boolean>
+                                            </field>
+                                            <field name="extensions">
+                                                <null/>
+                                            </field>
+                                            <field name="validationSchema">
+                                                <null/>
+                                            </field>
+                                        </validationUnit>
                                     </list>
                                 </field>
                                 <field name="type">
-                                    <String xml:space="preserve">text/xsl</String>
+                                    <String>Validation_scenario</String>
                                 </field>
                                 <field name="name">
-                                    <String xml:space="preserve">sort-order</String>
+                                    <String>sort-order</String>
                                 </field>
                             </validationScenario>
                             <validationScenario>
                                 <field name="pairs">
                                     <list>
-                                    <validationUnit>
-                                    <field name="validationType">
-                                    <validationUnitType>
-                                    <field name="validationInputType">
-                                    <String xml:space="preserve">text/xsl</String>
-                                    </field>
-                                    </validationUnitType>
-                                    </field>
-                                    <field name="url">
-                                    <String xml:space="preserve">file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/back/src/main/resources/COB-INF/workspace/getPage/getWorkspace.xslt</String>
-                                    </field>
-                                    <field name="validationEngine">
-                                    <validationEngine>
-                                    <field name="engineType">
-                                    <String xml:space="preserve">&lt;Default engine&gt;</String>
-                                    </field>
-                                    <field
-                                    name="allowsAutomaticValidation">
-                                    <Boolean xml:space="preserve">true</Boolean>
-                                    </field>
-                                    </validationEngine>
-                                    </field>
-                                    <field
-                                    name="allowAutomaticValidation">
-                                    <Boolean xml:space="preserve">true</Boolean>
-                                    </field>
-                                    <field name="extensions">
-                                    <null/>
-                                    </field>
-                                    <field name="validationSchema">
-                                    <null/>
-                                    </field>
-                                    </validationUnit>
+                                        <validationUnit>
+                                            <field name="validationType">
+                                                <validationUnitType>
+                                                    <field name="validationInputType">
+                                                        <String>text/xsl</String>
+                                                    </field>
+                                                </validationUnitType>
+                                            </field>
+                                            <field name="url">
+                                                <String>file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/back/src/main/resources/COB-INF/workspace/getPage/getWorkspace.xslt</String>
+                                            </field>
+                                            <field name="validationEngine">
+                                                <validationEngine>
+                                                    <field name="engineType">
+                                                        <String>&lt;Default engine></String>
+                                                    </field>
+                                                    <field name="allowsAutomaticValidation">
+                                                        <Boolean>true</Boolean>
+                                                    </field>
+                                                </validationEngine>
+                                            </field>
+                                            <field name="allowAutomaticValidation">
+                                                <Boolean>true</Boolean>
+                                            </field>
+                                            <field name="extensions">
+                                                <null/>
+                                            </field>
+                                            <field name="validationSchema">
+                                                <null/>
+                                            </field>
+                                        </validationUnit>
                                     </list>
                                 </field>
                                 <field name="type">
-                                    <String xml:space="preserve">text/xsl</String>
+                                    <String>Validation_scenario</String>
                                 </field>
                                 <field name="name">
-                                    <String xml:space="preserve">xquery-components</String>
+                                    <String>xquery-components</String>
                                 </field>
                             </validationScenario>
                         </validationScenario-array>
                     </entry>
                     <entry>
-                        <String xml:space="preserve">validation.scenarios.load.from.project</String>
-                        <Boolean xml:space="preserve">true</Boolean>
+                        <String>validation.scenarios.load.from.project</String>
+                        <Boolean>true</Boolean>
                     </entry>
                 </map>
             </serialized>
