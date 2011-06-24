@@ -28,7 +28,7 @@
     <parent>
         <groupId>nl.mpi.lexus</groupId>
         <artifactId>lexus</artifactId>
-        <version>3.0-beta-2</version>
+        <version>3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>front</artifactId>
@@ -136,17 +136,17 @@
         <dependency>
             <groupId>nl.mpi.lexus</groupId>
             <artifactId>db</artifactId>
-            <version>3.0-beta-2</version>
+            <version>3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>nl.mpi.lexus</groupId>
             <artifactId>display</artifactId>
-            <version>3.0-beta-2</version>
+            <version>3.0-SNAPSHOT</version>
         </dependency>
         <!--<dependency>
             <groupId>nl.mpi.lexus</groupId>
             <artifactId>flexus</artifactId>
-            <version>3.0-beta-2</version>
+            <version>3.0-SNAPSHOT</version>
             <type>swf</type>
             <scope>provided</scope>
         </dependency>-->
