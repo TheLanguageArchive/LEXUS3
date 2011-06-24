@@ -671,35 +671,24 @@
                         <scenarioAssociation-array>
                             <scenarioAssociation>
                                 <field name="name">
-                                    <String>createAltFormatForLexicon</String>
+                                    <String>typ-generated-schema-restructured</String>
                                 </field>
                                 <field name="type">
                                     <String>Validation_scenario</String>
                                 </field>
                                 <field name="url">
-                                    <String>front/src/main/resources/COB-INF/lexicon-editor/export/createAltFormatForLexicon.xsl</String>
+                                    <String>../../../../../Documents/MPI/Toolbox/Conversies/Udish%20export/Udisch-LEXUS-20110610/typ-generated-schema-restructured.xml</String>
                                 </field>
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="name">
-                                    <String>xquery-components</String>
+                                    <String>buildSearchQuery</String>
                                 </field>
                                 <field name="type">
                                     <String>Validation_scenario</String>
                                 </field>
                                 <field name="url">
-                                    <String>back/src/main/resources/COB-INF/util/xquery-components.xslt</String>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="name">
-                                    <String>2c9090a2167c21d701168046989d4a42</String>
-                                </field>
-                                <field name="type">
-                                    <String>Validation_scenario</String>
-                                </field>
-                                <field name="url">
-                                    <String>../../../../../Desktop/XMLexport/2c9090a2167c21d701168046989d4a42.xml</String>
+                                    <String>db/src/main/resources/COB-INF/workspace/queries/buildSearchQuery.xslt</String>
                                 </field>
                             </scenarioAssociation>
                             <scenarioAssociation>
@@ -715,13 +704,35 @@
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="name">
-                                    <String>buildSearchQuery</String>
+                                    <String>2c9090a2167c21d701168046989d4a42</String>
                                 </field>
                                 <field name="type">
                                     <String>Validation_scenario</String>
                                 </field>
                                 <field name="url">
-                                    <String>db/src/main/resources/COB-INF/workspace/queries/buildSearchQuery.xslt</String>
+                                    <String>../../../../../Desktop/XMLexport/2c9090a2167c21d701168046989d4a42.xml</String>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="name">
+                                    <String>xquery-components</String>
+                                </field>
+                                <field name="type">
+                                    <String>Validation_scenario</String>
+                                </field>
+                                <field name="url">
+                                    <String>back/src/main/resources/COB-INF/util/xquery-components.xslt</String>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="name">
+                                    <String>createAltFormatForLexicon</String>
+                                </field>
+                                <field name="type">
+                                    <String>Validation_scenario</String>
+                                </field>
+                                <field name="url">
+                                    <String>front/src/main/resources/COB-INF/lexicon-editor/export/createAltFormatForLexicon.xsl</String>
                                 </field>
                             </scenarioAssociation>
                         </scenarioAssociation-array>
@@ -899,6 +910,59 @@
                                 </field>
                                 <field name="name">
                                     <String>sort-order</String>
+                                </field>
+                            </validationScenario>
+                            <validationScenario>
+                                <field name="pairs">
+                                    <list>
+                                        <validationUnit>
+                                            <field name="validationType">
+                                                <validationUnitType>
+                                                    <field name="validationInputType">
+                                                        <String>text/xml</String>
+                                                    </field>
+                                                </validationUnitType>
+                                            </field>
+                                            <field name="url">
+                                                <String>${currentFileURL}</String>
+                                            </field>
+                                            <field name="validationEngine">
+                                                <validationEngine>
+                                                    <field name="engineType">
+                                                        <String>&lt;Default engine></String>
+                                                    </field>
+                                                    <field name="allowsAutomaticValidation">
+                                                        <Boolean>true</Boolean>
+                                                    </field>
+                                                </validationEngine>
+                                            </field>
+                                            <field name="allowAutomaticValidation">
+                                                <Boolean>true</Boolean>
+                                            </field>
+                                            <field name="extensions">
+                                                <null/>
+                                            </field>
+                                            <field name="validationSchema">
+                                                <validationUnitSchema>
+                                                    <field name="dtdSchemaPublicID">
+                                                        <null/>
+                                                    </field>
+                                                    <field name="type">
+                                                        <Integer>4</Integer>
+                                                    </field>
+                                                    <field name="uri">
+                                                        <String>file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/front/src/main/resources/COB-INF/workspace/import/lexusMeta.rng</String>
+                                                    </field>
+                                                </validationUnitSchema>
+                                            </field>
+                                        </validationUnit>
+                                    </list>
+                                </field>
+                                <field name="type">
+                                    <String>Validation_scenario</String>
+                                </field>
+                                <field name="name">
+                                    <String>typ-generated-schema-restructured</String>
                                 </field>
                             </validationScenario>
                             <validationScenario>
