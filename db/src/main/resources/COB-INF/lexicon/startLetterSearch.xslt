@@ -133,7 +133,7 @@
                    
                    let $firstDCId := $firstDC/@id
                    
-                   let $les := for $le in $search-results/lexical-entries/lexical-entry let $d := $le//data[@schema-ref eq $firstDCId] order by $d/@sort-key, $d/value return $le
+                   let $les := for $le in $search-results/lexical-entries/lexical-entry let $d := $le//data[@schema-ref eq $firstDCId][1] order by $d/@sort-key, $d/value return $le
                    
                    return element result {
                        element results {
