@@ -190,7 +190,7 @@
 
         <div id="announcement">
             Welcome to the <a href="http://ems03.mpi.nl/lexus/wordpress/">3.0-beta-2</a> release of Lexus.
-            <a href="#" onclick="popitup('announcement-3.0-beta-1.html'); return false;">Click here</a> for more information.
+            <a href="#" onclick="popitup('announcement-3.0-beta.html'); return false;">Click here</a> for more information.
         </div>
         
         <msgs>
