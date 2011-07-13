@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- The contents of this file will be loaded for each web application -->
-<Context antiJARLocking="true" path="/mpi/lexus">
+<Context antiJARLocking="true" path="/lex/lexus">
   <!-- Default set of monitored resources -->
   <WatchedResource>WEB-INF/web.xml</WatchedResource>
   <!-- Uncomment this to disable session persistence across Tomcat restarts -->
   <!--
     <Manager pathname="" />
   -->
+  <Environment name="tee-folder" override="false" type="java.lang.String" value="/tmp/tee"/>
   <!--VICOS VARIABLES-->
-  <Environment name="VICOS/contextPath" override="false" type="java.lang.String" value="mpi/vicos"/>
+  <Environment name="VICOS/contextPath" override="false" type="java.lang.String" value="lex/vicos"/>
   <!--LEXUS Environment variables -->
   <!--ISO12620 DCR settings-->
   <!--Refers to the location of the ISO 12620 DCR -->
@@ -57,4 +58,9 @@
   <!--Refers to the url for the handler of EAF files-->
   <Environment name="LEXUS/EAF_Handler" override="false" type="java.lang.String" value="http://corpus1.mpi.nl/ds/annex/runLoader"/>
   <!--End of LEXUS Environment variables -->
+  <Environment name="jdbc/CSDB" type="java.lang.String" value="jdbc:postgresql://lux08.mpi.nl:5432/corpusstructure" />
+  
+<!--  <Resource  auth="Container" driverClassName="org.postgresql.Driver" maxActive="100" maxIdle="5"
+      maxWait="4000" name="jdbc/CSDB" password="" type="javax.sql.DataSource"
+      url="jdbc:postgresql://lux08.mpi.nl:5432/corpusstructure" username="imdiArchive"/>-->
 </Context>
