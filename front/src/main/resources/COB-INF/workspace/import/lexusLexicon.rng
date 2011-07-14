@@ -59,6 +59,17 @@
             <data type="NCName"/>
           </attribute>
           <attribute name="value"/>
+          <optional>
+            <attribute name="metadataURL"/>
+          </optional>
+          <optional>
+            <attribute name="archiveHandle"/>
+          </optional>
+          <optional>
+            <element name="url">
+              <text/>
+            </element>
+          </optional>
         </element>
       </optional>
     </element></define>

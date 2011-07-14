@@ -11,6 +11,16 @@
       <attribute name="version">
         <data type="decimal"/>
       </attribute>
+      <optional>
+        <element name="created">
+          <text/>
+         </element>
+      </optional>
+      <optional>
+        <element name="modified">
+          <text/>
+        </element>
+      </optional> 
       <element name="schema">
         <ref name="container"/>
       </element>
@@ -41,9 +51,11 @@
       <optional>
         <attribute name="note"/>
       </optional>
+      <optional>
       <attribute name="type">
         <data type="NCName"/>
       </attribute>
+      </optional>
       <zeroOrMore>
         <choice>
           <ref name="container"/>
