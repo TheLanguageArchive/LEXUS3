@@ -17,7 +17,11 @@
                 <xsl:call-template name="users"/>
                 
                 declare function lexus:getUsers() as node() {
-                    element result {lexus:users(collection('<xsl:value-of select="$users-collection"/>')/user)}
+                    element result {
+                        for $u in lexus:users(collection('<xsl:value-of select="$users-collection"/>')/user)
+                            order by lower-case($u/name) descending
+                            return $u
+                    }
                 };
                 
                 let $userId := '<xsl:value-of select="/data/user/@id"/>'                        

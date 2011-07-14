@@ -20,7 +20,7 @@
     <xsl:template name="users">
         declare function lexus:user-sequence($users as element()*)  as element()* {
             for $user in $users
-                order by $user/name
+                order by lower-case($user/name) ascending
                 return element user {$user/@*, $user/*[local-name() = ('name', 'account', 'accesslevel', 'workspace')] }
         };
         declare function lexus:users($users as element()*)  as element()* {

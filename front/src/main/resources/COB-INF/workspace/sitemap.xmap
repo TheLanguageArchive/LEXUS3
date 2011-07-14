@@ -148,6 +148,35 @@
                 </map:transform>
                 <map:serialize type="xml"/>
             </map:match>
+            
+            
+            <!-- 
+                Create user.
+            -->
+            <map:match pattern="createUser.json">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://json"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-create-user-1.xml"/>
+                <map:transform type="saxon" src="users/prepareGetUserByAccount.xslt"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-create-user-2.xml"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:db:/workspace/getUserByAccount.xml"/>
+                </map:transform>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-create-user-3.xml"/>
+                <map:transform type="saxon" src="users/prepareCreateUser.xslt"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-create-user-4.xml"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:db:/workspace/createUser.xml"/>
+                </map:transform>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-create-user-5.xml"/>
+                <map:transform type="saxon" src="users/savedUser-2-JSON.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-create-user-6.xml"/>
+                <map:serialize type="json"/>
+            </map:match>
+            
 
 
             <!-- 

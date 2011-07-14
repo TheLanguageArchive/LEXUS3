@@ -22,7 +22,7 @@
                     See xmldb:store further on!
                     Also, it is an updating function so it can't return a value.
                     -->
-                declare functio lexus:updateUser($existingUser as node(), $newData as node()) as node() {
+                <xquery:declare-updating-function/> lexus:updateUser($existingUser as node(), $newData as node()) as node() {
                     let $dummy := (
                         update replace $existingUser/account with $newData/account,
                         update replace $existingUser/name with $newData/name,

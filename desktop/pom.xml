@@ -39,12 +39,12 @@
         <dependency>
             <groupId>org.basex</groupId>
             <artifactId>basex</artifactId>
-            <version>6.6.2</version>
+            <version>6.7.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.basex</groupId>
             <artifactId>basex-api</artifactId>
-            <version>6.6.2</version>
+            <version>6.7.1-SNAPSHOT</version>
         </dependency>
         
         <dependency>
@@ -91,10 +91,6 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
-
-                    <!--<descriptors>
-                        <descriptor>src/main/assembly/lexus-desktop.xml</descriptor>
-                    </descriptors>-->
                 </configuration>
                 <executions>
                     <execution>

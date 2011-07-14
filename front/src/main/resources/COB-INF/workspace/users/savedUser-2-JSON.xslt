@@ -1,65 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:lexus="http://www.mpi.nl/lexus" version="2.0">
+    xmlns:lexus="http://www.mpi.nl/lexus" exclude-result-prefixes="#all" version="2.0">
 
     <!-- 
-        JSON source to mimic:
-        {
-        "id": "Mon Feb 15 11:05:27 CET 2010",
-        "result": {"lexicon":         {
-        "shared": false,
-        "id": "MmM5MDkwYTIxMmQ2N2UzNjAxMTJmNmEyMGNkYjdhZWM=",
-        "description": "Standard Format markers defined in _Making Dictionaries: A guide to lexicography and the Multi-Dictionary Formatter_. David F. Coward, Charles E. Grimes, and Mark R. Pedrotti. Waxhaw, NC: SIL, 1998. (2nd edition) ",
-        "administrator": false,
-        "writable": true,
-        "name": "test-tua.",
-        "note": null,
-        "size": 75,
-        "readers": [            {
-        "id": "MmM5MDkwYTIxMDBiNWZkYjAxMTAxMGM3NzYzNzAwMDc=",
-        "accesslevel": 10,
-        "administrator": false,
-        "name": "marquesan"
-        }],
-        "writers": [            {
-        "id": "MmM5MDkwYTIxMDBiNWZkYjAxMTAxMGM3NzYzNzAwMDc=",
-        "accesslevel": 10,
-        "administrator": false,
-        "name": "marquesan"
-        }]
-        }},
-        "requester": "Workspace9174",
-        "status":         {
-        "message": "At your service",
-        "duration": "20",
-        "insync": true,
-        "success": true
-        },
-        "requestId": "EDCB71FE-5D9E-797F-42F2-D116F299FB86"
-        }
-    -->
-    
+        Just return success or failure and a empty result/userProfile element,
+        on the client side the users are reloaded anyway!
+        -->
+
     <xsl:template match="/">
-        <object><xsl:apply-templates /></object>
-    </xsl:template>
-    
-    <xsl:template match="lexus:result/result">
-        <object key="result"><xsl:apply-templates /></object>
-    </xsl:template>
-    
-    <xsl:template match="user">
-        <xsl:variable name="userId" select="/result/user/@id"/>
-        <object key="user">
-            <string key="id">
-                <xsl:value-of select="@id"/>
-            </string>
-            <string key="name">
-                <xsl:value-of select="name"/>
-            </string>            
+        <object>
+            <xsl:if test="/data/lexus:create-user/lexus:result[@success eq 'true']">
+                <xsl:apply-templates select="/data/lexus:create-user"/>
+            </xsl:if>
+            <object key="status">
+                <string key="success">
+                    <xsl:choose>
+                        <xsl:when test="/data/lexus:create-user/lexus:result[@success eq 'true']"
+                            >true</xsl:when>
+                        <xsl:otherwise>false</xsl:otherwise>
+                    </xsl:choose>
+                </string>
+            </object>
         </object>
-        
     </xsl:template>
-    
-    <xsl:template match="@* | node()"/>
-    
+
+    <xsl:template match="lexus:create-user">
+        <object key="result">
+            <object key="userProfile">
+            </object>
+        </object>
+    </xsl:template>
+
 </xsl:stylesheet>
