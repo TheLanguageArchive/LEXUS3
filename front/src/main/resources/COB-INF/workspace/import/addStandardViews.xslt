@@ -33,7 +33,7 @@
                     <xsl:when
                         test=".//lexus:container[@type eq 'data'][@dcr:datcat eq 'http://www.isocat.org/datcat/DC-3723']">
                         <xsl:value-of
-                            select=".//lexus:container[@type eq 'data'][@mdf:marker eq 'lx'][1]/@id"
+                            select=".//lexus:container[@type eq 'data'][@dcr:datcat eq 'http://www.isocat.org/datcat/DC-3723'][1]/@id"
                         />
                     </xsl:when>
                     <xsl:when

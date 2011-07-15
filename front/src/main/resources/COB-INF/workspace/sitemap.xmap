@@ -267,9 +267,9 @@
 
         <map:pipeline type="noncaching">
 
-            <!--
-        Import a Lexus XML lexicon.
-      -->
+        <!--
+            Import a Lexus XML lexicon.
+            -->
             <map:match pattern="import/*/*/ImportLexusXML.xml">
                 <map:aggregate element="import-lexicon" ns="http://www.mpi.nl/lexus">
                     <map:part
@@ -278,20 +278,18 @@
                         src="cocoon:/importGetLexusLexicon/{naming:java:comp/env/LEXUS/tempDir}/{2}.xml"/>
                     <map:part src="cocoon://user"/>
                 </map:aggregate>
-                <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/import-1.xml"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/import-1.xml"/>
                 <map:transform type="saxon" src="import/createLexusDocument.xslt"/>
                 <map:transform type="saxon" src="import/addStandardViews.xslt"/>
                 <!--        <map:transform type="validate" src="import/lexusLexus.rng"/>-->
                 <map:transform type="saxon" src="import/prepareLexusDocumentForDatabase.xslt"/>
-                <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/import-2.xml"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/import-2.xml"/>
                 <map:transform type="servletService">
                     <map:parameter name="service" value="servlet:db:/workspace/createLexicon.xml"/>
                 </map:transform>
-                <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/import-3.xml"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/import-3.xml"/>
                 <map:transform type="saxon" src="import/reportOnImport.xslt"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/import-4.xml"/>
                 <map:serialize type="xml"/>
             </map:match>
         </map:pipeline>

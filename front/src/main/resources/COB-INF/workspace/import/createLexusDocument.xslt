@@ -76,9 +76,9 @@
     <xsl:template match="lexus:container[count(ancestor::lexus:container) eq 1]" mode="meta"
         priority="2">
         <xsl:copy>
-            <xsl:apply-templates select="@*[local-name() ne 'id']"/>
+            <!-- HHV: Do NOT change the ids in the schema! Just the ids in the lexicon. -->            
+            <xsl:apply-templates select="@*"/>
             <xsl:attribute name="type" select="'lexical-entry'"/>
-            <xsl:attribute name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
 
             <xsl:apply-templates select="node()" mode="meta"/>
         </xsl:copy>
@@ -88,8 +88,7 @@
     -->
     <xsl:template match="lexus:container" mode="meta" priority="1">
         <xsl:copy>
-            <xsl:apply-templates select="@*[local-name() ne 'id']"/>
-            <xsl:attribute name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
+            <xsl:apply-templates select="@*"/>
 
             <xsl:attribute name="type" select="'container'"/>
             <xsl:apply-templates select="node()" mode="meta"/>
@@ -100,9 +99,8 @@
     -->
     <xsl:template match="lexus:datacategory" mode="meta" priority="1">
         <lexus:container>
-            <xsl:apply-templates select="@*[local-name() ne 'id']"/>
+            <xsl:apply-templates select="@*"/>
             <xsl:attribute name="type" select="'data'"/>
-            <xsl:attribute name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
 
             <xsl:if test="lexus:value">
                 <lexus:valuedomain>

@@ -24,8 +24,7 @@
             <lexus:lexicon version="1.0" id="{$id}">
                 <lexus:lexicon-information>
                     <lexus:name>Klingon Extended Corpus</lexus:name>
-                    <lexus:description>This is the Klingon demo lexicon for
-                        Lexus</lexus:description>
+                    <lexus:description><xsl:text>This is the Klingon demo lexicon for Lexus</xsl:text></lexus:description>
                     <lexus:note>Adapted from http://www.kli.org/stuff/ECP.html</lexus:note>
                 </lexus:lexicon-information>
                 <xsl:apply-templates select="klingon/dictionary/dl/dt"/>
