@@ -16,7 +16,7 @@
     </xsl:template>
 
 
-    <!-- Copy attributes, text and comments into namespace ns. -->
+    <!-- Copy attributes, text and comments in mode use_namespace. -->
     <xsl:template match="@* | text() | comment()" mode="use_namespace" priority="1">
         <xsl:copy-of select="."/>
     </xsl:template>

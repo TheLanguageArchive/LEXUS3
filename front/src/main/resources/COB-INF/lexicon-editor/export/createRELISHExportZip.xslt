@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:zip="http://apache.org/cocoon/zip-archive/1.0"
-    xmlns:lexus="http://www.mpi.nl/lexus"
-    xmlns:mdf="http://lexus.mpi.nl/datcat/mdf/" 
-    exclude-result-prefixes="#all" version="2.0">
+    xmlns:zip="http://apache.org/cocoon/zip-archive/1.0" xmlns:lexus="http://www.mpi.nl/lexus"
+    xmlns:mdf="http://lexus.mpi.nl/datcat/mdf/" exclude-result-prefixes="#all" version="2.0">
 
     <xsl:include href="createRelaxNGForLexicon.xslt"/>
     <xsl:include href="createAltFormatForLexicon.xslt"/>
+    <xsl:include href="../../util/identity.xslt"/>
 
     <xsl:output method="xml" indent="yes"/>
     <xsl:strip-space elements="*"/>
@@ -16,8 +15,6 @@
         1   the lexicon.
         2   the meta/schema data + sort orders if used.
     -->
-
-    <xsl:include href="../../util/identity.xslt"/>
 
     <xsl:key name="schemaIds" match="//lexus/meta/schema//container" use="@id"/>
 
@@ -34,9 +31,9 @@
 
     <!-- Skip any elements in the lexus namespace -->
     <xsl:template match="lexus:*">
-        <xsl:apply-templates />
+        <xsl:apply-templates/>
     </xsl:template>
-    
+
     <!-- Match the top node we got from the back module,
         generate sort orders file and then process the lexus element. -->
     <xsl:template match="docAndSortorders">
@@ -77,7 +74,9 @@
             <xsl:apply-templates select="lexicon"/>
         </zip:entry>
         <zip:entry name="{$id}_internal_schema.xml" serializer="xml">
-            <xsl:apply-templates select="meta"/>
+            <xsl:apply-templates select="meta" mode="use_namespace">
+                <xsl:with-param name="ns" select="$lexusNamespace"/>
+            </xsl:apply-templates>
         </zip:entry>
         <!--<zip:entry name="{$id}_rng.xml" serializer="xml">
             <xsl:apply-templates select="meta" mode="relaxng"/>
@@ -94,7 +93,9 @@
         <xsl:element name="lexicon" namespace="{$lexusNamespace}">
             <xsl:attribute name="version" select="'1.0'"/>
             <xsl:apply-templates select="@*"/>
-            <xsl:call-template name="lexicon-information"/>
+            <xsl:call-template name="lexicon-information">
+                <xsl:with-param name="ns" select="$lexusNamespace"/>
+            </xsl:call-template>
             <xsl:apply-templates mode="use_namespace">
                 <xsl:with-param name="ns" select="$lexusNamespace"/>
             </xsl:apply-templates>
@@ -104,14 +105,15 @@
 
     <!-- Copy name, description and note to a lexicon -->
     <xsl:template name="lexicon-information">
-        <xsl:element name="lexicon-information" namespace="{$lexusNamespace}">
-            <xsl:element name="name" namespace="{$lexusNamespace}">
+        <xsl:param name="ns" select="''"/>
+        <xsl:element name="lexicon-information" namespace="{$ns}">
+            <xsl:element name="name" namespace="{$ns}">
                 <xsl:value-of select="ancestor::lexus/meta/name"/>
             </xsl:element>
-            <xsl:element name="description" namespace="{$lexusNamespace}">
+            <xsl:element name="description" namespace="{$ns}">
                 <xsl:value-of select="ancestor::lexus/meta/description"/>
             </xsl:element>
-            <xsl:element name="note" namespace="{$lexusNamespace}">
+            <xsl:element name="note" namespace="{$ns}">
                 <xsl:value-of select="ancestor::lexus/meta/note"/>
             </xsl:element>
         </xsl:element>
@@ -121,52 +123,70 @@
         Generate the meta/schema file.
         Add the id attribute, a namespace and copy children.
     -->
-    <xsl:template match="meta">
-        <xsl:element name="meta" namespace="{$lexusNamespace}"
-            xmlns:isocat="http://www.isocat.org/datcat/">
+    <xsl:template match="meta" mode="use_namespace" >
+        <xsl:param name="ns" select="''"/>
+        <xsl:element name="meta" namespace="{$ns}" xmlns:isocat="http://www.isocat.org/datcat/">
             <xsl:attribute name="version" select="'1.0'"/>
             <xsl:attribute name="id" select="ancestor::lexus/@id"/>
-            <xsl:apply-templates mode="use_namespace"/>
+            <xsl:apply-templates mode="use_namespace">
+                <xsl:with-param name="ns" select="$ns"/>
+            </xsl:apply-templates>
             <xsl:apply-templates select="ancestor::docAndSortorders/sortorders"/>
         </xsl:element>
     </xsl:template>
 
     <!-- The schema element -->
     <xsl:template match="schema" mode="use_namespace">
-        <xsl:element name="schema" namespace="{$lexusNamespace}">
-            <xsl:apply-templates select="@*|node()" mode="use_namespace"/>
+        <xsl:param name="ns" select="''"/>
+        <xsl:element name="schema" namespace="{$ns}">
+            <xsl:apply-templates select="@*|node()" mode="use_namespace">
+                <xsl:with-param name="ns" select="$ns"/>
+            </xsl:apply-templates>
         </xsl:element>
     </xsl:template>
-    
-    
+
+
     <!-- Modify the lexical-entry container, it's got too much information.
     -->
-    <xsl:template match="schema//container[@type='lexical-entry'] | schema//container[@type='lexicon']" mode="use_namespace">
-        <xsl:element name="container" namespace="{$lexusNamespace}">
+    <xsl:template
+        match="schema//container[@type='lexical-entry'] | schema//container[@type='lexicon']"
+        mode="use_namespace">
+        <xsl:param name="ns" select="''"/>
+        <xsl:element name="container" namespace="{$ns}">
             <xsl:copy-of select="@id | @admin-info | @description | @type | @note | @name"/>
-            <xsl:apply-templates select="*" mode="use_namespace"/>
+            <xsl:apply-templates select="*" mode="use_namespace">
+                <xsl:with-param name="ns" select="$ns"/>
+            </xsl:apply-templates>
         </xsl:element>
     </xsl:template>
-    
+
     <!-- A regular container element -->
-    <xsl:template match="schema//container[@type='container'] | schema//container[not(@type)]" mode="use_namespace">
-        <xsl:element name="container" namespace="{$lexusNamespace}">
+    <xsl:template match="schema//container[@type='container'] | schema//container[not(@type)]"
+        mode="use_namespace">
+        <xsl:param name="ns" select="''"/>
+        <xsl:element name="container" namespace="{$ns}">
             <xsl:copy-of select="@id | @admin-info | @description | @type | @note | @name"/>
-            <xsl:apply-templates select="*" mode="use_namespace"/>
+            <xsl:apply-templates select="*" mode="use_namespace">
+                <xsl:with-param name="ns" select="$ns"/>
+            </xsl:apply-templates>
         </xsl:element>
     </xsl:template>
-    
+
     <!-- Transform the registry/reference attributes to datcat="isocat:DC-xxxx" attribute.
     -->
     <xsl:template match="schema//container[@type='data']" mode="use_namespace"
         xmlns:dcr="http://www.isocat.org/ns/dcr">
-        <xsl:element name="datacategory" namespace="{$lexusNamespace}"
+        <xsl:param name="ns" select="''"/>
+        <xsl:element name="datacategory" namespace="{$ns}"
             xmlns:isocat="http://www.isocat.org/datcat/">
-            <xsl:apply-templates select="@*" mode="use_namespace"/>
+            <xsl:apply-templates select="@*" mode="use_namespace">
+                <xsl:with-param name="ns" select="$ns"/>
+            </xsl:apply-templates>
             <xsl:choose>
                 <xsl:when test="@registry eq 'ISO-12620' and @reference ne ''">
                     <xsl:attribute name="dcr:datcat" select="@reference"/>
-                </xsl:when><!--
+                </xsl:when>
+                <!--
                 <xsl:when test="@registry eq 'MDF' and @reference ne ''">
                     <xsl:attribute name="dcr:datcat"
                         select="concat('lexus-user:', @reference)"/>
@@ -178,14 +198,14 @@
             </xsl:choose>
         </xsl:element>
     </xsl:template>
-    
+
     <xsl:template match="@reference | @registry | @mdf:*" mode="use_namespace" priority="3"/>
-    
+
     <xsl:template match="@*" mode="use_namespace" priority="2">
         <xsl:copy/>
     </xsl:template>
-    
-    
+
+
     <xsl:template match="meta/owner|meta/users|meta/views|meta/name|meta/description|meta/note"
         mode="use_namespace"/>
 

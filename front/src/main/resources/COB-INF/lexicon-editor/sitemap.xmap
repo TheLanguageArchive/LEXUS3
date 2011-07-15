@@ -314,11 +314,11 @@
                         value="servlet:db:/lexicon/getDocumentAndSchema.xml"/>
                 </map:transform>
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-xe-1.xml"/>
                 <!--        <map:transform type="saxon" src="export/createLexiconAndSchemaZipEntries.xslt"/>-->
                 <map:transform type="saxon" src="export/createRELISHExportZip.xslt"/>
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-xe-2.xml"/>
                 <map:transform src="export/prepareZipForSerialisation.xslt"/>
                 <map:serialize type="zip"/>
             </map:match>
