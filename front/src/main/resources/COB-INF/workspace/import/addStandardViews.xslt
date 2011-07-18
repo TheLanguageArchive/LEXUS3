@@ -15,9 +15,9 @@
 
 
     <!--
-        Add standard views, list view and lexical entry view.
+        When views are not defined, add standard views, list view and lexical entry view.
     -->
-    <xsl:template match="lexus:meta" priority="1">
+    <xsl:template match="lexus:meta[not(lexus:views)]" priority="1">
         <xsl:param name="lexiconId"/>
         <xsl:copy>
             <xsl:apply-templates select="@*[local-name() ne 'id']"/>
@@ -33,26 +33,26 @@
                     <xsl:when
                         test=".//lexus:container[@type eq 'data'][@dcr:datcat eq 'http://www.isocat.org/datcat/DC-3723']">
                         <xsl:value-of
-                            select=".//lexus:container[@type eq 'data'][@dcr:datcat eq 'http://www.isocat.org/datcat/DC-3723'][1]/@id"
+                            select="(.//lexus:container[@type eq 'data'][@dcr:datcat eq 'http://www.isocat.org/datcat/DC-3723'])[1]/@id"
                         />
                     </xsl:when>
                     <xsl:when
                         test=".//lexus:container[@type eq 'data'][@mdf:marker eq 'lx']">
                         <xsl:value-of
-                            select=".//lexus:container[@type eq 'data'][@mdf:marker eq 'lx'][1]/@id"
+                            select="(.//lexus:container[@type eq 'data'][@mdf:marker eq 'lx'])[1]/@id"
                         />
                     </xsl:when>
                     
                     <xsl:when
                         test=".//lexus:container[@type eq 'data'][lower-case(@name) eq 'lexeme']">
                         <xsl:value-of
-                            select=".//lexus:container[@type eq 'data'][lower-case(@name) eq 'lexeme'][1]/@id"
+                            select="(.//lexus:container[@type eq 'data'][lower-case(@name) eq 'lexeme'])[1]/@id"
                         />
                     </xsl:when>
                     <xsl:when
                         test=".//lexus:container[@type eq 'data'][lower-case(@name) eq 'headword']">
                         <xsl:value-of
-                            select=".//lexus:container[@type eq 'data'][lower-case(@name) eq 'headword'][1]/@id"
+                            select="(.//lexus:container[@type eq 'data'][lower-case(@name) eq 'headword'])[1]/@id"
                         />
                     </xsl:when>
                     <xsl:otherwise>
