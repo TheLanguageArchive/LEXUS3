@@ -94,6 +94,14 @@
             <xsl:apply-templates select="node()" mode="meta"/>
         </xsl:copy>
     </xsl:template>
+    
+    <!--
+        Copy queries element verbatim.
+    -->    
+    <xsl:template match="lexus:queries" mode="meta" priority="1">
+        <xsl:copy-of select="."/>
+    </xsl:template>
+    
     <!--
         Create lexus:container with @type and @id for lexus:datacategory.
     -->
