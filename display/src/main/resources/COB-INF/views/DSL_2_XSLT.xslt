@@ -117,7 +117,10 @@
         A <data/> element in the DSL matches data elements in the LE based on their @schema-ref attribute.
     -->
     <xsl:template match="data">
-        <target:apply-templates select=".//data[@schema-ref = '{@id}']"/>
+        <div>
+            <xsl:copy-of select="@*[local-name(.) != 'isBranch' and local-name(.) != 'id' and local-name(.) != 'type' and local-name(.) != 'name']"/>
+            <target:apply-templates select=".//data[@schema-ref = '{@id}']"/>
+        </div>
     </xsl:template>
     <!-- Process lists -->
     <xsl:template match="list">
