@@ -74,11 +74,9 @@
                 <map:act type="json-field">
                     <map:parameter name="json-field" value="lexicon"/>
                     <map:generate src="cocoon://LexusSchemaEditor/getSchema.xml"/>
-                    <map:transform type="${tee}"
-                        src="{naming:java:comp/env/tee-folder}debug-info/front-cle-1.xml"/>
+                    <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-cle-1.xml"/>
                     <map:transform type="saxon" src="addIdsToNewLexicalEntry.xslt"/>
-                    <map:transform type="${tee}"
-                        src="{naming:java:comp/env/tee-folder}debug-info/front-cle-2.xml"/>
+                    <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-cle-2.xml"/>
                     <map:transform type="servletService">
                         <map:parameter name="service"
                             value="servlet:db:/lexicon/saveLexicalEntry.xml"/>
@@ -87,8 +85,7 @@
                         <map:parameter name="service"
                             value="servlet:db:/lexicon/getLexicalEntryData.xml"/>
                     </map:transform>
-                    <map:transform type="${tee}"
-                        src="{naming:java:comp/env/tee-folder}debug-info/front-cle-3.xml"/>
+                    <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-cle-3.xml"/>
                     <map:transform type="saxon"
                         src="views/prepareDisplayGeneratorForLexicalEntry.xslt"/>
                     <map:transform type="servletService">

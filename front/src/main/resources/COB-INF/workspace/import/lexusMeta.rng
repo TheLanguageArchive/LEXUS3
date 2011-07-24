@@ -158,6 +158,9 @@
                         </attribute>
                         <zeroOrMore>
                             <element name="value">
+                                <optional>
+                                    <attribute name="dcr:datcat"/>
+                                </optional>
                                 <text/>
                             </element>
                         </zeroOrMore>
