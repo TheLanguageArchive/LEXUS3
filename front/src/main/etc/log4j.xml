@@ -27,15 +27,22 @@
       <!--
           HHV: Used to be ${org.apache.cocoon.work.directory}/cocoon-logs/log4j.log
           -->
-      <param name="File" value="/lat/tomcat-lexical/logs/log4j.log"/>
+    <param name="File" value="/lat/tomcat-lexical/logs/cocoon-logs/frontModule.log"/>
     <param name="Append" value="false"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d %-5p %t %c - %m%n"/>
+    </layout>
+  </appender>
+  
+  <appender name="stdout" class="org.apache.log4j.ConsoleAppender"> 
+    <param name="Target" value="System.out"/>
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%d %-5p %t %c - %m%n"/>
     </layout>
   </appender>
 
   <appender name="lexer-appender" class="org.apache.log4j.FileAppender">
-      <param name="File" value="/lat/tomcat-lexical/logs/lexer.log"/>
+      <param name="File" value="/lat/tomcat-lexical/logs/cocoon-logs/lexer.log"/>
     <param name="Append" value="false"/>
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%d %-5p %t %c - %m%n"/>
@@ -43,7 +50,7 @@
   </appender>
 
   <appender name="parser-appender" class="org.apache.log4j.FileAppender">
-      <param name="File" value="/lat/tomcat-lexical/logs/parser.log"/>
+      <param name="File" value="/lat/tomcat-lexical/logs/cocoon-logs/parser.log"/>
     <param name="Append" value="false"/>
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%d %-5p %t %c - %m%n"/>
@@ -51,23 +58,24 @@
   </appender>
 
   <logger name="sitemap.transformer.lexer" additivity="false">
-    <level value="\${org.apache.cocoon.log4j.loglevel}"/>
+    <level value="${org.apache.cocoon.log4j.loglevel}"/>
     <appender-ref ref="lexer-appender"/>
   </logger>
 
   <logger name="sitemap.transformer.parser" additivity="false">
-    <level value="\${org.apache.cocoon.log4j.loglevel}"/>
+    <level value="${org.apache.cocoon.log4j.loglevel}"/>
     <appender-ref ref="parser-appender"/>
   </logger>
   
   <logger name="rest" additivity="false">
-    <level value="\${org.apache.cocoon.log4j.loglevel}"/>
+    <level value="${org.apache.cocoon.log4j.loglevel}"/>
     <appender-ref ref="CORE"/>
   </logger>
   
   <root>
-    <priority value="\${org.apache.cocoon.log4j.loglevel}"/>
+    <priority value="${org.apache.cocoon.log4j.loglevel}"/>
     <appender-ref ref="CORE"/>
+    <appender-ref ref="stdout"/> <!-- When used in production this causes the log to go to catalina.out as well-->
   </root>
   
 </log4j:configuration>
