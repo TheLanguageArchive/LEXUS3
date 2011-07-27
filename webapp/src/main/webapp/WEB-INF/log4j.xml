@@ -42,6 +42,6 @@
   <root>
     <priority value="${org.apache.cocoon.log4j.loglevel}"/>
     <appender-ref ref="CORE"/>
-    <appender-ref ref="stdout"/> <!-- When used in production this causes the log to go to catalina.out as well-->
+   <!--  <appender-ref ref="stdout"/> When used in production this causes the log to go to catalina.out as well-->
   </root>
 </log4j:configuration>
