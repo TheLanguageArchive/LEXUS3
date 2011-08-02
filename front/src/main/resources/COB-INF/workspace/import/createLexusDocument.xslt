@@ -90,7 +90,11 @@
         <xsl:copy>
             <xsl:apply-templates select="@*"/>
 
-            <xsl:attribute name="type" select="'container'"/>
+            <xsl:attribute name="type" select="'component'"/>
+<!--            <xsl:attribute name="admin-info" select="''Imported Schema element from XML file'"/>-->
+<!--            <xsl:attribute name="multiple" select="'true'"/>-->
+<!--            <xsl:attribute name="mandatory" select="'false'"/>-->
+<!--            <xsl:attribute name="note" select="'This schema element was imported from an XML file''"/>-->
             <xsl:apply-templates select="node()" mode="meta"/>
         </xsl:copy>
     </xsl:template>
