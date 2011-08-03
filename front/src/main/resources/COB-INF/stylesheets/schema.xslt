@@ -100,7 +100,9 @@
         <string key="type">Lexicon</string>
         <string key="name">lexicon</string>
         <null key="parent"/>
-        <string key="note"/>
+        <string key="note">
+                <xsl:value-of select="@note"/>
+        </string>
         <xsl:if test="container and $tree eq 'true'">
             <array key="children">
                 <xsl:apply-templates select="container">
@@ -182,7 +184,9 @@
             <string key="parent">
                 <xsl:value-of select="../@id"/>
             </string>
-            <string key="note"/>
+            <string key="note">
+                <xsl:value-of select="@note"/>
+            </string>
             <xsl:if test="container and $tree eq 'true'">
                 <array key="children">
                     <xsl:apply-templates select="container">
@@ -281,6 +285,9 @@
             <string key="adminInfo">
                 <xsl:value-of select="@admin-info"/>
             </string>
+            <string key="note">
+                <xsl:value-of select="@note"/>
+            </string>
             <array key="valuedomain">
                 <xsl:apply-templates select="valuedomain/domainvalue"/>
             </array>
@@ -365,6 +372,9 @@
             </xsl:if>
             <string key="adminInfo">
                 <xsl:value-of select="@admin-info"/>
+            </string>
+			<string key="note">
+                <xsl:value-of select="@note"/>
             </string>
             <array key="children">
                 <xsl:if test="$tree eq 'true' and container">
