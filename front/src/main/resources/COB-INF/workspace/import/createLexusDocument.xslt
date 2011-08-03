@@ -65,6 +65,9 @@
         <xsl:copy>
             <xsl:apply-templates select="@*"/>
             <xsl:attribute name="type" select="'lexicon'"/>
+            <xsl:if test="not(@note)">
+            	<xsl:attribute name="note" select="'This schema element was imported from an XML file and had no original &quot;note&quot; attribute.'"/>
+            </xsl:if>
             <xsl:apply-templates select="node()" mode="meta"/>
         </xsl:copy>
     </xsl:template>
@@ -79,6 +82,9 @@
             <!-- HHV: Do NOT change the ids in the schema! Just the ids in the lexicon. -->            
             <xsl:apply-templates select="@*"/>
             <xsl:attribute name="type" select="'lexical-entry'"/>
+            <xsl:if test="not(@note)">
+            	<xsl:attribute name="note" select="'This schema element was imported from an XML file and had no original &quot;note&quot; attribute.'"/>
+            </xsl:if>
 
             <xsl:apply-templates select="node()" mode="meta"/>
         </xsl:copy>
@@ -91,10 +97,18 @@
             <xsl:apply-templates select="@*"/>
 
             <xsl:attribute name="type" select="'component'"/>
-<!--            <xsl:attribute name="admin-info" select="''Imported Schema element from XML file'"/>-->
-<!--            <xsl:attribute name="multiple" select="'true'"/>-->
-<!--            <xsl:attribute name="mandatory" select="'false'"/>-->
-<!--            <xsl:attribute name="note" select="'This schema element was imported from an XML file''"/>-->
+            <xsl:if test="not(@admin-info)">
+		            <xsl:attribute name="admin-info" select="''"/>
+			</xsl:if>
+			<xsl:if test="not(@multiple)">
+            	<xsl:attribute name="multiple" select="'true'"/>
+            </xsl:if>
+            <xsl:if test="not(@mandatory)">
+            	<xsl:attribute name="mandatory" select="'false'"/>
+            </xsl:if>
+            <xsl:if test="not(@note)">
+            	<xsl:attribute name="note" select="'This schema element was imported from an XML file and had no original &quot;note&quot; attribute.'"/>
+            </xsl:if>
             <xsl:apply-templates select="node()" mode="meta"/>
         </xsl:copy>
     </xsl:template>
@@ -113,6 +127,18 @@
         <lexus:container>
             <xsl:apply-templates select="@*"/>
             <xsl:attribute name="type" select="'data'"/>
+            <xsl:if test="not(@admin-info)">
+		            <xsl:attribute name="admin-info" select="''"/>
+			</xsl:if>
+			<xsl:if test="not(@multiple)">
+            	<xsl:attribute name="multiple" select="'true'"/>
+            </xsl:if>
+            <xsl:if test="not(@mandatory)">
+            	<xsl:attribute name="mandatory" select="'false'"/>
+            </xsl:if>
+            <xsl:if test="not(@note)">
+            	<xsl:attribute name="note" select="'This schema element was imported from an XML file and had no original &quot;note&quot; attribute.'"/>
+            </xsl:if>
 
             <xsl:if test="lexus:value">
                 <lexus:valuedomain>
