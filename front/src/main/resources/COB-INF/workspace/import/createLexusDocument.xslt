@@ -180,11 +180,12 @@
         <xsl:copy>
             <xsl:apply-templates select="@*[local-name() ne 'id']"/>
             <xsl:attribute name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
-
+            <xsl:if test="not(@note) and local-name() eq 'data'">
+            	<xsl:attribute name="note" select="''"/>
+            </xsl:if>
             <xsl:apply-templates select="node()" mode="add-ids"/>
         </xsl:copy>
     </xsl:template>
-
 
     <xsl:template match="lexus:lexicon-information/lexus:note">
         <xsl:copy>[This lexicon was imported by <xsl:value-of

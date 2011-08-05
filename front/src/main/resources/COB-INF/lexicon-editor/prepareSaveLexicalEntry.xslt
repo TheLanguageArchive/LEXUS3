@@ -54,13 +54,13 @@
     </xsl:template>
 
     <xsl:template match="children[children]">
-        <container id="{id}" schema-ref="{schemaElementId}" name="{label}">
+        <container id="{id}" schema-ref="{schemaElementId}" name="{label}" note="{notes}">
             <xsl:apply-templates select="children/children"/>
         </container>
     </xsl:template>
 
     <xsl:template match="children[not(children)]">
-        <data id="{id}" schema-ref="{schemaElementId}" name="{label}">
+        <data id="{id}" schema-ref="{schemaElementId}" name="{label}" note="{notes}">
             <value>
                 <xsl:value-of select="value"/>
             </value>

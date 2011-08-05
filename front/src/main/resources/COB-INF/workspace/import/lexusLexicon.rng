@@ -21,9 +21,11 @@
       </element>
       <oneOrMore>
         <element name="lexical-entry">
-          <optional><attribute name="id">
-            <data type="anyURI"/>
-          </attribute></optional>
+          <optional>
+            <attribute name="id">
+             <data type="anyURI"/>
+            </attribute>
+          </optional>
           <attribute name="schema-ref">
             <data type="anyURI"/>
           </attribute>
@@ -46,6 +48,11 @@
       <attribute name="schema-ref">
         <data type="anyURI"/>
       </attribute>
+      <optional>
+        <attribute name="note">
+          <data type="anyURI"/>
+        </attribute>
+      </optional>
       <element name="value">
         <text/>
       </element>
@@ -75,9 +82,11 @@
     </element></define>
   <define name="container">
     <element name="container">
-      <optional><attribute name="id">
-        <data type="anyURI"/>
-      </attribute></optional>
+      <optional>
+        <attribute name="id">
+          <data type="anyURI"/>
+        </attribute>
+      </optional>
       <attribute name="name"/>
       <attribute name="schema-ref">
         <data type="anyURI"/>

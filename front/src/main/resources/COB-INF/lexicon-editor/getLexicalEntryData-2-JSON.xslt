@@ -137,6 +137,11 @@
                     select="//lexus:get-lexical-entry/lexus:result/result/schema//container[@id eq current()/@schema-ref]/@name"
                 />
             </string>
+            <string key="notes">
+                <xsl:value-of
+                    select="//lexus:get-lexical-entry/lexus:result/result/lexical-entry//data[@id eq current()/@id]/@note"
+                />
+            </string>
 
             <xsl:apply-templates select="resource"/>
         </object>
