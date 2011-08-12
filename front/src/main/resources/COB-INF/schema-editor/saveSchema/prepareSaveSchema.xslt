@@ -46,9 +46,15 @@
     <xsl:include href="../../util/identity.xslt"/>
 
     <xsl:template match="json">
+        <lexus:get-schema>
+            <id><xsl:value-of select="parameters/viewId"/></id>
+        </lexus:get-schema>
         <lexus:save-schema id="{parameters/viewId}">
             <xsl:apply-templates select="parameters/schema"/>
         </lexus:save-schema>
+        <lexus:delete-lexical-entries-deleted-from-schema lexicon="{parameters/viewId}">
+            <xsl:apply-templates select="parameters/schema"/>
+        </lexus:delete-lexical-entries-deleted-from-schema>
         <lexus:update-lexicon-for-updated-schema lexicon="{parameters/viewId}" user-id="{/data/user/@id}">
             <xsl:apply-templates select="parameters/schema"/>
         </lexus:update-lexicon-for-updated-schema>

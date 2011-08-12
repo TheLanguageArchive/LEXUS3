@@ -208,18 +208,37 @@
 
                 <map:call resource="rest"/>
                 
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexicon-3.xml"/>
+                
+                <map:transform type="saxon" src="deleteLexicalEntriesDeletedFromSchema.xslt">
+                    <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
+                    <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+                </map:transform>                
+                <map:transform type="saxon" src="../util/xquery-dialect.xslt">
+                    <map:parameter name="xmldb" value="${xmldb}"/>
+                </map:transform>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexicon-4.xml"/>
+                
+                <map:call resource="rest"/>                
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexicon-5.xml"/>
+                
                 <map:transform type="saxon" src="updateLexiconForUpdatedSchema.xslt">
                     <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
                     <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
                 </map:transform>
                 
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexicon-3.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexicon-6.xml"/>
                 
                 <map:call resource="rest"/>
                 
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexicon-4.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-update-lexicon-7.xml"/>
                 
                 <map:serialize type="xml"/>
             </map:match>
