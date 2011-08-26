@@ -148,8 +148,8 @@
                 </map:transform>
                 <map:serialize type="xml"/>
             </map:match>
-            
-            
+
+
             <!-- 
                 Delete a user.
                 -->
@@ -159,23 +159,25 @@
                 <map:serialize type="json"/>-->
                 <map:serialize type="xml"/>
             </map:match>
-            
+
             <map:match pattern="deleteUser">
                 <map:aggregate element="data">
                     <map:part src="cocoon://json"/>
                     <map:part src="cocoon://user"/>
                 </map:aggregate>
-                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-delete-user-1.xml"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-delete-user-1.xml"/>
                 <map:transform type="saxon" src="users/prepareDeleteUser.xslt"/>
-                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-delete-user-2.xml"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-delete-user-2.xml"/>
                 <!--<map:transform type="servletService">
                     <map:parameter name="service" value="servlet:db:/workspace/deleteUser.xml"/>
                 </map:transform>
                 <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-delete-user-3.xml"/>-->
                 <map:serialize type="xml"/>
             </map:match>
-            
-            
+
+
             <!-- 
                 Create user.
                 -->
@@ -184,25 +186,31 @@
                     <map:part src="cocoon://json"/>
                     <map:part src="cocoon://user"/>
                 </map:aggregate>
-                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-create-user-1.xml"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-create-user-1.xml"/>
                 <map:transform type="saxon" src="users/prepareGetUserByAccount.xslt"/>
-                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-create-user-2.xml"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-create-user-2.xml"/>
                 <map:transform type="servletService">
-                    <map:parameter name="service" value="servlet:db:/workspace/getUserByAccount.xml"/>
+                    <map:parameter name="service" value="servlet:db:/workspace/getUserByAccount.xml"
+                    />
                 </map:transform>
-                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-create-user-3.xml"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-create-user-3.xml"/>
                 <map:transform type="saxon" src="users/prepareCreateUser.xslt"/>
-                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-create-user-4.xml"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-create-user-4.xml"/>
                 <map:transform type="servletService">
                     <map:parameter name="service" value="servlet:db:/workspace/createUser.xml"/>
                 </map:transform>
-                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-create-user-5.xml"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-create-user-5.xml"/>
                 <map:transform type="saxon" src="users/savedUser-2-JSON.xslt"/>
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-create-user-6.xml"/>
                 <map:serialize type="json"/>
             </map:match>
-            
+
 
 
             <!-- 
@@ -267,10 +275,10 @@
 
         <map:pipeline type="noncaching">
 
-        <!--
+            <!--
             Import a Lexus XML lexicon.
             -->
-            <map:match pattern="import/*/*/ImportLexusXML.xml">
+            <map:match pattern="import/*/*/ImportSmallLexusXML.xml">
                 <map:aggregate element="import-lexicon" ns="http://www.mpi.nl/lexus">
                     <map:part
                         src="cocoon:/importGetLexusMeta/{naming:java:comp/env/LEXUS/tempDir}/{1}.xml"/>
@@ -278,18 +286,18 @@
                         src="cocoon:/importGetLexusLexicon/{naming:java:comp/env/LEXUS/tempDir}/{2}.xml"/>
                     <map:part src="cocoon://user"/>
                 </map:aggregate>
-<!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/import-1.xml"/>-->
+                <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/import-1.xml"/>-->
                 <map:transform type="saxon" src="import/createLexusDocument.xslt"/>
                 <map:transform type="saxon" src="import/addStandardViews.xslt"/>
                 <!--        <map:transform type="validate" src="import/lexusLexus.rng"/>-->
                 <map:transform type="saxon" src="import/prepareLexusDocumentForDatabase.xslt"/>
-<!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/import-2.xml"/>-->
+                <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/import-2.xml"/>-->
                 <map:transform type="servletService">
                     <map:parameter name="service" value="servlet:db:/workspace/createLexicon.xml"/>
                 </map:transform>
-<!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/import-3.xml"/>-->
+                <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/import-3.xml"/>-->
                 <map:transform type="saxon" src="import/reportOnImport.xslt"/>
-<!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/import-4.xml"/>-->
+                <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/import-4.xml"/>-->
                 <map:serialize type="xml"/>
             </map:match>
         </map:pipeline>
@@ -322,41 +330,83 @@
 
 
             <!--
-        Import a BIG Lexus XML lexicon.
-      -->
-            <map:match pattern="import/*/*/ImportBIGLexusXML.xml">
+                Import a BIG Lexus XML lexicon.
+                -->
+            <map:match pattern="import/*/*/ImportLexusXML.xml">
 
                 <map:aggregate element="data">
                     <map:part src="cocoon://user"/>
-                    <map:part src="{naming:java:comp/env/LEXUS/tempDir}/{2}.xml"/>
                     <map:part src="{naming:java:comp/env/LEXUS/tempDir}/{1}.xml"/>
+                    <map:part src="{naming:java:comp/env/LEXUS/tempDir}/{2}.xml"/>
                 </map:aggregate>
-<!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/import-0.xml"/>-->
+                
+                <!--<map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-0.xml"/>-->
+                
                 <map:transform type="stx" src="import/add-lexicon-id.stx"/>
-<!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/import-1.xml"/>-->
+                
+                <!--<map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-1.xml"/>-->
+                
                 <map:transform type="stx" src="import/add-meta-and-ids.stx"/>
-<!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/import-2.xml"/>-->
-                <map:transform type="stx" src="import/add-cincludes-lexus.stx"/>
-<!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/import-3.xml"/>-->
-                <map:transform type="servletService">
+                
+                <!--<map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-2.xml"/>-->
+                
+                <map:transform type="stx" src="import/add-fragment-create-lexicon.stx"/>
+                
+                <!--<map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-3.xml"/>-->
+                
+                <map:transform type="servletServiceFragments">
                     <map:parameter name="service" value="servlet:db:/workspace/createLexicon.xml"/>
                 </map:transform>
-                <map:transform type="servletService">
-                    <map:parameter name="service" value="servlet:db:/lexicon/saveLexicalEntry.xml"/>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-4.xml"/>
+                
+                <map:transform type="stx" src="import/add-fragments-save-lexical-entries.stx"/>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-5.xml"/>
+                
+                <map:transform type="servletServiceFragments">
+                    <map:parameter name="service" value="servlet:db:/lexicon/insertLexicalEntries.xml"/>
                 </map:transform>
-<!--                <map:transform type="cinclude"/>-->
-<!--                <map:transform type="stx" src="import/add-cincludes-lexical-entries.stx"/>-->
-<!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/import-4.xml"/>-->
-                <!--        <map:transform type="cinclude"/>-->
-                <!--        <map:transform type="stx" src="import/count-ids.stx"/>-->
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-6.xml"/>
+                
+                <map:transform type="stx" src="import/add-fragment-replace-lexicon-information.stx"/>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-7.xml"/>
+                
+                <map:transform type="servletServiceFragments">
+                    <map:parameter name="service" value="servlet:db:/lexicon/replaceLexiconInformation.xml"/>
+                </map:transform>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-8.xml"/>
+
+                <map:transform type="saxon" src="import/import-2-result.xslt"/>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-9.xml"/>
+                
                 <map:serialize type="xml"/>
             </map:match>
+
 
             <map:handle-errors when="always">
                 <map:generate type="exception"/>
                 <map:serialize/>
             </map:handle-errors>
+            
         </map:pipeline>
+
+
+
 
         <map:pipeline>
 

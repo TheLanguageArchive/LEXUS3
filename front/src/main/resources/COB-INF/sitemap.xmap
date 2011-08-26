@@ -455,11 +455,11 @@
 
             <map:match pattern="StagingFileHandler/uploadFile.json">
                 <map:generate src="cocoon:/StagingFileHandler/uploadFile.xml"/>
-                <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/front-upload-json-1.xml"/>
+                <!--<map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-upload-json-1.xml"/>-->
                 <map:transform type="saxon" src="upload/upload-2-JSON.xslt"/>
-                <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/front-upload-json-2.xml"/>
+                <!--<map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-upload-json-2.xml"/>-->
                 <map:serialize type="json"/>
             </map:match>
 
@@ -471,8 +471,8 @@
                         />
                     </map:generate>
 
-                    <map:transform type="${tee}"
-                        src="{naming:java:comp/env/tee-folder}debug-info/front-upload-pre.xml"/>
+                    <!--<map:transform type="${tee}"
+                        src="{naming:java:comp/env/tee-folder}debug-info/front-upload-pre.xml"/>-->
                     <map:serialize type="xml"/>
                 </map:act>
 
@@ -481,8 +481,8 @@
                 <map:generate type="fileupload">
                     <map:parameter name="uploadDir" value="{naming:java:comp/env/LEXUS/tempDir}"/>
                 </map:generate>
-                <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/front-upload-xml-unauthorized-1.xml"/>
+                <!--<map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-upload-xml-unauthorized-1.xml"/>-->
                 <map:serialize type="xml"/>
                 <!--        <map:redirect-to uri="index.html"/>-->
             </map:match>

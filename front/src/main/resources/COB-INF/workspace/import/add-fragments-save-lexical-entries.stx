@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<stx:transform xmlns:stx="http://stx.sourceforge.net/2002/ns"
+    xmlns:sf="http://stx.sourceforge.net/2003/functions"
+    xmlns:lexus="http://www.mpi.nl/lexus"
+    xmlns:fragments="http://org.apache.cocoon.transformation/fragments/1.0"
+    xmlns:cinclude="http://apache.org/cocoon/include/1.0" xmlns:util="java:java.util.UUID"
+    version="1.0">
+
+    <stx:variable name="lexiconId" select="''"/>
+    <stx:variable name="userId" select="''"/>
+    <stx:variable name="batchSize" select="1000"/>
+    <stx:variable name="stopPos" select="0"/>
+    
+    <stx:template match="data">
+        <stx:assign name="lexiconId" select="@new-lexicon-id"/>
+        <stx:copy attributes="@*">
+            <stx:process-children/>
+        </stx:copy>
+    </stx:template>
+
+
+    <stx:template match="user">
+        <stx:assign name="userId" select="@id"/>
+        <stx:copy attributes="@*">
+            <stx:process-children/>
+        </stx:copy>
+    </stx:template>
+
+    <!-- 
+        Process a lexical-entry.
+    -->
+    <stx:template match="lexus:lexical-entry">
+        <stx:assign name="stopPos" select="position() + $batchSize"/>
+        <fragments:transform fragment-name="save-lexical-entries"
+                fragment-namespace="http://www.mpi.nl/lexus">
+                <lexus:save-lexical-entries lexicon="{$lexiconId}" user="{$userId}" first="{position()}" last="{$stopPos}">
+                    <stx:process-self group="batch-lexical-entries"/>
+                    <stx:process-siblings while="lexus:lexical-entry[$stopPos > position()]" group="batch-lexical-entries"/>
+                </lexus:save-lexical-entries>
+            </fragments:transform>
+    </stx:template>
+    
+    <stx:template match="@*">
+        <stx:copy/>
+    </stx:template>
+
+    <stx:template match="node()">
+        <stx:copy attributes="@*">
+            <stx:process-children/>
+        </stx:copy>
+    </stx:template>
+
+
+    <!--
+        Process the lexical entries following the first.
+        This groups together the updates for the db.
+    -->
+    <stx:group name="batch-lexical-entries">
+        <stx:template match="lexus:lexical-entry">
+            <lexical-entry>
+                <stx:process-attributes group="batch-lexical-entries"/>
+                <stx:process-children group="batch-lexical-entries"/>
+            </lexical-entry>
+        </stx:template>
+
+
+        <!-- 
+            Process a container.
+        -->
+        <stx:template match="lexus:data">
+            <data>
+                <stx:process-attributes group="batch-lexical-entries"/>
+                <stx:process-children group="batch-lexical-entries"/>
+            </data>
+        </stx:template>
+
+        <!-- 
+            Process a container.
+        -->
+        <stx:template match="lexus:container">
+            <container>
+                <stx:process-attributes group="batch-lexical-entries"/>
+                <stx:process-children group="batch-lexical-entries"/>
+            </container>
+        </stx:template>
+
+
+        <stx:template match="@*">
+            <stx:copy/>
+        </stx:template>
+
+        <stx:template match="node()">
+            <stx:copy attributes="@*">
+                <stx:process-children group="batch-lexical-entries"/>
+            </stx:copy>
+        </stx:template>
+    </stx:group>
+    
+</stx:transform>

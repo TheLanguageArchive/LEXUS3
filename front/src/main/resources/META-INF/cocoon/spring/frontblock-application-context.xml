@@ -71,6 +71,15 @@
         class="org.apache.cocoon.spring.configurator.log4j.Log4JConfigurator" scope="singleton">
         <property name="resource" value="/WEB-INF/log4j.xml"/>
     </bean>
+    
+    <!--
+        Special service transformers that calls the service for just a fragment.
+        -->
+    <bean name="org.apache.cocoon.transformation.Transformer/servletServiceFragments"
+        class="org.apache.cocoon.transformation.ServletServiceFragmentsTransformer" scope="prototype">
+        <property name="saxParser" ref="org.apache.cocoon.core.xml.SAXParser"/>
+    </bean>
+    
 
 
     <!--<bean id="EAF-handler" class="org.springframework.jndi.JndiObjectFactoryBean">

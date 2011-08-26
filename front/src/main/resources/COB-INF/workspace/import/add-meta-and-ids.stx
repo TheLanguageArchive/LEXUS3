@@ -5,9 +5,6 @@
     <stx:variable name="count" select="0"/>
     <stx:variable name="lexiconId" select="''"/>
     <stx:variable name="userId" select="''"/>
-    <stx:variable name="name" select="''"/>
-    <stx:variable name="description" select="''"/>
-    <stx:variable name="note" select="''"/>
     <stx:variable name="containerCount" select="0"/>
     <stx:buffer name="meta"/>
 
@@ -37,38 +34,26 @@
                     </user>
                 </users>
                 <name>
-                    <stx:value-of select="$name"/>
                 </name>
                 <description>
-                    <stx:value-of select="$description"/>
                 </description>
                 <note>
-                    <stx:value-of select="$note"/>
                 </note>
                 <stx:process-children group="meta"/>
             </meta>
-            <lexicon>
-            </lexicon>
+            <lexicon id="{$lexiconId}"> </lexicon>
         </lexus>
     </stx:template>
 
     <stx:group name="meta">
-        <!--
-          Remove lexus namespace from container elements.
-      -->
 
-        <stx:template match="lexus:container">
-            <container>
-                <stx:process-attributes/>
-                <stx:process-children/>
-            </container>
-        </stx:template>
+
         <!--
     Create lexus:container with @type and possibly @id for lexus:datacategory.
   -->
         <stx:template match="lexus:datacategory">
             <container>
-                <stx:process-attributes/>
+                <stx:process-attributes group="meta"/>
                 <stx:attribute name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
                 <stx:attribute name="type" select="'data'"/>
                 <stx:if test="not(@id)">
@@ -77,10 +62,10 @@
                 </stx:if>
                 <stx:if test="lexus:value">
                     <valuedomain>
-                        <stx:process-children/>
+                        <stx:process-children group="meta"/>
                     </valuedomain>
                 </stx:if>
-                <stx:process-children/>
+                <stx:process-children group="meta"/>
             </container>
         </stx:template>
 
@@ -92,19 +77,29 @@
         <stx:template match="lexus:value">
             <!--      <stx:result-buffer name="lexus">-->
             <lexus:domainvalue>
-                <stx:process-attributes/>
-                <stx:process-children/>
+                <stx:process-attributes group="meta"/>
+                <stx:process-children group="meta"/>
             </lexus:domainvalue>
             <!--      </stx:result-buffer>-->
         </stx:template>
 
+
+        <!--
+            Remove lexus namespace from elements.
+        -->
+        <stx:template match="lexus:*">
+            <stx:element name="{local-name()}">
+                <stx:process-attributes group="meta"/>
+                <stx:process-children group="meta"/>
+            </stx:element>
+        </stx:template>
 
         <!-- Copy everything -->
 
         <stx:template match="@* | node()">
             <!--      <stx:result-buffer name="lexus">-->
             <stx:copy attributes="@*">
-                <stx:process-children/>
+                <stx:process-children group="meta"/>
             </stx:copy>
             <!--      </stx:result-buffer>-->
         </stx:template>
@@ -128,44 +123,67 @@
     van lexical entries.
     -->
     <stx:group name="lexicon">
+        
+        <!--            
+            Keep the lexicon-information element, we'll add the info later to the
+            lexicon that's been saved to the db using the lexus:meta element.
+            -->
         <stx:template match="lexus:lexicon-information">
-            <stx:process-children/>
+            <stx:copy attributes="@*">
+                <stx:process-children group="lexicon"/>
+            </stx:copy>
         </stx:template>
         <stx:template match="lexus:name">
-            <stx:assign name="name" select="."/>
+            <stx:copy attributes="@*">
+                <stx:process-children group="lexicon"/>
+            </stx:copy>
         </stx:template>
         <stx:template match="lexus:description">
-            <stx:assign name="description" select="."/>
+            <stx:copy attributes="@*">
+                <stx:process-children group="lexicon"/>
+            </stx:copy>
         </stx:template>
         <stx:template match="lexus:note">
-            <stx:assign name="note" select="."/>
+            <stx:copy attributes="@*">
+                <stx:process-children group="lexicon"/>
+            </stx:copy>
         </stx:template>
 
         <stx:template match="lexus:lexical-entry">
             <stx:copy attributes="@*[not(name()='id')]">
                 <stx:attribute name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
                 <stx:assign name="count" select="$count + 1"/>
-                <stx:process-children/>
+                <stx:process-children group="lexicon"/>
             </stx:copy>
         </stx:template>
 
         <stx:template match="lexus:container">
             <stx:copy attributes="@*[not(name()='id')]">
                 <stx:attribute name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
-                <stx:process-children/>
+                <stx:process-children group="lexicon"/>
             </stx:copy>
         </stx:template>
 
         <stx:template match="lexus:data">
             <stx:copy attributes="@*[not(name()='id')]">
                 <stx:attribute name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
-                <stx:process-children/>
+                <stx:process-children group="lexicon"/>
             </stx:copy>
+        </stx:template>
+
+        <!--
+            Remove lexus namespace from elements.
+        -->
+        <stx:template match="lexus:*">
+            <stx:element name="{local-name()}">
+                <stx:process-attributes group="lexicon"/>
+                <stx:process-children group="lexicon"/>
+            </stx:element>
         </stx:template>
 
         <stx:template match="node()">
             <stx:copy attributes="@*">
-                <stx:process-children/>
+                <stx:process-children group="lexicon"/>
             </stx:copy>
         </stx:template>
 
