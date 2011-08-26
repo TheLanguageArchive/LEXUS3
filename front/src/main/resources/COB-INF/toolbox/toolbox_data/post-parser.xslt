@@ -10,6 +10,9 @@
     <xsl:apply-templates/>
   </xsl:template>
   
+  <!--Remove prologue element -->
+  <xsl:template match="parser:prologue"/>
+  
   <!--Switch to default namespace for lexicon element -->
   <xsl:template match="parser:lexicon">
     <lexicon><xsl:apply-templates/></lexicon>
@@ -36,29 +39,41 @@
     <xsl:apply-templates/>
   </xsl:template>
   
-  <!-- Remove unused start and end tags -->
-  <xsl:template match="parser:lf"/>
-    
 
   <!-- Compact attributes -->
+    
+  <xsl:template match="parser:lexical-entry-marker[parser:lexical-entry-marker and parser:textSequence]" priority="1">
+    <marker name="{translate(parser:lexical-entry-marker, '\', '')}">
+        <xsl:attribute name="value"><xsl:apply-templates select="parser:textSequence"/></xsl:attribute>
+    </marker>
+  </xsl:template>
+    
   <xsl:template match="parser:attribute[parser:attribute and parser:textSequence]" priority="1">
-    <marker name="{translate(parser:attribute, '\', '')}" value="{normalize-space(parser:textSequence)}"/>
+    <marker name="{translate(parser:attribute, '\', '')}">
+        <xsl:variable name="value"><xsl:apply-templates select="parser:textSequence"/></xsl:variable>
+        <xsl:attribute name="value" select="$value"/>
+    </marker>
   </xsl:template>
   <xsl:template match="parser:attribute[parser:attribute]">
     <marker name="{translate(parser:attribute, '\', '')}"/>
   </xsl:template>
+    
   <xsl:template match="parser:last-attribute[parser:attribute and parser:textSequence]" priority="1">
-    <marker name="{translate(parser:attribute, '\', '')}" value="{normalize-space(parser:textSequence)}"/>
+    <marker name="{translate(parser:attribute, '\', '')}">
+        <xsl:attribute name="value"><xsl:apply-templates select="parser:textSequence"/></xsl:attribute>
+    </marker>
   </xsl:template>
   <xsl:template match="parser:last-attribute[parser:attribute]">
     <marker name="{translate(parser:attribute, '\', '')}"/>
   </xsl:template>
 
-  <!-- Compact text sequence -->
+  <!-- Generate LF in the text -->
+  <xsl:template match="parser:lf"><xsl:text>&#x0a;</xsl:text></xsl:template>
+  <!-- Compact text sequence -->    
   <xsl:template match="parser:textSequence">
-    <parser:text>
+<!--    <parser:text>-->
       <xsl:value-of select="."/>
-    </parser:text>
+<!--    </parser:text>-->
   </xsl:template>
 
   <!-- Identity transform: copy all others -->

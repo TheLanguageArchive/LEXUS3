@@ -3,15 +3,17 @@
     <associativity symbol="text" type="right"/>
     <associativity symbol="attribute" type="right"/>
 
+
+    <!-- Lexical entry marker -->
+    <production symbol="lexical-entry-marker">
+        <terminal symbol="lexical-entry-marker"/>
+        <nonterminal symbol="textSequence"/>
+    </production>
+    
     <!-- Attribute -->
     <production symbol="attribute">
         <terminal symbol="attribute"/>
         <nonterminal symbol="textSequence"/>
-        <terminal symbol="lf"/>
-    </production>
-    <production symbol="attribute">
-        <terminal symbol="attribute"/>
-        <terminal symbol="lf"/>
     </production>
     <production symbol="last-attribute">
         <terminal symbol="attribute"/>
@@ -23,12 +25,14 @@
     
     <!-- textSequence -->
     <production symbol="textSequence">
+        <terminal symbol="lf"/>
+    </production>
+    <production symbol="textSequence">
         <terminal symbol="text"/>
     </production>
     <production symbol="textSequence">
         <nonterminal symbol="textSequence"/>
         <terminal symbol="lf"/>
-        <terminal symbol="text"/>
     </production>
     <production symbol="textSequence">
         <nonterminal symbol="textSequence"/>
@@ -44,11 +48,12 @@
         <nonterminal symbol="attribute"/>
     </production>
 
-    <production symbol="lexical-entry">
+    <production symbol="lexical-entry">        
+        <nonterminal symbol="lexical-entry-marker"/>
         <nonterminal symbol="attributeSequence"/>
-        <terminal symbol="lf"/>
     </production>
     <production symbol="last-lexical-entry">
+        <nonterminal symbol="lexical-entry-marker"/>
         <nonterminal symbol="attributeSequence"/>
         <nonterminal symbol="last-attribute"/>
     </production>
@@ -60,8 +65,16 @@
         <nonterminal symbol="lexicalEntrySequence"/>
         <nonterminal symbol="lexical-entry"/>
     </production>
-
+    
+    <!--
+        All the uninteresting stuff at the beginning of the file.
+        -->
+    <production symbol="prologue">
+        <nonterminal symbol="attributeSequence"/>
+    </production>
+    
     <production symbol="lexicon">
+        <nonterminal symbol="prologue"/>
         <nonterminal symbol="lexicalEntrySequence"/>
         <nonterminal symbol="last-lexical-entry"/>
     </production>

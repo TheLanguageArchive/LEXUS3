@@ -1,6 +1,15 @@
 <?xml version="1.0" standalone="no"?>
 <lexicon xmlns="http://chaperon.sourceforge.net/schema/lexicon/1.0">
 
+
+    <!-- Lexical entry attribute: \lx -->
+    <lexeme symbol="lexical-entry-marker">
+        <concat>
+            <bol/>
+            <cstring content="\lx"/>
+        </concat>
+    </lexeme>
+    
     <!-- Attribute: f.i. \nam -->
     <lexeme symbol="attribute">
         <concat>
@@ -53,7 +62,6 @@
             </cclass>
             <eol/>
         </concat>
-        <!--        <cuniversal/>-->
     </lexeme>
 
 </lexicon>

@@ -5,6 +5,11 @@
     xmlns:chaperon="http://chaperon.sourceforge.net/schema/syntaxtree/2.0"
     version="1.0">
 
+    <!--
+        Use STX transformation (fast and low in memory usage) to remove those extraneous
+        and recursive ...Sequence elements from the SAX stream. When left in there
+        they crash Saxon because it thinks the stylesheet is caught in a recursive loop!
+        -->
 
     <stx:template match="chaperon:lexicalEntrySequence">
         <stx:process-children/>
