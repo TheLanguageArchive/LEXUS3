@@ -11,13 +11,13 @@
     <xsl:param name="lexica-collection"/>
     <xsl:param name="users-collection"/>
     
-    <xsl:template match="lexus:save-lexical-entry">
+    <xsl:template match="lexus:save-lexical-entries">
         <xsl:copy copy-namespaces="no">
             <xsl:apply-templates select="@*"/>
                 <lexus:query>
                 
                 <!--             
-                    Save or create a Lexical Entry.                
+                    Save or create multiple lexical entries into a lexicon                
                   -->
                 <lexus:text>
                     
@@ -42,27 +42,17 @@
                         else ()
                     };
                     
-                    <!--
-                        You can use both <data><user>...</user> (always used if present)
-                        and
-                        <lexus:save-lexical-entry user="..."/>
-                        -->
-                    <xsl:choose>
-                        <xsl:when test="/data/user">
-                            let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            let $userId := '<xsl:value-of select="@user"/>'
-                            let $user := collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $userId]
-                        </xsl:otherwise>
-                    </xsl:choose>
+                    let $userId := '<xsl:value-of select="@user"/>'
+                    let $user := collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $userId]
                     let $request := <xsl:apply-templates select="." mode="encoded"/>
                     let $lexiconId:= $request/@lexicon
                     let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
-                    let $lexicalEntry := $lexus/lexicon/lexical-entry[@id eq $request/lexical-entry/@id]
                     return 
                         if (lexus:canWrite($lexus/meta, $user))
-                            then lexus:updateLexicalEntry($lexus, $request/lexical-entry, $lexicalEntry) 
+                            then 
+                                for $le in $request/lexical-entry
+                                    let $lexicalEntry := $lexus/lexicon/lexical-entry[@id eq $le/@id]
+                                    return lexus:updateLexicalEntry($lexus, $le, $lexicalEntry) 
                             else ()
                 </lexus:text>
                 </lexus:query>

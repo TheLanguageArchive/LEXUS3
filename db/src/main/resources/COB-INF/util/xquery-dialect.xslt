@@ -70,6 +70,20 @@
     </xsl:template>
     
     
+    <!--
+        insert ... as last into ...
+        -->
+    <xsl:template match="xquery:insert-as-last-into">
+        <xsl:choose>
+            <xsl:when test="$xmldb eq 'exist'">
+                update insert <xsl:value-of select="xquery:node"/> into <xsl:value-of select="xquery:into"/>
+            </xsl:when>
+            <xsl:otherwise>
+                insert node <xsl:value-of select="xquery:node"/> as last into <xsl:value-of select="xquery:into"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
     
     <!--
         delete node ...

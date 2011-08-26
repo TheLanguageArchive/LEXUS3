@@ -12,23 +12,26 @@
 
 
     <xsl:template match="lexus:create-lexicon">
-        <xsl:variable name="docName" select="substring-after(lexus/@id, 'uuid:')"/>
+        <xsl:variable name="docName" select="concat(substring-after(lexus/@id, 'uuid:'), '.xml')"/>
 
-        <xsl:choose>
-            <xsl:when test="$docName ne ''">
-                <rest:request target="{concat($endpoint, $lexica-collection, '/', $docName)}"
-                    method="PUT">
-                    <rest:header name="Content-Type" value="text/xml; charset=UTF-8"/>
-                    <rest:body>
-                        <xsl:copy-of select="lexus"/>
-                    </rest:body>
-                </rest:request>
-            </xsl:when>
-            <xsl:otherwise>
-                <lexus:error id="EMPT002"
-                    message="Cannot create lexicon document without documentname (=lexicon id)"/>
-            </xsl:otherwise>
-        </xsl:choose>
+        <xsl:copy copy-namespaces="no">
+            <xsl:choose>
+                <xsl:when test="$docName ne ''">
+                    <rest:request target="{concat($endpoint, $lexica-collection, '/', $docName)}"
+                        method="PUT">
+                        <rest:header name="Content-Type" value="text/xml; charset=UTF-8"/>
+                        <rest:body>
+                            <xsl:copy-of select="lexus" copy-namespaces="no"/>
+                        </rest:body>
+                    </rest:request>
+                </xsl:when>
+                <xsl:otherwise>
+                    <lexus:error id="EMPT002"
+                        message="Cannot create lexicon document without documentname (=lexicon id)"
+                    />
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:copy>
     </xsl:template>
 
 </xsl:stylesheet>

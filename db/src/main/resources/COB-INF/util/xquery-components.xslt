@@ -129,7 +129,7 @@
                 for $lexus in $lexi
                     order by $lexus/meta/name
                     return element lexicon {
-                        $lexus/lexicon/@*,
+                        $lexus/@*,
                         element meta {$lexus/meta/*[local-name() ne 'schema']},
                         element size {if ($admin) then '' else count($lexus/lexicon/lexical-entry)}
                     }

@@ -44,13 +44,13 @@
     <xsl:template match="exception">
         <lexus:result success="false">
             <lexus:message>
-                <xsl:copy-of select="//exception"/>
+                <xsl:copy-of select="//exception" copy-namespaces="no"/>
             </lexus:message>
         </lexus:result>
     </xsl:template>
     
     <xsl:template match="exist:result">
-        <lexus:result success="true"><xsl:copy-of select="*"/></lexus:result>
+        <lexus:result success="true"><xsl:copy-of select="*" copy-namespaces="no"/></lexus:result>
     </xsl:template>
 
     <!-- 
@@ -67,7 +67,7 @@
     </xsl:template>
     
     <xsl:template match="jax-rx:result">
-        <xsl:copy-of select="*"/>
+        <xsl:copy-of select="*" copy-namespaces="no"/>
     </xsl:template>
 
 </xsl:stylesheet>
