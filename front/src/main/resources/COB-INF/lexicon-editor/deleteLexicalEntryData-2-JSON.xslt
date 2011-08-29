@@ -3,9 +3,6 @@
     xmlns:lexus="http://www.mpi.nl/lexus"
     exclude-result-prefixes="#all" version="2.0">
 
-
-    <xsl:include href="../util/encodeXML.xslt"/>
-
     <!-- 
         JSON to produce:
         

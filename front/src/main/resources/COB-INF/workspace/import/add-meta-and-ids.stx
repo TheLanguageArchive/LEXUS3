@@ -54,7 +54,6 @@
         <stx:template match="lexus:datacategory">
             <container>
                 <stx:process-attributes group="meta"/>
-                <stx:attribute name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
                 <stx:attribute name="type" select="'data'"/>
                 <stx:if test="not(@id)">
                     <stx:attribute name="id"
