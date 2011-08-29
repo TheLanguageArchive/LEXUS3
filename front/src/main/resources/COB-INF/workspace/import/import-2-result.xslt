@@ -6,11 +6,11 @@
         <xsl:copy>
             <xsl:choose>
                 <xsl:when test="data//lexus:result[@success eq 'false']">
-                    <xsl:attribute name="success">false</xsl:attribute>
+                    <success>false</success>
                     <xsl:apply-templates select="data//lexus:result[@success eq 'false']"/>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:attribute name="success">true</xsl:attribute>
+                    <success>true</success>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:copy>
