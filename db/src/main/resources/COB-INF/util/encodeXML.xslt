@@ -14,7 +14,7 @@
         <xsl:text> attribute </xsl:text>
         <xsl:value-of select="QName(namespace-uri(), local-name())"/>
         <xsl:text> { &quot;</xsl:text>
-        <xsl:value-of select="."/>
+        <xsl:value-of select="fn:replace(fn:replace(., '&amp;', '&amp;amp;'), '&quot;', '&amp;quot;')"/>
         <xsl:text>&quot; }</xsl:text>
     </xsl:template>
 
