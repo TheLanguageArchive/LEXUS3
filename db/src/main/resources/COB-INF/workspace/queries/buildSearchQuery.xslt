@@ -129,11 +129,12 @@
                 let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq "<xsl:value-of select="@id"/>"]
                 
                 return element lexicon {
-                    attribute id {'<xsl:value-of select="@id"/>'}, attribute name {'<xsl:value-of select="$meta/name"/>'},
+                    <xsl:apply-templates select="@id" mode="encoded"/>,
+                    attribute name { <xsl:apply-templates select="$meta/name/text()" mode="encoded"/> },
                     <xsl:text>
                     element firstDC { </xsl:text><xsl:apply-templates select="$firstDC" mode="encoded"/><xsl:text> },</xsl:text>
                     <xsl:text>
-                    element matchText { '</xsl:text><xsl:value-of select="$matchText"/><xsl:text>' },</xsl:text>
+                    element matchText { "</xsl:text><xsl:apply-templates select="$matchText" mode="encoded"/><xsl:text>" },</xsl:text>
                     <xsl:text>
                     element lexical-entries {
                         for $l in $lexus/lexicon/lexical-entry</xsl:text>
@@ -181,10 +182,10 @@
         <!-- Now we either check the @start-letter or the first character of the value element -->
         <xsl:choose>
             <xsl:when test="$firstDC/container/@sort-order">
-                <xsl:text>@start-letter eq '</xsl:text><xsl:value-of select="$matchText"/><xsl:text>'</xsl:text>
+                <xsl:text>@start-letter eq "</xsl:text><xsl:value-of select="replace(replace($matchText, '&amp;', '&amp;amp;'), '&quot;', '&amp;quot;')" /><xsl:text>"</xsl:text>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:text>starts-with(upper-case(value), '</xsl:text><xsl:value-of select="$matchText"/><xsl:text>')</xsl:text>
+                <xsl:text>starts-with(upper-case(value), "</xsl:text><xsl:value-of select="replace(replace($matchText, '&amp;', '&amp;amp;'), '&quot;', '&amp;quot;')" /><xsl:text>")</xsl:text>
             </xsl:otherwise>
         </xsl:choose>
         <xsl:text>]</xsl:text>
