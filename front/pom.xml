@@ -132,7 +132,6 @@
             <artifactId>cocooncomponents</artifactId>
             <version>1.0.9</version>
         </dependency>
-
         <dependency>
             <groupId>nl.mpi.lexus</groupId>
             <artifactId>db</artifactId>
