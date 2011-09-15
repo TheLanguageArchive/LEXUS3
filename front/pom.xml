@@ -128,9 +128,9 @@
             <version>4aug2000r7-dev</version>
         </dependency>
         <dependency>
-            <groupId>com.google.code</groupId>
-            <artifactId>cocooncomponents</artifactId>
-            <version>1.0.9</version>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
         </dependency>
         <dependency>
             <groupId>nl.mpi.lexus</groupId>
@@ -273,7 +273,7 @@
                             <overwrite>true</overwrite>
                             <resources>
                                 <resource>
-                                    <directory>${basedir}/../../../branches/flexus-for-cocoon/bin-debug</directory>
+                                    <directory>${basedir}/../flexus-for-cocoon/bin-debug</directory>
                                     <filtering>false</filtering>
                                     <excludes>
                                         <exclude>.*</exclude>
