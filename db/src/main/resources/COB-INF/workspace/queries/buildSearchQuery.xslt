@@ -134,7 +134,7 @@
                     <xsl:text>
                     element firstDC { </xsl:text><xsl:apply-templates select="$firstDC" mode="encoded"/><xsl:text> },</xsl:text>
                     <xsl:text>
-                    element matchText { "</xsl:text><xsl:apply-templates select="$matchText" mode="encoded"/><xsl:text>" },</xsl:text>
+                    element matchText { </xsl:text><xsl:apply-templates select="$matchText" mode="encoded"/><xsl:text> },</xsl:text>
                     <xsl:text>
                     element lexical-entries {
                         for $l in $lexus/lexicon/lexical-entry</xsl:text>
