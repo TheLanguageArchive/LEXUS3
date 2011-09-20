@@ -82,37 +82,47 @@
                     let $listView := concat('uuid:',util:toString(util:randomUUID()))
                     let $lexicalEntryView := concat('uuid:',util:toString(util:randomUUID()))
                     (: determine lexeme id :)
-                    let $lexemeId := 
+                    let $lexeme :=
                         if (
                             exists($lexicon/meta//container[@type eq 'data'][@dcr:datcat eq 'http://www.isocat.org/datcat/DC-3723'])
                         ) then (
                             (: /lexeme/ datcat :)
-                            ($lexicon/meta//container[@type eq 'data'][@dcr:datcat eq 'http://www.isocat.org/datcat/DC-3723'])[1]/@id
+                            ( ($lexicon/meta//container[@type eq 'data'][@dcr:datcat eq 'http://www.isocat.org/datcat/DC-3723'])[1]/@id,
+                              ($lexicon/meta//container[@type eq 'data'][@dcr:datcat eq 'http://www.isocat.org/datcat/DC-3723'])[1]/@name )
                         ) else (
                             if (
                                 exists($lexicon/meta//container[@type eq 'data'][@mdf:marker eq 'lx'])
                             ) then (
                                 (: original \lx MDF marker :)
-                                ($lexicon/meta//container[@type eq 'data'][@mdf:marker eq 'lx'])[1]/@id
+                              ( ($lexicon/meta//container[@type eq 'data'][@mdf:marker eq 'lx'])[1]/@id,
+                                ($lexicon/meta//container[@type eq 'data'][@mdf:marker eq 'lx'])[1]/@name )
                             ) else (
                                 if (
                                     exists($lexicon/meta//container[@type eq 'data'][lower-case(@name) eq 'lexeme'])
                                 ) then (
                                     (: /lexeme/ LEXUS data category :)
-                                    ($lexicon/meta//container[@type eq 'data'][lower-case(@name) eq 'lexeme'])[1]/@id
+                                    ( ($lexicon/meta//container[@type eq 'data'][lower-case(@name) eq 'lexeme'])[1]/@id,
+                                      ($lexicon/meta//container[@type eq 'data'][lower-case(@name) eq 'lexeme'])[1]/@name )
                                 ) else (
                                     if (
                                         exists($lexicon/meta//container[@type eq 'data'][lower-case(@name) eq 'headword'])
                                     ) then (
                                         (: /headword/ LEXUS data category :)
-                                        ($lexicon/meta//container[@type eq 'data'][lower-case(@name) eq 'headword'])[1]/@id
+                                        ( ($lexicon/meta//container[@type eq 'data'][lower-case(@name) eq 'headword'])[1]/@id,
+                                          ($lexicon/meta//container[@type eq 'data'][lower-case(@name) eq 'headword'])[1]/@name )
                                     ) else (
                                         (: first LEXUS data category :)
-                                        ($lexicon/meta//container[@type eq 'data'])[1]/@id
+                                        ( ($lexicon/meta//container[@type eq 'data'])[1]/@id,
+                                          ($lexicon/meta//container[@type eq 'data'])[1]/@name )
                                     )
                                 )
                             )
                         )
+                        let $lexemeId := $lexeme[1]
+                        let $lexemeName := $lexeme[2]
+                        
+                        
+                        
                         (: the standard views :)
                         let $standard-views := element views {  attribute listView { $listView },
                  attribute lexicalEntryView { $lexicalEntryView },
@@ -128,11 +138,10 @@
                  attribute fontSize { "12" },
                  attribute fontFamily { "Arial" },
                  attribute isBranch { "true" },
-                 attribute dsl_class { "lexeme" },
                  attribute optional { "false" },
                  attribute localStyle { "true" },
                 element data {  attribute id { $lexemeId },
-                 attribute name { "Lexeme" },
+                 attribute name { $lexemeName },
                  attribute type { "data category" },
                  attribute isBranch { "false" } } } } },
                 element view {  attribute id { $lexicalEntryView },
@@ -157,11 +166,11 @@
                  attribute isBranch { "true" },
                  attribute type { "dsl_show" },
                  attribute name { "Container" },
-                 attribute dsl_class { "lexeme" },
+                 attribute dsl_class { $lexemeName },
                  attribute localStyle { "false" },
                 element data {  attribute isBranch { "false" },
                  attribute type { "data category" },
-                 attribute name { "Lexeme" },
+                 attribute name { $lexemeName },
                  attribute id { $lexemeId } } } } } }
                     return 
                         if (lexus:canWrite($lexicon/meta, $user) and empty($lexicon/meta/views))
