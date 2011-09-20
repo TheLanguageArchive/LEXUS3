@@ -388,11 +388,24 @@
                 
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/import-8.xml"/>
+                
+                <map:transform type="stx" src="import/add-fragment-add-standard-views.stx"/>
+                
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-9.xml"/>
+                
+                <map:transform type="servletServiceFragments">
+                    <map:parameter name="service" value="servlet:db:/lexicon/addStandardViews.xml"/>
+                </map:transform>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-10.xml"/>
 
                 <map:transform type="saxon" src="import/import-2-result.xslt"/>
                 
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/import-9.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-11.xml"/>
                 
                 <map:serialize type="xml"/>
             </map:match>
