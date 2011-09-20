@@ -126,7 +126,7 @@
                 </map:transform>
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/back-ast-2.xml"/>
-                <map:call resource="rest2"/>
+                <map:call resource="rest"/>
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/back-ast-3.xml"/>
                 <map:serialize type="xml"/>
@@ -306,7 +306,7 @@
             <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
         </map:resource>
         
-        <map:resource name="rest2">
+   <!--     <map:resource name="rest2">
             <map:transform type="saxon" src="../util/xquery-dialect.xslt">
                 <map:parameter name="xmldb" value="${xmldb}"/>
             </map:transform>
@@ -322,7 +322,7 @@
             </map:transform>
             <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-rest2-3.xml"/>
             <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
-        </map:resource>
+        </map:resource>-->
         
     </map:resources>
 </map:sitemap>
