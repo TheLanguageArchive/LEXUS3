@@ -10,7 +10,6 @@
         <html xmlns="http://www.w3.org/1999/xhtml">
             <head>
                 <title>Lexical entry</title>
-                <style type="text/css"><xsl:value-of select="/display:page/display:style"/></style>
             </head>
             <body>
                 <xsl:apply-templates select="@* | node()"/>
@@ -42,16 +41,24 @@
     </xsl:template>
 
 
-    <xsl:template match="div"> &lt;font <xsl:apply-templates select="@*"/>&gt;
-        <xsl:apply-templates/> &lt;/font&gt; </xsl:template>
-
+    <xsl:template match="div">
+    	<xsl:if test = "./@localStyle eq 'true' or not(./@localStyle)">
+     	&lt;font <xsl:apply-templates select="@*"/>&gt;
+        	<xsl:apply-templates/> &lt;/font&gt; 
+        </xsl:if>
+        <xsl:if test = "./@localStyle eq 'false'">
+        &lt;span <xsl:apply-templates select="@*"/>&gt;
+        	<xsl:apply-templates/> &lt;/span&gt; 
+        </xsl:if>          
+        </xsl:template>
 
     <xsl:template match="@dsl_class">
-        <xsl:text>class=&apos;#</xsl:text>
+        <xsl:text>class=&apos;</xsl:text>
         <xsl:value-of select="."/>
         <xsl:text>&apos; </xsl:text>
     </xsl:template>
-
+    <xsl:template match="@dsl_class[./@dsl_class eq '']">
+    </xsl:template>
 
     <xsl:template match="@type | @optional | @name | @block" priority="2"/>
         
@@ -83,6 +90,16 @@
         <xsl:value-of select="."/>
         <xsl:text>&apos; </xsl:text>
 
+    </xsl:template>
+    
+    
+    <xsl:template match="@color[../@localStyle eq 'false']">
+    </xsl:template>
+
+    <xsl:template match="@fontFamily[../@localStyle eq 'false']">
+    </xsl:template>
+
+    <xsl:template match="@fontSize[../@localStyle eq 'false']">
     </xsl:template>
 
     <xsl:template match="text()" priority="1">
