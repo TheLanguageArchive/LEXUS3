@@ -79,10 +79,8 @@
                 <xsl:choose>
                     <xsl:when test="//display:lexicon/lexical-entry[@id = current()/@id]">
                         <string key="value">
-                            <xsl:value-of
-                                select="//display:lexicon/lexical-entry[@id = current()/@id]/xhtml:html/xhtml:body"/>
                             <xsl:apply-templates
-                                select="//display:lexicon/lexical-entry[@id = current()/@id]/xhtml:html/xhtml:body/*"
+                                select="//display:lexicon/lexical-entry[@id = current()/@id]/xhtml:html/xhtml:body/child::node()"
                                 mode="encoded"/>
                         </string>
                     </xsl:when>
