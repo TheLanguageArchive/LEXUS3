@@ -239,6 +239,14 @@
         <number key="count">
             <xsl:value-of select="../pageSize"/>
         </number>
+        <object key="ListViewStyle">
+        	<string key="style">
+        		<xsl:value-of select="/data/lexus:search/lexus:result/result/results/lexicon/meta/views/view[@id =
+        		../@listView]/style"/>
+            	<xsl:apply-templates select="/data/lexus:search/lexus:result/result/results/lexicon/meta/views/view[@id = 
+            	../@listView]/style/*" mode="encoded"/>
+        	</string>
+        </object>
         <array key="lexicalEntries">
             <xsl:apply-templates select="lexical-entry"/>
         </array>
@@ -257,11 +265,9 @@
                     <xsl:when
                         test="/data/display:lexicon/lexical-entries/lexical-entry[@id = current()/@id]">
                         <string key="value">
-                            <xsl:value-of
-                                select="/data/display:lexicon/lexical-entries/lexical-entry[@id = current()/@id]/xhtml:html/xhtml:body"/>
                             <xsl:apply-templates
-                                select="/data/display:lexicon/lexical-entries/lexical-entry[@id = current()/@id]/xhtml:html/xhtml:body/*"
-                                mode="encoded"/>
+                                select="/data/display:lexicon/lexical-entries/lexical-entry[@id = current()/@id]/xhtml:html/xhtml:body/child::node()"
+                                 mode="encoded"/>
                         </string>
                     </xsl:when>
                     <xsl:otherwise>
