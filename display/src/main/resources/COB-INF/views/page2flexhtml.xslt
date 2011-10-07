@@ -40,17 +40,54 @@
         <xsl:apply-templates select="." mode="encoded"/>
     </xsl:template>
 
-
+	<!--AAM: we have 8 possible cases with italic, bold and underlined local style parameters-->
     <xsl:template match="div">
     	<xsl:if test = "./@localStyle eq 'true' or not(./@localStyle)">
-     	&lt;font <xsl:apply-templates select="@*"/>&gt;
-        	<xsl:apply-templates/> &lt;/font&gt; 
+    		<xsl:if test="./@fontStyle eq 'italic' and not(./@fontWeight eq 'bold') and not(./@textDecoration eq 'underline')">
+    	     		&lt;I&gt;&lt;font <xsl:apply-templates select="@*"/>&gt;
+        		<xsl:apply-templates/>
+        		&lt;/font&gt;&lt;/I&gt;
+    		</xsl:if>
+    		<xsl:if test="./@fontWeight eq 'bold' and not(./@fontStyle eq 'italic') and not(./@textDecoration eq 'underline')">
+    	     		&lt;b&gt;&lt;font <xsl:apply-templates select="@*"/>&gt;
+        		<xsl:apply-templates/>
+        		&lt;/font&gt;&lt;/b&gt;
+    		</xsl:if>
+    		<xsl:if test="./@textDecoration eq 'underline' and not(./@fontStyle eq 'italic') and not(./@fontWeight eq 'bold')">
+    	     		&lt;u&gt;&lt;font <xsl:apply-templates select="@*"/>&gt;
+        		<xsl:apply-templates/>
+        		&lt;/font&gt;&lt;/u&gt;
+    		</xsl:if>
+    		<xsl:if test="./@fontStyle eq 'italic' and ./@fontWeight eq 'bold' and not(./@textDecoration eq 'underline')">
+    	     		&lt;b&gt;&lt;I&gt;&lt;font <xsl:apply-templates select="@*"/>&gt;
+        		<xsl:apply-templates/>
+        		&lt;/font&gt;&lt;/I&gt;&lt;/b&gt;
+    		</xsl:if>
+    		<xsl:if test="./@fontStyle eq 'italic' and ./@textDecoration eq 'underline' and not(./@fontWeight eq 'bold')">
+    	     		&lt;u&gt;&lt;I&gt;&lt;font <xsl:apply-templates select="@*"/>&gt;
+        		<xsl:apply-templates/>
+        		&lt;/font&gt;&lt;/I&gt;&lt;/u&gt;
+    		</xsl:if>
+    		<xsl:if test="./@fontWeight eq 'bold' and ./@textDecoration eq 'underline' and not(./@fontStyle eq 'italic')">
+    	     		&lt;b&gt;&lt;u&gt;&lt;font <xsl:apply-templates select="@*"/>&gt;
+        		<xsl:apply-templates/>
+        		&lt;/font&gt;&lt;/u&gt;&lt;/b&gt;
+    		</xsl:if>
+    		<xsl:if test="./@fontWeight eq 'bold' and ./@fontStyle eq 'italic' and ./@textDecoration eq 'underline'">
+    	     		&lt;b&gt;&lt;I&gt;&lt;u&gt;&lt;font <xsl:apply-templates select="@*"/>&gt;
+        		<xsl:apply-templates/>
+        		&lt;/font&gt;&lt;/u&gt;&lt;/I&gt;&lt;/b&gt;
+    		</xsl:if>
+    		<xsl:if test="not(./@fontStyle eq 'italic') and not(./@fontWeight eq 'bold') and not(./@textDecoration eq 'underline')">
+     			&lt;font <xsl:apply-templates select="@*"/>&gt;
+        		<xsl:apply-templates/> &lt;/font&gt; 
+        	</xsl:if>
         </xsl:if>
         <xsl:if test = "./@localStyle eq 'false'">
         &lt;span <xsl:apply-templates select="@*"/>&gt;
         	<xsl:apply-templates/> &lt;/span&gt; 
         </xsl:if>          
-        </xsl:template>
+    </xsl:template>
 
     <xsl:template match="@dsl_class">
         <xsl:text>class=&apos;</xsl:text>
@@ -89,8 +126,14 @@
         <xsl:text>size=&apos;</xsl:text>
         <xsl:value-of select="."/>
         <xsl:text>&apos; </xsl:text>
-
     </xsl:template>
+    
+<!--    <xsl:template match="@fontStyle[(not(../@localStyle) or ../@localStyle eq 'true') and . eq 'italic']">-->
+<!--		-->
+<!--        <xsl:text select="..">&lt;i&gt;</xsl:text>-->
+<!--        <xsl:apply-templates/>-->
+<!--        <xsl:text select="..">&lt;/i&gt;</xsl:text>-->
+<!--    </xsl:template>-->
     
     
     <xsl:template match="@color[../@localStyle eq 'false']">
