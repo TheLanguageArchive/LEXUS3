@@ -44,9 +44,9 @@
     <xsl:template match="div">
     	<xsl:if test = "./@localStyle eq 'true' or not(./@localStyle)">
     		<xsl:if test="./@fontStyle eq 'italic' and not(./@fontWeight eq 'bold') and not(./@textDecoration eq 'underline')">
-    	     		&lt;I&gt;&lt;font <xsl:apply-templates select="@*"/>&gt;
+    	     		&lt;i&gt;&lt;font <xsl:apply-templates select="@*"/>&gt;
         		<xsl:apply-templates/>
-        		&lt;/font&gt;&lt;/I&gt;
+        		&lt;/font&gt;&lt;/i&gt;
     		</xsl:if>
     		<xsl:if test="./@fontWeight eq 'bold' and not(./@fontStyle eq 'italic') and not(./@textDecoration eq 'underline')">
     	     		&lt;b&gt;&lt;font <xsl:apply-templates select="@*"/>&gt;
@@ -59,14 +59,14 @@
         		&lt;/font&gt;&lt;/u&gt;
     		</xsl:if>
     		<xsl:if test="./@fontStyle eq 'italic' and ./@fontWeight eq 'bold' and not(./@textDecoration eq 'underline')">
-    	     		&lt;b&gt;&lt;I&gt;&lt;font <xsl:apply-templates select="@*"/>&gt;
+    	     		&lt;b&gt;&lt;i&gt;&lt;font <xsl:apply-templates select="@*"/>&gt;
         		<xsl:apply-templates/>
-        		&lt;/font&gt;&lt;/I&gt;&lt;/b&gt;
+        		&lt;/font&gt;&lt;/i&gt;&lt;/b&gt;
     		</xsl:if>
     		<xsl:if test="./@fontStyle eq 'italic' and ./@textDecoration eq 'underline' and not(./@fontWeight eq 'bold')">
-    	     		&lt;u&gt;&lt;I&gt;&lt;font <xsl:apply-templates select="@*"/>&gt;
+    	     		&lt;u&gt;&lt;i&gt;&lt;font <xsl:apply-templates select="@*"/>&gt;
         		<xsl:apply-templates/>
-        		&lt;/font&gt;&lt;/I&gt;&lt;/u&gt;
+        		&lt;/font&gt;&lt;/i&gt;&lt;/u&gt;
     		</xsl:if>
     		<xsl:if test="./@fontWeight eq 'bold' and ./@textDecoration eq 'underline' and not(./@fontStyle eq 'italic')">
     	     		&lt;b&gt;&lt;u&gt;&lt;font <xsl:apply-templates select="@*"/>&gt;
@@ -74,9 +74,9 @@
         		&lt;/font&gt;&lt;/u&gt;&lt;/b&gt;
     		</xsl:if>
     		<xsl:if test="./@fontWeight eq 'bold' and ./@fontStyle eq 'italic' and ./@textDecoration eq 'underline'">
-    	     		&lt;b&gt;&lt;I&gt;&lt;u&gt;&lt;font <xsl:apply-templates select="@*"/>&gt;
+    	     		&lt;b&gt;&lt;i&gt;&lt;u&gt;&lt;font <xsl:apply-templates select="@*"/>&gt;
         		<xsl:apply-templates/>
-        		&lt;/font&gt;&lt;/u&gt;&lt;/I&gt;&lt;/b&gt;
+        		&lt;/font&gt;&lt;/u&gt;&lt;/i&gt;&lt;/b&gt;
     		</xsl:if>
     		<xsl:if test="not(./@fontStyle eq 'italic') and not(./@fontWeight eq 'bold') and not(./@textDecoration eq 'underline')">
      			&lt;font <xsl:apply-templates select="@*"/>&gt;
@@ -89,15 +89,13 @@
         </xsl:if>          
     </xsl:template>
 
-    <xsl:template match="@dsl_class[not(../@localStyle) or ../@localStyle eq 'false']">
+    <xsl:template match="@dsl_class[not(../@localStyle) or ../@localStyle eq 'false']" priority="2">
         <xsl:text>class=&apos;</xsl:text>
         <xsl:value-of select="."/>
         <xsl:text>&apos; </xsl:text>
     </xsl:template>
-    <xsl:template match="@dsl_class[./@dsl_class eq '']">
-    </xsl:template>
 
-    <xsl:template match="@type | @optional | @name | @block" priority="2"/>
+    <xsl:template match="@type | @optional | @name | @block | @localStyle | @dsl_class | @fontWeight | @fontStyle | @textDecoration | @id" priority="1"/>
         
     
     <xsl:template match="@color[not(../@localStyle) or ../@localStyle eq 'true']">
@@ -128,30 +126,25 @@
         <xsl:text>&apos; </xsl:text>
     </xsl:template>  
     
-    <xsl:template match="@color[../@localStyle eq 'false']">
-    </xsl:template>
-
-    <xsl:template match="@fontFamily[../@localStyle eq 'false']">
-    </xsl:template>
-
-    <xsl:template match="@fontSize[../@localStyle eq 'false']">
-    </xsl:template>
+    <xsl:template match="@color[../@localStyle eq 'false'] | @fontFamily[../@localStyle eq 'false'] | @fontSize[../@localStyle eq 'false']"/>
 
     <xsl:template match="text()" priority="1">
         <xsl:copy/>
     </xsl:template>
 
-
-    <xsl:template match="img"><xsl:text> &lt;img </xsl:text><xsl:apply-templates select="@*"/><xsl:text>&gt;</xsl:text>
-        <xsl:apply-templates/><xsl:text> &lt;/img&gt; </xsl:text></xsl:template>
+<!-- AAM: the resources have been temporarely deactivated in the list view.
+ They currently cause display problems but it seems possible to handle them properly. However for the time being we remove them -->
+    <xsl:template match="img"/>
+<!--    <xsl:text> &lt;img </xsl:text><xsl:apply-templates select="@*"/><xsl:text>&gt;</xsl:text>-->
+<!--        <xsl:apply-templates/><xsl:text> &lt;/img&gt; </xsl:text></xsl:template>-->
     
-    
-    <xsl:template match="rr:*" priority="1">
-        <xsl:copy>
-            <xsl:copy-of select="@*"/>
-            <xsl:apply-templates select="node()"/>
-        </xsl:copy>
-    </xsl:template>
+<!--    -->
+<!--    <xsl:template match="rr:*" priority="1">-->
+<!--        <xsl:copy>-->
+<!--            <xsl:copy-of select="@*"/>-->
+<!--            <xsl:apply-templates select="node()"/>-->
+<!--        </xsl:copy>-->
+<!--    </xsl:template>-->
 
     <xsl:template match="@* | node()">
         <xsl:apply-templates select="." mode="encoded"/>
