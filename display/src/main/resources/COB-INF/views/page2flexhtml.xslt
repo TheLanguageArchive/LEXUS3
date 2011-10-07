@@ -89,7 +89,7 @@
         </xsl:if>          
     </xsl:template>
 
-    <xsl:template match="@dsl_class">
+    <xsl:template match="@dsl_class[not(../@localStyle) or ../@localStyle eq 'false']">
         <xsl:text>class=&apos;</xsl:text>
         <xsl:value-of select="."/>
         <xsl:text>&apos; </xsl:text>
