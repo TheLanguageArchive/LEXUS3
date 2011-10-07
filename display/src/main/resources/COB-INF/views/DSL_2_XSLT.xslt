@@ -42,14 +42,14 @@
 			-->
 			<target:template match="data[resource[@type = 'image']]"
 				priority="1">
-				<div class="resource">
+				<div dsl_class="resource">
 					<div style="clear:left;" block="true">
 						<target:attribute name="id">
 							<target:value-of select="@id" />
 						</target:attribute>
 						<img>
 							<target:attribute name="alt">
-								<target:value-of select="value" />
+								<target:value-of select="concat(value, ' (&lt;the resource is currently unreacheble&gt;)')" />
 							</target:attribute>
 							<target:attribute name="src">
 								<target:value-of
@@ -64,7 +64,7 @@
 							</target:element>
 						</img>
 					</div>
-					<div class="caption" block="true">
+					<div dsl_class="caption" block="true">
 						<text>
 							<target:value-of select="value" />
 						</text>
