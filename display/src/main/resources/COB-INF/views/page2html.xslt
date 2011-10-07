@@ -37,13 +37,13 @@
             <xsl:apply-templates/>
         </xhtml:table>
     </xsl:template>
-    <xsl:template match="row">
+    <xsl:template match="tr">
         <xhtml:tr xmlns="http://www.w3.org/1999/xhtml">
             <xsl:apply-templates select="@*"/>
             <xsl:apply-templates/>
         </xhtml:tr>
     </xsl:template>
-    <xsl:template match="col">
+    <xsl:template match="td">
         <xhtml:td xmlns="http://www.w3.org/1999/xhtml">
             <xsl:apply-templates select="@*"/>
             <xsl:apply-templates/>
@@ -54,27 +54,38 @@
         <xsl:copy-of select="."/>
     </xsl:template>
 
-    <xsl:template match="div[@block = 'true']" priority="1">
-        <xhtml:div xmlns="http://www.w3.org/1999/xhtml">
-            <xsl:apply-templates select="@dsl_class"/>
-            <xsl:variable name="style"><xsl:apply-templates select="@*[local-name() ne 'dsl_class']"/></xsl:variable>
-            <xsl:if test="$style ne '' or @style ne ''"><xsl:attribute name="style" select="concat(@style, $style)"/></xsl:if>            
-            <xsl:apply-templates/>
-        </xhtml:div>
-    </xsl:template>
+<!--    <xsl:template match="div[@block = 'true']" priority="1">-->
+<!--        <xhtml:div xmlns="http://www.w3.org/1999/xhtml">-->
+<!--            <xsl:apply-templates select="@dsl_class"/>-->
+<!--            <xsl:variable name="style"><xsl:apply-templates select="@* except (@dsl_class)"/></xsl:variable>-->
+<!--            <xsl:if test="$style ne '' or @style ne ''"><xsl:attribute name="style" select="concat(@style, $style)"/></xsl:if>            -->
+<!--            <xsl:apply-templates/>-->
+<!--        </xhtml:div>-->
+<!--    </xsl:template>-->
     
     <xsl:template match="div">
         <xhtml:div xmlns="http://www.w3.org/1999/xhtml">
             <xsl:apply-templates select="@dsl_class"/>
-            <xsl:variable name="style"><xsl:apply-templates select="@*[local-name() ne 'dsl_class']"/> display:inline;</xsl:variable>
-            <xsl:if test="$style ne '' or @style ne ''"><xsl:attribute name="style" select="concat(@style, $style)"/></xsl:if>            
-            <xsl:apply-templates/>
+            <xsl:variable name="style"><xsl:apply-templates select="@* except (@dsl_class)"/>
+            <xsl:if test="not(./@block) and not(./@localStyle = 'false')">display:inline;</xsl:if>
+            </xsl:variable>
+            <xsl:if test="$style ne '' or @style ne ''"><xsl:attribute name="style" select="concat(@style, $style)"/></xsl:if>
+            <xsl:apply-templates />
         </xhtml:div>
     </xsl:template>
 
-    <xsl:template match="@dsl_class">
+    <xsl:template match="@dsl_class[not(../@localStyle) or ../@localStyle eq 'false']">
         <xsl:attribute name="class" select="."/>
     </xsl:template>
+    
+    <xsl:template match="@block[not(../@localStyle) or ../@localStyle eq 'true']">display:<xsl:if test="data(.) = 'true'">block</xsl:if>
+    	<xsl:if test="data(.) = 'false'">inline</xsl:if>;</xsl:template>
+    	
+    <xsl:template match="@fontStyle[not(../@localStyle) or ../@localStyle eq 'true']">font-style:<xsl:value-of select="."/>;</xsl:template>
+    <xsl:template match="@fontWeight[not(../@localStyle) or ../@localStyle eq 'true']">font-weight:<xsl:value-of select="."/>;</xsl:template>
+    <xsl:template match="@textDecoration[not(../@localStyle) or ../@localStyle eq 'true']">text-decoration:<xsl:value-of select="."/>;</xsl:template>
+
+
 
     <xsl:template match="@color[not(../@localStyle) or ../@localStyle eq 'true']">
         <xsl:text>color:#</xsl:text>
