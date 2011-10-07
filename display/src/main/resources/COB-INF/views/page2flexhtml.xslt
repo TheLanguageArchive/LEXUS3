@@ -126,15 +126,7 @@
         <xsl:text>size=&apos;</xsl:text>
         <xsl:value-of select="."/>
         <xsl:text>&apos; </xsl:text>
-    </xsl:template>
-    
-<!--    <xsl:template match="@fontStyle[(not(../@localStyle) or ../@localStyle eq 'true') and . eq 'italic']">-->
-<!--		-->
-<!--        <xsl:text select="..">&lt;i&gt;</xsl:text>-->
-<!--        <xsl:apply-templates/>-->
-<!--        <xsl:text select="..">&lt;/i&gt;</xsl:text>-->
-<!--    </xsl:template>-->
-    
+    </xsl:template>  
     
     <xsl:template match="@color[../@localStyle eq 'false']">
     </xsl:template>
