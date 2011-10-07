@@ -49,7 +49,7 @@
 						</target:attribute>
 						<img>
 							<target:attribute name="alt">
-								<target:value-of select="concat(value, ' (&lt;the resource is currently unreacheble&gt;)')" />
+								<target:value-of select="concat(value, ' (the resource is currently unreacheble)')" />
 							</target:attribute>
 							<target:attribute name="src">
 								<target:value-of
