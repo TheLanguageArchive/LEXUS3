@@ -12,9 +12,10 @@
         <rest:request target="{$endpoint}" method="POST">
             <rest:header name="Content-Type" value="application/query+xml; charset=UTF-8"/>
             <rest:body>
-                <query>
+                <query xmlns="http://www.basex.org/rest" media-type="text/xml" omit-xml-declaration="no" wrap="yes">
+                 <parameter name='wrap-prefix' value='basexrest'/>
+                 <parameter name='wrap-uri' value='http://www.basex.org/rest'/>
                     <text><xsl:value-of select="lexus:text"/></text>
-                    <parameter name="output" value="media-type=text/xml; omit-xml-declaration=no"/>
                 </query>
             </rest:body>
         </rest:request>

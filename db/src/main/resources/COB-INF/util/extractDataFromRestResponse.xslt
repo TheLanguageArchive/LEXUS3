@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:lexus="http://www.mpi.nl/lexus"
     xmlns:rest="http://org.apache.cocoon.transformation/rest/1.0"
-    xmlns:exist="http://exist.sourceforge.net/NS/exist" xmlns:jax-rx="http://jax-rx.sourceforge.net"
+    xmlns:exist="http://exist.sourceforge.net/NS/exist" xmlns:basexrest="http://www.basex.org/rest"
     version="2.0" exclude-result-prefixes="#all">
 
     <xsl:import href="identity.xslt"/>
@@ -56,17 +56,17 @@
     <!-- 
         Extract data from the BaseX response.
     -->
-    <xsl:template match="jax-rx:results[not(jax-rx:result)]">
+    <xsl:template match="basexrest:results[not(basexrest:result)]">
         <lexus:result success="true" />
     </xsl:template>
 
-    <xsl:template match="jax-rx:results">
+    <xsl:template match="basexrest:results">
         <lexus:result success="true">
-            <xsl:apply-templates select="jax-rx:result"/>
+            <xsl:apply-templates select="basexrest:result"/>
         </lexus:result>
     </xsl:template>
     
-    <xsl:template match="jax-rx:result">
+    <xsl:template match="basexrest:result">
         <xsl:copy-of select="*" copy-namespaces="no"/>
     </xsl:template>
 
