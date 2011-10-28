@@ -14,7 +14,7 @@
 
     <xsl:template match="/">
         <rest:request target="{$endpoint}" method="PUT">
-            <rest:header name="Content-Type" value="text/xml; charset=UTF-8"/>
+            <rest:header name="Content-Type" value="application/xml"/>
             <rest:body>
                 <query xmlns="http://exist.sourceforge.net/NS/exist">
                     <text>                        

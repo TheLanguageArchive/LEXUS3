@@ -19,7 +19,7 @@
                 <xsl:when test="$docName ne ''">
                     <rest:request target="{concat($endpoint, $lexica-collection, '/', $docName)}"
                         method="PUT">
-                        <rest:header name="Content-Type" value="text/xml; charset=UTF-8"/>
+                        <rest:header name="Content-Type" value="application/xml"/>
                         <rest:body>
                             <xsl:copy-of select="lexus" copy-namespaces="no"/>
                         </rest:body>
