@@ -43,6 +43,8 @@
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/demo-back-2.xml"/>
                 <map:call resource="rest"/>
+                                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/demo-back-3.xml"/>
                 <map:serialize type="xml"/>
             </map:match>
 
@@ -293,7 +295,7 @@
 
     </map:pipelines>
     
-    <map:resources>
+ <map:resources>
         <!--
             HHV: Instead of this resource, you cqn also call
             <map:transform type="servletService">
@@ -304,15 +306,20 @@
         <map:resource name="rest">
             <map:transform type="saxon" src="../util/xquery-dialect.xslt">
                 <map:parameter name="xmldb" value="${xmldb}"/>
-            </map:transform>            
+            </map:transform>
+            <map:transform type="${tee}"
+                src="{naming:java:comp/env/tee-folder}debug-info/back-restb-1.xml"/>
             <map:transform type="saxon" src="../util/${xmldb.rest.transformer}">
                 <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
             </map:transform>
+                        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-restb-2.xml"/>
             <map:transform type="rest">
                 <map:parameter name="username" value="${xmldb.rest.username}"/>
                 <map:parameter name="password" value="${xmldb.rest.password}"/>
             </map:transform>
+                        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-restb-3.xml"/>
             <map:transform type="saxon" src="../util/extractDataFromRestResponse.xslt"/>
+            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-restb-4.xml"/>
         </map:resource>
     </map:resources>
 </map:sitemap>
