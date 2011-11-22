@@ -25,29 +25,44 @@
     </xsl:template>
 
     <xsl:template match="text">
-        <xhtml:div xmlns="http://www.w3.org/1999/xhtml" style="display:inline;">
             <xsl:apply-templates select="@*"/>
             <xsl:apply-templates select="text() | node()"/>
-        </xhtml:div>
     </xsl:template>
 
     <xsl:template match="table">
         <xhtml:table xmlns="http://www.w3.org/1999/xhtml">
-            <xsl:apply-templates select="@*"/>
-            <xsl:apply-templates/>
+            <xsl:apply-templates select="@dsl_class"/>
+            <xsl:variable name="style"><xsl:apply-templates select="@* except (@dsl_class)"/>
+            </xsl:variable>
+            <xsl:if test="$style ne '' or @style ne ''"><xsl:attribute name="style" select="concat(@style, $style)"/></xsl:if>
+            <xsl:apply-templates />
         </xhtml:table>
     </xsl:template>
     <xsl:template match="tr">
         <xhtml:tr xmlns="http://www.w3.org/1999/xhtml">
-            <xsl:apply-templates select="@*"/>
-            <xsl:apply-templates/>
+            <xsl:apply-templates select="@dsl_class"/>
+            <xsl:variable name="style"><xsl:apply-templates select="@* except (@dsl_class)"/>
+            </xsl:variable>
+            <xsl:if test="$style ne '' or @style ne ''"><xsl:attribute name="style" select="concat(@style, $style)"/></xsl:if>
+            <xsl:apply-templates />
         </xhtml:tr>
     </xsl:template>
     <xsl:template match="td">
         <xhtml:td xmlns="http://www.w3.org/1999/xhtml">
-            <xsl:apply-templates select="@*"/>
-            <xsl:apply-templates/>
+            <xsl:apply-templates select="@dsl_class"/>
+            <xsl:variable name="style"><xsl:apply-templates select="@* except (@dsl_class)"/>
+            </xsl:variable>
+            <xsl:if test="$style ne '' or @style ne ''"><xsl:attribute name="style" select="concat(@style, $style)"/></xsl:if>
+            <xsl:apply-templates />
         </xhtml:td>
+    </xsl:template>
+    <xsl:template match="br">
+        <xhtml:br xmlns="http://www.w3.org/1999/xhtml" />
+    </xsl:template>
+    <xsl:template match="hr">
+        <xhtml:hr xmlns="http://www.w3.org/1999/xhtml">
+            <xsl:copy-of select="./@size"/>
+        </xhtml:hr>
     </xsl:template>
 
     <xsl:template match="@class | @colspan">
@@ -81,25 +96,28 @@
     <xsl:template match="@block[not(../@localStyle) or ../@localStyle eq 'true']">display:<xsl:if test="data(.) = 'true'">block</xsl:if>
     	<xsl:if test="data(.) = 'false'">inline</xsl:if>;</xsl:template>
     	
-    <xsl:template match="@fontStyle[not(../@localStyle) or ../@localStyle eq 'true']">font-style:<xsl:value-of select="."/>;</xsl:template>
-    <xsl:template match="@fontWeight[not(../@localStyle) or ../@localStyle eq 'true']">font-weight:<xsl:value-of select="."/>;</xsl:template>
-    <xsl:template match="@textDecoration[not(../@localStyle) or ../@localStyle eq 'true']">text-decoration:<xsl:value-of select="."/>;</xsl:template>
+    <xsl:template match="@fontStyle">font-style:<xsl:value-of select="."/>;</xsl:template>
+    <xsl:template match="@fontWeight">font-weight:<xsl:value-of select="."/>;</xsl:template>
+    <xsl:template match="@textDecoration">text-decoration:<xsl:value-of select="."/>;</xsl:template>
+    
+    <xsl:template match="@width">width:<xsl:value-of select="."/>;</xsl:template>
+    <xsl:template match="@height">height:<xsl:value-of select="."/>;</xsl:template>
+    <xsl:template match="@textAlign">text-align:<xsl:value-of select="."/>;</xsl:template>
 
 
-
-    <xsl:template match="@color[not(../@localStyle) or ../@localStyle eq 'true']">
+    <xsl:template match="@color">
         <xsl:text>color:#</xsl:text>
         <xsl:value-of select="substring-after(., '0x')"/>
         <xsl:text>;</xsl:text>
     </xsl:template>
 
-    <xsl:template match="@fontFamily[not(../@localStyle) or ../@localStyle eq 'true']">
+    <xsl:template match="@fontFamily">
         <xsl:text>font-family:'</xsl:text>
         <xsl:value-of select="."/>
         <xsl:text>';</xsl:text>
     </xsl:template>
 
-    <xsl:template match="@fontSize[not(../@localStyle) or ../@localStyle eq 'true']">
+    <xsl:template match="@fontSize">
         <xsl:if test="data(.) != '' and data(.) != 'null'">
             <xsl:text>font-size:</xsl:text>
             <xsl:value-of select="."/>
@@ -108,7 +126,7 @@
     </xsl:template>
     
     <xsl:template match="img">
-        <xhtml:img>
+        <xhtml:img style="width: expression( document.body.clientWidth > 319 ? '320px' : 'auto' );max-width: 320px;margin:0.67em;">
             <xsl:copy-of select="@* | *"/>
         </xhtml:img>
     </xsl:template>

@@ -19,7 +19,7 @@
 			<target:strip-space elements="*" />
 			<target:preserve-space elements="text" />
 
-			<target:output indent="yes" />
+			<target:output indent="no" />
 
 			<target:template match="/">
 				<display:page>
@@ -42,33 +42,29 @@
 			-->
 			<target:template match="data[resource[@type = 'image']]"
 				priority="1">
-				<div dsl_class="resource">
-					<div style="clear:left;" block="true">
-						<target:attribute name="id">
-							<target:value-of select="@id" />
+				<div style="border: thin solid silver;max-width: 320px;padding: 10px;"
+					block="true">
+					<img>
+						<target:attribute name="alt">
+							<target:value-of
+								select="concat(value, ' (the resource is currently unreachable!!!)')" />
 						</target:attribute>
-						<img>
-							<target:attribute name="alt">
-								<target:value-of select="concat(value, ' (the resource is currently unreachable!!!)')" />
+						<target:attribute name="src">
+							<target:value-of
+								select="concat('resource:',resource/@archive,':',resource/@value)" />
+						</target:attribute>
+						<target:element name="resource-id-to-url"
+							namespace="http://nl.mpi.lexus/resource-resolver">
+							<target:copy-of select="resource/@*" />
+							<target:attribute name="lexiconId">
+								<target:value-of select="'{$lexicon-id}'" />
 							</target:attribute>
-							<target:attribute name="src">
-								<target:value-of
-									select="concat('resource:',resource/@archive,':',resource/@value)" />
-							</target:attribute>
-							<target:element name="resource-id-to-url"
-								namespace="http://nl.mpi.lexus/resource-resolver">
-								<target:copy-of select="resource/@*" />
-								<target:attribute name="lexiconId">
-									<target:value-of select="'{$lexicon-id}'" />
-								</target:attribute>
-							</target:element>
-						</img>
-					</div>
-					<div dsl_class="caption" block="true">
-						<text>
-							<target:value-of select="value" />
-						</text>
-					</div>
+						</target:element>
+					</img>
+					<br />
+					<text>
+						<target:value-of select="value" />
+					</text>
 				</div>
 			</target:template>
 
@@ -89,7 +85,7 @@
 			</target:template>
 		</target:stylesheet>
 	</xsl:template>
-	<xsl:template match="show[@type = 'dsl_show'][@optional = 'true']"
+	<xsl:template match="show[@type = 'dsl_show' and not(count(./data) = 1 and count(./show) = 0)][@optional = 'true']"
 		priority="1">
 		<xsl:choose>
 			<xsl:when test="(not(@optional) or @optional eq 'true') and .//data">
@@ -119,7 +115,7 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
-	<xsl:template match="show[@type = 'dsl_show']">
+	<xsl:template match="show[@type = 'dsl_show' and not(count(./data) = 1 and count(./show) = 0)]">
 		<div>
 			<xsl:copy-of select="@*[local-name(.) != 'isBranch']" />
 			<xsl:apply-templates />
@@ -131,6 +127,7 @@
 			<xsl:value-of select="translate(@value, ' ', '&#160;')" />
 		</xsl:copy>
 	</xsl:template>
+
 	<!--
 		A <data/> element in the DSL matches data elements in the LE based on
 		their @schema-ref attribute.
@@ -139,14 +136,79 @@
 		<div>
 			<xsl:copy-of
 				select="@*[local-name(.) != 'isBranch' and local-name(.) != 'id' and local-name(.) != 'type' and local-name(.) != 'name']" />
-			<target:apply-templates select=".//data[@schema-ref = '{@id}']" />
+					<target:apply-templates select="./data[@schema-ref = '{./@id}']" />
 		</div>
 	</xsl:template>
-	<!-- Process lists -->
-	<xsl:template match="list">
-		<target:for-each select=".//container[@schema-ref = '{@id}']">
-			<xsl:apply-templates />
-		</target:for-each>
+	<xsl:template match="lbreak">
+		<br/>
+	</xsl:template>
+	<xsl:template match="hline">
+		<hr>
+			<xsl:apply-templates select="@size"/>
+		</hr>
+	</xsl:template>
+	<!-- Process multipliers -->
+	<xsl:template match="multiplier[@type = 'dsl_multiplier' and not(count(./data) = 1 and count(./show) = 0)]">
+	<xsl:choose>
+		<xsl:when test=".//data">
+		<target:variable name="containers-{generate-id(.)}">                                            
+			<xsl:attribute name="select">
+				<xsl:for-each select=".//data">
+                	<xsl:variable name="d" select="." />
+                    <xsl:text>.//data[@schema-ref='</xsl:text>
+                    <xsl:value-of select="$d/@id" />
+                    <xsl:text>']/parent::node()</xsl:text>
+                    <xsl:if test="position() ne last()">
+                        	<xsl:text> | </xsl:text>
+                    </xsl:if>
+                </xsl:for-each>
+            </xsl:attribute>
+		</target:variable>
+		<target:variable name="first-{generate-id(.)}" select="$containers-{generate-id(.)}[1]" />
+		<target:variable name="siblings-{generate-id(.)}" select="$containers-{generate-id(.)}[1]/following-sibling::*" />
+		<target:if test="$first-{generate-id(.)}">
+			<div>
+				<xsl:copy-of select="@*[local-name(.) != 'isBranch']" />
+				<target:variable name="displayContainers-{generate-id(.)}" select="$first-{generate-id(.)} | ($siblings-{generate-id(.)})/self::node()[@id = $containers-{generate-id(.)}/@id]"/>
+				<target:variable name="doubles-{generate-id(.)}">
+					<target:for-each select="$displayContainers-{generate-id(.)}">
+						<target:variable name="displayContainer" select="."/>
+							<target:if test="count($displayContainers-{generate-id(.)}[@schema-ref = $displayContainer/@schema-ref]) &gt; 1">
+								<target:value-of select="'x'"/>
+							</target:if>
+					</target:for-each>
+				</target:variable>				
+				<target:if test="$doubles-{generate-id(.)} = ''">
+					<xsl:apply-templates />
+				</target:if>
+				<target:if test="not($doubles-{generate-id(.)} = '')">
+					<target:for-each select="$displayContainers-{generate-id(.)}">
+						<xsl:apply-templates />
+					</target:for-each>
+				</target:if>
+			</div>
+		</target:if>
+		</xsl:when>
+		<xsl:otherwise>
+				<div>
+					<xsl:copy-of select="@*[local-name(.) != 'isBranch']" />
+					<xsl:apply-templates />
+				</div>
+		</xsl:otherwise>
+	</xsl:choose>
+	</xsl:template>
+		
+	<!-- Separately handle list elements with a single data child. So that text child of this show element are repeated in
+	case we have multiple instances of the child data category at the lexical entry level. -->
+	<xsl:template match="multiplier[@type = 'dsl_multiplier' and (count(./data) = 1 and count(./show) = 0)]">
+	<target:if test=".//data[@schema-ref = '{.//data/@id}']/parent::node()">
+		<div>
+			<xsl:copy-of select="@*[local-name(.) != 'isBranch']" />
+			<target:for-each select=".//data[@schema-ref = '{.//data/@id}']/parent::node()">
+				<xsl:apply-templates />
+			</target:for-each>
+		</div>
+	</target:if>
 	</xsl:template>
 	<xsl:template match="container[@id]">
 		<target:template match="container[@schema-ref eq '{@id}']">
@@ -177,26 +239,31 @@
 		id="uuid:2c9090a21a6d44e9011a714ccb1c027b" name="Homonym number"
 		type="data category" isBranch="false"/> </col> </row> </list> </tbody>
 		</table>
-
--->
+	-->
 	<xsl:template match="table[@type = 'dsl_table']">
 		<xsl:choose>
 			<xsl:when test="(not(@optional) or @optional eq 'true') and .//data">
-				<target:if>
-					<xsl:attribute name="test">
-                <xsl:for-each select=".//data">
-                    <xsl:variable name="d" select="." />
-                    <xsl:text>.//data[@schema-ref='</xsl:text>
-                    <xsl:value-of select="$d/@id" />
-                    <xsl:text>']</xsl:text>
-                    <xsl:if test="position() ne last()">
-                        <xsl:text> | </xsl:text>
-                    </xsl:if>
-                </xsl:for-each>
-            </xsl:attribute>
+				<target:variable name="containers-{generate-id(.)}">
+					<xsl:attribute name="select">
+						<xsl:for-each select=".//data">
+                    		<xsl:variable name="d" select="." />
+                    		<xsl:text>.//data[@schema-ref='</xsl:text>
+                    		<xsl:value-of select="$d/@id" />
+                    		<xsl:text>']/parent::node()</xsl:text>
+                    		<xsl:if test="position() ne last()">
+                        		<xsl:text> | </xsl:text>
+                    		</xsl:if>
+                		</xsl:for-each>
+            		</xsl:attribute>
+				</target:variable>
+				<target:if test="$containers-{generate-id(.)}">
+					<target:variable name="first-{generate-id(.)}" select="$containers-{generate-id(.)}[1]" />
+					<target:variable name="siblings-{generate-id(.)}" select="$containers-{generate-id(.)}[1]/following-sibling::*" />
 					<xsl:copy>
-						<xsl:copy-of select="@*[local-name(.) != 'isBranch']" />
-						<xsl:apply-templates />
+					<xsl:copy-of select="@*[local-name(.) != 'isBranch']" />
+						<target:for-each select="$first-{generate-id(.)} | ($siblings-{generate-id(.)})/self::node()[@id = $containers-{generate-id(.)}/@id]">
+							<xsl:apply-templates />
+						</target:for-each>
 					</xsl:copy>
 				</target:if>
 			</xsl:when>
@@ -217,22 +284,27 @@
 	<xsl:template match="row[@type eq 'dsl_table_row']">
 		<xsl:choose>
 			<xsl:when test="(not(@optional) or @optional eq 'true') and .//data">
-				<target:if>
-					<xsl:attribute name="test">
-                        <xsl:for-each select=".//data">
-                            <xsl:variable name="d" select="." />
-                            <xsl:text>.//data[@schema-ref='</xsl:text>
-                            <xsl:value-of select="$d/@id" />
-                            <xsl:text>']</xsl:text>
-                            <xsl:if test="position() ne last()">
-                                <xsl:text> | </xsl:text>
-                            </xsl:if>
-                        </xsl:for-each>
-                    </xsl:attribute>
-
+				<target:variable name="containers-{generate-id(.)}">
+					<xsl:attribute name="select">
+						<xsl:for-each select=".//data">
+                    		<xsl:variable name="d" select="." />
+                    		<xsl:text>.//data[@schema-ref='</xsl:text>
+                    		<xsl:value-of select="$d/@id" />
+                    		<xsl:text>']/parent::node()</xsl:text>
+                    		<xsl:if test="position() ne last()">
+                        		<xsl:text> | </xsl:text>
+                    		</xsl:if>
+                		</xsl:for-each>
+            		</xsl:attribute>
+				</target:variable>
+				<target:if test="$containers-{generate-id(.)}">
+					<target:variable name="first-{generate-id(.)}" select="$containers-{generate-id(.)}[1]" />
+					<target:variable name="siblings-{generate-id(.)}" select="$containers-{generate-id(.)}[1]/following-sibling::*" />
 					<tr>
 						<xsl:copy-of select="@*[local-name(.) != 'isBranch']" />
-						<xsl:apply-templates />
+						<target:for-each select="$first-{generate-id(.)} | ($siblings-{generate-id(.)})/self::node()[@id = $containers-{generate-id(.)}/@id]">
+							<xsl:apply-templates />
+						</target:for-each>
 					</tr>
 				</target:if>
 			</xsl:when>

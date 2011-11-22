@@ -145,7 +145,7 @@
 <!--            <xsl:apply-templates select="node()"/>-->
 <!--        </xsl:copy>-->
 <!--    </xsl:template>-->
-
+   <xsl:template match="br"/>
     <xsl:template match="@* | node()">
         <xsl:apply-templates select="." mode="encoded"/>
     </xsl:template>
