@@ -61,7 +61,8 @@
     </xsl:template>
     <xsl:template match="hr">
         <xhtml:hr xmlns="http://www.w3.org/1999/xhtml">
-            <xsl:copy-of select="./@size"/>
+        <xsl:attribute name="style"><xsl:text>height:</xsl:text><xsl:value-of select="./@size"/><xsl:text>px;</xsl:text>
+        </xsl:attribute>
         </xhtml:hr>
     </xsl:template>
 
