@@ -126,7 +126,7 @@
     </xsl:template>
     
     <xsl:template match="img">
-        <xhtml:img style="width: expression( document.body.clientWidth > 319 ? '320px' : 'auto' );max-width: 320px;margin:0.67em;">
+        <xhtml:img style="width: expression( document.body.clientWidth > 309 ? '310px' : 'auto' );max-width: 310px;margin:0.67em;">
             <xsl:copy-of select="@* | *"/>
         </xhtml:img>
     </xsl:template>
