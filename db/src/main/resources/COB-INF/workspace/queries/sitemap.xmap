@@ -102,7 +102,8 @@
           -->
             <map:match pattern="search.xml">
                 <map:generate src="service-consumer:"/>
-
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-sq-0.xml"/>
                 <map:transform type="saxon" src="../../lexicon/getMetaForLexicaInQuery.xslt">
                     <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"
                     />
@@ -110,6 +111,8 @@
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/back-sq-1.xml"/>
                 <map:call resource="rest"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-sq-2.xml"/>
                 <map:transform type="saxon" src="../../util/stripLexusResult.xslt"/>
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/back-sq-3.xml"/>
