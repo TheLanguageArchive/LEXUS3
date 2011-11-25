@@ -18,14 +18,13 @@
     <xsl:template match="/">
       <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
          <soapenv:Body>
-            <ns1:getResourcesResponse soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:ns1="http://service.lexicon.mpi.nl">
+            <getResourcesResponse soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
                <getResourcesReturn xsi:type="soapenc:string" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
-                    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
                     &lt;resources xmlns=&quot;http://www.mpi.nl/lexus&quot; version=&quot;1.0&quot;&gt;
                         <xsl:apply-templates select="/data/lexus:get-page/lexus:result/result/lexica/lexicon"/>
                     &lt;/resources&gt;
 </getResourcesReturn>
-            </ns1:getResourcesResponse>
+            </getResourcesResponse>
          </soapenv:Body>
       </soapenv:Envelope>
     </xsl:template>

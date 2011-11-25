@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<wsdl:definitions targetnamespace="http://www.mpi.nl/lexus/webservice/" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://www.mpi.nl/lexus/webservice/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns1="urn:LEXUS" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<wsdl:definitions targetNamespace="http://www.mpi.nl/lexus/webservice/" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://ws.service.lexicon.mpi.nl" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns1="urn:LEXUS" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 <!--WSDL created by Apache Axis version: 1.4
 Built on Apr 22, 2006 (06:55:48 PDT)-->
  <wsdl:types>
@@ -187,7 +187,7 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
          <wsdl:input name="getResourceRequest">
 
-            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.service.lexicon.mpi.nl" use="encoded"/>
 
          </wsdl:input>
 
@@ -211,7 +211,7 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
          <wsdl:input name="getResourcesRequest">
 
-            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.service.lexicon.mpi.nl" use="encoded"/>
 
          </wsdl:input>
 
@@ -235,7 +235,7 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
          <wsdl:input name="searchRequest">
 
-            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.service.lexicon.mpi.nl" use="encoded"/>
 
          </wsdl:input>
 
@@ -259,7 +259,7 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
          <wsdl:input name="loginRequest">
 
-            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.service.lexicon.mpi.nl" use="encoded"/>
 
          </wsdl:input>
 
@@ -283,7 +283,7 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
          <wsdl:input name="getDataCategoriesRequest">
 
-            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.service.lexicon.mpi.nl" use="encoded"/>
 
          </wsdl:input>
 
@@ -307,7 +307,7 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
          <wsdl:input name="getResourceStructureRequest">
 
-            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.service.lexicon.mpi.nl" use="encoded"/>
 
          </wsdl:input>
 
@@ -331,7 +331,7 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
 
          <wsdl:input name="getHTMLViewRequest">
 
-            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://ws.service.lexicon.mpi.nl" use="encoded"/>
 
          </wsdl:input>
 
