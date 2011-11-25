@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
-    xmlns:impl="http://www.mpi.nl/lexus/webservice/"
+    xmlns:impl="http://ws.service.lexicon.mpi.nl"
     xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
     xmlns:cinclude="http://apache.org/cocoon/include/1.0" exclude-result-prefixes="#all"
     version="2.0">
