@@ -13,7 +13,7 @@
         </xd:desc>
     </xd:doc>
     
-    <xsl:include href="../util/encodeXML.xslt"/>
+    <xsl:include href="../util/encodeXML_4WS.xslt"/>
 
     <xsl:template match="/">
         <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -24,8 +24,7 @@
                     soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
                     xmlns:ns1="http://service.lexicon.mpi.nl">
                     <getResourceStructureReturn xsi:type="soapenc:string"
-                        xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"> &lt;?xml
-                        version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+                        xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
                         <xsl:apply-templates select="/data/lexus:get-document-and-schema/lexus:result/docAndSortorders/lexus/meta"/>
                     </getResourceStructureReturn>
                 </ns1:getResourceStructureResponse>

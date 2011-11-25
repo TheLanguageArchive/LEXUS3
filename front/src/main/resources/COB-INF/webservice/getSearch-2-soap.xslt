@@ -13,7 +13,8 @@
         </xd:desc>
     </xd:doc>
     
-    <xsl:include href="../util/encodeXML.xslt"/>
+    <xsl:include href="../util/encodeXML_4WS.xslt"/>
+    
 
 <!--
     <?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
@@ -54,9 +55,8 @@
                     soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
                     xmlns:ns1="http://service.lexicon.mpi.nl">
                     <searchReturn xsi:type="soapenc:string"
-                        xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"> &lt;?xml
-                        version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-                            <xsl:apply-templates select="/data/lexus:search-with-query/lexus:result/search-results"/>
+                        xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+                            <xsl:apply-templates select="/data/lexus:search/lexus:result/search-results"/>
                     </searchReturn>
                 </ns1:getSearchResponse>
             </soapenv:Body>
@@ -64,9 +64,8 @@
     </xsl:template>
                     
     <xsl:template match="search-results">
-        &lt;Results&gt;
+        &lt;Results xmlns=&quot;http://www.mpi.nl/lexus&quot; version=&quot;1.0&quot;&gt;
         <xsl:apply-templates select="lexicon" mode="encoded"/>
         &lt;/Results&gt;
     </xsl:template>
-
 </xsl:stylesheet>

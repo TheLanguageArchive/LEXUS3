@@ -212,16 +212,26 @@
         <map:act type="cauth-is-logged-in">
           <map:parameter name="application" value="Lexus"/>
           <map:generate src="cocoon://user"/>
+                      <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/search-1.xml"/>
+          
           <map:transform type="saxon" src="prepareSearch.xslt">
             <map:parameter name="a_startPage" value="{../1}"/>
             <map:parameter name="a_pageSize" value="{../2}"/>
             <map:parameter name="a_queryString" value="{../3}"/>
           </map:transform>
+                                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/search-2.xml"/>
+          
           <map:transform type="saxon" src="prepareSearch-generate-query.xslt"/>
+                                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/search-3.xml"/>
+          
           <map:transform type="servletService">
             <map:parameter name="service" value="servlet:db:/workspace/queries/search.xml"/>
           </map:transform>
+                                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/search-4.xml"/>
+          
           <map:transform type="saxon" src="getSearch-2-soap.xslt"/>
+                                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/search-5.xml"/>
+          
           <map:serialize type="xml"/>
         </map:act>
         <map:generate src="soap-login-failed.xml"/>
@@ -239,18 +249,23 @@
           <map:transform type="saxon" src="prepareGetLexicalEntry.xslt">
             <map:parameter name="a_entryID" value="{../1}"/>
           </map:transform>
+          <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ghv-1.xml"/>
           <map:transform type="servletService">
             <map:parameter name="service" value="servlet:db:/lexicon/getLexicalEntryData.xml"/>
           </map:transform>
+          <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ghv-2.xml"/>
           <map:transform type="saxon" src="../lexicon-editor/views/prepareDisplayGeneratorForLexicalEntry.xslt">
             <map:parameter name="view" value="le-view"/>
           </map:transform>
+          <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ghv-3.xml"/>
           <map:transform type="servletService">
             <map:parameter name="service" value="servlet:display:/htmlview.xml"/>
           </map:transform>
+          <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ghv-4.xml"/>
           <map:transform type="saxon" src="../lexicon-editor/views/extractHTMLView.xslt"/>
+          <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ghv-5.xml"/>
           <map:transform type="saxon" src="getHTMLView-2-soap.xslt"/>
-<!--          <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ghv-6.xml"/>-->
+          <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ghv-6.xml"/>
           <map:serialize type="xml"/>
         </map:act>
         <map:generate src="soap-login-failed.xml"/>
@@ -264,10 +279,35 @@
 
     </map:pipeline>
 
-
     <map:pipeline>
       <map:match pattern="services/LexusWebService">
-        <map:select type="request-method">
+       <map:act type="req-params" >
+         <map:parameter name="parameters" value="method" />
+			<map:aggregate element="soap">
+              <map:part src="cocoon://request"/>
+            </map:aggregate>
+            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ws-1.xml"/>
+            <map:transform type="saxon" src="handle_soap_calls.xslt"/>
+            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ws-2.xml"/>
+            <map:transform type="cinclude"/>
+            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ws-3.xml"/>
+            <map:serialize type="xml"/>
+      </map:act>
+      <map:act type="req-params" >
+         <map:parameter name="parameters" value="wsdl" />
+  			<map:generate src="wsdl.xml"/>
+            <map:transform type="${tee}"
+              src="{naming:java:comp/env/tee-folder}debug-info/wsdl-pre.xml"/>
+            <map:transform type="saxon" src="add_base_url.xslt">
+              <map:parameter name="base_url"
+                value="{request:scheme}://{request:serverName}:{request:serverPort}{request:contextPath}/{request:sitemapURI}"
+              />
+            </map:transform>
+            <map:transform type="${tee}"
+              src="{naming:java:comp/env/tee-folder}debug-info/wsdl-post.xml"/>
+            <map:serialize type="xml"/>
+      </map:act>
+      <map:select type="request-method">
           <map:when test="GET">
             <map:generate src="wsdl.xml"/>
             <map:transform type="${tee}"
@@ -286,11 +326,13 @@
               <map:part src="cocoon://request"/>
               <map:part src="cocoon://stream"/>
             </map:aggregate>
-<!--            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ws-1.xml"/>-->
+            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ws-1.xml"/>
+            <map:transform type="saxon" src="../util/flatten_hrefs_4WS.xslt"/>
+            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ws-2.xml"/>
             <map:transform type="saxon" src="handle_soap_calls.xslt"/>
-<!--            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ws-2.xml"/>-->
+            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ws-3.xml"/>
             <map:transform type="cinclude"/>
-<!--            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ws-3.xml"/>-->
+            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ws-4.xml"/>
             <map:serialize type="xml"/>
           </map:when>
         </map:select>

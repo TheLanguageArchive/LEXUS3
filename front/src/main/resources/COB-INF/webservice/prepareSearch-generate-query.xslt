@@ -43,7 +43,7 @@
         </lexicon>
         </query>
         -->
-    <xsl:template match="lexus:search-with-query/query">
+    <xsl:template match="lexus:search/query">
         <xsl:copy>
             <xsl:attribute name="id" select="id"/>
             <xsl:copy-of select="name|description"/>

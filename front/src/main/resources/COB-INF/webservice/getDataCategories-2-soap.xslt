@@ -34,7 +34,7 @@
         <max/>
         </datacategory>
     -->
-    <xsl:include href="../util/encodeXML.xslt"/>
+    <xsl:include href="../util/encodeXML_4WS.xslt"/>
 
     <xsl:template match="/">
         <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -45,8 +45,7 @@
                     soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
                     xmlns:ns1="http://service.lexicon.mpi.nl">
                     <getDataCategoriesReturn xsi:type="soapenc:string"
-                        xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"> &lt;?xml
-                        version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+                        xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
                         <xsl:apply-templates select="/data/lexus:get-document-and-schema/lexus:result/docAndSortorders/lexus/meta"/>
                     </getDataCategoriesReturn>
                 </ns1:getDataCategoriesResponse>
@@ -55,7 +54,7 @@
     </xsl:template>
                     
     <xsl:template match="meta">
-        &lt;lexicon id=&quot;<xsl:value-of select="@id"/>&quot;&gt;
+        &lt;lexicon xmlns=&quot;http://www.mpi.nl/lexus&quot; version=&quot;1.0&quot;&gt; xmlns:dcr=&quot;http://www.isocat.org/ns/dcr&quot; id=&quot;<xsl:value-of select="@id"/>&quot;&gt;
         <xsl:apply-templates select="schema//container[@type eq 'data']"/>
         &lt;/lexicon&gt;
     </xsl:template>

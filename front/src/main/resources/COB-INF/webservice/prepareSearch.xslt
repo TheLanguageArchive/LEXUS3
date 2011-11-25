@@ -23,17 +23,18 @@
 
     <xsl:template match="/">
         <data>
-            <lexus:search-with-query>
+            <lexus:search>
                 <xsl:copy-of select="saxon:parse($a_queryString)"/>
                 <refiner>
-                    <position>
+                    <startPage>
                         <xsl:value-of select="$a_startPage"/>
-                    </position>
+                    </startPage>
+                    <startLetter/>
                     <pageSize>
                         <xsl:value-of select="$a_pageSize"/>
                     </pageSize>
                 </refiner>
-            </lexus:search-with-query>
+            </lexus:search>
             <xsl:copy-of select="user"/>
         </data>
     </xsl:template>
