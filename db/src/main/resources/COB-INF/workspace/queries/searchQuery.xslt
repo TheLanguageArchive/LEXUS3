@@ -37,8 +37,8 @@
                     let $pageSize := number($search/refiner/pageSize)
                     let $startPage := number($search//refiner/startPage)
                    
-                    let $from := ($startPage) * $pageSize
-                    let $to := ($startPage + 1) * $pageSize
+                    let $from := ($startPage * $pageSize) + 1
+                    let $lenght := $pageSize
                     
                     
                     (: Returns a list of lexicon elements, containing ($firstDC, (lexical-entry)*) :)
@@ -55,7 +55,7 @@
                    
                                     let $les := for $le in $l/lexical-entries/lexical-entry let $d := $le//data[@schema-ref eq $firstDCId] order by $d/@sort-key, $d/value return $le
                    
-                                    return element lexicon { $l/@*, subsequence($les, $from, $to) }</xsl:text>
+                                    return element lexicon { $l/@*, subsequence($les, $from, $lenght) }</xsl:text>
                     <xsl:text> }</xsl:text>
             </lexus:text>
             </lexus:query>
