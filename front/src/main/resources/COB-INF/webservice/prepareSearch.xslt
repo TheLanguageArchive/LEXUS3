@@ -26,10 +26,13 @@
             <lexus:search>
                 <xsl:copy-of select="saxon:parse($a_queryString)"/>
                 <refiner>
-                    <startPage>
-                        <xsl:value-of select="$a_startPage"/>
-                    </startPage>
                     <startLetter/>
+                    <!-- AAM: the WS currently specifies 'a_startPage' parameter actually behaving as 'a_firstResult'. 
+                    For now, and to assure backwards compatibility, we convert the supplied parameter to the an actual startPage.
+                    In the future it will be desirable to change the WS clients so they send 'a_startPage' instead of 'a_firstResult' labeled as 'a_stratPage'.-->
+                    <startPage>
+                        <xsl:value-of select="number($a_startPage) div number($a_pageSize)"/>
+                    </startPage>
                     <pageSize>
                         <xsl:value-of select="$a_pageSize"/>
                     </pageSize>
