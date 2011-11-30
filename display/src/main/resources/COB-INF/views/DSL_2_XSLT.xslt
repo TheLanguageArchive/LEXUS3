@@ -85,7 +85,7 @@
 			</target:template>
 		</target:stylesheet>
 	</xsl:template>
-	<xsl:template match="show[@type = 'dsl_show' and not(count(./data) = 1 and count(./show) = 0)][@optional = 'true']"
+	<xsl:template match="show[@optional = 'true']"
 		priority="1">
 		<xsl:choose>
 			<xsl:when test="(not(@optional) or @optional eq 'true') and .//data">
@@ -115,7 +115,7 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
-	<xsl:template match="show[@type = 'dsl_show' and not(count(./data) = 1 and count(./show) = 0)]">
+	<xsl:template match="show">
 		<div>
 			<xsl:copy-of select="@*[local-name(.) != 'isBranch']" />
 			<xsl:apply-templates />
@@ -136,7 +136,7 @@
 		<div>
 			<xsl:copy-of
 				select="@*[local-name(.) != 'isBranch' and local-name(.) != 'id' and local-name(.) != 'type' and local-name(.) != 'name']" />
-					<target:apply-templates select="./data[@schema-ref = '{./@id}']" />
+					<target:apply-templates select=".//data[@schema-ref = '{./@id}']" />
 		</div>
 	</xsl:template>
 	<xsl:template match="lbreak">
@@ -198,7 +198,7 @@
 	</xsl:choose>
 	</xsl:template>
 		
-	<!-- Separately handle list elements with a single data child. So that text child of this show element are repeated in
+	<!-- Separately handle multiplier elements with a single data child. So that text child of this show element are repeated in
 	case we have multiple instances of the child data category at the lexical entry level. -->
 	<xsl:template match="multiplier[@type = 'dsl_multiplier' and (count(./data) = 1 and count(./show) = 0)]">
 	<target:if test=".//data[@schema-ref = '{.//data/@id}']/parent::node()">
