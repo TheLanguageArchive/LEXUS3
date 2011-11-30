@@ -105,7 +105,7 @@
                                 <style/>
                                 <structure isBranch="true">
                                     <show optional="false" isBranch="true" type="dsl_show"
-                                        name="Decorator" optional="false" dsl_class="">
+                                        name="Decorator" dsl_class="">
                                         <data isBranch="false" type="data category" name="Lexeme"
                                             id="{$schema-lexeme-id}"/>
                                     </show>
