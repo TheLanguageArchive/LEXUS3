@@ -102,10 +102,10 @@
                         <views listView="{$listViewId}" lexicalEntryView="{$leViewId}">
                             <view id="{$listViewId}" type="dsl_view" isBranch="true"
                                 name="List view" description="Created by Lexus.">
-                                <style isBranch="false"/>
+                                <style/>
                                 <structure isBranch="true">
                                     <show optional="false" isBranch="true" type="dsl_show"
-                                        name="Container">
+                                        name="Decorator" optional="false" dsl_class="">
                                         <data isBranch="false" type="data category" name="Lexeme"
                                             id="{$schema-lexeme-id}"/>
                                     </show>
@@ -121,7 +121,7 @@
                                         font-size : 20pt;
                                         color : grey;
                                     }</style>
-                                <structure isBranch="true" type="dsl_structure">
+                                <structure isBranch="true">
                                     <show type="dsl_show" name="Decorator" 
                                         isBranch="true" dsl_class="lexeme" optional="false"
                                         block="false" localStyle="false">
