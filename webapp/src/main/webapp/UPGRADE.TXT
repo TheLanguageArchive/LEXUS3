@@ -1,0 +1,10 @@
+To upgrade from previous versions:
+
+ Please UPGRADE BaseX version /lat/tools/BaseX/ to version 7.0.2.
+ Version 7.0.2 can be found @lux16 /lat/tool/BaseX/BaseX702
+
+ After upgrading BaseX version, open the file .basex located at root of the BaseX folder, and repoint the database location to the place where LEXUS Db can be found. Ex. for lux16:
+
+DBPATH = /lat/tools/BaseX/BaseXData
+
+ In this upgrade the directory BaseXData should be copied from lux16 to lux17 (it contains a new database export)
