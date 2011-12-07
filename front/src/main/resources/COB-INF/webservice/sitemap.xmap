@@ -188,13 +188,21 @@
         <map:act type="cauth-is-logged-in">
           <map:parameter name="application" value="Lexus"/>
           <map:generate src="cocoon://user"/>
-          <map:transform type="saxon" src="prepareGetResource.xslt">
+                                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/getDCs-1.xml"/>
+          
+          <map:transform type="saxon" src="prepareGetDataCategories.xslt">
             <map:parameter name="a_resourceID" value="{../1}"/>
           </map:transform>
+                                          <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/getDCs-2.xml"/>
+          
           <map:transform type="servletService">
-            <map:parameter name="service" value="servlet:db:/lexicon/getDocumentAndSchema.xml"/>
+            <map:parameter name="service" value="servlet:db:/schema-editor/getSchema.xml"/>
           </map:transform>
+                                          <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/getDCs-3.xml"/>
+          
           <map:transform type="saxon" src="getDataCategories-2-soap.xslt"/>
+                                          <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/getDCs-4.xml"/>
+          
           <map:serialize type="xml"/>
         </map:act>
         <map:generate src="soap-login-failed.xml"/>

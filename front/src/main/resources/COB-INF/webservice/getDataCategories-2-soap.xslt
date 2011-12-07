@@ -46,7 +46,7 @@
                     xmlns:ns1="http://service.lexicon.mpi.nl">
                     <getDataCategoriesReturn xsi:type="soapenc:string"
                         xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
-                        <xsl:apply-templates select="/data/lexus:get-document-and-schema/lexus:result/docAndSortorders/lexus/meta"/>
+                        <xsl:apply-templates select="/data/lexus:get-schema/lexus:result/result/lexicon/meta"/>
                     </getDataCategoriesReturn>
                 </ns1:getDataCategoriesResponse>
             </soapenv:Body>

@@ -37,8 +37,7 @@
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/demo-back-1.xml"/>
                 <map:transform type="saxon" src="getSchema.xslt">
-                    <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"
-                    />
+                    <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
                 </map:transform>
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/demo-back-2.xml"/>
