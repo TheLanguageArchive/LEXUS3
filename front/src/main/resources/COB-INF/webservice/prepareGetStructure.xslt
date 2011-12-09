@@ -19,7 +19,7 @@
 
     <xsl:template match="/">
         <data>
-            <lexus:get-schema id="{$a_resourceID}">
+            <lexus:get-schema>
             	<xsl:element name="id">
             		<xsl:value-of select="$a_resourceID"/>
             	</xsl:element>
