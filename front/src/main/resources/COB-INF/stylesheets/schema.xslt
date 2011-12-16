@@ -139,7 +139,7 @@
             <string key="description">
                 <xsl:value-of select="@description"/>
             </string>
-            <string key="type">component</string>
+            <string key="type">container</string>
             <string key="name">lexiconInformation</string>
             <string key="parent">
                 <xsl:value-of select="../@id"/>
@@ -345,7 +345,7 @@
             <string key="parent">
                 <xsl:value-of select="../@id"/>
             </string>
-            <string key="type">component</string>
+            <string key="type">container</string>
             <string key="name">
                 <xsl:value-of select="@name"/>
             </string>

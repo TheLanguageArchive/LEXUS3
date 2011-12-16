@@ -86,7 +86,7 @@
                                     <container id="{$schema-form-id}"
                                         description="Represents one lexical variant of the written or spoken form of the lexical entry"
                                         name="Form" mandatory="true" multiple="false"
-                                        type="component" admin-info="">
+                                        type="container" admin-info="">
                                         <container id="{$schema-lexeme-id}"
                                             description="Main word of the lexical entry"
                                             name="Lexeme" mandatory="true" multiple="false"
@@ -95,7 +95,7 @@
                                     <container id="{$schema-sense-id}"
                                         description="Contains attributes that describe meanings of a lexical entry"
                                         name="Sense" mandatory="false" multiple="true"
-                                        type="component" admin-info=""/>
+                                        type="container" admin-info=""/>
                                 </container>
                             </container>
                         </schema>
