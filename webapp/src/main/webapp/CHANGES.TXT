@@ -1,3 +1,3 @@
 This is a staging version!
 
-Fixed tickets: #1339
+Fixed tickets: #1339, #1340, #1345, #1347, #1344, #1343
