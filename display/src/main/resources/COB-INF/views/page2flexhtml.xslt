@@ -42,51 +42,51 @@
 
 	<!--AAM: we have 8 possible cases with italic, bold and underlined local style parameters-->
     <xsl:template match="div">
-    	<xsl:if test = "./@localStyle eq 'true' or not(./@localStyle)">
+<!--    	<xsl:if test = "./@localStyle eq 'true' or not(./@localStyle)">-->
     		<xsl:if test="./@fontStyle eq 'italic' and not(./@fontWeight eq 'bold') and not(./@textDecoration eq 'underline')">
-    	     		&lt;i&gt;&lt;font <xsl:apply-templates select="@*"/>&gt;
+    	     		&lt;i&gt;&lt;span <xsl:apply-templates select="@*"/>&gt;
         		<xsl:apply-templates/>
-        		&lt;/font&gt;&lt;/i&gt;
+        		&lt;/span&gt;&lt;/i&gt;
     		</xsl:if>
     		<xsl:if test="./@fontWeight eq 'bold' and not(./@fontStyle eq 'italic') and not(./@textDecoration eq 'underline')">
-    	     		&lt;b&gt;&lt;font <xsl:apply-templates select="@*"/>&gt;
+    	     		&lt;b&gt;&lt;span <xsl:apply-templates select="@*"/>&gt;
         		<xsl:apply-templates/>
-        		&lt;/font&gt;&lt;/b&gt;
+        		&lt;/span&gt;&lt;/b&gt;
     		</xsl:if>
     		<xsl:if test="./@textDecoration eq 'underline' and not(./@fontStyle eq 'italic') and not(./@fontWeight eq 'bold')">
-    	     		&lt;u&gt;&lt;font <xsl:apply-templates select="@*"/>&gt;
+    	     		&lt;u&gt;&lt;span <xsl:apply-templates select="@*"/>&gt;
         		<xsl:apply-templates/>
-        		&lt;/font&gt;&lt;/u&gt;
+        		&lt;/span&gt;&lt;/u&gt;
     		</xsl:if>
     		<xsl:if test="./@fontStyle eq 'italic' and ./@fontWeight eq 'bold' and not(./@textDecoration eq 'underline')">
-    	     		&lt;b&gt;&lt;i&gt;&lt;font <xsl:apply-templates select="@*"/>&gt;
+    	     		&lt;b&gt;&lt;i&gt;&lt;span <xsl:apply-templates select="@*"/>&gt;
         		<xsl:apply-templates/>
-        		&lt;/font&gt;&lt;/i&gt;&lt;/b&gt;
+        		&lt;/span&gt;&lt;/i&gt;&lt;/b&gt;
     		</xsl:if>
     		<xsl:if test="./@fontStyle eq 'italic' and ./@textDecoration eq 'underline' and not(./@fontWeight eq 'bold')">
-    	     		&lt;u&gt;&lt;i&gt;&lt;font <xsl:apply-templates select="@*"/>&gt;
+    	     		&lt;u&gt;&lt;i&gt;&lt;span <xsl:apply-templates select="@*"/>&gt;
         		<xsl:apply-templates/>
-        		&lt;/font&gt;&lt;/i&gt;&lt;/u&gt;
+        		&lt;/span&gt;&lt;/i&gt;&lt;/u&gt;
     		</xsl:if>
     		<xsl:if test="./@fontWeight eq 'bold' and ./@textDecoration eq 'underline' and not(./@fontStyle eq 'italic')">
-    	     		&lt;b&gt;&lt;u&gt;&lt;font <xsl:apply-templates select="@*"/>&gt;
+    	     		&lt;b&gt;&lt;u&gt;&lt;span <xsl:apply-templates select="@*"/>&gt;
         		<xsl:apply-templates/>
-        		&lt;/font&gt;&lt;/u&gt;&lt;/b&gt;
+        		&lt;/span&gt;&lt;/u&gt;&lt;/b&gt;
     		</xsl:if>
     		<xsl:if test="./@fontWeight eq 'bold' and ./@fontStyle eq 'italic' and ./@textDecoration eq 'underline'">
-    	     		&lt;b&gt;&lt;i&gt;&lt;u&gt;&lt;font <xsl:apply-templates select="@*"/>&gt;
+    	     		&lt;b&gt;&lt;i&gt;&lt;u&gt;&lt;span <xsl:apply-templates select="@*"/>&gt;
         		<xsl:apply-templates/>
-        		&lt;/font&gt;&lt;/u&gt;&lt;/i&gt;&lt;/b&gt;
+        		&lt;/span&gt;&lt;/u&gt;&lt;/i&gt;&lt;/b&gt;
     		</xsl:if>
     		<xsl:if test="not(./@fontStyle eq 'italic') and not(./@fontWeight eq 'bold') and not(./@textDecoration eq 'underline')">
-     			&lt;font <xsl:apply-templates select="@*"/>&gt;
-        		<xsl:apply-templates/> &lt;/font&gt; 
+     			&lt;span <xsl:apply-templates select="@*"/>&gt;
+        		<xsl:apply-templates/> &lt;/span&gt; 
         	</xsl:if>
-        </xsl:if>
-        <xsl:if test = "./@localStyle eq 'false'">
-        &lt;span <xsl:apply-templates select="@*"/>&gt;
-        	<xsl:apply-templates/> &lt;/span&gt; 
-        </xsl:if>          
+<!--        </xsl:if>-->
+<!--        <xsl:if test = "not(./@fontWeight) or not(./@textAlign) or not(./@fontWeight) or not(./@textDecoration)">-->
+<!--        &lt;span <xsl:apply-templates select="@*"/>&gt;-->
+<!--        	<xsl:apply-templates/> &lt;/span&gt; -->
+<!--        </xsl:if>          -->
     </xsl:template>
 
     <xsl:template match="@dsl_class[not(../@localStyle) or ../@localStyle eq 'false']" priority="2">
