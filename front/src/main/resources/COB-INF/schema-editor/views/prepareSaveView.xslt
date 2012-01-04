@@ -8,16 +8,16 @@
 
     <xsl:template match="view">
         <xsl:variable name="id"
-            select="if (@id) then @id else concat('uuid:',util:toString(util:randomUUID()))"/>
+            select="if(string-length(./@id) != 0) then ./@id else concat('uuid:',util:toString(util:randomUUID()))"/>
         <lexus:save-view lexicon="{$lexiconId}">
             <view>
                 <xsl:attribute name="id" select="$id"/>
-                <xsl:copy-of select="@*|node()"/>
+                <xsl:copy-of select="@* except @id|node()"/>
             </view>
         </lexus:save-view>
         <view>
             <xsl:attribute name="id" select="$id"/>
-            <xsl:copy-of select="@*|node()"/>
+            <xsl:copy-of select="@* except @id|node()"/>
         </view>
     </xsl:template>
 
