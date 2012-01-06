@@ -36,9 +36,9 @@
 
     <developers>
         <developer>
-            <id>huiver</id>
-            <name>Huib Verweij</name>
-            <email>huiver@mpi.nl</email>
+            <id>andmor</id>
+            <name>André Moreira</name>
+            <email>andmor@mpi.nl</email>
             <roles>
                 <role>Developer</role>
                 <role>Architect</role>
@@ -46,6 +46,28 @@
             <organization>MPI</organization>
             <timezone>+1</timezone>
         </developer>
+        <developer>
+            <id>shasha</id>
+            <name>Shakila Shayan</name>
+            <email>shasha@mpi.nl</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <organization>MPI</organization>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>huiver</id>
+            <name>Huib Verweij</name>
+            <email>huiver@mpi.nl</email>
+            <roles>
+                <role>Former developer</role>
+                <role>Former architect</role>
+            </roles>
+            <organization>MPI</organization>
+            <timezone>+1</timezone>
+        </developer>
+
     </developers>
 
     <dependencies>
