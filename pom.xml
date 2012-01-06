@@ -59,7 +59,7 @@
         <dependency>
             <groupId>nl.mpi</groupId>
             <artifactId>corpusstructure</artifactId>
-            <version>1.6.4</version>
+            <version>1.6.5.4</version>
         </dependency>
         <dependency>
             <groupId>nl.mpi.bcarchive</groupId>
@@ -102,7 +102,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>2.3</version>
+                <version>2.4</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
                 </configuration>
@@ -141,6 +141,18 @@
 
 
 
+    <distributionManagement>
+        <repository>
+            <id>MPI</id>
+            <name>MPI LAT Repository/</name>
+            <url>http://lux15.mpi.nl/nexus/content/groups/public</url>
+        </repository>
+        <snapshotRepository>
+            <id>MPI-Snapshots</id>
+            <name>MPI LAT Repository/</name>
+            <url>http://lux15.mpi.nl/nexus/content/repositories/MPI-Snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
     <repositories>
         <repository>
             <id>MPI</id>
@@ -148,12 +160,11 @@
             <url>http://lux15.mpi.nl/nexus/content/groups/public</url>
         </repository>
         <repository>
-            <id>MPI-Snapshot</id>
+            <id>MPI-Snapshots</id>
             <name>MPI LAT Repository/</name>
             <url>http://lux15.mpi.nl/nexus/content/repositories/MPI-Snapshots</url>
         </repository>
     </repositories>
-
 
 
     <scm>
