@@ -1,7 +1,7 @@
 To upgrade from the previous version:
 
-Deploy LEXUS-3.0-SNAPSHOT-r28300.war to tomcat-lexical @lux17. 
+Deploy LEXUS-3.0-SNAPSHOT-r28623.war to tomcat-lexical @lux17. 
 
 
 Previously installed version:
-LEXUS-3.0-SNAPSHOT-r27757.war
+LEXUS-3.0-SNAPSHOT-r28139.war
