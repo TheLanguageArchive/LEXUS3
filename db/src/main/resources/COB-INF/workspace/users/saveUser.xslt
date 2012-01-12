@@ -20,7 +20,7 @@
 	                        replace value of node $existingUser/name with $newData/name,
 	                        replace value of node $existingUser/password with $newData/password,
 	                        replace value of node $existingUser/email with $newData/email,
-	                        replace value of node $existingUser/accesslevel with $newData/accesslevel,
+	                        replace value of node $existingUser/accesslevel with $newData/accesslevel
 	                        
 	                };
 	                 
