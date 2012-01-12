@@ -5,8 +5,6 @@
     xmlns:exist="http://exist.sourceforge.net/NS/exist" xmlns:util="java:java.util.UUID"
     version="2.0">
 
-    <xsl:include href="../../util/identity.xslt"/>
-
 
     <xsl:template match="data">
         <xsl:copy>
@@ -34,15 +32,42 @@
         </save-user>
     </xsl:template>
 
-    <xsl:template match="username">
+    <xsl:template match="account">
         <account>
             <xsl:value-of select="."/>
         </account>
     </xsl:template>
 
-    <xsl:template match="displayName">
+    <xsl:template match="name">
         <name>
             <xsl:value-of select="."/>
         </name>
     </xsl:template>
+    
+    <xsl:template match="password">
+        <password>
+            <xsl:value-of select="."/>
+        </password>
+    </xsl:template>
+    
+    <xsl:template match="accesslevel">
+        <accesslevel>
+            <xsl:value-of select="."/>
+        </accesslevel>
+    </xsl:template>
+    
+    <xsl:template match="id">
+        <id>
+            <xsl:value-of select="."/>
+        </id>
+    </xsl:template>
+    
+    <xsl:template match="email">
+        <email>
+            <xsl:value-of select="."/>
+        </email>
+    </xsl:template>
+    
+    <xsl:template match="mx_internal_uid" />
+
 </xsl:stylesheet>

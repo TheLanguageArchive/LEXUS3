@@ -66,6 +66,9 @@
             <string key="account">
                 <xsl:value-of select="account"/>
             </string>
+            <string key="email">
+                <xsl:value-of select="email"/>
+            </string>
         </object>
     </xsl:template>
 

@@ -125,6 +125,7 @@
                 <map:transform type="servletService">
                     <map:parameter name="service" value="servlet:db:/workspace/getUsers.xml"/>
                 </map:transform>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-get-users-1.xml"/>
                 <map:serialize type="xml"/>
             </map:match>
 
@@ -142,10 +143,13 @@
                     <map:part src="cocoon://json"/>
                     <map:part src="cocoon://user"/>
                 </map:aggregate>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-save-user-1.xml"/>
                 <map:transform type="saxon" src="users/prepareSaveUser.xslt"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-save-user-2.xml"/>
                 <map:transform type="servletService">
                     <map:parameter name="service" value="servlet:db:/workspace/saveUser.xml"/>
                 </map:transform>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-save-user-3.xml"/>
                 <map:serialize type="xml"/>
             </map:match>
 
@@ -155,9 +159,9 @@
                 -->
             <map:match pattern="deleteUser.json">
                 <map:generate src="cocoon:/deleteUser"/>
-                <!--<map:transform type="saxon" src="users/deletedUser-2-JSON.xslt"/>
-                <map:serialize type="json"/>-->
-                <map:serialize type="xml"/>
+                <map:transform type="saxon" src="users/deletedUser-2-JSON.xslt"/>
+                <map:serialize type="json"/>
+                <!--<map:serialize type="xml"/>-->
             </map:match>
 
             <map:match pattern="deleteUser">
@@ -170,10 +174,10 @@
                 <map:transform type="saxon" src="users/prepareDeleteUser.xslt"/>
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-delete-user-2.xml"/>
-                <!--<map:transform type="servletService">
+              <map:transform type="servletService">
                     <map:parameter name="service" value="servlet:db:/workspace/deleteUser.xml"/>
                 </map:transform>
-                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-delete-user-3.xml"/>-->
+              <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-delete-user-3.xml"/>
                 <map:serialize type="xml"/>
             </map:match>
 
