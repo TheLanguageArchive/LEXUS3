@@ -21,7 +21,7 @@
         declare function lexus:user-sequence($users as element()*)  as element()* {
             for $user in $users
                 order by lower-case($user/name) ascending
-                return element user {$user/@*, $user/*[local-name() = ('name', 'account', 'accesslevel', 'workspace')] }
+                return element user {$user/@*, $user/*[local-name() = ('name', 'account', 'accesslevel', 'email', 'workspace')] }
         };
         declare function lexus:users($users as element()*)  as element()* {
             element users {lexus:user-sequence($users)}
