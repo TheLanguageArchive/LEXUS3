@@ -19,7 +19,10 @@
 	                        replace value of node $existingUser/account with $newData/account,
 	                        replace value of node $existingUser/name with $newData/name,
 	                        replace value of node $existingUser/password with $newData/password,
-	                        replace value of node $existingUser/email with $newData/email,
+	                        if($existingUser/email)
+	                        	then replace value of node $existingUser/email with $newData/email
+	                        else 
+	                        	(insert nodes $newData/email into $existingUser),
 	                        replace value of node $existingUser/accesslevel with $newData/accesslevel
 	                        
 	                };
