@@ -18,7 +18,9 @@
 	                <xquery:declare-updating-function/> lexus:updateUser($existingUser as node(), $newData as node()){
 	                        replace value of node $existingUser/account with $newData/account,
 	                        replace value of node $existingUser/name with $newData/name,
-	                        replace value of node $existingUser/password with $newData/password,
+	                        if(string-length(replace($newData/password,  ' ', '' )) > 0)
+	                        	then replace value of node $existingUser/password with $newData/password
+	                        	else (),
 	                        if($existingUser/email)
 	                        	then replace value of node $existingUser/email with $newData/email
 	                        else 
