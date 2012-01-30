@@ -98,11 +98,9 @@
             <string key="schemaElementId">
                 <xsl:value-of select="@schema-ref"/>
             </string>
-            <xsl:if test="container|data">
-                <array key="children">
-                    <xsl:apply-templates select="container|data"/>
-                </array>
-            </xsl:if>
+            <array key="children">
+                <xsl:apply-templates select="container|data"/>
+            </array>
             <string key="label">
                 <xsl:value-of
                     select="//lexus:get-lexical-entry/lexus:result/result/schema//container[@id eq current()/@schema-ref]/@name"
@@ -125,7 +123,7 @@
             <string key="schemaElementId">
                 <xsl:value-of select="@schema-ref"/>
             </string>
-            <xsl:if test="container|data or //lexus:get-lexical-entry/lexus:result/result/schema//container[@id eq current()/@schema-ref]/@type eq 'component'">
+            <xsl:if test="container|data or not(//lexus:get-lexical-entry/lexus:result/result/schema//container[@id eq current()/@schema-ref]/@type)">
                 <array key="children">
                     <xsl:apply-templates select="container|data"/>
                 </array>
