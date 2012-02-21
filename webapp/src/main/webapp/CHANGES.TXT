@@ -1,4 +1,8 @@
 This is a staging version!
 
-Fixed tickets: #878, #879, #1340, #1344, #1349, #1355, #1457, #1458, #1471, #1472
+Updated db module to be compatible with the new BaseX 7.1.1.
+Major performance improvements thanks to new incremental indexes on BaseX 7.1.1
+
+
+Fixed tickets: 
 
