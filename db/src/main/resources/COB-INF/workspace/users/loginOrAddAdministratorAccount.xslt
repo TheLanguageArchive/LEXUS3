@@ -25,7 +25,7 @@
                     then
                         $user
                     else
-                        element boe {}
+                        element boe {()}
                         (:
                         let $noUsers := empty(collection('<xsl:value-of select="$users-collection"/>')/user)
                         return if ($noUsers)
