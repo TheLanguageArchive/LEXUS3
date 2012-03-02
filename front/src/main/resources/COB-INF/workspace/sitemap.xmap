@@ -573,20 +573,23 @@
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-search-1.xml"/>
                 <map:transform type="saxon" src="queries/prepare-search.xslt"/>
+              <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-search-2.xml"/>
+                <map:transform type="saxon" src="queries/refine-query.xslt"/>
                 <map:transform type="servletService">
                     <map:parameter name="service" value="servlet:db:/workspace/queries/search.xml"/>
                 </map:transform>
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/front-search-2.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-search-3.xml"/>
                 <map:transform type="saxon" src="queries/process-search-results.xslt"/>
                 <map:transform type="servletService">
                     <map:parameter name="service" value="servlet:display:/flexhtmlview.xml"/>
                 </map:transform>
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/front-search-3.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-search-4.xml"/>
                 <map:transform type="saxon" src="queries/search-results-2-JSON.xslt"/>
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/front-search-4.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-search-5.xml"/>
                 <map:serialize type="json"/>
             </map:match>
 
