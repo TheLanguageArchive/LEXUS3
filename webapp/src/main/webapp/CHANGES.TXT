@@ -4,5 +4,5 @@ Updated db module to be compatible with the new BaseX 7.1.1.
 Major performance improvements thanks to new incremental indexes on BaseX 7.1.1
 
 
-Fixed tickets: 
+Fixed tickets: 1489
 
