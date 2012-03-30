@@ -222,15 +222,29 @@
             <xsl:text> and </xsl:text>
             
             <xsl:if test="@negation eq 'true'">not(</xsl:if>
-            <xsl:choose>
-                <xsl:when test="@condition eq 'is'"> upper-case(value) eq '<xsl:value-of select="$uc"/>' </xsl:when>
-                <xsl:when test="@condition eq 'contains'"> contains(upper-case(value), '<xsl:value-of
-                        select="$uc"/>') </xsl:when>
-                <xsl:when test="@condition eq 'begins with'"> starts-with(upper-case(value), '<xsl:value-of select="$uc"/>') </xsl:when>
-                <xsl:when test="@condition eq 'ends with'"> ends-with(upper-case(value), '<xsl:value-of
-                        select="$uc"/>') </xsl:when>
-            </xsl:choose>
+            <xsl:if test="ancestor::query/../refiner/caseSensitive eq 'true'">
+           		<xsl:choose>
+	                <xsl:when test="@condition eq 'is'"> value eq '<xsl:value-of select="@value"/>' </xsl:when>
+	                <xsl:when test="@condition eq 'contains'"> contains(value, '<xsl:value-of
+	                        select="@value"/>') </xsl:when>
+	                <xsl:when test="@condition eq 'begins with'"> starts-with(value, '<xsl:value-of select="@value"/>') </xsl:when>
+	                <xsl:when test="@condition eq 'ends with'"> ends-with(value, '<xsl:value-of
+	                        select="@value"/>') </xsl:when>
+	            </xsl:choose>
+            </xsl:if>
+            <xsl:if test="ancestor::query/../refiner/caseSensitive eq 'false'">
+	            <xsl:choose>
+	                <xsl:when test="@condition eq 'is'"> upper-case(value) eq '<xsl:value-of select="$uc"/>' </xsl:when>
+	                <xsl:when test="@condition eq 'contains'"> contains(upper-case(value), '<xsl:value-of
+	                        select="$uc"/>') </xsl:when>
+	                <xsl:when test="@condition eq 'begins with'"> starts-with(upper-case(value), '<xsl:value-of select="$uc"/>') </xsl:when>
+	                <xsl:when test="@condition eq 'ends with'"> ends-with(upper-case(value), '<xsl:value-of
+	                        select="$uc"/>') </xsl:when>
+	            </xsl:choose>
+            </xsl:if>
             <xsl:if test="@negation eq 'true'">)</xsl:if>
+            	
+            
         </xsl:if>
     </xsl:template>
     
