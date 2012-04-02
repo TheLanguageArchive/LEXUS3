@@ -104,9 +104,12 @@
             <string key="negation">
                 <xsl:value-of select="@negation"/>
             </string>
-                <array key="children">
-                    <xsl:apply-templates select="datacategory"/>
-                </array>
+            <string key="caseSensitive">
+                <xsl:value-of select="@caseSensitive"/>
+            </string>
+            <array key="children">
+                <xsl:apply-templates select="datacategory"/>
+            </array>
         </object>
     </xsl:template>
     

@@ -199,6 +199,14 @@
                     <false key="negation"/>
                 </xsl:otherwise>
             </xsl:choose>
+            <xsl:choose>
+                <xsl:when test="@caseSensitive eq 'true'">
+                    <true key="caseSensitive"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <false key="caseSensitive"/>
+                </xsl:otherwise>
+            </xsl:choose>
             <xsl:if test="datacategory">
                 <array key="children">
                     <xsl:apply-templates select="datacategory" mode="queries"/>

@@ -207,6 +207,9 @@
             <string key="negation">
                 <xsl:value-of select="@negation"/>
             </string>
+            <string key="caseSensitive">
+                <xsl:value-of select="@caseSensitive"/>
+            </string>
             <xsl:if test="datacategory">
                 <array key="children">
                     <xsl:apply-templates select="datacategory"/>
