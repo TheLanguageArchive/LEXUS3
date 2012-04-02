@@ -71,6 +71,8 @@
 
             <map:match pattern="getLexicalEntryData.xml">
                 <map:generate src="service-consumer:"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/gled-back-0.xml"/>
 
                 <map:transform type="saxon" src="getLexicalEntryData.xslt">
                     <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"
