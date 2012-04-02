@@ -243,8 +243,6 @@
 	            </xsl:choose>
             </xsl:if>
             <xsl:if test="@negation eq 'true'">)</xsl:if>
-            	
-            
         </xsl:if>
     </xsl:template>
     
