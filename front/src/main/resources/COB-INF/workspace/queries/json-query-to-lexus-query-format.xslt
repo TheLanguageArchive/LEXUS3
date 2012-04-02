@@ -58,7 +58,7 @@
     <xsl:template match="children" mode="json-query-first-level">
         <xsl:param name="startLetter" select="''"/>
         <datacategory schema-ref="{id}" name="{name}" value="{value}" condition="{condition}"
-            negation="{negation}">
+            negation="{negation}" caseSensitive="{caseSensitive}">
             <!-- If a start character was chosen in the UI, add a datacategory element for it,
                 match the first datacategory element used in the list view. -->
             <xsl:if test="$startLetter ne ''">
@@ -75,7 +75,7 @@
         -->
     <xsl:template match="children" mode="json-query">
         <datacategory schema-ref="{id}" name="{name}" value="{value}" condition="{condition}"
-            negation="{negation}">
+            negation="{negation}" caseSensitive="{caseSensitive}">
             <xsl:apply-templates select="children/children" mode="json-query"/>
         </datacategory>
     </xsl:template>
