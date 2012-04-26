@@ -1,3 +1,4 @@
 This is a staging version!
 
-Fixed tickets: #1559 #1531 #1795 #1815 #1556 #1536 #1520
+Fixed tickets: #1520 #1531 #1536 #1556 #1559 #1748 #1749 #1773 #1795 #1815
+
