@@ -44,7 +44,7 @@
     -->
     <New id="lexus_eaf_handler"  class="org.mortbay.jetty.plus.naming.EnvEntry">
         <Arg>LEXUS/EAF_Handler</Arg>
-        <Arg type="java.lang.String">http://corpus1.mpi.nl/ds/annex/runLoader</Arg>
+        <Arg type="java.lang.String">http://corpus1.mpi.nl/ds/annex/protected/interface.jsp</Arg>
         <Arg type="boolean">false</Arg>
     </New>
     

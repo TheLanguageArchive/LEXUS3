@@ -56,7 +56,7 @@
   <!--refers to the url for the handler of IMDI files-->
   <Environment name="LEXUS/IMDI_Handler" override="false" type="java.lang.String" value="http://corpus1.mpi.nl/ds/imdi_browser"/>
   <!--Refers to the url for the handler of EAF files-->
-  <Environment name="LEXUS/EAF_Handler" override="false" type="java.lang.String" value="http://corpus1.mpi.nl/ds/annex/runLoader"/>
+  <Environment name="LEXUS/EAF_Handler" override="false" type="java.lang.String" value="http://corpus1.mpi.nl/ds/annex/protected/interface.jsp"/>
   <!--End of LEXUS Environment variables -->
   <Environment name="jdbc/CSDB" type="java.lang.String" value="jdbc:postgresql://lux08.mpi.nl:5432/corpusstructure" />
   

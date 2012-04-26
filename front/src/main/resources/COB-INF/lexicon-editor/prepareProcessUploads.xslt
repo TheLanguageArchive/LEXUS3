@@ -13,7 +13,7 @@
                     <value>38d44d77-e357-463a-9fa0-9d4f7694d331</value>
                     <archive>local</archive>
                     <type>upload</type>
-                    <fragmentIdentifier>null</fragmentIdentifier>
+                    <fragmentIdentifier>null</fragmentIdentifier> (used for ANNEX eaf resources)
                     <url>null</url>
                     </multimedia>
                     -->
@@ -24,7 +24,7 @@
 
 
     <xsl:template match="multimedia[archive eq 'MPI'][type eq 'upload']">
-        <archive:get-object id="{value}"/>
+        <archive:get-object id="{value}" fragmentIdentifier="{if (fragmentIdentifier eq 'null') then '' else fragmentIdentifier}"/>
     </xsl:template>
     <!--
         Convert a resource that was already present, e.g. not just uploaded.
