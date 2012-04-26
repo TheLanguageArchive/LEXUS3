@@ -55,10 +55,10 @@
                    </xsl:apply-templates>
                    
                    let $user-id := '<xsl:value-of select="/data/user/@id"/>'
-                   let $lexiconId := '<xsl:value-of select="replace(query/expression/lexicon/@id,'''','''''')"/>'
+                   let $lexiconId := '<xsl:value-of select="replace(replace(replace(query/expression/lexicon/@id, '&amp;', '&amp;amp;'), '&quot;', '&amp;quot;') ,'''', '''''')"/>'
                    let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
-                   let $startLetter := '<xsl:value-of select="replace(refiner/startLetter,'''','''''')"/>'
-                   let $searchTerm := '<xsl:value-of select="replace(refiner/searchTerm,'''','''''')"/>'
+                   let $startLetter := '<xsl:value-of select="replace(replace(replace(refiner/startLetter, '&amp;', '&amp;amp;'), '&quot;', '&amp;quot;') ,'''', '''''')"/>'
+                   let $searchTerm := '<xsl:value-of select="replace(replace(replace(refiner/searchTerm, '&amp;', '&amp;amp;'), '&quot;', '&amp;quot;') ,'''', '''''')"/>'
                    let $caseSensitive := <xsl:choose>
                        <xsl:when test="refiner/caseSensitive eq 'true'">
                            <xsl:text>true()</xsl:text>

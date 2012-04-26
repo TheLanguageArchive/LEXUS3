@@ -93,6 +93,7 @@ public class JSONGenerator extends ServiceableGenerator implements CacheableProc
             throws SAXException {
         try {
             getLogger().debug("JSON source =" + jsonSource);
+        //    Logger.getLogger(JSONGenerator.class.getName()).info("JSON source =" + jsonSource);
             JSONObject json = new JSONObject(jsonSource);
             this.contentHandler.startDocument();
             this.contentHandler.startPrefixMapping(PREFIX, URI);
@@ -193,9 +194,11 @@ public class JSONGenerator extends ServiceableGenerator implements CacheableProc
     }
 
     private void content(String s) throws SAXException {
-        String chars = org.json.XML.escape(s);
-        getLogger().debug("content: " + chars);
-        contentHandler.characters(chars.toCharArray(), 0, chars.length());
+        //String chars = org.json.XML.escape(s);
+        //getLogger().debug("content: " + chars);
+        //Logger.getLogger(JSONGenerator.class.getName()).info("content: " + s);
+
+        contentHandler.characters(s.toCharArray(), 0, s.length());
     }
 
     public Serializable getKey() {
