@@ -14,7 +14,10 @@
         <resource archive="MPI" mimetype="{@format}" 
             value="{@archiveHandle}">
             <xsl:copy-of select="@archiveHandle | @metadataURL | @type"/>
-            <url><xsl:value-of select="concat(@url, '&amp;' ,../@fragmentIdentifier)"/></url>
+            <url>
+            <xsl:if test="../@fragmentIdentifier ne ''"><xsl:value-of select="concat(@url, '&amp;' ,../@fragmentIdentifier)"/></xsl:if>
+            <xsl:if test="../@fragmentIdentifier eq ''"><xsl:value-of select="@url"/></xsl:if>
+            </url>
         </resource>
     </xsl:template>
 </xsl:stylesheet>
