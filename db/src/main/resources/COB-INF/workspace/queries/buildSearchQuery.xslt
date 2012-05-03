@@ -75,7 +75,7 @@
     <xsl:template match="query" mode="build-query">
         <xsl:param name="lexica" select="()"/>
         <xsl:param name="user" select="()"/>
-        <xsl:text>declare function lexus:search($startLetter as xs:string, $searchTerm as xs:string) {
+        <xsl:text>declare function lexus:search($startLetter as xs:string, $searchTerm as xs:string, $startPage as xs:double, $pageSize as xs:double) {
         (
         </xsl:text>
         <xsl:for-each select="expression/lexicon">
@@ -162,6 +162,14 @@
                             </xsl:if>
                         </xsl:for-each>
                         <xsl:text>]</xsl:text>
+                    </xsl:if>
+                    <xsl:if test="not(datacategory)">
+	                    <xsl:text>
+	                    let $d := $l//data[@schema-ref eq "</xsl:text><xsl:value-of select="$firstDC/container/@id" /><xsl:text>"][1]</xsl:text>
+	                    <xsl:text>
+	                    where ((position() ge ($startPage * $pageSize) + 1) and (position() le ($startPage * $pageSize) + $pageSize))
+	                    order by $d/@sort-key, $d/value
+	                    </xsl:text>
                     </xsl:if>
                     <xsl:text>
                         return $l

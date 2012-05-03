@@ -110,7 +110,7 @@
                    let $sortOrders := collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $user-id]/workspace/sortorders
                    
                     (: Returns a list of lexicon elements, containing ($firstDC, (lexical-entry)*) :)
-                   let $search-results := lexus:search($startLetter, $searchTerm) 
+                   let $search-results := lexus:search($startLetter, $searchTerm, $startPage, $pageSize) 
 
 
                     (: Return $sortOrder//mapping/to character(s) when a sort order is defined,
@@ -133,7 +133,6 @@
                    
                    let $firstDCId := $firstDC/@id
                    
-                   let $les := for $le in $search-results/lexical-entries/lexical-entry let $d := $le//data[@schema-ref eq $firstDCId][1] order by $d/@sort-key, $d/value return $le
                    
                    return element result {
                        element results {
@@ -144,7 +143,7 @@
                            element caseSensitive { $caseSensitive },
                            element count { count($search-results/lexical-entries/lexical-entry) },
                            element pageSize { $pageSize },
-                           element lexical-entries { subsequence($les, ($startPage * $pageSize) + 1, $pageSize) },
+                           $search-results/lexical-entries,
                            element query { attribute id { '<xsl:value-of select="query/@id"/>' } }
                             },                                        
                        lexus:lexica($lexi),
