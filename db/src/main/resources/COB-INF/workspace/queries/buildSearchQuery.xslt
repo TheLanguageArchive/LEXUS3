@@ -136,7 +136,34 @@
                     <xsl:text>
                     element matchText { </xsl:text><xsl:apply-templates select="$matchText" mode="encoded"/><xsl:text> },</xsl:text>
                     <xsl:text>
-                    element lexical-entries {
+                    element lexical-entries { attribute count {count($lexus/lexicon/lexical-entry</xsl:text>
+                    <xsl:if test="ancestor::query/../refiner/searchTerm ne ''">
+                        <xsl:text>[.//value[text() contains text {'.*</xsl:text>
+                        <xsl:value-of select="replace(replace(replace(ancestor::query/../refiner/searchTerm, '&amp;', '&amp;amp;'), '&quot;', '&amp;quot;'), '''', '''''')" />
+                        <xsl:text>.*'} using wildcards</xsl:text>
+                        <xsl:if test="ancestor::query/../refiner/caseSensitive eq 'true'">
+                            <xsl:text> using case sensitive</xsl:text>
+                        </xsl:if>
+                        <xsl:text>]]</xsl:text>
+                    </xsl:if>
+                    <xsl:if test="datacategory">
+                        <xsl:text>[</xsl:text>
+                        <xsl:for-each select="datacategory">
+                            <xsl:text>(</xsl:text>
+                            <xsl:apply-templates select="." mode="build-query">
+                                <xsl:with-param name="firstDC" select="$firstDC"/>
+                                <xsl:with-param name="matchText" select="$matchText"/>
+                            </xsl:apply-templates>
+                            <xsl:text>)</xsl:text>
+                            <xsl:if test="position()!=last()">
+                                <xsl:text> or 
+                                </xsl:text>
+                            </xsl:if>
+                        </xsl:for-each>
+                        <xsl:text>]</xsl:text>
+                    </xsl:if>
+                    <xsl:text>)},</xsl:text>
+                    <xsl:text>
                         for $l in $lexus/lexicon/lexical-entry</xsl:text>
                     <xsl:if test="ancestor::query/../refiner/searchTerm ne ''">
                         <xsl:text>[.//value[text() contains text {'.*</xsl:text>
@@ -163,14 +190,12 @@
                         </xsl:for-each>
                         <xsl:text>]</xsl:text>
                     </xsl:if>
-                    <xsl:if test="not(datacategory)">
 	                    <xsl:text>
 	                    let $d := $l//data[@schema-ref eq "</xsl:text><xsl:value-of select="$firstDC/container/@id" /><xsl:text>"][1]</xsl:text>
 	                    <xsl:text>
 	                    where ((position() ge ($startPage * $pageSize) + 1) and (position() le ($startPage * $pageSize) + $pageSize))
 	                    order by $d/@sort-key, $d/value
 	                    </xsl:text>
-                    </xsl:if>
                     <xsl:text>
                         return $l
                     }                

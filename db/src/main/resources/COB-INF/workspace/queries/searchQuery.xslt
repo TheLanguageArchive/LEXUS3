@@ -35,17 +35,13 @@
                     let $startLetter := data($search/refiner/startLetter)
                     let $searchTerm := data(if (not(empty($search/refiner/searchTerm))) then $search/refiner/searchTerm else '')
                     let $pageSize := number($search/refiner/pageSize)
-                    let $startPage := number($search//refiner/startPage)
-                   
-                    let $from := ($startPage * $pageSize) + 1
-                    let $lenght := $pageSize
-                    
+                    let $startPage := number($search//refiner/startPage)      
                     
                     (: Returns a list of lexicon elements, containing ($firstDC, (lexical-entry)*) :)
                     let $search-results := lexus:search($startLetter, $searchTerm, $startPage, $pageSize) 
 
                     <xsl:text>return element search-results { </xsl:text>
-                    <xsl:text> attribute total { count($search-results//lexical-entry) }, </xsl:text>
+                    <xsl:text> attribute total { $search-results//lexical-entries/@count }, </xsl:text>
                     <xsl:apply-templates select="query" mode="encoded"/>
                     <xsl:text>, </xsl:text>
                     <xsl:apply-templates select="refiner" mode="encoded"/>
@@ -55,7 +51,7 @@
                    
                                     let $les := for $le in $l/lexical-entries/lexical-entry let $d := $le//data[@schema-ref eq $firstDCId] order by $d/@sort-key, $d/value return $le
                    
-                                    return element lexicon { $l/@*, subsequence($les, $from, $lenght) }</xsl:text>
+                                    return element lexicon { $l/@*, $les}</xsl:text>
                     <xsl:text> }</xsl:text>
             </lexus:text>
             </lexus:query>

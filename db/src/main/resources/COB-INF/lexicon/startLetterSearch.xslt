@@ -141,7 +141,7 @@
                            element startPage { $startPage },
                            element searchTerm { $searchTerm },
                            element caseSensitive { $caseSensitive },
-                           element count {count(collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]/lexicon/lexical-entry) },
+                           element count { number($search-results//lexical-entries/@count) },
                            element pageSize { $pageSize },
                            $search-results/lexical-entries,
                            element query { attribute id { '<xsl:value-of select="query/@id"/>' } }
