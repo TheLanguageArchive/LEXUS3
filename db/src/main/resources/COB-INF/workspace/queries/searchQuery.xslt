@@ -41,7 +41,7 @@
                     let $search-results := lexus:search($startLetter, $searchTerm, $startPage, $pageSize) 
 
                     <xsl:text>return element search-results { </xsl:text>
-                    <xsl:text> attribute total { $search-results//lexical-entries/@count }, </xsl:text>
+                    <xsl:text> attribute total { sum( for $value in $search-results//lexical-entries/@count return $value) }, </xsl:text>
                     <xsl:apply-templates select="query" mode="encoded"/>
                     <xsl:text>, </xsl:text>
                     <xsl:apply-templates select="refiner" mode="encoded"/>
