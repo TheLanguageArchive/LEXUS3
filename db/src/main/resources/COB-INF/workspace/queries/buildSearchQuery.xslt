@@ -212,12 +212,9 @@
                         <xsl:text>]</xsl:text>
                     </xsl:if>
 	                    <xsl:text>
-	                    let $d := $l//data[@schema-ref eq "</xsl:text><xsl:value-of select="$firstDC/container/@id" /><xsl:text>"][1]</xsl:text>
-	                    <xsl:text>
-<!--	                    where ((position() ge ($startPage * $pageSize) + 1) and (position() le ($startPage * $pageSize) + $pageSize))-->
+	                    let $d := $l//data[@schema-ref eq "</xsl:text><xsl:value-of select="$firstDC/container/@id" /><xsl:text>"][1]
+<!--	                where ((position() ge ($startPage * $pageSize) + 1) and (position() le ($startPage * $pageSize) + $pageSize))-->
 	                    order by $d/@sort-key, $d/value
-	                    </xsl:text>
-                    <xsl:text>
                         return $l , ($startPage * $pageSize) + 1, $pageSize)
                     }                
                 </xsl:text>
