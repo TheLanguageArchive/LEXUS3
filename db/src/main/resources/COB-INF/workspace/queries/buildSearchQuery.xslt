@@ -183,8 +183,7 @@
 					   		 <xsl:value-of select="replace(replace(replace(ancestor::query/../refiner/searchTerm, '&amp;', '&amp;amp;'), '&quot;', '&amp;quot;'), '''', '''''')" />
 				    	     <xsl:text>'))]]</xsl:text> 
 				    	</xsl:when> 
-				    </xsl:choose>
-	                 
+				    </xsl:choose>               
 	    <!--             
 	    <xsl:text>[.//value[text() contains text {concat('.*', string-join(ft:tokenize('</xsl:text>
 	    <xsl:value-of select="replace(replace(replace(ancestor::query/../refiner/searchTerm, '&amp;', '&amp;amp;'), '&quot;', '&amp;quot;'), '''', '''''')" />
@@ -193,16 +192,7 @@
 	        <xsl:text> using case sensitive </xsl:text>
 	    </xsl:if>
 	    <xsl:text>]]</xsl:text>
-	    -->
-				      
-				   
-				    
-				    
-				    
-				    
-				    
-				    
-				    
+	    -->			    
 	</xsl:if>
                     <xsl:if test="datacategory">
                         <xsl:text>[</xsl:text>
