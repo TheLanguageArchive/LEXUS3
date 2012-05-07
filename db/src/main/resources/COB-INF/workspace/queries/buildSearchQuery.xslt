@@ -138,13 +138,10 @@
                     <xsl:text>
                     element lexical-entries { attribute count {count($lexus/lexicon/lexical-entry</xsl:text>
                     <xsl:if test="ancestor::query/../refiner/searchTerm ne ''">
-                        <xsl:text>[.//value[text() contains text {'.*</xsl:text>
-                        <xsl:value-of select="replace(replace(replace(ancestor::query/../refiner/searchTerm, '&amp;', '&amp;amp;'), '&quot;', '&amp;quot;'), '''', '''''')" />
-                        <xsl:text>.*'} using wildcards</xsl:text>
-                        <xsl:if test="ancestor::query/../refiner/caseSensitive eq 'true'">
-                            <xsl:text> using case sensitive</xsl:text>
-                        </xsl:if>
-                        <xsl:text>]]</xsl:text>
+                        <xsl:text>[.//value[contains(text(),'</xsl:text>
+   <xsl:value-of select="replace(replace(replace(ancestor::query/../refiner/searchTerm, '&amp;', '&amp;amp;'), '&quot;', '&amp;quot;'), '''', '''''')" />
+	    <xsl:text>')]]</xsl:text> 
+                       
                     </xsl:if>
                     <xsl:if test="datacategory">
                         <xsl:text>[</xsl:text>
