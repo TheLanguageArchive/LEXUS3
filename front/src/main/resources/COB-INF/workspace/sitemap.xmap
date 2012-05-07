@@ -268,10 +268,16 @@
                     <map:part src="cocoon://json"/>
                     <map:part src="cocoon://user"/>
                 </map:aggregate>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-delete-lexicon-1.xml"/>
                 <map:transform type="saxon" src="lexicon/prepareDeleteLexicon.xslt"/>
+                                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-delete-lexicon-2.xml"/>
                 <map:transform type="servletService">
                     <map:parameter name="service" value="servlet:db:/workspace/deleteLexicon.xml"/>
                 </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-delete-lexicon-3.xml"/>
                 <map:transform type="saxon" src="lexicon/deletedLexicon-2-JSON.xslt"/>
                 <map:serialize type="json"/>
             </map:match>
