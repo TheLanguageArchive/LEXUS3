@@ -265,7 +265,7 @@
 	                        select="@value"/>') </xsl:when>
 	            </xsl:choose>
             </xsl:if>
-            <xsl:if test="@caseSensitive eq 'false'">
+            <xsl:if test="@caseSensitive eq 'false' or not(@caseSensitive )">
 	            <xsl:choose>
 	                <xsl:when test="@condition eq 'is'"> upper-case(value) eq '<xsl:value-of select="$uc"/>' </xsl:when>
 	                <xsl:when test="@condition eq 'contains'"> contains(upper-case(value), '<xsl:value-of
