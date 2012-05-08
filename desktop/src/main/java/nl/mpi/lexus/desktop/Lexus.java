@@ -13,7 +13,8 @@ import javax.swing.*;
 import java.security.ProtectionDomain;
 import java.util.zip.ZipFile;
 
-import org.basex.api.jaxrx.JaxRxServer;
+import org.basex.http.rest.RESTServlet;
+import org.basex.http.restxq.RestXqServlet;
 
 import com.google.common.io.Files;
 
@@ -29,7 +30,7 @@ import org.mortbay.jetty.webapp.WebAppContext;
 public class Lexus {
 
     private static Server webServer = null;
-    private static org.basex.api.jaxrx.JaxRxServer db = null;
+    private static org.basex.http.restxq.RestXqServlet db = null;
     private static Desktop desktop = null;
 
     public static void main(String[] args) {
@@ -188,13 +189,13 @@ public class Lexus {
             Logger.getLogger(Lexus.class.getName()).log(Level.SEVERE, null, ex);
         }
         if (dbStarted()) {
-            db.quit(true);
+            db.destroy();
         }
     }
 
     // Start the database.
     protected static Boolean startDb() {
-        db = new JaxRxServer();
+        db = new RestXqServlet();
         return true;
     }
 
@@ -224,11 +225,18 @@ public class Lexus {
         System.out.println("tempFolder=" + tempFolder);
         File moduleFile = new File(Lexus.class.getProtectionDomain().getCodeSource().getLocation().toURI());
 
-        Unzip.unzip(new ZipFile(moduleFile), tempFolder, webappFilename);
-
-        File warFile = new File(tempFolder, "/" + webappFilename);
-        System.out.println("warFile=" + warFile);
-        webapp.setWar(warFile.getAbsolutePath());
+        if(!moduleFile.isDirectory()){
+        	Unzip.unzip(new ZipFile(moduleFile), tempFolder, webappFilename);
+        	File warFile = new File(tempFolder, "/" + webappFilename);
+            webapp.setWar(warFile.getAbsolutePath());
+            System.out.println("warFile=" + warFile);
+        }
+        else{
+        	webapp.setWar(Lexus.class.getProtectionDomain().getCodeSource().getLocation().toURI() + "/" + webappFilename);
+            System.out.println("warFile=" + Lexus.class.getProtectionDomain().getCodeSource().getLocation().toURI() + "/" + webappFilename);
+        }
+        
+        
         webServer.setHandler(webapp);
 
         try {
