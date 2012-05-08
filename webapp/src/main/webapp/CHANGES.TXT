@@ -1,5 +1,6 @@
 This is a staging version!
 
-Fixed tickets: #954 #1474 #1520 #1531 #1536 #1556 #1559 #1730 #1727 #1735 #1739 #1740 #1741 #1748 #1749 #1773 #1795 #1815 #1852 #1861 #1751
+Fixed tickets: #954 #1474 #1520 #1531 #1536 #1556 #1559 #1730 #1727 #1735 #1739 #1740 #1741 #1748 #1749 #1751 #1773 #1795 #1815 #1852 #1861 
 
-Optimized XQuery search for BaseX 7.2.1
+Upgraded to BaseX 7.2.1
+Optimized XQuery search for the new BaseX
