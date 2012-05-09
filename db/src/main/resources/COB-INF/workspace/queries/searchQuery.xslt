@@ -45,13 +45,8 @@
                     <xsl:apply-templates select="query" mode="encoded"/>
                     <xsl:text>, </xsl:text>
                     <xsl:apply-templates select="refiner" mode="encoded"/>
-                    <xsl:text>, for $l in $search-results
-                        
-                                    let $firstDCId := $l/lexicon/firstDC/@id
-                   
-                                    let $les := for $le in $l/lexical-entries/lexical-entry let $d := $le//data[@schema-ref = $firstDCId] order by $d/@sort-key, $d/value return $le
-                   
-                                    return element lexicon { $l/@*, attribute entries { $l/lexical-entries/@count }, $les}</xsl:text>
+                    <xsl:text>, for $l in $search-results                   
+                                    return element lexicon { $l/@*, attribute entries { $l/lexical-entries/@count }, $l/lexical-entries/lexical-entry}</xsl:text>
                     <xsl:text> }</xsl:text>
             </lexus:text>
             </lexus:query>
