@@ -125,18 +125,11 @@
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
+        <xsl:text>
             (
-                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq "<xsl:value-of select="@id"/>"]
-                
-                return element lexicon {
-                    <xsl:apply-templates select="@id" mode="encoded"/>,
-                    attribute name { <xsl:apply-templates select="$meta/name/text()" mode="encoded"/> },
-                    <xsl:text>
-                    element firstDC { </xsl:text><xsl:apply-templates select="$firstDC" mode="encoded"/><xsl:text> },</xsl:text>
-                    <xsl:text>
-                    element matchText { </xsl:text><xsl:apply-templates select="$matchText" mode="encoded"/><xsl:text> },</xsl:text>
-                    <xsl:text>
-                    element lexical-entries { attribute count {count($lexus/lexicon/lexical-entry</xsl:text>
+                let $lexus := collection('</xsl:text><xsl:value-of select="$lexica-collection"/><xsl:text>')/lexus[@id = "</xsl:text><xsl:value-of select="@id"/>
+                <xsl:text>"]
+                let $les := $lexus/lexicon/lexical-entry</xsl:text>
                     <xsl:if test="ancestor::query/../refiner/searchTerm ne ''">
                           <xsl:choose>
 	           		     <xsl:when test="ancestor::query/../refiner/caseSensitive eq 'true'">
@@ -150,7 +143,6 @@
 				    	     <xsl:text>'))]]</xsl:text> 
 				    	</xsl:when> 
 				    </xsl:choose>
-                       
                     </xsl:if>
                     <xsl:if test="datacategory">
                         <xsl:text>[</xsl:text>
@@ -168,52 +160,20 @@
                         </xsl:for-each>
                         <xsl:text>]</xsl:text>
                     </xsl:if>
-                    <xsl:text>)},</xsl:text>
+                	<xsl:text>
+                	return element lexicon {</xsl:text>
+                    <xsl:apply-templates select="@id" mode="encoded"/><xsl:text>,
+                    attribute name { </xsl:text><xsl:apply-templates select="$meta/name/text()" mode="encoded"/><xsl:text> },</xsl:text>
+                    <xsl:text>
+                    element firstDC { </xsl:text><xsl:apply-templates select="$firstDC" mode="encoded"/><xsl:text> },</xsl:text>
+                    <xsl:text>
+                    element matchText { </xsl:text><xsl:apply-templates select="$matchText" mode="encoded"/><xsl:text> },</xsl:text>
+                    <xsl:text>
+                    element lexical-entries { attribute count {count($les)},</xsl:text>
                     <xsl:text>
                     subsequence(
-                        for $l in $lexus/lexicon/lexical-entry</xsl:text>
-	                 <xsl:if test="ancestor::query/../refiner/searchTerm ne ''">
-	                 <xsl:choose>
-	           		     <xsl:when test="ancestor::query/../refiner/caseSensitive eq 'true'">
-	                 		 <xsl:text>[.//value[contains(text(),'</xsl:text>
-   							 <xsl:value-of select="replace(replace(replace(ancestor::query/../refiner/searchTerm, '&amp;', '&amp;amp;'), '&quot;', '&amp;quot;'), '''', '''''')" />
-							 <xsl:text>')]]</xsl:text> 
-				    	</xsl:when> 
-				    	<xsl:when test="ancestor::query/../refiner/caseSensitive eq 'false'">
-	                 		 <xsl:text>[.//value[contains(upper-case(text()),upper-case('</xsl:text>
-					   		 <xsl:value-of select="replace(replace(replace(ancestor::query/../refiner/searchTerm, '&amp;', '&amp;amp;'), '&quot;', '&amp;quot;'), '''', '''''')" />
-				    	     <xsl:text>'))]]</xsl:text> 
-				    	</xsl:when> 
-				    </xsl:choose>               
-	    <!--             
-	    <xsl:text>[.//value[text() contains text {concat('.*', string-join(ft:tokenize('</xsl:text>
-	    <xsl:value-of select="replace(replace(replace(ancestor::query/../refiner/searchTerm, '&amp;', '&amp;amp;'), '&quot;', '&amp;quot;'), '''', '''''')" />
-	    <xsl:text>'), ' '), '.*' )} using wildcards</xsl:text>
-	    <xsl:if test="ancestor::query/../refiner/caseSensitive eq 'true'">
-	        <xsl:text> using case sensitive </xsl:text>
-	    </xsl:if>
-	    <xsl:text>]]</xsl:text>
-	    -->			    
-					</xsl:if>
-                    <xsl:if test="datacategory">
-                        <xsl:text>[</xsl:text>
-                        <xsl:for-each select="datacategory">
-                            <xsl:text>(</xsl:text>
-                            <xsl:apply-templates select="." mode="build-query">
-                                <xsl:with-param name="firstDC" select="$firstDC"/>
-                                <xsl:with-param name="matchText" select="$matchText"/>
-                            </xsl:apply-templates>
-                            <xsl:text>)</xsl:text>
-                            <xsl:if test="position()!=last()">
-                                <xsl:text> or 
-                                </xsl:text>
-                            </xsl:if>
-                        </xsl:for-each>
-                        <xsl:text>]</xsl:text>
-                    </xsl:if>
-	                    <xsl:text>
-	                    let $d := $l//data[@schema-ref eq "</xsl:text><xsl:value-of select="$firstDC/container/@id" /><xsl:text>"][1]
-<!--	                where ((position() ge ($startPage * $pageSize) + 1) and (position() le ($startPage * $pageSize) + $pageSize))-->
+                        for $l in $les
+	                    let $d := $l//data[@schema-ref = "</xsl:text><xsl:value-of select="$firstDC/container/@id" /><xsl:text>"][1]
 	                    order by $d/@sort-key, $d/value
                         return $l , ($startPage * $pageSize) + 1, $pageSize)
                     }                
@@ -229,11 +189,11 @@
     <xsl:template match="datacategory[@ref eq 'lexus:start-letter-search']" mode="build-query"  priority="1">
         <xsl:param name="firstDC" as="node()*" />
         <xsl:param name="matchText" as="xs:string" />
-        <xsl:text>.//data[@schema-ref eq &quot;</xsl:text><xsl:value-of select="$firstDC/container/@id"/><xsl:text>&quot; and </xsl:text>
+        <xsl:text>.//data[@schema-ref = &quot;</xsl:text><xsl:value-of select="$firstDC/container/@id"/><xsl:text>&quot; and </xsl:text>
         <!-- Now we either check the @start-letter or the first character of the value element -->
         <xsl:choose>
             <xsl:when test="$firstDC/container/@sort-order">
-                <xsl:text>@start-letter eq "</xsl:text><xsl:value-of select="replace(replace($matchText, '&amp;', '&amp;amp;'), '&quot;', '&amp;quot;')" /><xsl:text>"</xsl:text>
+                <xsl:text>@start-letter = "</xsl:text><xsl:value-of select="replace(replace($matchText, '&amp;', '&amp;amp;'), '&quot;', '&amp;quot;')" /><xsl:text>"</xsl:text>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:text>starts-with(upper-case(value), "</xsl:text><xsl:value-of select="replace(replace($matchText, '&amp;', '&amp;amp;'), '&quot;', '&amp;quot;')" /><xsl:text>")</xsl:text>
@@ -248,13 +208,11 @@
     <xsl:template match="datacategory" mode="build-query">
         <xsl:param name="firstDC" as="node()*" />
         <xsl:param name="matchText" as="xs:string" />
-        <xsl:text>.//data[@schema-ref eq &quot;</xsl:text><xsl:value-of select="@schema-ref"/><xsl:text>&quot;</xsl:text>
+        <xsl:text>.//data[@schema-ref = &quot;</xsl:text><xsl:value-of select="@schema-ref"/><xsl:text>&quot;</xsl:text>
         <xsl:apply-templates select="." mode="condition"/>
-        <xsl:text>]
-        </xsl:text>
+        <xsl:text>]</xsl:text>
         <xsl:if test="datacategory">
-            <xsl:text> and
-                (</xsl:text>
+            <xsl:text> and (</xsl:text>
             <xsl:apply-templates select="datacategory" mode="build-query">                
                 <xsl:with-param name="firstDC" select="$firstDC"/>
                 <xsl:with-param name="matchText" select="$matchText"/>
@@ -272,28 +230,24 @@
         <xsl:if test="$uc ne '' or @condition eq 'is'">
             <xsl:text> and </xsl:text>
             
-            <xsl:if test="@negation eq 'true'">not(</xsl:if>
+            <xsl:if test="@negation eq 'true'"><xsl:text>not(</xsl:text></xsl:if>
             <xsl:if test="@caseSensitive eq 'true'">
            		<xsl:choose>
-	                <xsl:when test="@condition eq 'is'"> value eq '<xsl:value-of select="@value"/>' </xsl:when>
-	                <xsl:when test="@condition eq 'contains'"> contains(value, '<xsl:value-of
-	                        select="@value"/>') </xsl:when>
-	                <xsl:when test="@condition eq 'begins with'"> starts-with(value, '<xsl:value-of select="@value"/>') </xsl:when>
-	                <xsl:when test="@condition eq 'ends with'"> ends-with(value, '<xsl:value-of
-	                        select="@value"/>') </xsl:when>
+	                <xsl:when test="@condition eq 'is'"><xsl:text> value = '</xsl:text><xsl:value-of select="@value"/><xsl:text>' </xsl:text></xsl:when>
+	                <xsl:when test="@condition eq 'contains'"><xsl:text> contains(value, '</xsl:text><xsl:value-of select="@value"/><xsl:text>') </xsl:text></xsl:when>
+	                <xsl:when test="@condition eq 'begins with'"><xsl:text> starts-with(value, '</xsl:text><xsl:value-of select="@value"/><xsl:text>') </xsl:text></xsl:when>
+	                <xsl:when test="@condition eq 'ends with'"><xsl:text> ends-with(value, '</xsl:text><xsl:value-of select="@value"/><xsl:text>') </xsl:text></xsl:when>
 	            </xsl:choose>
             </xsl:if>
             <xsl:if test="@caseSensitive eq 'false' or not(@caseSensitive )">
 	            <xsl:choose>
-	                <xsl:when test="@condition eq 'is'"> upper-case(value) eq '<xsl:value-of select="$uc"/>' </xsl:when>
-	                <xsl:when test="@condition eq 'contains'"> contains(upper-case(value), '<xsl:value-of
-	                        select="$uc"/>') </xsl:when>
-	                <xsl:when test="@condition eq 'begins with'"> starts-with(upper-case(value), '<xsl:value-of select="$uc"/>') </xsl:when>
-	                <xsl:when test="@condition eq 'ends with'"> ends-with(upper-case(value), '<xsl:value-of
-	                        select="$uc"/>') </xsl:when>
+	                <xsl:when test="@condition eq 'is'"><xsl:text> upper-case(value) = '</xsl:text><xsl:value-of select="$uc"/><xsl:text>' </xsl:text></xsl:when>
+	                <xsl:when test="@condition eq 'contains'"><xsl:text> contains(upper-case(value), '</xsl:text><xsl:value-of select="$uc"/><xsl:text>') </xsl:text></xsl:when>
+	                <xsl:when test="@condition eq 'begins with'"><xsl:text> starts-with(upper-case(value), '</xsl:text><xsl:value-of select="$uc"/><xsl:text>') </xsl:text></xsl:when>
+	                <xsl:when test="@condition eq 'ends with'"><xsl:text> ends-with(upper-case(value), '</xsl:text><xsl:value-of select="$uc"/><xsl:text>') </xsl:text></xsl:when>
 	            </xsl:choose>
             </xsl:if>
-            <xsl:if test="@negation eq 'true'">)</xsl:if>
+            <xsl:if test="@negation eq 'true'"><xsl:text>)</xsl:text></xsl:if>
         </xsl:if>
     </xsl:template>
     
