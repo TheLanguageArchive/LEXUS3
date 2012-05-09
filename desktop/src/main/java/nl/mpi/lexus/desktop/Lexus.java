@@ -30,7 +30,7 @@ import org.mortbay.jetty.webapp.WebAppContext;
 public class Lexus {
 
     private static Server webServer = null;
-    private static org.basex.http.restxq.RestXqServlet db = null;
+    private static org.basex.http.rest.RESTServlet db = null;
     private static Desktop desktop = null;
 
     public static void main(String[] args) {
@@ -195,7 +195,7 @@ public class Lexus {
 
     // Start the database.
     protected static Boolean startDb() {
-        db = new RestXqServlet();
+        db = new RESTServlet();
         return true;
     }
 
