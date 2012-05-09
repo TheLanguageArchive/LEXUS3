@@ -53,13 +53,13 @@
                         </xsl:when>
                         <xsl:otherwise>
                             let $userId := '<xsl:value-of select="@user"/>'
-                            let $user := collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $userId]
+                            let $user := collection('<xsl:value-of select="$users-collection"/>')/user[@id = $userId]
                         </xsl:otherwise>
                     </xsl:choose>
                     let $request := <xsl:apply-templates select="." mode="encoded"/>
                     let $lexiconId:= $request/@lexicon
-                    let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
-                    let $lexicalEntry := $lexus/lexicon/lexical-entry[@id eq $request/lexical-entry/@id]
+                    let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $lexiconId]
+                    let $lexicalEntry := $lexus/lexicon/lexical-entry[@id = $request/lexical-entry/@id]
                     return 
                         if (lexus:canWrite($lexus/meta, $user))
                             then lexus:updateLexicalEntry($lexus, $request/lexical-entry, $lexicalEntry) 

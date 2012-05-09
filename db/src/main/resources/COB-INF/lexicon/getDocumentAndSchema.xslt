@@ -35,9 +35,9 @@
                     <xsl:call-template name="declare-namespace"/> 
                     <xsl:call-template name="permissions"/> 
                     let $lexiconId := '<xsl:value-of select="@id"/>'
-                    let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
+                    let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $lexiconId]
                     let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>
-                    let $sortOrders := collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $user/@id]/workspace/sortorders
+                    let $sortOrders := collection('<xsl:value-of select="$users-collection"/>')/user[@id = $user/@id]/workspace/sortorders
                     return if (lexus:canRead($lexus/meta, $user)) then element docAndSortorders {$lexus, $sortOrders} else ()
                 </lexus:text>
             </lexus:query>

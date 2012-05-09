@@ -40,7 +40,7 @@
         declare function lexus:canRead($lexusMeta as node()*, $user as node()) as xs:boolean {
             if (lexus:isAdministrator($user)) then true()
             else
-                $lexusMeta/users/user[@ref eq $user/@id]/permissions/read eq "true" 
+                $lexusMeta/users/user[@ref = $user/@id]/permissions/read = "true" 
         };
         
         
@@ -51,18 +51,18 @@
                     if (empty($lexusMeta))
                         then false()
                         else
-                            let $write := $lexusMeta/users/user[@ref eq $user/@id]/permissions/write
+                            let $write := $lexusMeta/users/user[@ref = $user/@id]/permissions/write
                             return
                                 if (empty($write))
                                     then false()
-                                    else $write eq "true"
+                                    else $write = "true"
         };
         
         
         declare function lexus:isOwner($lexusMeta as node()*, $user as node()) as xs:boolean {
             if (empty($lexusMeta))
                 then false()
-                else $lexusMeta/owner/@ref eq $user/@id
+                else $lexusMeta/owner/@ref = $user/@id
         };
     </xsl:template>
     
@@ -109,8 +109,8 @@
         declare function lexus:canReadViews($lexusMeta as node()*, $user as node()) as xs:boolean {
             if (lexus:isAdministrator($user)) then true()
             else
-                $lexusMeta/users/user[@ref eq $user/@id]/permissions/read eq "true" or
-                $lexusMeta/users/user[@ref eq $user/@id]/permissions/write eq "true" 
+                $lexusMeta/users/user[@ref = $user/@id]/permissions/read = "true" or
+                $lexusMeta/users/user[@ref = $user/@id]/permissions/write = "true" 
         };
     </xsl:template>
     
@@ -178,7 +178,7 @@
             
             
         declare function lexus:log($lexiconId as xs:string, $type as xs:string, $userId as xs:string, $username as xs:string, $logEntry as node()*) {
-            let $log := collection('<xsl:value-of select="$lexica-collection"/>')/log[@id eq $lexiconId]
+            let $log := collection('<xsl:value-of select="$lexica-collection"/>')/log[@id = $lexiconId]
             let $entry :=  element entry {
                                 attribute type {$type}, attribute date-time {current-dateTime()},
                                 attribute user {$userId}, attribute username {$username},

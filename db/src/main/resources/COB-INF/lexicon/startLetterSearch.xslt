@@ -56,7 +56,7 @@
                    
                    let $user-id := '<xsl:value-of select="/data/user/@id"/>'
                    let $lexiconId := '<xsl:value-of select="replace(replace(replace(query/expression/lexicon/@id, '&amp;', '&amp;amp;'), '&quot;', '&amp;quot;') ,'''', '''''')"/>'
-                   let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
+                   let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $lexiconId]
                    let $startLetter := '<xsl:value-of select="replace(replace(replace(refiner/startLetter, '&amp;', '&amp;amp;'), '&quot;', '&amp;quot;') ,'''', '''''')"/>'
                    let $searchTerm := '<xsl:value-of select="replace(replace(replace(refiner/searchTerm, '&amp;', '&amp;amp;'), '&quot;', '&amp;quot;') ,'''', '''''')"/>'
                    let $caseSensitive := <xsl:choose>
@@ -70,7 +70,7 @@
                    let $pageSize := number('<xsl:value-of select="replace(refiner/pageSize,'''','''''')"/>')
                    let $startPage := number('<xsl:value-of select="replace(refiner/startPage,'''','''''')"/>')
                    let $lexi := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[meta/users/user/@ref = $user-id]
-                   let $listView := $lexus/meta/views/view[@id eq $lexus/meta/views/@listView]
+                   let $listView := $lexus/meta/views/view[@id = $lexus/meta/views/@listView]
                    
                    <!--
                        Possible situations:
@@ -107,7 +107,7 @@
                        
                    -->
                    
-                   let $sortOrders := collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $user-id]/workspace/sortorders
+                   let $sortOrders := collection('<xsl:value-of select="$users-collection"/>')/user[@id = $user-id]/workspace/sortorders
                    
                     (: Returns a list of lexicon elements, containing ($firstDC, (lexical-entry)*) :)
                    let $search-results := lexus:search($startLetter, $searchTerm, $startPage, $pageSize) 
@@ -119,10 +119,10 @@
                    let $firstDC := $search-results/firstDC/container
                    let $sortOrderId := $firstDC/@sort-order
                    let $startLetters := if ($sortOrderId ne '')
-                        then for $sl in $sortOrders/sortorder[@id eq $sortOrderId]/mappings/mapping/to  return element startLetter { $sl/text() }
+                        then for $sl in $sortOrders/sortorder[@id = $sortOrderId]/mappings/mapping/to  return element startLetter { $sl/text() }
                         else 
                             (: Look for data elements with the same schema-ref as the first data element :)
-                            let $sortOrderDCs := for $le in $lexus/lexicon/lexical-entry return ($le//data[@schema-ref eq $firstDC/@id])[1]
+                            let $sortOrderDCs := for $le in $lexus/lexicon/lexical-entry return ($le//data[@schema-ref = $firstDC/@id])[1]
                             (: Return their values :)
                             let $sLValues := for $sodc in $sortOrderDCs return upper-case(substring($sodc/value, 1, 1))
                             (: Create a list of startLetters from the values :)

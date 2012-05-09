@@ -37,11 +37,11 @@
                     <xsl:for-each select="../lexus:get-schema/lexus:result[@success eq 'true']/result/schema//container[empty(index-of($newIds,@id))]">
                         <xsl:text>(: delete node </xsl:text><xsl:value-of select="current()/@name"/><xsl:text> :)</xsl:text>
                         <xquery:delete>
-                            <xquery:node>collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]/lexicon//container[@schema-ref eq '<xsl:value-of select="current()/@id"/>']</xquery:node>
+                            <xquery:node>collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $lexiconId]/lexicon//container[@schema-ref = '<xsl:value-of select="current()/@id"/>']</xquery:node>
                         </xquery:delete>
                         <xsl:text>, </xsl:text>
                         <xquery:delete>
-                            <xquery:node>collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]/lexicon//data[@schema-ref eq '<xsl:value-of select="current()/@id"/>']</xquery:node>
+                            <xquery:node>collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $lexiconId]/lexicon//data[@schema-ref = '<xsl:value-of select="current()/@id"/>']</xquery:node>
                         </xquery:delete>
                         <xsl:if test="position() ne last()">
                             <xsl:text>, </xsl:text>

@@ -16,7 +16,7 @@
                 <xsl:call-template name="users"/>
                 
                 let $account := '<xsl:value-of select="@account"/>'
-                let $user := collection('<xsl:value-of select="$users-collection"/>')/user[account eq $account]
+                let $user := collection('<xsl:value-of select="$users-collection"/>')/user[account = $account]
                 return
                     if (not(empty($user)))
                         then $user

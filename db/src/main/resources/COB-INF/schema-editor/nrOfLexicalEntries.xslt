@@ -15,7 +15,7 @@
                 <lexus:text>
                     <xsl:call-template name="declare-namespace"/>
                     element nr-of-lexical-entries {
-                        count(collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq '<xsl:value-of select="@id"/>']/lexicon/lexical-entry)
+                        count(collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = '<xsl:value-of select="@id"/>']/lexicon/lexical-entry)
                     }
                 </lexus:text>
                 <properties>

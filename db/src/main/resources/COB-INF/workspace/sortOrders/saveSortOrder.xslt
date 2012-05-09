@@ -29,10 +29,10 @@
                     
                     <xsl:call-template name="declare-namespace"/>
                     <xquery:declare-updating-function/> lexus:updateSortOrder($sortOrder as node(), $user as node()) {
-                        if ($user/workspace/sortorders/sortorder[@id eq $sortOrder/@id])
+                        if ($user/workspace/sortorders/sortorder[@id = $sortOrder/@id])
                             then 
                                 <xquery:replace>
-                                    <xquery:node>$user/workspace/sortorders/sortorder[@id eq $sortOrder/@id]</xquery:node>
+                                    <xquery:node>$user/workspace/sortorders/sortorder[@id = $sortOrder/@id]</xquery:node>
                                     <xquery:with>$sortOrder</xquery:with>
                                 </xquery:replace>
                             else
@@ -45,7 +45,7 @@
                     
                     let $userId := '<xsl:value-of select="/data/user/@id"/>'
                     let $sortOrder := <xsl:apply-templates select="sortorder" mode="encoded"/>
-                    let $user := collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $userId]
+                    let $user := collection('<xsl:value-of select="$users-collection"/>')/user[@id = $userId]
                     return lexus:updateSortOrder($sortOrder, $user)
                 </lexus:text>
             </lexus:query>

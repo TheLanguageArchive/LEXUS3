@@ -36,7 +36,7 @@
                 };
                 let $requestUser := <xsl:apply-templates select="../user" mode="encoded"/>
                 let $id := '<xsl:value-of select="user/@id"/>'
-                let $user := fn:subsequence(collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $id], 1, 1)
+                let $user := fn:subsequence(collection('<xsl:value-of select="$users-collection"/>')/user[@id = $id], 1, 1)
                                 
                 return 
                     if (lexus:canUpdateOrCreateUser($requestUser))

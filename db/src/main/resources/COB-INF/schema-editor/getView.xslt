@@ -28,14 +28,14 @@
                 (: let $user := <xsl:apply-templates select="/data/user" mode="encoded"/> :)
                 let $id := '<xsl:value-of select="view/@id"/>'
                 let $request := <xsl:apply-templates select="." mode="encoded"/>
-                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus/meta/views/view[@id eq $id]/ancestor::lexus
+                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus/meta/views/view[@id = $id]/ancestor::lexus
                 return
                 (:
                     if (lexus:canReadViews($lexus/meta, $user))
                         then 
                         
                         :)
-                        $lexus/meta/views/view[@id eq $id]
+                        $lexus/meta/views/view[@id = $id]
                   (:      else () :)
             </lexus:text>
         </lexus:query></xsl:copy>

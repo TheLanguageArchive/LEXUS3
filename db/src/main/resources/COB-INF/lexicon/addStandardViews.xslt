@@ -75,45 +75,45 @@
                     };
                     
                     let $userId := '<xsl:value-of select="@user"/>'
-                    let $user := collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $userId]
+                    let $user := collection('<xsl:value-of select="$users-collection"/>')/user[@id = $userId]
                     let $lexiconId := '<xsl:value-of select="@lexicon"/>'
-                    let $lexicon := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
+                    let $lexicon := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $lexiconId]
                     (: new ids for new views :)
                     let $listView := concat('uuid:',util:toString(util:randomUUID()))
                     let $lexicalEntryView := concat('uuid:',util:toString(util:randomUUID()))
                     (: determine lexeme id :)
                     let $lexeme :=
                         if (
-                            exists($lexicon/meta//container[@type eq 'data'][@dcr:datcat eq 'http://www.isocat.org/datcat/DC-3723'])
+                            exists($lexicon/meta//container[@type = 'data'][@dcr:datcat = 'http://www.isocat.org/datcat/DC-3723'])
                         ) then (
                             (: /lexeme/ datcat :)
-                            ( ($lexicon/meta//container[@type eq 'data'][@dcr:datcat eq 'http://www.isocat.org/datcat/DC-3723'])[1]/@id,
-                              ($lexicon/meta//container[@type eq 'data'][@dcr:datcat eq 'http://www.isocat.org/datcat/DC-3723'])[1]/@name )
+                            ( ($lexicon/meta//container[@type = 'data'][@dcr:datcat = 'http://www.isocat.org/datcat/DC-3723'])[1]/@id,
+                              ($lexicon/meta//container[@type = 'data'][@dcr:datcat = 'http://www.isocat.org/datcat/DC-3723'])[1]/@name )
                         ) else (
                             if (
-                                exists($lexicon/meta//container[@type eq 'data'][@mdf:marker eq 'lx'])
+                                exists($lexicon/meta//container[@type = 'data'][@mdf:marker = 'lx'])
                             ) then (
                                 (: original \lx MDF marker :)
-                              ( ($lexicon/meta//container[@type eq 'data'][@mdf:marker eq 'lx'])[1]/@id,
-                                ($lexicon/meta//container[@type eq 'data'][@mdf:marker eq 'lx'])[1]/@name )
+                              ( ($lexicon/meta//container[@type = 'data'][@mdf:marker = 'lx'])[1]/@id,
+                                ($lexicon/meta//container[@type = 'data'][@mdf:marker = 'lx'])[1]/@name )
                             ) else (
                                 if (
-                                    exists($lexicon/meta//container[@type eq 'data'][lower-case(@name) eq 'lexeme'])
+                                    exists($lexicon/meta//container[@type = 'data'][lower-case(@name) = 'lexeme'])
                                 ) then (
                                     (: /lexeme/ LEXUS data category :)
-                                    ( ($lexicon/meta//container[@type eq 'data'][lower-case(@name) eq 'lexeme'])[1]/@id,
-                                      ($lexicon/meta//container[@type eq 'data'][lower-case(@name) eq 'lexeme'])[1]/@name )
+                                    ( ($lexicon/meta//container[@type = 'data'][lower-case(@name) = 'lexeme'])[1]/@id,
+                                      ($lexicon/meta//container[@type = 'data'][lower-case(@name) = 'lexeme'])[1]/@name )
                                 ) else (
                                     if (
-                                        exists($lexicon/meta//container[@type eq 'data'][lower-case(@name) eq 'headword'])
+                                        exists($lexicon/meta//container[@type = 'data'][lower-case(@name) = 'headword'])
                                     ) then (
                                         (: /headword/ LEXUS data category :)
-                                        ( ($lexicon/meta//container[@type eq 'data'][lower-case(@name) eq 'headword'])[1]/@id,
-                                          ($lexicon/meta//container[@type eq 'data'][lower-case(@name) eq 'headword'])[1]/@name )
+                                        ( ($lexicon/meta//container[@type = 'data'][lower-case(@name) = 'headword'])[1]/@id,
+                                          ($lexicon/meta//container[@type = 'data'][lower-case(@name) = 'headword'])[1]/@name )
                                     ) else (
                                         (: first LEXUS data category :)
-                                        ( ($lexicon/meta//container[@type eq 'data'])[1]/@id,
-                                          ($lexicon/meta//container[@type eq 'data'])[1]/@name )
+                                        ( ($lexicon/meta//container[@type = 'data'])[1]/@id,
+                                          ($lexicon/meta//container[@type = 'data'])[1]/@name )
                                     )
                                 )
                             )

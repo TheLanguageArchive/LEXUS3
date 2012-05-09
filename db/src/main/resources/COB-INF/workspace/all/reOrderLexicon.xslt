@@ -21,9 +21,9 @@
                 :)
                 declare function lexus:orderNodes($le as node()*, $schema as node()*) as node()* {
                 (
-                    for $sd in $schema[@type eq 'data'] return $le[@schema-ref eq $sd/@id],
+                    for $sd in $schema[@type = 'data'] return $le[@schema-ref = $sd/@id],
                     for $sc in $schema[not(@type)] 
-                        let $containers := $le[@schema-ref eq $sc/@id]
+                        let $containers := $le[@schema-ref = $sc/@id]
                         return
                             for $lc in $containers 
                                 return element container {$lc/@*, lexus:orderNodes($lc/*, $sc/*)}
@@ -49,12 +49,12 @@
                 
                 (: process all lexical entries in a lexicon :)
                 <xquery:declare-updating-function/> lexus:updateLexicon($lexus as node()) {
-                    let $schema := $lexus/meta/schema//container[@type eq 'lexical-entry']/*
+                    let $schema := $lexus/meta/schema//container[@type = 'lexical-entry']/*
                     for $le in $lexus/lexicon/lexical-entry
                         return lexus:updateLE($le, $schema)
                 };
                 
-                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq '<xsl:value-of select="@id"/>']
+                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = '<xsl:value-of select="@id"/>']
                 return lexus:updateLexicon($lexus)
                 
             </lexus:text>

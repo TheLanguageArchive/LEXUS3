@@ -15,7 +15,7 @@
                 <xsl:call-template name="declare-namespace"/>
                 
                 let $userId := '<xsl:value-of select="/data/user/@id"/>'                        
-                return collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $userId]/workspace/queries
+                return collection('<xsl:value-of select="$users-collection"/>')/user[@id = $userId]/workspace/queries
             </lexus:text>
             </lexus:query>
             </xsl:copy>

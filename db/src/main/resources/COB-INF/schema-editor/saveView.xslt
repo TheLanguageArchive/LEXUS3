@@ -44,14 +44,14 @@
                                 <xquery:node>element views { attribute listView {$newView/@id}, attribute lexicalEntryView {}, $newView }</xquery:node>
                                 <xquery:into>$lexus/meta</xquery:into>
                             </xquery:insert-into>
-                        else if (empty($lexus/meta/views/view[@id eq $newView/@id]))
+                        else if (empty($lexus/meta/views/view[@id = $newView/@id]))
                             then
                                 <xquery:insert-into>
                                     <xquery:node>$newView</xquery:node>
                                     <xquery:into>$lexus/meta/views</xquery:into>
                                 </xquery:insert-into>
                             else <xquery:replace>
-                                <xquery:node>$lexus/meta/views/view[@id eq $newView/@id]</xquery:node>
+                                <xquery:node>$lexus/meta/views/view[@id = $newView/@id]</xquery:node>
                                 <xquery:with>$newView</xquery:with>
                             </xquery:replace>                    
                 };
@@ -64,8 +64,8 @@
                 :)
                 let $lexus :=
                     if (not($request/@lexicon))
-                        then collection('<xsl:value-of select="$lexica-collection"/>')/lexus/meta/views/view[@id eq $request/view/@id]/ancestor::lexus
-                        else collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $request/@lexicon]
+                        then collection('<xsl:value-of select="$lexica-collection"/>')/lexus/meta/views/view[@id = $request/view/@id]/ancestor::lexus
+                        else collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $request/@lexicon]
                 return
                     if (lexus:canCreateView($lexus/meta, $user))
                         then lexus:createView($request/view, $lexus)

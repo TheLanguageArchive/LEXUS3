@@ -17,12 +17,12 @@
                 <xsl:call-template name="permissions"/>
                 
                 let $lexiconId := '<xsl:value-of select="id"/>'
-                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
+                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $lexiconId]
                 let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>
                 return
                     if (lexus:canRead($lexus/meta, $user))
                         then element dataCategories {
-                            $lexus/meta//schema//container[@type eq 'data']
+                            $lexus/meta//schema//container[@type = 'data']
                         }
                         else element exception {attribute id {"LEX002"}, element message {concat("Permission denied, user '",$user/name,"' ('",$user/account,"', ", $user/@id, ") does not have read permission on lexicon '", $lexus/meta/name, "' (", $lexus/@id)}} 
             </lexus:text>

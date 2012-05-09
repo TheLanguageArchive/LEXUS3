@@ -26,9 +26,9 @@
                 <xsl:call-template name="log"/>
                  
                 let $request := <xsl:apply-templates select="." mode="encoded"/> 
-                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $request/@lexicon]
+                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $request/@lexicon]
                 let $view := $lexus/meta/views/@lexicalEntryView
-                return $lexus/meta/views/view[@id eq $view]
+                return $lexus/meta/views/view[@id = $view]
             </lexus:text>
         </lexus:query></xsl:copy>
     </xsl:template>

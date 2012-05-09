@@ -31,7 +31,7 @@
 	                 
 	                let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>
 	                let $newData := <xsl:apply-templates select="/data/save-user" mode="encoded"/>
-	                let $existingUser := collection('lexus')/user[@id eq $newData/id]
+	                let $existingUser := collection('lexus')/user[@id = $newData/id]
 	                return
 	                    if (lexus:isAdministrator($user))
 	                        then lexus:updateUser($existingUser, $newData)

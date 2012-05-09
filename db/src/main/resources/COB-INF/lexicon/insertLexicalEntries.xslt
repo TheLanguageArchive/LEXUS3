@@ -26,10 +26,10 @@
                     <xsl:call-template name="permissions"/>
                     
                     let $userId := '<xsl:value-of select="@user"/>'
-                    let $user := collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $userId]
+                    let $user := collection('<xsl:value-of select="$users-collection"/>')/user[@id = $userId]
                     let $request := <xsl:apply-templates select="." mode="encoded"/>
                     let $lexiconId:= $request/@lexicon
-                    let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
+                    let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $lexiconId]
                     return 
                         if (lexus:canWrite($lexus/meta, $user))
                             then                            

@@ -58,7 +58,7 @@
                 let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>
                 let $request := <xsl:apply-templates select="." mode="encoded"/>
                 
-                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $request/@lexicon]
+                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $request/@lexicon]
                 return
                     if (lexus:canCreateView($lexus/meta, $user))
                         then lexus:saveStandardViews($request/standardViews, $lexus)

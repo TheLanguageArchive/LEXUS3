@@ -26,7 +26,7 @@
                 
                 let $userId := '<xsl:value-of select="/data/user/@id"/>'                        
                 return
-                    if (collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $userId and number(accesslevel) = 30])
+                    if (collection('<xsl:value-of select="$users-collection"/>')/user[@id = $userId and number(accesslevel) = 30])
                         then lexus:getUsers()
                         else element exception {attribute id {"LEX002"}, element message {"Permission denied, user is not an administrator."}}
             </lexus:text>

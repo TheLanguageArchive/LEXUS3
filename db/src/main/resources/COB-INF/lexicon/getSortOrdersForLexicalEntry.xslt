@@ -18,8 +18,8 @@
                     <xsl:call-template name="declare-namespace"/>
                 
                     let $userId := '<xsl:value-of select="@user-id"/>'
-                    let $sortorder-ids := distinct-values(collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq '<xsl:value-of select="@lexicon"/>']/meta/schema//container/@sort-order)
-                    return collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $userId]/workspace/sortorders/sortorder[@id = $sortorder-ids]
+                    let $sortorder-ids := distinct-values(collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = '<xsl:value-of select="@lexicon"/>']/meta/schema//container/@sort-order)
+                    return collection('<xsl:value-of select="$users-collection"/>')/user[@id = $userId]/workspace/sortorders/sortorder[@id = $sortorder-ids]
                 </lexus:text>
             </lexus:query>
         </xsl:copy>

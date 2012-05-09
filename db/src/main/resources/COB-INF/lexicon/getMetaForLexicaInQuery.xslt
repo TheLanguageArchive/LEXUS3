@@ -45,7 +45,7 @@
                         (: Returns lexus/meta element :)
                         element lexus {
                             attribute id { '<xsl:value-of select="@id"/>' },
-                            collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq '<xsl:value-of select="@id"/>']/meta
+                            collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = '<xsl:value-of select="@id"/>']/meta
                         }
                     </lexus:text>
                 </lexus:query>

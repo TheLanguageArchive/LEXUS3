@@ -38,12 +38,12 @@
                     let $user-id := '<xsl:value-of select="/data/user/@id"/>'
                     let $lexus :=
                         if ($data/lexicon ne '')
-                            then collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $data/lexicon]
+                            then collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $data/lexicon]
                             else
                                 let $lexica := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[meta/users/user/@ref = $user-id]
-                                return $lexica[lexicon//data[@id eq $id]] 
+                                return $lexica[lexicon//data[@id = $id]] 
                     let $lexiconId := $lexus/@id
-                    let $data := $lexus/lexicon//data[@id eq $id]
+                    let $data := $lexus/lexicon//data[@id = $id]
                     
                     return element result {
                         attribute lexicon { $lexiconId },

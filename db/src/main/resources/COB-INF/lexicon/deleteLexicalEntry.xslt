@@ -37,8 +37,8 @@
                     let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>
                     let $request := <xsl:apply-templates select="/data/lexus:delete-lexical-entry" mode="encoded"/>
                     let $lexiconId:= $request/@lexicon
-                    let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
-                    let $lexicalEntry := $lexus/lexicon/lexical-entry[@id eq $request/@id]
+                    let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $lexiconId]
+                    let $lexicalEntry := $lexus/lexicon/lexical-entry[@id = $request/@id]
                     return if (lexus:canWrite($lexus/meta, $user))
                         then lexus:deleteLexicalEntry($lexicalEntry)
                         else ()

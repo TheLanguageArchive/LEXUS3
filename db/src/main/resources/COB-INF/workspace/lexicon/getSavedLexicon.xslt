@@ -21,7 +21,7 @@
                 let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>
                 let $userId := '<xsl:value-of select="/data/user/@id"/>'
                 let $lexiconId := '<xsl:value-of select="@id"/>'
-                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
+                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $lexiconId]
                 let $users := lexus:users(collection('<xsl:value-of select="$users-collection"/>')/user[@id = distinct-values($lexus/meta/users/user/@ref)])
                 return element result
                 {

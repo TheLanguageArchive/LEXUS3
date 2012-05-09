@@ -35,13 +35,13 @@
                 
                 <xquery:declare-updating-function/> lexus:removeShared($lexus as node() , $user as node()) {
                         <xquery:delete>
-                        	<xquery:node>$lexus/meta/users/user[@ref eq $user/@id]</xquery:node>
+                        	<xquery:node>$lexus/meta/users/user[@ref = $user/@id]</xquery:node>
                         </xquery:delete>
                 };
                 
                 let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>
                 let $id := '<xsl:value-of select="lexicon/@id"/>'
-                let $lexus := fn:subsequence(collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $id], 1, 1)
+                let $lexus := fn:subsequence(collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $id], 1, 1)
                 return 
                     if (lexus:canDeleteLexicon($lexus/meta, $user))
                         then lexus:deleteLexicon($lexus)

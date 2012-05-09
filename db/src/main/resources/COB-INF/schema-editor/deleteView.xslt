@@ -28,14 +28,14 @@
                 (: create the view in the db :)
                 <xquery:declare-updating-function/> lexus:deleteView($newView as node(), $lexus as node()) {
                     <xquery:delete>
-                        <xquery:node>$lexus/meta/views/view[@id eq $newView/@id][1]</xquery:node>
+                        <xquery:node>$lexus/meta/views/view[@id = $newView/@id][1]</xquery:node>
                     </xquery:delete>
                 };
                 
                 let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>
                 let $id := '<xsl:value-of select="view/@id"/>'
                 let $request := <xsl:apply-templates select="." mode="encoded"/>
-                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus/meta/views/view[@id eq $id]/ancestor::lexus
+                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus/meta/views/view[@id = $id]/ancestor::lexus
                 return
                     if (lexus:canDeleteView($lexus/meta, $user))
                         then lexus:deleteView($request/view, $lexus)

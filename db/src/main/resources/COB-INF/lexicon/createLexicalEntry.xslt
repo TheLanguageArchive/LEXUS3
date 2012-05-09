@@ -31,7 +31,7 @@
                     
                     let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>
                     let $lexiconId := '<xsl:value-of select="@lexicon"/>'
-                    let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
+                    let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $lexiconId]
                     return
                         if (lexus:canWrite($lexus/meta, $user))
                             then element result { attribute lexicon { $lexiconId}, $lexus/meta/schema }

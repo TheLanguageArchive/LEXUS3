@@ -24,10 +24,10 @@
                     :)
                 <xquery:declare-updating-function/> lexus:updateQuery($query as node(), $user as node()) {
                     (
-                        if ($user/workspace/queries/query[@id eq $query/@id])                        
+                        if ($user/workspace/queries/query[@id = $query/@id])                        
                             then
                                 <xquery:replace>
-                                    <xquery:node>$user/workspace/queries/query[@id eq $query/@id]</xquery:node>
+                                    <xquery:node>$user/workspace/queries/query[@id = $query/@id]</xquery:node>
                                     <xquery:with>$query</xquery:with>
                                 </xquery:replace>                
                             else                
@@ -50,10 +50,10 @@
                                 <xquery:into>$lexicon/meta</xquery:into>
                             </xquery:insert-into>
                         else
-                            if ($lexicon/meta/queries/query[@id eq $query/@id]) 
+                            if ($lexicon/meta/queries/query[@id = $query/@id]) 
                                 then 
                                     <xquery:replace>
-                                        <xquery:node>$lexicon/meta/queries/query[@id eq $query/@id]</xquery:node>
+                                        <xquery:node>$lexicon/meta/queries/query[@id = $query/@id]</xquery:node>
                                         <xquery:with>$query</xquery:with>
                                     </xquery:replace>
                                 else
@@ -68,10 +68,10 @@
                 let $userId := '<xsl:value-of select="/data/user/@id"/>'                        
                 let $query := <xsl:apply-templates select="query" mode="encoded"/>
                 let $lexiconId := '<xsl:value-of select="lexicon"/>'
-                let $user := collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $userId]
+                let $user := collection('<xsl:value-of select="$users-collection"/>')/user[@id = $userId]
                 return
                     if ($lexiconId ne '')
-                    then let $lexicon := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
+                    then let $lexicon := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $lexiconId]
                          return if (lexus:canWrite($lexicon/meta, $user))
                             then lexus:updateFilter($query, $lexicon)
                             else ()

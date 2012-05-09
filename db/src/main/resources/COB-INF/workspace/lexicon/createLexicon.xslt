@@ -65,7 +65,7 @@
                         let $logSave := xmldb:store('<xsl:value-of select="$lexica-collection"/>', '<xsl:value-of select="$id"/>_log.xml', $log)
                         let $users := lexus:users(collection('<xsl:value-of select="$users-collection"/>')/user[@id = distinct-values($lexus/meta/users/user/@ref)])
                         return
-                            if ($lexusSave eq '' or $logSave eq '')
+                            if ($lexusSave = '' or $logSave = '')
                             then element exception {'failed to create lexicon'}
                             else element result {$lexicon, $lexus, $users, $user}
                     else 

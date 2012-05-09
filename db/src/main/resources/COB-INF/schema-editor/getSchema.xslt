@@ -20,7 +20,7 @@
                 <xsl:call-template name="lexicon"/>
                 
                 let $id := '<xsl:value-of select="id"/>'
-                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $id]
+                let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $id]
                 let $schema := $lexus/meta/schema
                 
                 return element result { $schema, lexus:lexicon($lexus) }

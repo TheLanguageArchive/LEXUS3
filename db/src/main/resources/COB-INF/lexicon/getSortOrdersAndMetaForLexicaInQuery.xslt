@@ -46,7 +46,7 @@
                         (: Returns lexus/meta element :)
                         element lexus {
                             attribute id { '<xsl:value-of select="@id"/>' },
-                            collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq '<xsl:value-of select="@id"/>']/meta
+                            collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = '<xsl:value-of select="@id"/>']/meta
                         }
                     </lexus:text>
                 </lexus:query>
@@ -55,7 +55,7 @@
             <lexus:query>
                 <lexus:text>
                     (: Returns user element (containing workspace/sortorders :)
-                    collection('<xsl:value-of select="$users-collection"/>')/user[@id eq '<xsl:value-of select="/data/user/@id"/>']
+                    collection('<xsl:value-of select="$users-collection"/>')/user[@id = '<xsl:value-of select="/data/user/@id"/>']
                 </lexus:text>
             </lexus:query>
         </lexus:search-lexica>

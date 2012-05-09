@@ -24,7 +24,7 @@
                     :)
                     <xquery:declare-updating-function/> lexus:deleteQuery($queryId as xs:string, $user as node()) {
                         <xquery:delete>
-                            <xquery:node>$user/workspace/queries/query[@id eq $queryId]</xquery:node>
+                            <xquery:node>$user/workspace/queries/query[@id = $queryId]</xquery:node>
                         </xquery:delete>                
                     };
                     
@@ -33,17 +33,17 @@
                     :)
                     <xquery:declare-updating-function/> lexus:deleteFilter($queryId as xs:string, $lexus as node()) {
                         <xquery:delete>
-                            <xquery:node>$lexus/meta/queries/query[@id eq $queryId]</xquery:node>
+                            <xquery:node>$lexus/meta/queries/query[@id = $queryId]</xquery:node>
                         </xquery:delete>
                     };
                     
                     let $userId := '<xsl:value-of select="/data/user/@id"/>'                        
                     let $queryId := '<xsl:value-of select="id"/>'
                     let $lexiconId := '<xsl:value-of select="lexicon"/>'
-                    let $user := collection('<xsl:value-of select="$users-collection"/>')/user[@id eq $userId]
+                    let $user := collection('<xsl:value-of select="$users-collection"/>')/user[@id = $userId]
                     return
                         if ($lexiconId ne '')
-                            then let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id eq $lexiconId]
+                            then let $lexus := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $lexiconId]
                                 return if (lexus:canWrite($lexus/meta, $user))
                                         then lexus:deleteFilter($queryId, $lexus)
                                         else ()
