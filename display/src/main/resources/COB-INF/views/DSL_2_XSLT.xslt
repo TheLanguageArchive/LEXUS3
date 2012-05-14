@@ -256,14 +256,28 @@
                 		</xsl:for-each>
             		</xsl:attribute>
 				</target:variable>
-				<target:if test="$containers-{generate-id(.)}">
-					<target:variable name="first-{generate-id(.)}" select="$containers-{generate-id(.)}[1]" />
-					<target:variable name="siblings-{generate-id(.)}" select="$containers-{generate-id(.)}[1]/following-sibling::*" />
+				<target:variable name="first-{generate-id(.)}" select="$containers-{generate-id(.)}[1]" />
+				<target:variable name="siblings-{generate-id(.)}" select="$containers-{generate-id(.)}[1]/following-sibling::*" />
+				<target:if test="$first-{generate-id(.)}">
 					<xsl:copy>
-					<xsl:copy-of select="@*[local-name(.) != 'isBranch']" />
-						<target:for-each select="$first-{generate-id(.)} | ($siblings-{generate-id(.)})/self::node()[@id = $containers-{generate-id(.)}/@id]">
+						<xsl:copy-of select="@*[local-name(.) != 'isBranch']" />
+						<target:variable name="displayContainers-{generate-id(.)}" select="$first-{generate-id(.)} | ($siblings-{generate-id(.)})/self::node()[@id = $containers-{generate-id(.)}/@id]"/>
+						<target:variable name="doubles-{generate-id(.)}">
+							<target:for-each select="$displayContainers-{generate-id(.)}">
+								<target:variable name="displayContainer" select="."/>
+									<target:if test="count($displayContainers-{generate-id(.)}[@schema-ref = $displayContainer/@schema-ref]) &gt; 1">
+										<target:value-of select="'x'"/>
+									</target:if>
+							</target:for-each>
+						</target:variable>				
+						<target:if test="$doubles-{generate-id(.)} = ''">
 							<xsl:apply-templates />
-						</target:for-each>
+						</target:if>
+						<target:if test="not($doubles-{generate-id(.)} = '')">
+							<target:for-each select="$displayContainers-{generate-id(.)}">
+								<xsl:apply-templates />
+							</target:for-each>
+						</target:if>
 					</xsl:copy>
 				</target:if>
 			</xsl:when>
@@ -297,16 +311,30 @@
                 		</xsl:for-each>
             		</xsl:attribute>
 				</target:variable>
-				<target:if test="$containers-{generate-id(.)}">
-					<target:variable name="first-{generate-id(.)}" select="$containers-{generate-id(.)}[1]" />
-					<target:variable name="siblings-{generate-id(.)}" select="$containers-{generate-id(.)}[1]/following-sibling::*" />
+				<target:variable name="first-{generate-id(.)}" select="$containers-{generate-id(.)}[1]" />
+				<target:variable name="siblings-{generate-id(.)}" select="$containers-{generate-id(.)}[1]/following-sibling::*" />
+				<target:if test="$first-{generate-id(.)}">
 					<tr>
 						<xsl:copy-of select="@*[local-name(.) != 'isBranch']" />
-						<target:for-each select="$first-{generate-id(.)} | ($siblings-{generate-id(.)})/self::node()[@id = $containers-{generate-id(.)}/@id]">
+						<target:variable name="displayContainers-{generate-id(.)}" select="$first-{generate-id(.)} | ($siblings-{generate-id(.)})/self::node()[@id = $containers-{generate-id(.)}/@id]"/>
+						<target:variable name="doubles-{generate-id(.)}">
+							<target:for-each select="$displayContainers-{generate-id(.)}">
+								<target:variable name="displayContainer" select="."/>
+									<target:if test="count($displayContainers-{generate-id(.)}[@schema-ref = $displayContainer/@schema-ref]) &gt; 1">
+										<target:value-of select="'x'"/>
+									</target:if>
+							</target:for-each>
+						</target:variable>				
+						<target:if test="$doubles-{generate-id(.)} = ''">
 							<xsl:apply-templates />
-						</target:for-each>
+						</target:if>
+						<target:if test="not($doubles-{generate-id(.)} = '')">
+							<target:for-each select="$displayContainers-{generate-id(.)}">
+								<xsl:apply-templates />
+							</target:for-each>
+						</target:if>
 					</tr>
-				</target:if>
+				</target:if>				
 			</xsl:when>
 			<xsl:otherwise>
 				<tr>
