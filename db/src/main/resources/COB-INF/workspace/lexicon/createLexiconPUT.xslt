@@ -12,12 +12,12 @@
 
 
     <xsl:template match="lexus:create-lexicon">
-        <xsl:variable name="docName" select="concat(substring-after(lexus/@id, 'uuid:'), '.xml')"/>
+        <xsl:variable name="docName" select="concat(substring-after(lexus/@id, 'uuid:'), '_lexus.xml')"/>
 
         <xsl:copy copy-namespaces="no">
             <xsl:choose>
                 <xsl:when test="$docName ne ''">
-                    <rest:request target="{concat($endpoint, $lexica-collection, '/', $docName)}"
+                    <rest:request target="{concat($endpoint, $lexica-collection, '/lexica/', $docName)}"
                         method="PUT">
                         <rest:header name="Content-Type" value="application/xml"/>
                         <rest:body>

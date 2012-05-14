@@ -27,20 +27,20 @@
                 <xsl:call-template name="user-permissions"/>
                 <xsl:call-template name="log"/>
                 
-                (: create the view in the db :)
-                <xquery:declare-updating-function/> lexus:deleteUser($user as node()) {
+                (: delete user document from the db :)
+                <xsl:variable name="docName" select="concat('users/', substring-after(user/@id, 'uuid:'), '.xml')"/>
+                <xquery:declare-updating-function/> lexus:deleteUser() {
                 
                     <xquery:delete>
-                        <xquery:node>$user</xquery:node>
+                        <xquery:collection><xsl:value-of select="$users-collection"/></xquery:collection>
+                        <xquery:path><xsl:value-of select="$docName"/></xquery:path>
                     </xquery:delete>
                 };
                 let $requestUser := <xsl:apply-templates select="../user" mode="encoded"/>
-                let $id := '<xsl:value-of select="user/@id"/>'
-                let $user := fn:subsequence(collection('<xsl:value-of select="$users-collection"/>')/user[@id = $id], 1, 1)
                                 
                 return 
                     if (lexus:canUpdateOrCreateUser($requestUser))
-                        then lexus:deleteUser($user)
+                        then lexus:deleteUser()
                         else ()
             </lexus:text>
             </lexus:query>

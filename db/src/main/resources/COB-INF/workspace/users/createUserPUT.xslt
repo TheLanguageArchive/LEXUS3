@@ -12,11 +12,11 @@
 
     <xsl:template match="lexus:create-user">
         <xsl:copy>
-            <xsl:variable name="docName" select="substring-after(user/@id, 'uuid:')"/>
+            <xsl:variable name="docName" select="concat(substring-after(user/@id, 'uuid:'), '.xml')"/>
 
             <xsl:choose>
                 <xsl:when test="$docName ne ''">
-                    <rest:request target="{concat($endpoint, $users-collection, '/', $docName)}"
+                    <rest:request target="{concat($endpoint, $users-collection, '/users/', $docName)}"
                         method="PUT">
                         <rest:header name="Content-Type" value="application/xml"/>
                         <rest:body>

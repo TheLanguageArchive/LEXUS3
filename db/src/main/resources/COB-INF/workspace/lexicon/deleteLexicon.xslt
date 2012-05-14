@@ -26,10 +26,13 @@
                 <xsl:call-template name="lexicon-permissions"/>
                 <xsl:call-template name="log"/>
                 
-                (: create the view in the db :)
-                <xquery:declare-updating-function/> lexus:deleteLexicon($lexus as node()) {
+                (: delete lexicon document from the db :)
+                
+                <xsl:variable name="docName" select="concat('lexica/', substring-after(lexicon/@id, 'uuid:'), '_lexus.xml')"/>
+                <xquery:declare-updating-function/> lexus:deleteLexicon() {
                     <xquery:delete>
-                        <xquery:node>$lexus</xquery:node>
+                        <xquery:collection><xsl:value-of select="$lexica-collection"/></xquery:collection>
+                        <xquery:path><xsl:value-of select="$docName"/></xquery:path>
                     </xquery:delete>
                 };
                 
@@ -44,7 +47,7 @@
                 let $lexus := fn:subsequence(collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $id], 1, 1)
                 return 
                     if (lexus:canDeleteLexicon($lexus/meta, $user))
-                        then lexus:deleteLexicon($lexus)
+                        then lexus:deleteLexicon()
                         else ( lexus:removeShared($lexus, $user))
             </lexus:text>
             </lexus:query>

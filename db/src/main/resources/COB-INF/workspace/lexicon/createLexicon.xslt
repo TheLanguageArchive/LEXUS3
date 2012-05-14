@@ -60,7 +60,7 @@
                     if ($access)
                     then 
                         let $lexus := <xsl:apply-templates select="lexus" mode="encoded"/>
-                        let $lexusSave := xmldb:store('<xsl:value-of select="$lexica-collection"/>', '<xsl:value-of select="$id"/>_lexus.xml', $lexus)
+                        let $lexusSave := xmldb:store('<xsl:value-of select="$lexica-collection"/>/lexica', '<xsl:value-of select="$id"/>_lexus.xml', $lexus)
                         let $log := <xsl:apply-templates select="log" mode="encoded"/>
                         let $logSave := xmldb:store('<xsl:value-of select="$lexica-collection"/>', '<xsl:value-of select="$id"/>_log.xml', $log)
                         let $users := lexus:users(collection('<xsl:value-of select="$users-collection"/>')/user[@id = distinct-values($lexus/meta/users/user/@ref)])
