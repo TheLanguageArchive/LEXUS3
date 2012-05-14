@@ -4,7 +4,7 @@
         <map:transformer name="rest" src="org.apache.cocoon.transformation.RESTTransformer">
             <authentication>
                 <username>admin</username>
-                <password>boe</password>
+                <password>admin</password>
                 <preemptive-authentication>true</preemptive-authentication>
             </authentication>
             <encoding>UTF-8</encoding>
