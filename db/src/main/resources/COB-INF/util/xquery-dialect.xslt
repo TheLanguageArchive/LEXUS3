@@ -86,16 +86,32 @@
     
     
     <!--
-        delete node ...
+        delete node or collection...
     -->
     <xsl:template match="xquery:delete">
         <xsl:choose>
             <xsl:when test="$xmldb eq 'exist'">
-                update delete <xsl:value-of select="xquery:node"/>
+            	<xsl:choose>
+            		<xsl:when test="xquery:node">
+                		update delete <xsl:value-of select="xquery:node"/>
+            		</xsl:when>
+            		<xsl:when test="xquery:collection and xquery:path">
+            			db:delete('<xsl:value-of select="xquery:collection"/>', '<xsl:value-of select="xquery:path"/>')
+            		</xsl:when>
+            	</xsl:choose>
             </xsl:when>
             <xsl:otherwise>
-                delete node <xsl:value-of select="xquery:node"/>
+	            <xsl:choose>
+	            	<xsl:when test="xquery:node">
+	                	delete node <xsl:value-of select="xquery:node"/>
+	                </xsl:when>
+            		<xsl:when test="xquery:collection and xquery:path">
+	            		db:delete('<xsl:value-of select="xquery:collection"/>', '<xsl:value-of select="xquery:path"/>')
+	            	</xsl:when>
+	            </xsl:choose>	
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
+    
+ 
 </xsl:stylesheet>

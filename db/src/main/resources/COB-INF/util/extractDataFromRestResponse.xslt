@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:lexus="http://www.mpi.nl/lexus"
     xmlns:rest="http://org.apache.cocoon.transformation/rest/1.0"
-    xmlns:exist="http://exist.sourceforge.net/NS/exist" xmlns:basexrest="http://basex.org/rest"
+    xmlns:exist="http://exist.sourceforge.net/NS/exist" xmlns:basexrest="http://www.basex.org/rest"
     version="2.0" exclude-result-prefixes="#all">
 
     <xsl:import href="identity.xslt"/>
