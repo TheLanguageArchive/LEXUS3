@@ -6,7 +6,7 @@
     <lexeme symbol="lexical-entry-marker">
         <concat>
             <bol/>
-            <cstring content="\lx"/>
+            <cstring content="\lx "/>
         </concat>
     </lexeme>
     
@@ -26,6 +26,9 @@
                 <cinterval min="A" max="Z"/>
                 <cinterval min="a" max="z"/>
                 <cinterval min="0" max="9"/>
+            </cclass>
+            <cclass minOccurs="0" maxOccurs="1">
+            	<cset content=" "/>
             </cclass>
         </concat>
     </lexeme>
