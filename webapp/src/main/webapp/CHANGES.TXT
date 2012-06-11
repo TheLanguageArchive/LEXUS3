@@ -1,5 +1,6 @@
 This is a staging version!
 
-Fixed tickets: #772 #1872
+Fixed tickets: #772 #1704 #1872
 
 Fixed new query/filter sequential naming
+Resize bar between wordlist and lexical entry detail
