@@ -30,7 +30,9 @@
                         (
                             <xquery:replace>
                                 <xquery:node>$lexus/meta/name</xquery:node>
-                                <xquery:with>$lexicon-information/name</xquery:with>
+                                <xquery:with>if ($lexicon-information/name ne '')
+                                				then $lexicon-information/name
+                                				else (element name {"UnamedLexicon!"})</xquery:with>
                             </xquery:replace>
                         ,
                             <xquery:replace>
