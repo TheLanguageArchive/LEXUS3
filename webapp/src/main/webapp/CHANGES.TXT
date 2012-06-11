@@ -1,5 +1,5 @@
 This is a staging version!
 
-Fixed tickets:
+Fixed tickets: #772 #1872
 
 Fixed new query/filter sequential naming
