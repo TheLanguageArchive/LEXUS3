@@ -18,7 +18,9 @@
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:lexer="http://chaperon.sourceforge.net/schema/lexer/2.0">
 
   <xsl:template match="lexer:error" />
-  <!--<xsl:template match="lexer:lexeme[@symbol='lf']" />-->
+  <xsl:template match="lexer:lexeme[@symbol='lf']" />
+  <xsl:template match="lexer:lexeme[@symbol='space-separator']" />
+  
   
   <xsl:template match="lexer:*">
     <xsl:copy>

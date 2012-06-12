@@ -6,7 +6,7 @@
     <lexeme symbol="lexical-entry-marker">
         <concat>
             <bol/>
-            <cstring content="\lx "/>
+            <cstring content="\lx"/>
         </concat>
     </lexeme>
     
@@ -27,16 +27,13 @@
                 <cinterval min="a" max="z"/>
                 <cinterval min="0" max="9"/>
             </cclass>
-            <cclass minOccurs="0" maxOccurs="1">
-            	<cset content=" "/>
-            </cclass>
         </concat>
     </lexeme>
 
 
     <!-- Match eol. -->
     <lexeme symbol="lf">
-        <cclass>
+        <cclass minOccurs="1" maxOccurs="1">
             <cset content="&#10;"/>
         </cclass>
     </lexeme>
@@ -50,6 +47,12 @@
             </cclass>
         </concat>
     </lexeme>
+    
+    <lexeme symbol="space-separator">
+        <cclass minOccurs="1" maxOccurs="1">
+            <cset content=" "/>
+        </cclass>
+    </lexeme>
 
     <!-- Any character . -->
     <lexeme symbol="text">
@@ -58,6 +61,7 @@
                 <cset content="&#13;"/>
                 <cset content="&#10;"/>
                 <cset content="\"/>
+                <cset content=" "/>
             </cclass>
             <cclass exclusive="true" minOccurs="0" maxOccurs="*">
                 <cset content="&#13;"/>

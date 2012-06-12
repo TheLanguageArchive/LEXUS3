@@ -24,15 +24,12 @@
     </production>
     
     <!-- textSequence -->
-    <production symbol="textSequence">
-        <terminal symbol="lf"/>
-    </production>
+    <production symbol="textSequence"/>
     <production symbol="textSequence">
         <terminal symbol="text"/>
     </production>
     <production symbol="textSequence">
         <nonterminal symbol="textSequence"/>
-        <terminal symbol="lf"/>
     </production>
     <production symbol="textSequence">
         <nonterminal symbol="textSequence"/>
