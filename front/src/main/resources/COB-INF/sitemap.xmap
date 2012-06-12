@@ -42,6 +42,21 @@
             </map:match>
         </map:pipeline>
 
+        <map:pipeline>
+        	<map:match pattern="logout.htm">
+        	 	<map:act type="cauth-is-logged-in">
+        	 	    <map:parameter name="application" value="Lexus"/>
+            		<map:act type="cauth-logout">
+            			<map:parameter name="application" value="Lexus"/>
+           			</map:act>
+           			<map:redirect-to uri="index.html?msg=3"/>
+            	</map:act>
+        <!-- 
+          Logout failed, redirect to Lexus.html
+        -->
+            <map:redirect-to uri="Lexus.html"/>
+            </map:match>
+        </map:pipeline>
 
 
         <!-- 
@@ -80,7 +95,7 @@
                 <!-- 
           Login failed, redirect to index.html.
         -->
-                <map:redirect-to uri="index.html?msg=2"/>
+            <map:redirect-to uri="index.html?msg=2"/>
             </map:match>
 
 
@@ -351,7 +366,7 @@
                     <map:mount uri-prefix="LexusLexicalEntryEditor/"
                         src="lexicon-editor/sitemap.xmap"/>
                 </map:act>
-                <map:redirect-to uri="/index.html"/>
+                <map:redirect-to uri="index.html?msg=1"/>
             </map:match>
             
             <!--
@@ -379,7 +394,7 @@
                     <map:parameter name="application" value="Lexus"/>
                     <map:mount uri-prefix="" src="lexicon-editor/sitemap.xmap"/>
                 </map:act>
-                <map:redirect-to uri="/index.html"/>
+                <map:redirect-to uri="index.html?msg=1"/>
             </map:match>
 
 
@@ -388,7 +403,7 @@
                     <map:parameter name="application" value="Lexus"/>
                     <map:mount uri-prefix="" src="lexicon-editor/sitemap.xmap"/>
                 </map:act>
-                <map:redirect-to uri="/index.html"/>
+                <map:redirect-to uri="index.html?msg=1"/>
             </map:match>
             
             <map:match pattern="ISOCAT/search.json">
@@ -396,7 +411,7 @@
                     <map:parameter name="application" value="Lexus"/>
                     <map:mount uri-prefix="" src="schema-editor/sitemap.xmap"/>
                 </map:act>
-                <map:redirect-to uri="/index.html"/>
+                <map:redirect-to uri="index.html?msg=1"/>
             </map:match>
 
 
@@ -409,7 +424,7 @@
                     <map:parameter name="application" value="Lexus"/>
                     <map:mount uri-prefix="LexusWorkspaceEditor/" src="workspace/sitemap.xmap"/>
                 </map:act>
-                <map:redirect-to uri="/index.html"/>
+                <map:redirect-to uri="index.html?msg=1"/>
             </map:match>
 
             <map:match pattern="SortOrderEditor/**">
@@ -417,7 +432,7 @@
                     <map:parameter name="application" value="Lexus"/>
                     <map:mount uri-prefix="SortOrderEditor/" src="workspace/sitemap.xmap"/>
                 </map:act>
-                <map:redirect-to uri="/index.html"/>
+                <map:redirect-to uri="index.html?msg=1"/>
             </map:match>
 
 
@@ -426,7 +441,7 @@
                     <map:parameter name="application" value="Lexus"/>
                     <map:mount uri-prefix="" src="workspace/sitemap.xmap"/>
                 </map:act>
-                <map:redirect-to uri="/index.html"/>
+                <map:redirect-to uri="index.html?msg=1"/>
             </map:match>
 
             <map:match pattern="LexusSchemaEditor/**">
@@ -434,7 +449,7 @@
                     <map:parameter name="application" value="Lexus"/>
                     <map:mount uri-prefix="LexusSchemaEditor/" src="schema-editor/sitemap.xmap"/>
                 </map:act>
-                <map:redirect-to uri="/index.html"/>
+                <map:redirect-to uri="index.html?msg=1"/>
             </map:match>
 
             <map:match pattern="toolbox/**">
@@ -442,7 +457,7 @@
           <map:parameter name="application" value="Lexus"/> -->
                 <map:mount uri-prefix="toolbox/" src="toolbox/sitemap.xmap"/>
                 <!--         </map:act>
-        <map:redirect-to uri="index.html"/> -->
+        <map:redirect-to uri="index.html?msg=1"/> -->
             </map:match>
 
             <map:match pattern="vicos/**">
@@ -450,7 +465,7 @@
                     <map:parameter name="application" value="Lexus"/>
                     <map:mount uri-prefix="vicos/" src="vicos/sitemap.xmap"/>
                 </map:act>
-                <map:redirect-to uri="/index.html"/>
+                <map:redirect-to uri="index.html?msg=1"/>
             </map:match>
 
             <map:match pattern="StagingFileHandler/uploadFile.json">

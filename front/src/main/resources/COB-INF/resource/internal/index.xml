@@ -194,8 +194,9 @@
         </div>
         
         <msgs>
-            <msg id="1">Please log in first.</msg>
+            <msg id="1">Session expired!</msg>
             <msg id="2">Login unsuccessful, please try again.</msg>
+            <msg id="3">Log out successful.</msg>
         </msgs>
     </body>
 </html>

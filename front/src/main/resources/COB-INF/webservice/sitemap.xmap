@@ -73,6 +73,28 @@
         <map:serialize type="xml"/>
       </map:handle-errors>
     </map:pipeline>
+    
+    <map:pipeline>
+      	<map:match pattern="logout.xml">
+        	<map:act type="cauth-is-logged-in">
+        	    <map:parameter name="application" value="Lexus"/>
+            	<map:act type="cauth-logout">
+            		<map:parameter name="application" value="Lexus"/>
+           		</map:act>
+           		<map:redirect-to uri="soap-logout-ok.xml"/>
+           		<map:serialize type="xml"/>
+           	</map:act>
+        <!-- 
+          Logout failed, redirect to index.html.
+        -->
+        <map:generate src="soap-logout-failed.xml"/>
+        <map:serialize type="xml"/>
+      	</map:match>
+      	<map:handle-errors when="always">
+        	<map:generate src="soap-error.xml"/>
+        	<map:serialize type="xml"/>
+      </map:handle-errors>
+    </map:pipeline>
 
 
     <!--
