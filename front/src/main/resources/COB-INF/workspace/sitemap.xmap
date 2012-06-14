@@ -35,7 +35,7 @@
       <map:match pattern="reOrder.xml">
         <map:generate src="all/getAllLexiconIds.xml"/>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:db:/workspace/getAllLexiconIds.xml"/>
+          <map:parameter name="service" value="servlet:lexus-db:/workspace/getAllLexiconIds.xml"/>
         </map:transform>
         <map:transform src="all/prepareReOrderEachLexicon.xslt"/>
         <map:transform type="cinclude"/>
@@ -48,7 +48,7 @@
           <map:parameter name="id" value="{request-param:id}"/>
         </map:transform>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:db:/workspace/reOrderLexicon.xml"/>
+          <map:parameter name="service" value="servlet:lexus-db:/workspace/reOrderLexicon.xml"/>
         </map:transform>
         <map:serialize/>
       </map:match>-->
@@ -77,7 +77,7 @@
                 </map:aggregate>
                 <map:transform type="saxon" src="getPage/prepareGetPage.xslt"/>
                 <map:transform type="servletService">
-                    <map:parameter name="service" value="servlet:db:/workspace/getPage.xml"/>
+                    <map:parameter name="service" value="servlet:lexus-db:/workspace/getPage.xml"/>
                 </map:transform>
                 <map:serialize type="xml"/>
             </map:match>
@@ -98,7 +98,7 @@
                     <map:part src="cocoon://user"/>
                 </map:aggregate>
                 <map:transform type="servletService">
-                    <map:parameter name="service" value="servlet:db:/workspace/getProfiles.xml"/>
+                    <map:parameter name="service" value="servlet:lexus-db:/workspace/getProfiles.xml"/>
                 </map:transform>
                 <map:serialize type="xml"/>
             </map:match>
@@ -123,7 +123,7 @@
                     <map:part src="cocoon://user"/>
                 </map:aggregate>
                 <map:transform type="servletService">
-                    <map:parameter name="service" value="servlet:db:/workspace/getUsers.xml"/>
+                    <map:parameter name="service" value="servlet:lexus-db:/workspace/getUsers.xml"/>
                 </map:transform>
                 <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-get-users-1.xml"/>
                 <map:serialize type="xml"/>
@@ -147,7 +147,7 @@
                 <map:transform type="saxon" src="users/prepareSaveUser.xslt"/>
                 <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-save-user-2.xml"/>
                 <map:transform type="servletService">
-                    <map:parameter name="service" value="servlet:db:/workspace/saveUser.xml"/>
+                    <map:parameter name="service" value="servlet:lexus-db:/workspace/saveUser.xml"/>
                 </map:transform>
                 <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-save-user-3.xml"/>
                 <map:serialize type="xml"/>
@@ -175,7 +175,7 @@
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-delete-user-2.xml"/>
               <map:transform type="servletService">
-                    <map:parameter name="service" value="servlet:db:/workspace/deleteUser.xml"/>
+                    <map:parameter name="service" value="servlet:lexus-db:/workspace/deleteUser.xml"/>
                 </map:transform>
               <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-delete-user-3.xml"/>
                 <map:serialize type="xml"/>
@@ -196,7 +196,7 @@
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-create-user-2.xml"/>
                 <map:transform type="servletService">
-                    <map:parameter name="service" value="servlet:db:/workspace/getUserByAccount.xml"
+                    <map:parameter name="service" value="servlet:lexus-db:/workspace/getUserByAccount.xml"
                     />
                 </map:transform>
                 <map:transform type="${tee}"
@@ -205,7 +205,7 @@
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-create-user-4.xml"/>
                 <map:transform type="servletService">
-                    <map:parameter name="service" value="servlet:db:/workspace/createUser.xml"/>
+                    <map:parameter name="service" value="servlet:lexus-db:/workspace/createUser.xml"/>
                 </map:transform>
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-create-user-5.xml"/>
@@ -233,7 +233,7 @@
                 </map:aggregate>
                 <map:transform type="saxon" src="lexicon/prepareSaveLexicon.xslt"/>
                 <map:transform type="servletService">
-                    <map:parameter name="service" value="servlet:db:/workspace/saveLexicon.xml"/>
+                    <map:parameter name="service" value="servlet:lexus-db:/workspace/saveLexicon.xml"/>
                 </map:transform>
                 <map:serialize type="xml"/>
             </map:match>
@@ -250,7 +250,7 @@
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-create-lexicon-1.xml"/>
                 <map:transform type="servletService">
-                    <map:parameter name="service" value="servlet:db:/workspace/createLexicon.xml"/>
+                    <map:parameter name="service" value="servlet:lexus-db:/workspace/createLexicon.xml"/>
                 </map:transform>
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-create-lexicon-2.xml"/>
@@ -274,7 +274,7 @@
                                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-delete-lexicon-2.xml"/>
                 <map:transform type="servletService">
-                    <map:parameter name="service" value="servlet:db:/workspace/deleteLexicon.xml"/>
+                    <map:parameter name="service" value="servlet:lexus-db:/workspace/deleteLexicon.xml"/>
                 </map:transform>
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-delete-lexicon-3.xml"/>
@@ -303,7 +303,7 @@
                 <map:transform type="saxon" src="import/prepareLexusDocumentForDatabase.xslt"/>
                 <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/import-2.xml"/>-->
                 <map:transform type="servletService">
-                    <map:parameter name="service" value="servlet:db:/workspace/createLexicon.xml"/>
+                    <map:parameter name="service" value="servlet:lexus-db:/workspace/createLexicon.xml"/>
                 </map:transform>
                 <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/import-3.xml"/>-->
                 <map:transform type="saxon" src="import/reportOnImport.xslt"/>
@@ -369,7 +369,7 @@
                     src="{naming:java:comp/env/tee-folder}debug-info/import-3.xml"/>-->
                 
                 <map:transform type="servletServiceFragments">
-                    <map:parameter name="service" value="servlet:db:/workspace/createLexicon.xml"/>
+                    <map:parameter name="service" value="servlet:lexus-db:/workspace/createLexicon.xml"/>
                 </map:transform>
                 
                 <map:transform type="${tee}"
@@ -381,7 +381,7 @@
                     src="{naming:java:comp/env/tee-folder}debug-info/import-5.xml"/>
                 
                 <map:transform type="servletServiceFragments">
-                    <map:parameter name="service" value="servlet:db:/lexicon/insertLexicalEntries.xml"/>
+                    <map:parameter name="service" value="servlet:lexus-db:/lexicon/insertLexicalEntries.xml"/>
                 </map:transform>
                 
                 <map:transform type="${tee}"
@@ -393,7 +393,7 @@
                     src="{naming:java:comp/env/tee-folder}debug-info/import-7.xml"/>
                 
                 <map:transform type="servletServiceFragments">
-                    <map:parameter name="service" value="servlet:db:/lexicon/replaceLexiconInformation.xml"/>
+                    <map:parameter name="service" value="servlet:lexus-db:/lexicon/replaceLexiconInformation.xml"/>
                 </map:transform>
                 
                 <map:transform type="${tee}"
@@ -406,7 +406,7 @@
                     src="{naming:java:comp/env/tee-folder}debug-info/import-9.xml"/>
                 
                 <map:transform type="servletServiceFragments">
-                    <map:parameter name="service" value="servlet:db:/lexicon/addStandardViews.xml"/>
+                    <map:parameter name="service" value="servlet:lexus-db:/lexicon/addStandardViews.xml"/>
                 </map:transform>
                 
                 <map:transform type="${tee}"
@@ -477,7 +477,7 @@
                 </map:aggregate>
                 <map:transform type="servletService">
                     <map:parameter name="service"
-                        value="servlet:db:/workspace/queries/getQueries.xml"/>
+                        value="servlet:lexus-db:/workspace/queries/getQueries.xml"/>
                 </map:transform>
                 <map:serialize type="xml"/>
             </map:match>
@@ -510,7 +510,7 @@
                     src="{naming:java:comp/env/tee-folder}debug-info/front-getdc-pre2.xml"/>
                 <map:transform type="servletService">
                     <map:parameter name="service"
-                        value="servlet:db:/workspace/queries/getDataCategories.xml"/>
+                        value="servlet:lexus-db:/workspace/queries/getDataCategories.xml"/>
                 </map:transform>
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-getdc-post.xml"/>
@@ -533,7 +533,7 @@
                     src="{naming:java:comp/env/tee-folder}debug-info/front-save-query-2.xml"/>
                 <map:transform type="servletService">
                     <map:parameter name="service"
-                        value="servlet:db:/workspace/queries/saveQuery.xml"/>
+                        value="servlet:lexus-db:/workspace/queries/saveQuery.xml"/>
                 </map:transform>
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-save-query-3.xml"/>
@@ -558,7 +558,7 @@
                     src="{naming:java:comp/env/tee-folder}debug-info/delete-query-2.xml"/>
                 <map:transform type="servletService">
                     <map:parameter name="service"
-                        value="servlet:db:/workspace/queries/deleteQuery.xml"/>
+                        value="servlet:lexus-db:/workspace/queries/deleteQuery.xml"/>
                 </map:transform>
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/delete-query-3.xml"/>
@@ -583,13 +583,13 @@
                     src="{naming:java:comp/env/tee-folder}debug-info/front-search-2.xml"/>
                 <map:transform type="saxon" src="queries/refine-query.xslt"/>
                 <map:transform type="servletService">
-                    <map:parameter name="service" value="servlet:db:/workspace/queries/search.xml"/>
+                    <map:parameter name="service" value="servlet:lexus-db:/workspace/queries/search.xml"/>
                 </map:transform>
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-search-3.xml"/>
                 <map:transform type="saxon" src="queries/process-search-results.xslt"/>
                 <map:transform type="servletService">
-                    <map:parameter name="service" value="servlet:display:/flexhtmlview.xml"/>
+                    <map:parameter name="service" value="servlet:lexus-display:/flexhtmlview.xml"/>
                 </map:transform>
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-search-4.xml"/>

@@ -25,7 +25,7 @@
                            http://cocoon.apache.org/schema/servlet http://cocoon.apache.org/schema/servlet/cocoon-servlet-1.0.xsd">
 
   <bean name="nl.mpi.lexus.db.service" class="org.apache.cocoon.sitemap.SitemapServlet">
-    <servlet:context mount-path="/db" context-path="blockcontext:/db/"/>    
+    <servlet:context mount-path="/lexus-db" context-path="blockcontext:/lexus-db/"/>    
   </bean>
 
 

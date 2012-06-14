@@ -31,7 +31,7 @@
       <version>3.0-SNAPSHOT</version>
   </parent>
   
-  <artifactId>db</artifactId>
-  <name>db</name>
+  <artifactId>lexus-db</artifactId>
+  <name>lexus-db</name>
 
 </project>

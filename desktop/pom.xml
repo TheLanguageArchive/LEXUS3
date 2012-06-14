@@ -8,8 +8,8 @@
         <groupId>nl.mpi.lexus</groupId>
         <version>3.0-SNAPSHOT</version>
     </parent>
-    <artifactId>desktop</artifactId>
-    <name>desktop</name>
+    <artifactId>lexus-desktop</artifactId>
+    <name>lexus-desktop</name>
     <url>http://maven.apache.org</url>
     <dependencies>
         <dependency>

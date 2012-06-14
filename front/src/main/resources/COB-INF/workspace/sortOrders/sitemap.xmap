@@ -66,7 +66,7 @@
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-so-1.xml"/>
                 <map:transform type="servletService">
-                    <map:parameter name="service" value="servlet:db:/workspace/getSortOrders.xml"/>
+                    <map:parameter name="service" value="servlet:lexus-db:/workspace/getSortOrders.xml"/>
                 </map:transform>
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-so-2.xml"/>
@@ -96,7 +96,7 @@
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-sso-3.xml"/>
                 <map:transform type="servletService">
-                    <map:parameter name="service" value="servlet:db:/workspace/saveSortOrder.xml"/>
+                    <map:parameter name="service" value="servlet:lexus-db:/workspace/saveSortOrder.xml"/>
                 </map:transform>
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-sso-4.xml"/>
@@ -132,7 +132,7 @@
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>
                 <map:transform type="servletService">
-                    <map:parameter name="service" value="servlet:db:/workspace/deleteSortOrder.xml"
+                    <map:parameter name="service" value="servlet:lexus-db:/workspace/deleteSortOrder.xml"
                     />
                 </map:transform>
                 <map:transform type="${tee}"

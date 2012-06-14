@@ -72,7 +72,7 @@
           src="{naming:java:comp/env/tee-folder}debug-info/vicos-gwl-pre.xml"/>
         <map:transform type="saxon" src="vicos-prepare-search.xslt"/>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:db:/workspace/queries/search.xml"/>
+          <map:parameter name="service" value="servlet:lexus-db:/workspace/queries/search.xml"/>
         </map:transform>
         <map:transform type="${tee}"
           src="{naming:java:comp/env/tee-folder}debug-info/vicos-gwl-post.xml"/>
@@ -101,7 +101,7 @@
         </map:aggregate>
         <map:transform type="saxon" src="vicosPrepareGetLexicalEntryData.xslt"/>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:db:/lexicon/getLexicalEntryData.xml"/>
+          <map:parameter name="service" value="servlet:lexus-db:/lexicon/getLexicalEntryData.xml"/>
         </map:transform>
         <map:transform type="${tee}"
           src="{naming:java:comp/env/tee-folder}debug-info/vicos-gle-pre.xml"/>
@@ -110,12 +110,12 @@
           <map:parameter name="view" value="le-view"/>
         </map:transform>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:display:/htmlview.xml"/>
+          <map:parameter name="service" value="lexus-display:/htmlview.xml"/>
         </map:transform>
         <map:transform type="${tee}"
           src="{naming:java:comp/env/tee-folder}debug-info/vicos-gle-post.xml"/>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:db:/schema-editor/getListView.xml"/>
+          <map:parameter name="service" value="servlet:lexus-db:/schema-editor/getListView.xml"/>
         </map:transform>
         <map:transform type="saxon" src="vicos-getLexicalEntry-2-JSON.xslt"/>
         <map:transform type="saxon" src="normalize-space-in-jsonxml.xslt"/>
@@ -137,7 +137,7 @@
         <map:transform type="${tee}"
           src="{naming:java:comp/env/tee-folder}debug-info/vicos-gliu-pre.xml"/>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:db:/lexicon/getData.xml"/>
+          <map:parameter name="service" value="servlet:lexus-db:/lexicon/getData.xml"/>
         </map:transform>
         <map:transform type="${tee}"
           src="{naming:java:comp/env/tee-folder}debug-info/vicos-gliu-post.xml"/>
@@ -161,7 +161,7 @@
           src="{naming:java:comp/env/tee-folder}debug-info/vicos-glius-pre.xml"/>
         <map:transform type="saxon" src="vicosPrepareGetDataElements.xslt"/>
         <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:db:/lexicon/getDataElements.xml"/>
+          <map:parameter name="service" value="servlet:lexus-db:/lexicon/getDataElements.xml"/>
         </map:transform>
         <map:transform type="${tee}"
           src="{naming:java:comp/env/tee-folder}debug-info/vicos-glius-post.xml"/>

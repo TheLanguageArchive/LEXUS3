@@ -31,13 +31,13 @@
       <version>3.0-SNAPSHOT</version>
   </parent>
   
-  <artifactId>display</artifactId>
-  <name>display</name>
+  <artifactId>lexus-display</artifactId>
+  <name>lexus-display</name>
 
   <dependencies>
     <dependency>
       <groupId>nl.mpi.lexus</groupId>
-      <artifactId>db</artifactId>
+      <artifactId>lexus-db</artifactId>
         <version>3.0-SNAPSHOT</version>
     </dependency>
   </dependencies>

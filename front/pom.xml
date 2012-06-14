@@ -31,8 +31,12 @@
         <version>3.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>front</artifactId>
-    <name>front</name>
+    <artifactId>lexus-front</artifactId>
+    <name>lexus-front</name>
+    
+    <properties>
+    	<org.apache.cocoon.log4j.loglevel>info</org.apache.cocoon.log4j.loglevel>
+    </properties>
 
     <dependencies>
 
@@ -144,12 +148,12 @@
         </dependency>
         <dependency>
             <groupId>nl.mpi.lexus</groupId>
-            <artifactId>db</artifactId>
+            <artifactId>lexus-db</artifactId>
             <version>3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>nl.mpi.lexus</groupId>
-            <artifactId>display</artifactId>
+            <artifactId>lexus-display</artifactId>
             <version>3.0-SNAPSHOT</version>
         </dependency>
         <!--<dependency>
@@ -171,6 +175,9 @@
                     <execution>
                         <id>prepare</id>
                         <phase>compile</phase>
+                        <configuration>
+                        <customLog4jXconf>${project.build.outputDirectory}/rcl-conf/log4j.xml</customLog4jXconf>
+                        </configuration>
                         <goals>
                             <goal>prepare</goal>
                         </goals>
@@ -313,14 +320,14 @@
                                     </includes>
                                 </resource>
                                 <resource>
-                                    <targetPath>${project.build.outputDirectory}</targetPath>
-                                    <filtering>true</filtering>
-                                    <directory>${basedir}/src/main/etc</directory>
-                                    <includes>
-                                        <include>log4j.xml</include>
+                					<targetPath>${project.build.outputDirectory}</targetPath>
+                					<filtering>false</filtering>
+                					<directory>${basedir}/src/main/etc</directory>
+					                <includes>
+					                	<include>log4j.xml</include>
                                         <include>ehcache.xml</include>
-                                    </includes>
-                                </resource>
+					                </includes>
+            					</resource>
                             </resources>
                         </configuration>
                     </execution>
@@ -329,7 +336,7 @@
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>maven-jetty-plugin</artifactId>
-                <version>6.1.26</version>
+                <version>6.1.9</version>
                 <configuration>
                     <argLine>-Xmx256m</argLine>
                     <connectors>
@@ -338,17 +345,50 @@
                             <maxIdleTime>30000</maxIdleTime>
                         </connector>
                     </connectors>
-                    <webAppSourceDirectory>${project.build.directory}/rcl/webapp</webAppSourceDirectory>
+                    <!-- configure the container -->
+          			<jettyConfig>${basedir}/src/main/etc/jetty.xml</jettyConfig>
                     <jettyEnvXml>${basedir}/src/main/etc/jetty-env.xml</jettyEnvXml>
+                    <webAppSourceDirectory>${project.build.directory}/rcl/webapp</webAppSourceDirectory>
                     <contextPath>/mpi/lexusDojo</contextPath>
+                    <classesDirectory>${project.build.directory}/classes</classesDirectory>
                     <systemProperties>
-                        <systemProperty>
+						<systemProperty> 
+              				<name>org.apache.commons.logging.Log</name>
+               				<value>org.apache.commons.logging.impl.Log4JLogger</value>
+            			</systemProperty>
+            			<systemProperty>
                             <name>org.apache.cocoon.mode</name>
                             <value>dev</value>
                         </systemProperty>
-                    </systemProperties>
+            		</systemProperties>
                 </configuration>
-            </plugin>
+				<dependencies>
+			        <dependency>
+			          <groupId>commons-logging</groupId>
+			          <artifactId>commons-logging</artifactId>
+			          <version>1.1</version>
+			          <type>jar</type>
+			        </dependency>
+			        <dependency>
+			          <groupId>org.slf4j</groupId>
+			          <artifactId>slf4j-jcl</artifactId>
+			          <version>1.3.1</version>
+			          <type>jar</type>
+			        </dependency>
+			        <dependency>
+			          <groupId>org.slf4j</groupId>
+			          <artifactId>slf4j-api</artifactId>
+			          <version>1.3.1</version>
+			          <type>jar</type>
+			        </dependency>
+			        <dependency>
+			          <groupId>log4j</groupId>
+			          <artifactId>log4j</artifactId>
+			          <version>1.2.14</version>
+			          <type>jar</type>
+			        </dependency>
+		      	</dependencies>
+                   </plugin>
         </plugins>
 
         <resources>
@@ -364,6 +404,14 @@
                 <includes>
                     <include>**/aboutLexus.xml</include>
                     <include>**/index.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <targetPath>${project.build.outputDirectory}/rcl-conf/</targetPath>
+                <filtering>true</filtering>
+                <directory>${basedir}/src/main/etc</directory>
+                <includes>
+                	<include>log4j.xml</include>
                 </includes>
             </resource>
         </resources>

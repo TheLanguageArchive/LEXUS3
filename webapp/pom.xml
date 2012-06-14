@@ -31,24 +31,24 @@
         <version>3.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>webapp</artifactId>
-    <name>webapp</name>
+    <artifactId>lexus-webapp</artifactId>
+    <name>lexus-webapp</name>
     <!-- -r${buildNumber} -->
 
     <dependencies>
         <dependency>
             <groupId>nl.mpi.lexus</groupId>
-            <artifactId>front</artifactId>
+            <artifactId>lexus-front</artifactId>
             <version>3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>nl.mpi.lexus</groupId>
-            <artifactId>display</artifactId>
+            <artifactId>lexus-display</artifactId>
             <version>3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>nl.mpi.lexus</groupId>
-            <artifactId>db</artifactId>
+            <artifactId>lexus-db</artifactId>
             <version>3.0-SNAPSHOT</version>
         </dependency>
     </dependencies>

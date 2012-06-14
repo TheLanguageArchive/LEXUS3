@@ -108,7 +108,7 @@
           <map:generate src="cocoon://user"/>
           <map:transform type="saxon" src="prepareGetPage.xslt"/>
           <map:transform type="servletService">
-            <map:parameter name="service" value="servlet:db:/workspace/getPage.xml"/>
+            <map:parameter name="service" value="servlet:lexus-db:/workspace/getPage.xml"/>
           </map:transform>
           <map:transform type="saxon" src="getPage-2-soap.xslt"/>
           <map:serialize type="xml"/>
@@ -142,7 +142,7 @@
             <map:parameter name="a_resourceID" value="{../1}"/>
           </map:transform>
           <map:transform type="servletService">
-            <map:parameter name="service" value="servlet:db:/lexicon/getDocumentAndSchema.xml"/>
+            <map:parameter name="service" value="servlet:lexus-db:/lexicon/getDocumentAndSchema.xml"/>
           </map:transform>
           <map:transform type="saxon" src="getResource-2-soap.xslt"/>
           <map:serialize type="xml"/>
@@ -174,7 +174,7 @@
             <map:parameter name="a_resourceID" value="{../1}"/>
           </map:transform>
           <map:transform type="servletService">
-            <map:parameter name="service" value="servlet:db:/schema-editor/getSchema.xml"/>
+            <map:parameter name="service" value="servlet:lexus-db:/schema-editor/getSchema.xml"/>
           </map:transform>
           <map:transform type="saxon" src="getResourceStructure-2-soap.xslt"/>
           <map:serialize type="xml"/>
@@ -216,7 +216,7 @@
           </map:transform>
           <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/getDCs-2.xml"/>
           <map:transform type="servletService">
-            <map:parameter name="service" value="servlet:db:/schema-editor/getSchema.xml"/>
+            <map:parameter name="service" value="servlet:lexus-db:/schema-editor/getSchema.xml"/>
           </map:transform>
           <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/getDCs-3.xml"/>
           <map:transform type="saxon" src="getDataCategories-2-soap.xslt"/>
@@ -251,7 +251,7 @@
                                 <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/search-3.xml"/>
           
           <map:transform type="servletService">
-            <map:parameter name="service" value="servlet:db:/workspace/queries/search.xml"/>
+            <map:parameter name="service" value="servlet:lexus-db:/workspace/queries/search.xml"/>
           </map:transform>
                                 <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/search-4.xml"/>
           
@@ -277,7 +277,7 @@
           </map:transform>
           <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ghv-1.xml"/>
           <map:transform type="servletService">
-            <map:parameter name="service" value="servlet:db:/lexicon/getLexicalEntryData.xml"/>
+            <map:parameter name="service" value="servlet:lexus-db:/lexicon/getLexicalEntryData.xml"/>
           </map:transform>
           <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ghv-2.xml"/>
           <map:transform type="saxon" src="../lexicon-editor/views/prepareDisplayGeneratorForLexicalEntry.xslt">
@@ -285,7 +285,7 @@
           </map:transform>
           <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ghv-3.xml"/>
           <map:transform type="servletService">
-            <map:parameter name="service" value="servlet:display:/htmlview.xml"/>
+            <map:parameter name="service" value="servlet:lexus-display:/htmlview.xml"/>
           </map:transform>
           <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ghv-4.xml"/>
           <map:transform type="saxon" src="../lexicon-editor/views/extractHTMLView.xslt"/>

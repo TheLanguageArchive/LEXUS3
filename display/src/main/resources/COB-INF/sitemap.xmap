@@ -115,7 +115,7 @@
                     <map:parameter name="lexicon-id" value="{1}"/>
                 </map:transform>
                 <map:transform type="servletService">
-                    <map:parameter name="service" value="servlet:db:/schema-editor/getListView.xml"
+                    <map:parameter name="service" value="servlet:lexus-db:/schema-editor/getListView.xml"
                     />
                 </map:transform>
 <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/display-listview-1.xml"/>-->
@@ -139,7 +139,7 @@
                 </map:transform>
 <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/display-leView-2.xml"/>-->
                 <map:transform type="servletService">
-                    <map:parameter name="service" value="servlet:db:/schema-editor/getLEView.xml"/>
+                    <map:parameter name="service" value="servlet:lexus-db:/schema-editor/getLEView.xml"/>
                 </map:transform>
 <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/display-leView-3.xml"/>-->
                 <map:transform type="saxon" src="views/prepareViewForTransformation.xslt"/>
@@ -164,7 +164,7 @@
                 </map:transform>
 <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/display-view-2.xml"/>-->
                 <map:transform type="servletService">
-                    <map:parameter name="service" value="servlet:db:/schema-editor/getView.xml"/>
+                    <map:parameter name="service" value="servlet:lexus-db:/schema-editor/getView.xml"/>
                 </map:transform>
 <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/display-view-3.xml"/>-->
                 <map:transform type="saxon" src="views/prepareViewForTransformation.xslt"/>
