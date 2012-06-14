@@ -6,3 +6,5 @@ Fixed new query/filter sequential naming
 Resize bar between wordlist and lexical entry detail
 Implemented logout functionality
 UI built on Flex sdk 4.6
+Logging for jetty under mvn jetty:run
+Refactored  project for more meaningful names
