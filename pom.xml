@@ -87,12 +87,12 @@
     </dependencies>
 
     <modules>
-        <module>db</module>
-        <module>display</module>
+        <module>lexus-db</module>
+        <module>lexus-display</module>
         <!--        <module>flexus</module>-->
-        <module>front</module>
-        <module>webapp</module>
-        <module>desktop</module>
+        <module>lexus-front</module>
+        <module>lexus-webapp</module>
+        <module>lexus-desktop</module>
         <!--        <module>VicosApp</module>-->
     </modules>
 
