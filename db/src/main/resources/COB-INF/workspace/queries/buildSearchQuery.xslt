@@ -224,57 +224,57 @@
                     	<xsl:text>'</xsl:text>
 	                </xsl:when>
 	                <xsl:when test="@condition eq 'contains'">
-	                	<xsl:text> contains(.//data[@schema-ref = "</xsl:text> 
+	                	<xsl:text>.//data[@schema-ref = "</xsl:text> 
 	                	<xsl:value-of select="@schema-ref"/>
-	                	<xsl:text>"]/value/text(), '</xsl:text>                           
+	                	<xsl:text>"]/.[contains(./value/text(), '</xsl:text>                           
 						<xsl:value-of select="replace(@value, '&quot;', '&amp;quot;')"/>
-                    	<xsl:text>') </xsl:text>
+                    	<xsl:text>')] </xsl:text>
 	                </xsl:when>
 	                <xsl:when test="@condition eq 'begins with'">
-	                	<xsl:text> starts-with(.//data[@schema-ref = "</xsl:text>
+	                	<xsl:text>.//data[@schema-ref = "</xsl:text>
 	                	<xsl:value-of select="@schema-ref"/>
-	                	<xsl:text>"]/value/text(), '</xsl:text>                           
+	                	<xsl:text>"]/.[starts-with(./value/text(), '</xsl:text>                           
 						<xsl:value-of select="replace(@value, '&quot;', '&amp;quot;')"/>
-                    	<xsl:text>') </xsl:text>
+                    	<xsl:text>')] </xsl:text>
 	               	</xsl:when>
 	                <xsl:when test="@condition eq 'ends with'">
-	                	<xsl:text> ends-with(.//data[@schema-ref = "</xsl:text>
+	                	<xsl:text>.//data[@schema-ref = "</xsl:text>
 	                	<xsl:value-of select="@schema-ref"/>
-	                	<xsl:text>"]/value/text(), '</xsl:text>                           
+	                	<xsl:text>"]/.ends-with(./value/text(), '</xsl:text>                           
 						<xsl:value-of select="replace(@value, '&quot;', '&amp;quot;')"/>
-                    	<xsl:text>') </xsl:text>
+                    	<xsl:text>')] </xsl:text>
 	                </xsl:when>
 	            </xsl:choose>
             </xsl:if>
             <xsl:if test="@caseSensitive eq 'false' or not(@caseSensitive )">
 	            <xsl:choose>
 	                <xsl:when test="@condition eq 'is'">
-	                	<xsl:text> upper-case(.//data[@schema-ref = "</xsl:text> 
+	                	<xsl:text>.//data[@schema-ref = "</xsl:text> 
 	                	<xsl:value-of select="@schema-ref"/>
-	                	<xsl:text>&quot;]/value/text() ) = '</xsl:text>                           
+	                	<xsl:text>&quot;]/.[upper-case(./value/text() ) = '</xsl:text>                           
                     	<xsl:value-of select="$uc"/>
-                    	<xsl:text>'</xsl:text>
+                    	<xsl:text>']</xsl:text>
 	                </xsl:when>
 	                <xsl:when test="@condition eq 'contains'">
-	                	<xsl:text> contains(upper-case(.//data[@schema-ref = "</xsl:text> 
+	                	<xsl:text>.//data[@schema-ref = "</xsl:text> 
 	                	<xsl:value-of select="@schema-ref"/>
-	                	<xsl:text>&quot;]/value/text() ), '</xsl:text>                           
+	                	<xsl:text>&quot;]/.[contains(upper-case(./value/text() ), '</xsl:text>                           
                     	<xsl:value-of select="$uc"/>
-                    	<xsl:text>') </xsl:text>
+                    	<xsl:text>')] </xsl:text>
                     </xsl:when>
 	                <xsl:when test="@condition eq 'begins with'">
-	                	<xsl:text> starts-with(upper-case(.//data[@schema-ref = "</xsl:text> 
+	                	<xsl:text>.//data[@schema-ref = "</xsl:text> 
 	                	<xsl:value-of select="@schema-ref"/>
-	                	<xsl:text>&quot;]/value/text() ), '</xsl:text>                           
+	                	<xsl:text>&quot;]/.[starts-with(upper-case(./value/text() ), '</xsl:text>                           
                     	<xsl:value-of select="$uc"/>
-                    	<xsl:text>') </xsl:text>
+                    	<xsl:text>')] </xsl:text>
 	                </xsl:when>
 	                <xsl:when test="@condition eq 'ends with'">
-	                	<xsl:text> ends-with(upper-case(.//data[@schema-ref = "</xsl:text> 
+	                	<xsl:text>.//data[@schema-ref = "</xsl:text> 
 	                	<xsl:value-of select="@schema-ref"/>
-	                	<xsl:text>&quot;]/value/text() ), '</xsl:text>                           
+	                	<xsl:text>&quot;]/.[ends-with(upper-case(./value/text() ), '</xsl:text>                           
                     	<xsl:value-of select="$uc"/>
-                    	<xsl:text>') </xsl:text>
+                    	<xsl:text>')] </xsl:text>
 	                </xsl:when>
 	            </xsl:choose>
             </xsl:if>
@@ -287,7 +287,7 @@
         </xsl:if>
     </xsl:template>
     
-    <!-- Determines datacategori element that is used for filtering and sorting. -->
+    <!-- Determines datacategory element that is used for filtering and sorting. -->
     <xsl:template name="determineFirstDC">
         <xsl:param name="meta" select="()"/>
         <xsl:variable name="firstListViewId" select="($meta/views/view[@id eq ../@listView]//data[@type eq 'data category'])[1]/@id"/>
