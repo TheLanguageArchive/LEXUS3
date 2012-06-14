@@ -38,7 +38,7 @@
                                     <String>XML</String>
                                 </field>
                                 <field name="url">
-                                    <String>front/src/main/resources/COB-INF/toolbox/toolbox_import/add-missing-parents.xslt</String>
+                                    <String>lexus-front/src/main/resources/COB-INF/toolbox/toolbox_import/add-missing-parents.xslt</String>
                                 </field>
                             </scenarioAssociation>
                             <scenarioAssociation>
@@ -49,7 +49,7 @@
                                     <String>XML</String>
                                 </field>
                                 <field name="url">
-                                    <String>front/src/main/resources/COB-INF/toolbox/toolbox_import/typ-structure-from-schema.xslt</String>
+                                    <String>lexus-front/src/main/resources/COB-INF/toolbox/toolbox_import/typ-structure-from-schema.xslt</String>
                                 </field>
                             </scenarioAssociation>
                             <scenarioAssociation>
@@ -60,7 +60,7 @@
                                     <String>XML</String>
                                 </field>
                                 <field name="url">
-                                    <String>../lexus-war/src/main/webapp/WEB-INF/resources/xslt/htmlViewToDsl.xsl</String>
+                                    <String>../lexus-war/src/main/lexus-webapp/WEB-INF/resources/xslt/htmlViewToDsl.xsl</String>
                                 </field>
                             </scenarioAssociation>
                             <scenarioAssociation>
@@ -268,10 +268,10 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/front/src/main/resources/COB-INF/toolbox/toolbox_import/add-missing-parents.xslt</String>
+                                    <String>file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/lexus-front/src/main/resources/COB-INF/toolbox/toolbox_import/add-missing-parents.xslt</String>
                                 </field>
                                 <field name="inputXMLURL">
-                                    <String>file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/front/debug-info/front-pre.xml</String>
+                                    <String>file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/lexus-front/debug-info/front-pre.xml</String>
                                 </field>
                                 <field name="defaultScenario">
                                     <Boolean>false</Boolean>
@@ -434,7 +434,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>file:/Users/huiver/Projecten/LAT/lexus/trunk/lexus-war/src/main/webapp/WEB-INF/resources/xslt/htmlViewToDsl.xsl</String>
+                                    <String>file:/Users/huiver/Projecten/LAT/lexus/trunk/lexus-war/src/main/lexus-webapp/WEB-INF/resources/xslt/htmlViewToDsl.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>
@@ -517,7 +517,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/front/src/main/resources/COB-INF/toolbox/toolbox_import/typ-structure-from-schema.xslt</String>
+                                    <String>file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/lexus-front/src/main/resources/COB-INF/toolbox/toolbox_import/typ-structure-from-schema.xslt</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>file:/Users/huiver/Documents/MPI/Toolbox/Conversies/Udish%20export/ConvertedToolbox/typ-generated-schema.xml</String>
@@ -688,7 +688,7 @@
                                     <String>Validation_scenario</String>
                                 </field>
                                 <field name="url">
-                                    <String>db/src/main/resources/COB-INF/workspace/queries/buildSearchQuery.xslt</String>
+                                    <String>lexus-db/src/main/resources/COB-INF/workspace/queries/buildSearchQuery.xslt</String>
                                 </field>
                             </scenarioAssociation>
                             <scenarioAssociation>
@@ -732,7 +732,7 @@
                                     <String>Validation_scenario</String>
                                 </field>
                                 <field name="url">
-                                    <String>front/src/main/resources/COB-INF/lexicon-editor/export/createAltFormatForLexicon.xsl</String>
+                                    <String>lexus-front/src/main/resources/COB-INF/lexicon-editor/export/createAltFormatForLexicon.xsl</String>
                                 </field>
                             </scenarioAssociation>
                         </scenarioAssociation-array>
@@ -795,7 +795,7 @@
                                                 </validationUnitType>
                                             </field>
                                             <field name="url">
-                                                <String>file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/db/src/main/resources/COB-INF/workspace/queries/searchQuery.xslt</String>
+                                                <String>file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/lexus-db/src/main/resources/COB-INF/workspace/queries/searchQuery.xslt</String>
                                             </field>
                                             <field name="validationEngine">
                                                 <validationEngine>
@@ -838,7 +838,7 @@
                                                 </validationUnitType>
                                             </field>
                                             <field name="url">
-                                                <String>file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/front/src/main/resources/COB-INF/lexicon-editor/export/createRELISHExportZip.xslt</String>
+                                                <String>file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/lexus-front/src/main/resources/COB-INF/lexicon-editor/export/createRELISHExportZip.xslt</String>
                                             </field>
                                             <field name="validationEngine">
                                                 <validationEngine>
@@ -951,7 +951,7 @@
                                                         <Integer>4</Integer>
                                                     </field>
                                                     <field name="uri">
-                                                        <String>file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/front/src/main/resources/COB-INF/workspace/import/lexusMeta.rng</String>
+                                                        <String>file:/Users/huiver/Projecten/LAT/lexus/trunk/LexusCocoon/lexus-front/src/main/resources/COB-INF/workspace/import/lexusMeta.rng</String>
                                                     </field>
                                                 </validationUnitSchema>
                                             </field>
