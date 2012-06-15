@@ -89,6 +89,34 @@
         <Arg type="boolean">false</Arg>
     </New>
     
+    <!-- 
+        Database configuration.
+    -->
+    <New id="db-rest-endpoint"  class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>LEXUS/db-rest-endpoint</Arg>
+        <Arg type="java.lang.String">http://localhost:8984/rest/</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    <New id="db-username"  class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>LEXUS/db-username</Arg>
+        <Arg type="java.lang.String">admin</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>    
+    <New id="db-password"  class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>LEXUS/db-password</Arg>
+        <Arg type="java.lang.String">admin</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    <New id="db-users-collection"  class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>LEXUS/db-users-collection</Arg>
+        <Arg type="java.lang.String">lexus</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    <New id="db-lexica-collection"  class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>LEXUS/db-lexica-collection</Arg>
+        <Arg type="java.lang.String">lexus</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
     
     <!--
         Vicos
