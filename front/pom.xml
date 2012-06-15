@@ -315,7 +315,6 @@
                                     <filtering>true</filtering>
                                     <directory>${basedir}/src/main/etc</directory>
                                     <includes>
-                                        <include>context.xml</include>
                                         <include>ehcache.xml</include>
                                     </includes>
                                 </resource>
