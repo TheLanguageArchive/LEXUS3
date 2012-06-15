@@ -34,8 +34,8 @@
             <map:match pattern="getQueries.xml">
                 <map:generate src="service-consumer:"/>
                 <map:transform type="saxon" src="getQueries.xslt">
-                    <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
-                    <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+                    <map:parameter name="lexica-collection" value="{naming:java:comp/env/LEXUS/db-lexica-collection}"/>
+                    <map:parameter name="users-collection" value="{naming:java:comp/env/LEXUS/db-users-collection}"/>
                 </map:transform>
                 <map:call resource="rest"/>
                 <map:serialize type="xml"/>
@@ -48,8 +48,8 @@
             <map:match pattern="getDataCategories.xml">
                 <map:generate src="service-consumer:"/>
                 <map:transform type="saxon" src="getDataCategories.xslt">
-                    <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
-                    <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+                    <map:parameter name="lexica-collection" value="{naming:java:comp/env/LEXUS/db-lexica-collection}"/>
+                    <map:parameter name="users-collection" value="{naming:java:comp/env/LEXUS/db-users-collection}"/>
                 </map:transform>
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/back-getdc-pre.xml"/>
@@ -66,8 +66,8 @@
             <map:match pattern="saveQuery.xml">
                 <map:generate src="service-consumer:"/>
                 <map:transform type="saxon" src="saveQuery.xslt">
-                    <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
-                    <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+                    <map:parameter name="lexica-collection" value="{naming:java:comp/env/LEXUS/db-lexica-collection}"/>
+                    <map:parameter name="users-collection" value="{naming:java:comp/env/LEXUS/db-users-collection}"/>
                 </map:transform>
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/back-save-query-1.xml"/>
@@ -86,8 +86,8 @@
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/back-delq-1.xml"/>
                 <map:transform type="saxon" src="deleteQuery.xslt">
-                    <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
-                    <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+                    <map:parameter name="lexica-collection" value="{naming:java:comp/env/LEXUS/db-lexica-collection}"/>
+                    <map:parameter name="users-collection" value="{naming:java:comp/env/LEXUS/db-users-collection}"/>
                 </map:transform>
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/back-delq-2.xml"/>
@@ -105,7 +105,7 @@
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/back-sq-0.xml"/>
                 <map:transform type="saxon" src="../../lexicon/getMetaForLexicaInQuery.xslt">
-                    <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"
+                    <map:parameter name="lexica-collection" value="{naming:java:comp/env/LEXUS/db-lexica-collection}"
                     />
                 </map:transform>
                 <map:transform type="${tee}"
@@ -118,8 +118,8 @@
                     src="{naming:java:comp/env/tee-folder}debug-info/back-sq-3.xml"/>
 
                 <map:transform type="saxon" src="searchQuery.xslt">
-                    <map:parameter name="lexica-collection" value="${xmldb.rest.lexica-collection}"/>
-                    <map:parameter name="users-collection" value="${xmldb.rest.users-collection}"/>
+                    <map:parameter name="lexica-collection" value="{naming:java:comp/env/LEXUS/db-lexica-collection}"/>
+                    <map:parameter name="users-collection" value="{naming:java:comp/env/LEXUS/db-users-collection}"/>
                 </map:transform>
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/back-sq-4.xml"/>
@@ -140,12 +140,12 @@
             </map:transform>
             <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-rest-1.xml"/>
             <map:transform type="saxon" src="../../util/${xmldb.rest.transformer}">
-                <map:parameter name="endpoint" value="${xmldb.rest.endpoint}"/>
+                <map:parameter name="endpoint" value="{naming:java:comp/env/LEXUS/db-rest-endpoint}"/>
             </map:transform>
                         <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-rest-2.xml"/>
             <map:transform type="rest">
-                <map:parameter name="username" value="${xmldb.rest.username}"/>
-                <map:parameter name="password" value="${xmldb.rest.password}"/>
+                <map:parameter name="username" value="{naming:java:comp/env/LEXUS/db-username}"/>
+                <map:parameter name="password" value="{naming:java:comp/env/LEXUS/db-password}"/>
             </map:transform>
             <!--            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-rest-3.xml"/>-->
             <map:transform type="saxon" src="../../util/extractDataFromRestResponse.xslt"/>
