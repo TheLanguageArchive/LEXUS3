@@ -7,6 +7,7 @@
   <!--
     <Manager pathname="" />
   -->
+  <!--Folder where to place the tee debugger files. Just used when running Lexus with -Dorg.apache.cocoon.mode=dev -->
   <Environment name="tee-folder" override="false" type="java.lang.String" value="../lexus-front/"/>
   <!-- Lexus database variables -->
   <Environment name="LEXUS/db-rest-endpoint" override="false" type="java.lang.String" value="http://localhost:8984/rest/"/>
