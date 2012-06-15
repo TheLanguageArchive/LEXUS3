@@ -7,7 +7,14 @@
   <!--
     <Manager pathname="" />
   -->
-  <Environment name="tee-folder" override="false" type="java.lang.String" value="/tmp/tee"/>
+  <Environment name="tee-folder" override="false" type="java.lang.String" value="../lexus-front/"/>
+  <!-- Lexus database variables -->
+  <Environment name="LEXUS/db-rest-endpoint" override="false" type="java.lang.String" value="http://localhost:8984/rest/"/>
+  <Environment name="LEXUS/db-username" override="false" type="java.lang.String" value="admin"/>
+  <Environment name="LEXUS/db-password" override="false" type="java.lang.String" value="admin"/>
+  <Environment name="LEXUS/db-users-collection" override="false" type="java.lang.String" value="lexus"/>
+  <Environment name="LEXUS/db-lexica-collection" override="false" type="java.lang.String" value="lexus"/>
+  
   <!--VICOS VARIABLES-->
   <Environment name="VICOS/contextPath" override="false" type="java.lang.String" value="lex/vicos"/>
   <!--LEXUS Environment variables -->
