@@ -25,8 +25,10 @@
     </xsl:template>
 
     <xsl:template match="text">
+        <xhtml:span xmlns="http://www.w3.org/1999/xhtml">
             <xsl:apply-templates select="@*"/>
             <xsl:apply-templates select="text() | node()"/>
+        </xhtml:span>
     </xsl:template>
 
     <xsl:template match="table">
