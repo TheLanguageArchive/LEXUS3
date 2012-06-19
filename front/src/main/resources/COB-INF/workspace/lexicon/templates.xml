@@ -1,0 +1,52 @@
+<templates xmlns="http://www.mpi.nl/lexus">
+    <template version="1.0" name="Default Template" description="The default lexicon structure of LEXUS 2.">
+        <schema>
+            <container id="schema-l-id" admin-info=""
+                description="The container for all the lexical entries of a source language within the database. A Lexicon must contain at least one lexical entry"
+                name="Lexicon" type="lexicon">
+                <container id="schema-le-id" admin-info=""
+                    description="Represents a word, a multi-word expression, or an affix in a given language"
+                    name="Lexical Entry" type="lexical-entry">
+                    <container id="schema-form-id" admin-info=""
+                        description="Represents one lexical variant of the written or spoken form of the lexical entry"
+                        name="Form" type="container">
+                        <datacategory id="schema-lexeme-id" admin-info=""
+                            description="Main word of the lexical entry" mandatory="true"
+                            multiple="false" name="Lexeme" type="data" reference="http://www.isocat.org/datcat/DC-1325"
+                            registry="12620"/>
+                    </container>
+                    <container id="schema-sense-id" admin-info=""
+                        description="Contains attributes that describe meanings of a lexical entry"
+                        name="Sense" type="container"/>
+                </container>
+            </container>
+        </schema>
+        <views listView="listViewId" lexicalEntryView="leViewId">
+            <view id="listViewId" type="dsl_view" isBranch="true" name="List view"
+                description="Created by Lexus.">
+                <style/>
+                <structure isBranch="true">
+                    <show optional="false" isBranch="true" type="dsl_show" name="Decorator"
+                        dsl_class="">
+                        <data isBranch="false" type="data category" name="Lexeme"
+                            id="schema-lexeme-id"/>
+                    </show>
+                </structure>
+            </view>
+            <view id="leViewId" isBranch="true" name="Lexical Entry View"
+                description="Created by Lexus." type="dsl_view">
+                <style type="dsl_style"> body { background-color : #333333; } .lexeme { font-size :
+                    20pt; color : grey; }</style>
+                <structure isBranch="true">
+                    <show type="dsl_show" name="Decorator" isBranch="true" dsl_class="lexeme"
+                        optional="false" block="false" localStyle="false">
+                        <data isBranch="false" type="data category" name="Lexeme"
+                            id="schema-lexeme-id"/>
+                    </show>
+                </structure>
+            </view>
+        </views>
+
+    </template>
+    
+</templates>

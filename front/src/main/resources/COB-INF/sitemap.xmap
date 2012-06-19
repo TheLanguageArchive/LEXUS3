@@ -414,7 +414,12 @@
                 <map:redirect-to uri="index.html?msg=1"/>
             </map:match>
 
-
+			<map:match pattern="LexusWorkspaceEditor/listTemplates">
+                <map:mount uri-prefix="LexusWorkspaceEditor/" src="workspace/sitemap.xmap"/>
+            </map:match>
+            <map:match pattern="LexusWorkspaceEditor/listTemplates.json">
+                <map:mount uri-prefix="LexusWorkspaceEditor/" src="workspace/sitemap.xmap"/>
+            </map:match>
             <map:match pattern="LexusWorkspaceEditor/reOrder.xml">
                 <map:mount uri-prefix="LexusWorkspaceEditor/" src="workspace/sitemap.xmap"/>
             </map:match>
