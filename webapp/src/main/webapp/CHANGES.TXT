@@ -1,12 +1,12 @@
 This is a staging version!
 
-Fixed tickets: #772 #1704 #1872 #1990 #1997 #2010
+Fixed tickets: #772 #1473 #1482 #1704 #1872 #1987 #1990 #1997 #2010
 
 Fixed new query/filter sequential naming.
 Resize bar between wordlist and lexical entry detail.
 Implemented logout functionality.
 Database configuration specified in the context file.
-UI built on Flex sdk 4.6
+UI libraries upgrade: built on Flex sdk 4.6
 Logging for jetty under 'mvn jetty:run'.
 Tee debugger files for tomcat under 'mvn tomcat:run-war'.
 Refactored  project for more meaningful names.
