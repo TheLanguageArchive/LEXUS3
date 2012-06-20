@@ -225,15 +225,32 @@
                     	<xsl:text>]</xsl:text>
 	                </xsl:when>
 	                <xsl:when test="@condition eq 'contains'">
-	                	<xsl:text>.//data[@schema-ref = "</xsl:text> 
-	                	<xsl:value-of select="@schema-ref"/>
-	                	<xsl:text>"]/value[</xsl:text> 
-	                	<xsl:if test="@negation eq 'true'"><xsl:text>not(</xsl:text></xsl:if>
-	                	<xsl:text>contains(., '</xsl:text>                           
-						<xsl:value-of select="replace(@value, '&quot;', '&amp;quot;')"/>
-                    	<xsl:text>')</xsl:text>
-                    	<xsl:if test="@negation eq 'true'"><xsl:text>)</xsl:text></xsl:if>
-                    	<xsl:text>]</xsl:text>
+		                <!-- We separatly treat the case where the empty string is specified as search string, so
+		                this situation can be used to search for entries which contain (or not) a certain DC -->
+		                <xsl:choose>
+		                	<xsl:when test="$uc eq ''">
+			                	<xsl:if test="@negation eq 'true'"><xsl:text>not(</xsl:text></xsl:if>
+			                	<xsl:text>.//data[@schema-ref = "</xsl:text> 
+			                	<xsl:value-of select="@schema-ref"/>
+			                	<xsl:text>"]/value[</xsl:text>
+			                	<xsl:text>contains(., '</xsl:text>                           
+								<xsl:value-of select="replace(@value, '&quot;', '&amp;quot;')"/>
+		                    	<xsl:text>')</xsl:text>
+		                    	<xsl:text>]</xsl:text>
+		                    	<xsl:if test="@negation eq 'true'"><xsl:text>)</xsl:text></xsl:if>
+		                	</xsl:when>
+		                	<xsl:otherwise>
+			                	<xsl:text>.//data[@schema-ref = "</xsl:text> 
+			                	<xsl:value-of select="@schema-ref"/>
+			                	<xsl:text>"]/value[</xsl:text> 
+			                	<xsl:if test="@negation eq 'true'"><xsl:text>not(</xsl:text></xsl:if>
+			                	<xsl:text>contains(., '</xsl:text>                           
+								<xsl:value-of select="replace(@value, '&quot;', '&amp;quot;')"/>
+		                    	<xsl:text>')</xsl:text>
+		                    	<xsl:if test="@negation eq 'true'"><xsl:text>)</xsl:text></xsl:if>
+		                    	<xsl:text>]</xsl:text>
+	                    	</xsl:otherwise>
+	                    </xsl:choose>
 	                </xsl:when>
 	                <xsl:when test="@condition eq 'begins with'">
 	                	<xsl:text>.//data[@schema-ref = "</xsl:text>
@@ -273,15 +290,32 @@
                     	<xsl:text>]</xsl:text>
 	                </xsl:when>
 	                <xsl:when test="@condition eq 'contains'">
-	                	<xsl:text>.//data[@schema-ref = "</xsl:text> 
-	                	<xsl:value-of select="@schema-ref"/>
-	                	<xsl:text>&quot;]/value[</xsl:text>
-	                	<xsl:if test="@negation eq 'true'"><xsl:text>not(</xsl:text></xsl:if>
-	                	<xsl:text>contains(upper-case(.), '</xsl:text>                           
-                    	<xsl:value-of select="$uc"/>
-                    	<xsl:text>')</xsl:text>
-                    	<xsl:if test="@negation eq 'true'"><xsl:text>)</xsl:text></xsl:if>
-                    	<xsl:text>]</xsl:text>
+		                <!-- We separatly treat the case where the empty string is specified as search string, so
+		                this situation can be used to search for entries which contain (or not) a certain DC -->
+		                <xsl:choose>
+		                	<xsl:when test="$uc eq ''">
+			                	<xsl:if test="@negation eq 'true'"><xsl:text>not(</xsl:text></xsl:if>
+			                	<xsl:text>.//data[@schema-ref = "</xsl:text> 
+			                	<xsl:value-of select="@schema-ref"/>
+			                	<xsl:text>&quot;]/value[</xsl:text>
+			                	<xsl:text>contains(upper-case(.), '</xsl:text>                           
+		                    	<xsl:value-of select="$uc"/>
+		                    	<xsl:text>')</xsl:text>
+		                    	<xsl:text>]</xsl:text>
+		                    	<xsl:if test="@negation eq 'true'"><xsl:text>)</xsl:text></xsl:if>
+		                	</xsl:when>
+		                	<xsl:otherwise>
+			                	<xsl:text>.//data[@schema-ref = "</xsl:text> 
+			                	<xsl:value-of select="@schema-ref"/>
+			                	<xsl:text>&quot;]/value[</xsl:text>
+			                	<xsl:if test="@negation eq 'true'"><xsl:text>not(</xsl:text></xsl:if>
+			                	<xsl:text>contains(upper-case(.), '</xsl:text>                           
+		                    	<xsl:value-of select="$uc"/>
+		                    	<xsl:text>')</xsl:text>
+		                    	<xsl:if test="@negation eq 'true'"><xsl:text>)</xsl:text></xsl:if>
+		                    	<xsl:text>]</xsl:text>
+		                	</xsl:otherwise>
+		                </xsl:choose>
                     </xsl:when>
 	                <xsl:when test="@condition eq 'begins with'">
 	                	<xsl:text>.//data[@schema-ref = "</xsl:text> 
