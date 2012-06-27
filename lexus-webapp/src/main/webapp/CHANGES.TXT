@@ -1,3 +1,5 @@
 This is a staging version!
 
-Fixed tickets:
+Fixed tickets: #1928 #1986 #1989 #2015 #2068
+
+Synchronization of data category names and id's between lexicon schema tree and views structure tree.
