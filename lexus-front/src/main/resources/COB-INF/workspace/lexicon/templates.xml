@@ -1,13 +1,13 @@
 <templates xmlns="http://www.mpi.nl/lexus">
     <template version="1.0" name="Default Template" description="The default lexicon structure of LEXUS 2.">
         <schema>
-            <container id="schema-l-id" admin-info=""
+            <container id="schema-l-id" admin-info="" mandatory="true" multiple="false"
                 description="The container for all the lexical entries of a source language within the database. A Lexicon must contain at least one lexical entry"
                 name="Lexicon" type="lexicon">
-                <container id="schema-le-id" admin-info=""
+                <container id="schema-le-id" admin-info="" mandatory="true" multiple="true"
                     description="Represents a word, a multi-word expression, or an affix in a given language"
                     name="Lexical Entry" type="lexical-entry">
-                    <container id="schema-form-id" admin-info=""
+                    <container id="schema-form-id" admin-info="" mandatory="true" multiple="false"
                         description="Represents one lexical variant of the written or spoken form of the lexical entry"
                         name="Form" type="container">
                         <datacategory id="schema-lexeme-id" admin-info=""
@@ -15,7 +15,7 @@
                             multiple="false" name="Lexeme" type="data" reference="http://www.isocat.org/datcat/DC-1325"
                             registry="12620"/>
                     </container>
-                    <container id="schema-sense-id" admin-info=""
+                    <container id="schema-sense-id" admin-info="" mandatory="true" multiple="true"
                         description="Contains attributes that describe meanings of a lexical entry"
                         name="Sense" type="container"/>
                 </container>
