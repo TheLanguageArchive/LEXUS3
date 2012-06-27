@@ -28,7 +28,7 @@
                 <structure isBranch="true">
                     <show optional="false" isBranch="true" type="dsl_show" name="Decorator"
                         dsl_class="">
-                        <data isBranch="false" type="data category" name="Lexeme"
+                        <data isBranch="false" type="data category" name="Data Category"
                             id="schema-lexeme-id"/>
                     </show>
                 </structure>
@@ -40,7 +40,7 @@
                 <structure isBranch="true">
                     <show type="dsl_show" name="Decorator" isBranch="true" dsl_class="lexeme"
                         optional="false" block="false" localStyle="false">
-                        <data isBranch="false" type="data category" name="Lexeme"
+                        <data isBranch="false" type="data category" name="Data Category"
                             id="schema-lexeme-id"/>
                     </show>
                 </structure>

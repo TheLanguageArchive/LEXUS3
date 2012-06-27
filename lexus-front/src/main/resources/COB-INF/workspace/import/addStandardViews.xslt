@@ -71,7 +71,7 @@
                         <lexus:show type="dsl_show" name="Decorator" color="0x333333" fontSize="12"
                             fontFamily="Arial" isBranch="true" dsl_class="lexeme" optional="false"
                             localStyle="true">
-                            <lexus:data id="{$lexemeId}" name="Lexeme" type="data category"
+                            <lexus:data id="{$lexemeId}" name="Data Category" type="data category"
                                 isBranch="false"/>
                         </lexus:show>
                     </lexus:structure>
@@ -89,7 +89,7 @@
 </lexus:style>
                     <lexus:structure isBranch="true" dsl_class="base">
                         <lexus:show optional="false" isBranch="true" type="dsl_show" name="Container" dsl_class="lexeme" localStyle="false">
-                            <lexus:data isBranch="false" type="data category" name="Lexeme" id="{$lexemeId}"/>
+                            <lexus:data isBranch="false" type="data category" name="Data Category" id="{$lexemeId}"/>
                         </lexus:show>
                     </lexus:structure>
                 </lexus:view>
