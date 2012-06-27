@@ -44,7 +44,7 @@
         <xsl:param name="map" tunnel="yes"/>
         <container id="{concat('uuid:',util:toString(util:randomUUID()))}"
             schema-ref="{$map//entry[from=current()/@id]/to}" name="{@name}">
-            <xsl:apply-templates mode="#current"/>
+            <xsl:if test="count(./*) > 0"><xsl:apply-templates mode="#current"/></xsl:if>
         </container>
     </xsl:template>
 
