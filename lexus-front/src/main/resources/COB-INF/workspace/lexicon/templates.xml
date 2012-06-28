@@ -7,7 +7,7 @@
                 <container id="schema-le-id" admin-info="" mandatory="true" multiple="true"
                     description="Represents a word, a multi-word expression, or an affix in a given language"
                     name="Lexical Entry" type="lexical-entry">
-                    <container id="schema-form-id" admin-info="" mandatory="true" multiple="false"
+                    <container id="schema-form-id" admin-info="" mandatory="true" multiple="true"
                         description="Represents one lexical variant of the written or spoken form of the lexical entry"
                         name="Form" type="container">
                         <datacategory id="schema-lexeme-id" admin-info=""
@@ -15,7 +15,7 @@
                             multiple="false" name="Lexeme" type="data" reference="http://www.isocat.org/datcat/DC-1325"
                             registry="12620"/>
                     </container>
-                    <container id="schema-sense-id" admin-info="" mandatory="true" multiple="true"
+                    <container id="schema-sense-id" admin-info="" mandatory="false" multiple="true"
                         description="Contains attributes that describe meanings of a lexical entry"
                         name="Sense" type="container"/>
                 </container>
