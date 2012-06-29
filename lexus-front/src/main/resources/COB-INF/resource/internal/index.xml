@@ -158,10 +158,10 @@
 
     <body onload="setFocus(); writebanner(); displayMessage();" onunload="stoptimer()">
 
-        <marquee direction="left" scrolldelay="1" style="x:0; y:0; width=100%; height=80; color:#ff0000; font-size:60pt; 
-            text-shadow : #000 0px 0px 5px;"
-            behavior="slide" scrollamount="10" width="500" height="80" loop="true">
-            BETA</marquee>
+<!--        <marquee direction="left" scrolldelay="1" style="x:0; y:0; width=100%; height=80; color:#ff0000; font-size:60pt; -->
+<!--            text-shadow : #000 0px 0px 5px;"-->
+<!--            behavior="slide" scrollamount="10" width="500" height="80" loop="true">-->
+<!--            BETA</marquee>-->
         
         <div id="banner" class="banner"></div>
 
@@ -189,7 +189,7 @@
         </form>
 
         <div id="announcement">
-            Welcome to the <a href="http://ems03.mpi.nl/lexus/wordpress/">3.0-beta-2</a> release of Lexus.
+            Welcome to <a href="http://ems03.mpi.nl/lexus/wordpress/">Lexus 3.0 Release candidate</a>.
             <a href="#" onclick="popitup('announcement-3.0-beta.html'); return false;">Click here</a> for more information.
         </div>
         
