@@ -1,6 +1,7 @@
 This is a staging version!
 
-Fixed tickets: #1928 #1986 #1989 #2015 #2068
+Fixed tickets: #1533 #1928 #1986 #1989 #1995 #2015 #2068 #2093
 
 Synchronization of data category names and id's between lexicon schema tree and views structure tree.
 Minor drag and drop and tree update fixes.
+Release candidate version
