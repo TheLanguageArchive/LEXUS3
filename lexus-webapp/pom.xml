@@ -33,7 +33,6 @@
 
     <artifactId>lexus-webapp</artifactId>
     <name>lexus-webapp</name>
-    <!-- -r${buildNumber} -->
 
     <dependencies>
         <dependency>
@@ -53,35 +52,36 @@
         </dependency>
     </dependencies>
     <build>
-    <plugins>
-    	<plugin>
-        	<artifactId>maven-clean-plugin</artifactId>
-            <version>2.4.1</version>
-            <configuration>
-            	<filesets>
-                    <fileset>
-                    	<directory>../lexus-front/debug-info</directory>
-                    	<excludes>
-                        	<exclude>.svn</exclude>
-                        	<exclude>.svn/*</exclude>
-                        </excludes>
-                        <followSymlinks>false</followSymlinks>
-                    </fileset>
-                </filesets>
-            </configuration>
-		</plugin>
-        <plugin>
-			<groupId>org.codehaus.mojo</groupId>
-			<artifactId>tomcat-maven-plugin</artifactId>
-			<version>1.1</version>
-			<configuration>
-				<path>/lex/lexus</path>
-				<warDirectory>${project.build.directory}/${project.build.finalName}</warDirectory>
-				<configurationDir>${project.build.directory}/tomcat</configurationDir>
-				<contextFile>${project.build.directory}/${project.build.finalName}/META-INF/context.xml</contextFile>
-			</configuration>
-		</plugin>
-    </plugins>
+	    <finalName>${project.artifactId}-${project.version}-r${buildNumber}</finalName>
+	    <plugins>
+	    	<plugin>
+	        	<artifactId>maven-clean-plugin</artifactId>
+	            <version>2.4.1</version>
+	            <configuration>
+	            	<filesets>
+	                    <fileset>
+	                    	<directory>../lexus-front/debug-info</directory>
+	                    	<excludes>
+	                        	<exclude>.svn</exclude>
+	                        	<exclude>.svn/*</exclude>
+	                        </excludes>
+	                        <followSymlinks>false</followSymlinks>
+	                    </fileset>
+	                </filesets>
+	            </configuration>
+			</plugin>
+	        <plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>tomcat-maven-plugin</artifactId>
+				<version>1.1</version>
+				<configuration>
+					<path>/lex/lexus</path>
+					<warDirectory>${project.build.directory}/${project.build.finalName}</warDirectory>
+					<configurationDir>${project.build.directory}/tomcat</configurationDir>
+					<contextFile>${project.build.directory}/${project.build.finalName}/META-INF/context.xml</contextFile>
+				</configuration>
+			</plugin>
+	    </plugins>
     </build>
     <properties>
         <netbeans.hint.deploy.server>Tomcat55</netbeans.hint.deploy.server>
