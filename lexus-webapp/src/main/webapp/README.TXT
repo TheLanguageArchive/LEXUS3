@@ -1,4 +1,4 @@
-LEXUS-3.0-RC-r31661
+LEXUS-3.0-SNAPSHOT-r${buildNumber}
 
  What is it?
  -----------
@@ -11,7 +11,7 @@ Lexus uses Adobe Flex for the front-end application. The server side is XML base
  The Latest Version
  ------------------
 
-LEXUS-3.0-RC-r31661
+LEXUS-3.0-SNAPSHOT-r${buildNumber}
 
 
  Documentation
