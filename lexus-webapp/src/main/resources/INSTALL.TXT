@@ -1,0 +1,50 @@
+LEXUS-3.0-SNAPSHOT-r${buildNumber} install notes:
+
+
+Software requirements:
+----------------------
+1. Server oriented OS capable of running the specified versions of
+Tomcat and BaseX.
+
+2. Apache Tomcat 5.5.x or Jetty 6.1.9. Other JAVA servlet containers
+should be possible but were not tested.
+
+3. BaseX 7.0.2 as XML database engine. Though other database engines are 
+possible to be used, fast and reliable operation is not warranted.
+
+
+Installation:
+-------------
+1. Download and install BaseX 7.0.2 from:
+http://files.basex.org/releases
+
+2. Create a new database user in BaseX (by default LEXUS uses the "admin"
+user available by default in BaseX with password "admin"). See BaseX 
+documentation at:
+http://docs.basex.org/wiki/Main_Page
+
+3. Create a database for LEXUS to use (by default LEXUS expects its database
+to be called "lexus").
+
+4. Download and install Apache Tomcat 5.5.x from:
+http://tomcat.apache.org
+See available documentation.
+
+5. Set up the servlet context file to use the user and database values
+defined in steps 2 and 3. A Tomcat sample context file can be found in:
+META-INF/context.xml.
+Also set up other servlet aspects as the LEXUS web application URL.
+
+6. Deploy LEXUS-3.0-SNAPSHOT-r${buildNumber}.war to you Tomcat
+installation.
+
+7. Start Tomcat with the options:
+-> -Djavax.xml.transform.TransformerFactory=org.apache.xalan.processor.TransformerFactoryImpl 
+(Use Xalan as XML XSLT processor. Saxon default transformer breaks LEXUS 
+HTML views)
+-> -Dorg.apache.cocoon.mode=prod (run cocoon is production mode so it
+does not generate 'tee' debug files)
+
+
+ 
+
