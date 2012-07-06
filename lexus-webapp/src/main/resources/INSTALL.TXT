@@ -35,7 +35,7 @@ defined in steps 2 and 3. A Tomcat sample context file can be found in:
 META-INF/context.xml.
 Also set up other servlet aspects as the LEXUS web application URL.
 
-6. Deploy lexus-webapp-3.0-SNAPSHOT-r${buildNumber}.war to you Tomcat
+6. Deploy lexus-webapp-3.0-SNAPSHOT-r${buildNumber}.war to your Tomcat
 installation.
 
 7. Start Tomcat with the options:
