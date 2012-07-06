@@ -1,6 +1,8 @@
+Changes for:
 LEXUS-3.0-SNAPSHOT-r${buildNumber}
-This is a staging version!
 
 Fixed tickets:
 
+
+Other issues:
 Fixed problem with names for new views in some particular cases

@@ -1,6 +1,7 @@
 To upgrade from the previous version:
 
-Deploy LEXUS-3.0-SNAPSHOT-r${buildNumber}.war to tomcat-lexical @lux17. 
+Deploy LEXUS-3.0-SNAPSHOT-r${buildNumber}.war to the servlet container
+where LEXUS was previously running. 
 
 
 Previously installed version:
