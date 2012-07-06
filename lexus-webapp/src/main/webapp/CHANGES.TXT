@@ -1,5 +1,0 @@
-This is a staging version!
-
-Fixed tickets:
-
-Fixed problem with names for new views in some particular cases
