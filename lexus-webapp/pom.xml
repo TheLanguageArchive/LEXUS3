@@ -82,6 +82,13 @@
 				</configuration>
 			</plugin>
 	    </plugins>
+	    <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <targetPath>${basedir}/src/main/webapp</targetPath>
+            </resource>
+        </resources>
     </build>
     <properties>
         <netbeans.hint.deploy.server>Tomcat55</netbeans.hint.deploy.server>
