@@ -24,6 +24,11 @@ from and stores data to the database.
 LEXUS-3.0-SNAPSHOT-r${buildNumber}
 
 
+ Changes
+--------
+Please see the file called CHANGES.TXT 
+
+
  Documentation
  -------------
 The documentation available as of the date of this release:
@@ -37,14 +42,14 @@ https://trac.mpi.nl/wiki/Lexus
 
  Installation
  ------------
-Please see the file called INSTALL. 
+Please see the file called INSTALL.TXT 
 
 
- Upgrading
+ Upgrade
  ------------
-Please see the file called UPGRADE.
+Please see the file called UPGRADE.TXT
 
 
- Licensing
+ License
  ---------
-See the file called LICENSES.
+See the file called LICENSES.TXT
