@@ -67,6 +67,14 @@
 	                        </excludes>
 	                        <followSymlinks>false</followSymlinks>
 	                    </fileset>
+	                    <fileset>
+	                    	<directory>${basedir}/src/main/webapp/WEB-INF/lib</directory>
+	                    	<excludes>
+	                        	<exclude>.svn</exclude>
+	                        	<exclude>.svn/*</exclude>
+	                        </excludes>
+	                        <followSymlinks>false</followSymlinks>
+	                    </fileset>
 	                </filesets>
 	            </configuration>
 			</plugin>
@@ -87,6 +95,14 @@
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
                 <targetPath>${basedir}/src/main/webapp</targetPath>
+                <excludes>
+                	<exclude>legal/</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/resources/legal</directory>
+                <filtering>false</filtering>
+                <targetPath>${basedir}/src/main/webapp/WEB-INF/lib/legal</targetPath>
             </resource>
         </resources>
     </build>
