@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -178,7 +176,7 @@ public class ImdiArchiveTransformer extends AbstractTransformer {
                                 attrs.addAttribute("", METADATA_URL_ATTRIBUTE, METADATA_URL_ATTRIBUTE, "CDATA", this.IMDIHandlerContextPath + "?openpath=" + URLEncoder.encode(nodeId, "utf-8"));
                             } catch (UnsupportedEncodingException ex) {
                             	getLogger().error(null, ex);
-                                Logger.getLogger(ImdiArchiveTransformer.class.getName()).log(Level.SEVERE, null, ex);
+                                //Logger.getLogger(ImdiArchiveTransformer.class.getName()).log(Level.SEVERE, null, ex);
                             }                            
                             
                             attrs.addAttribute("", FORMAT_ATTRIBUTE, FORMAT_ATTRIBUTE, "CDATA", node.getFormat());
