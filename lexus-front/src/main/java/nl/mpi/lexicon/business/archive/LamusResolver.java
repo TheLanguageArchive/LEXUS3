@@ -10,12 +10,12 @@ import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 
-import mpi.corpusstructure.ArchiveAccessContext;
-import mpi.corpusstructure.CorpusStructureDB;
-import mpi.corpusstructure.CorpusStructureDBImpl;
-import mpi.corpusstructure.Node;
-import mpi.corpusstructure.UnknownNodeException;
-import mpi.util.OurURL;
+import nl.mpi.corpusstructure.ArchiveAccessContext;
+import nl.mpi.corpusstructure.CorpusStructureDB;
+import nl.mpi.corpusstructure.CorpusStructureDBImpl;
+import nl.mpi.corpusstructure.Node;
+import nl.mpi.corpusstructure.UnknownNodeException;
+import nl.mpi.util.OurURL;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

@@ -41,7 +41,6 @@ public class JSONField extends AbstractAction {
 
     private String requestParameter;
 
-    @Override
     public Map act(Redirector redirector,
             SourceResolver resolver,
             Map objectModel,

@@ -11,12 +11,12 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 
-import mpi.corpusstructure.ArchiveAccessContext;
-import mpi.corpusstructure.CorpusStructureDB;
-import mpi.corpusstructure.CorpusStructureDBImpl;
-import mpi.corpusstructure.Node;
-import mpi.corpusstructure.UnknownNodeException;
-import mpi.util.OurURL;
+import nl.mpi.corpusstructure.ArchiveAccessContext;
+import nl.mpi.corpusstructure.CorpusStructureDB;
+import nl.mpi.corpusstructure.CorpusStructureDBImpl;
+import nl.mpi.corpusstructure.Node;
+import nl.mpi.corpusstructure.UnknownNodeException;
+import nl.mpi.util.OurURL;
 import nl.mpi.lexus.resource.ResourceType;
 
 import org.apache.avalon.framework.parameters.Parameters;
@@ -79,15 +79,15 @@ public class ImdiArchiveTransformer extends AbstractTransformer {
     public void configure(Configuration configuration) {
         this.EAFHandlerContextPath = configuration.getChild(CONF_EAF_HANDLER).getValue(DefaultEAFHandler);
         this.IMDIHandlerContextPath = configuration.getChild(CONF_IMDI_HANDLER).getValue(DefaultIMDIHandler);
-       // getLogger().info("this.EAFHandlerContextPath=" + this.EAFHandlerContextPath);
-       // getLogger().info("this.IMDIHandlerContextPath=" + this.IMDIHandlerContextPath);
-        Logger.getLogger(ImdiArchiveTransformer.class.getName()).info("this.EAFHandlerContextPath=" + this.EAFHandlerContextPath);
-        Logger.getLogger(ImdiArchiveTransformer.class.getName()).info("this.IMDIHandlerContextPath=" + this.IMDIHandlerContextPath);
+        getLogger().info("this.EAFHandlerContextPath=" + this.EAFHandlerContextPath);
+        getLogger().info("this.IMDIHandlerContextPath=" + this.IMDIHandlerContextPath);
+      //  Logger.getLogger(ImdiArchiveTransformer.class.getName()).info("this.EAFHandlerContextPath=" + this.EAFHandlerContextPath);
+      //  Logger.getLogger(ImdiArchiveTransformer.class.getName()).info("this.IMDIHandlerContextPath=" + this.IMDIHandlerContextPath);
 
 
     }
 
-    @Override
+    
     public void setup(SourceResolver resolver, Map objectModel, String src, Parameters par)
             throws ProcessingException, SAXException, IOException {
         response = ObjectModelHelper.getResponse(objectModel);
@@ -99,10 +99,10 @@ public class ImdiArchiveTransformer extends AbstractTransformer {
             IMDIHandlerContextPath = par.getParameter(SETUP_IMDI_HANDLER, "");
         }
 
-        //getLogger().info("this.EAFHandlerContextPath=" + this.EAFHandlerContextPath);
-        //getLogger().info("this.IMDIHandlerContextPath=" + this.IMDIHandlerContextPath);
-        Logger.getLogger(ImdiArchiveTransformer.class.getName()).info("this.EAFHandlerContextPath=" + this.EAFHandlerContextPath);
-        Logger.getLogger(ImdiArchiveTransformer.class.getName()).info("this.IMDIHandlerContextPath=" + this.IMDIHandlerContextPath);
+        getLogger().info("this.EAFHandlerContextPath=" + this.EAFHandlerContextPath);
+        getLogger().info("this.IMDIHandlerContextPath=" + this.IMDIHandlerContextPath);
+        //Logger.getLogger(ImdiArchiveTransformer.class.getName()).info("this.EAFHandlerContextPath=" + this.EAFHandlerContextPath);
+        //Logger.getLogger(ImdiArchiveTransformer.class.getName()).info("this.IMDIHandlerContextPath=" + this.IMDIHandlerContextPath);
 
         this.objectModel = objectModel;
     }
@@ -117,32 +117,32 @@ public class ImdiArchiveTransformer extends AbstractTransformer {
                 String nodeId = attributes.getValue(ID_ATTRIBUTE);
                 AttributesImpl attrs = new AttributesImpl();
 
-                //getLogger().info("nodeId=" + nodeId);
-                Logger.getLogger(ImdiArchiveTransformer.class.getName()).info("nodeId=" + nodeId);
+                getLogger().info("nodeId=" + nodeId);
+                //Logger.getLogger(ImdiArchiveTransformer.class.getName()).info("nodeId=" + nodeId);
 
                 Context initCtx;
                 try {
                     initCtx = new InitialContext();
-                    Logger.getLogger(ImdiArchiveTransformer.class.getName()).info("initCtx = " + initCtx);
-                    //getLogger().info("initCtx = " + initCtx);
+                    //Logger.getLogger(ImdiArchiveTransformer.class.getName()).info("initCtx = " + initCtx);
+                    getLogger().info("initCtx = " + initCtx);
 
                     Context envCtx = (Context) initCtx.lookup("java:comp/env");
-                    Logger.getLogger(ImdiArchiveTransformer.class.getName()).info("envCtx = " + envCtx);
-                    //getLogger().info("envCtx = " + envCtx);
+                    //Logger.getLogger(ImdiArchiveTransformer.class.getName()).info("envCtx = " + envCtx);
+                    getLogger().info("envCtx = " + envCtx);
 
                     String dbURL = (String) envCtx.lookup("jdbc/CSDB");
-                    Logger.getLogger(ImdiArchiveTransformer.class.getName()).info("Corpus dbURL = " + dbURL);
-                    //getLogger().info("Corpus dbURL = " + dbURL);
+                    //Logger.getLogger(ImdiArchiveTransformer.class.getName()).info("Corpus dbURL = " + dbURL);
+                    getLogger().info("Corpus dbURL = " + dbURL);
 
                     db = new CorpusStructureDBImpl(dbURL);
                 } catch (NamingException ex) {
-                    //getLogger().fatal(ex);
-                    Logger.getLogger(ImdiArchiveTransformer.class.getName()).info(ex.toString());
+                    getLogger().fatal(ex);
+                    //Logger.getLogger(ImdiArchiveTransformer.class.getName()).info(ex.toString());
 
                 }
 
-                //getLogger().info("Corpus db handler=" + db);
-                Logger.getLogger(ImdiArchiveTransformer.class.getName()).info("Corpus db handler=" + db);
+                getLogger().info("Corpus db handler=" + db);
+                //Logger.getLogger(ImdiArchiveTransformer.class.getName()).info("Corpus db handler=" + db);
 
                 
                 
@@ -153,20 +153,22 @@ public class ImdiArchiveTransformer extends AbstractTransformer {
 
                         if (null != node) {
 
-                            Logger.getLogger(ImdiArchiveTransformer.class.getName()).log(Level.INFO, "node = {0}", node);
+                           // Logger.getLogger(ImdiArchiveTransformer.class.getName()).log(Level.INFO, "node = {0}", node);
+                            getLogger().info("node = " + node);
 
                             if (node.getFormat() != null && node.getFormat().equals(CorpusStructureDB.WR_FORMAT_EAF) || node.getFormat().trim().equals("EAF")) {
                                 try {
                                     attrs.addAttribute("", URL_ATTRIBUTE, URL_ATTRIBUTE, "CDATA", this.EAFHandlerContextPath + "?nodeid=" + URLEncoder.encode(nodeId, "utf-8"));
-                                    Logger.getLogger(ImdiArchiveTransformer.class.getName()).log(Level.INFO, this.EAFHandlerContextPath + "?nodeid=" + URLEncoder.encode(nodeId, "utf-8"));
+                                    getLogger().info(this.EAFHandlerContextPath + "?nodeid=" + URLEncoder.encode(nodeId, "utf-8"));
                                 } catch (UnsupportedEncodingException ex) {
-                                    Logger.getLogger(ImdiArchiveTransformer.class.getName()).log(Level.SEVERE, null, ex);
+                                	getLogger().error(null, ex);
+                                    //Logger.getLogger(ImdiArchiveTransformer.class.getName()).log(Level.SEVERE, null, ex);
                                 }
                             } else {
                                 OurURL url = db.getObjectURL(nodeId, ArchiveAccessContext.HTTP_URL);
                                 if (getLogger().isInfoEnabled()) {
-                                    //getLogger().info(url.getProtocol() + " " + url.getHost() + "    " + url.getPort() + " " + url.getPath());
-                                    Logger.getLogger(ImdiArchiveTransformer.class.getName()).log(Level.INFO, url.getProtocol() + " " + url.getHost() + "    " + url.getPort() + " " + url.getPath());
+                                    getLogger().info(url.getProtocol() + " " + url.getHost() + "    " + url.getPort() + " " + url.getPath());
+                                    //Logger.getLogger(ImdiArchiveTransformer.class.getName()).log(Level.INFO, url.getProtocol() + " " + url.getHost() + "    " + url.getPort() + " " + url.getPath());
 
                                 }
                                 String urlStr = url.getProtocol() + "://" + url.getHost() + (url.getPort() == -1 ? "" : ":" + url.getPort()) + url.getPath();
@@ -175,6 +177,7 @@ public class ImdiArchiveTransformer extends AbstractTransformer {
                             try {
                                 attrs.addAttribute("", METADATA_URL_ATTRIBUTE, METADATA_URL_ATTRIBUTE, "CDATA", this.IMDIHandlerContextPath + "?openpath=" + URLEncoder.encode(nodeId, "utf-8"));
                             } catch (UnsupportedEncodingException ex) {
+                            	getLogger().error(null, ex);
                                 Logger.getLogger(ImdiArchiveTransformer.class.getName()).log(Level.SEVERE, null, ex);
                             }                            
                             
@@ -183,11 +186,11 @@ public class ImdiArchiveTransformer extends AbstractTransformer {
                             attrs.addAttribute("", TYPE_ATTRIBUTE, TYPE_ATTRIBUTE, "CDATA", ResourceType.determineType(node.getFormat()));
                             
                         } else {
-                            Logger.getLogger(ImdiArchiveTransformer.class.getName()).info("node = null!");
+                        	getLogger().info("node = null!");
                         }
                     } catch (UnknownNodeException e) {
-                        //getLogger().fatal("Unknown node ID[" + nodeId + "] specified by the user");
-                        Logger.getLogger(ImdiArchiveTransformer.class.getName()).log(Level.INFO, "Unknown node ID[" + nodeId + "] specified by the user");
+                        getLogger().fatal("Unknown node ID[" + nodeId + "] specified by the user");
+                        //Logger.getLogger(ImdiArchiveTransformer.class.getName()).log(Level.INFO, "Unknown node ID[" + nodeId + "] specified by the user");
 
                         
 
