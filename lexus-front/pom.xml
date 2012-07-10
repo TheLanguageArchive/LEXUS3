@@ -177,7 +177,7 @@
                         <id>prepare</id>
                         <phase>compile</phase>
                         <configuration>
-                        <customLog4jXconf>${project.build.outputDirectory}/rcl-conf/log4j.xml</customLog4jXconf>
+                        	<customLog4jXconf>${project.build.outputDirectory}/rcl-conf/log4j.xml</customLog4jXconf>
                         </configuration>
                         <goals>
                             <goal>prepare</goal>
