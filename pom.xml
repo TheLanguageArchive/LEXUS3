@@ -75,8 +75,8 @@
         <!-- MPI dependencies -->
         <dependency>
             <groupId>nl.mpi</groupId>
-            <artifactId>corpusstructure</artifactId>
-            <version>1.6.5.4</version>
+            <artifactId>corpusstructure-api</artifactId>
+            <version>1.7.5</version>
         </dependency>
         <dependency>
             <groupId>nl.mpi.bcarchive</groupId>
