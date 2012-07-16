@@ -54,6 +54,8 @@
         <nonterminal symbol="attributeSequence"/>
         <nonterminal symbol="last-attribute"/>
     </production>
+    <production symbol="last-lexical-entry">
+    </production>
     
     <production symbol="lexicalEntrySequence">
         <nonterminal symbol="lexical-entry"/>

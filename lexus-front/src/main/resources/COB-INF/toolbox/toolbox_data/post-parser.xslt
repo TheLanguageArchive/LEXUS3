@@ -26,7 +26,9 @@
   
   <!--Switch to default namespace for lexical-entry element -->
   <xsl:template match="parser:last-lexical-entry">
-    <lexical-entry><xsl:apply-templates/></lexical-entry>
+  	<xsl:if test="exists(./*)">
+    	<lexical-entry><xsl:apply-templates/></lexical-entry>
+    </xsl:if>
   </xsl:template>
 
   <!--Skip attributeSequence elements -->
