@@ -136,7 +136,7 @@
 		<div>
 			<xsl:copy-of
 				select="@*[local-name(.) != 'isBranch' and local-name(.) != 'id' and local-name(.) != 'type' and local-name(.) != 'name']" />
-					<target:apply-templates select=".//data[@schema-ref = '{./@id}']" />
+					<target:apply-templates select="descendant-or-self::node()[@schema-ref = '{./@id}']" />
 		</div>
 	</xsl:template>
 	<xsl:template match="lbreak">
@@ -148,7 +148,7 @@
 		</hr>
 	</xsl:template>
 	<!-- Process multipliers -->
-	<xsl:template match="multiplier[@type = 'dsl_multiplier' and not(count(./data) = 1 and count(./show) = 0)]">
+	<xsl:template match="multiplier[@type = 'dsl_multiplier' and not(count(./data) = 1 and count(./*/*) = 0)]">
 	<xsl:choose>
 		<xsl:when test=".//data">
 		<target:variable name="containers-{generate-id(.)}">                                            
@@ -200,11 +200,11 @@
 		
 	<!-- Separately handle multiplier elements with a single data child. So that text child of this show element are repeated in
 	case we have multiple instances of the child data category at the lexical entry level. -->
-	<xsl:template match="multiplier[@type = 'dsl_multiplier' and (count(./data) = 1 and count(./show) = 0)]">
-	<target:if test=".//data[@schema-ref = '{.//data/@id}']/parent::node()">
+	<xsl:template match="multiplier[@type = 'dsl_multiplier' and (count(./data) = 1 and count(./*/*) = 0)]">
+	<target:if test=".//data[@schema-ref = '{.//data/@id}']">
 		<div>
 			<xsl:copy-of select="@*[local-name(.) != 'isBranch']" />
-			<target:for-each select=".//data[@schema-ref = '{.//data/@id}']/parent::node()">
+			<target:for-each select=".//data[@schema-ref = '{.//data/@id}']">
 				<xsl:apply-templates />
 			</target:for-each>
 		</div>
