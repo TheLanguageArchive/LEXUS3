@@ -48,5 +48,917 @@
         </views>
 
     </template>
-    
+    <template version="1.0" name="LMF Core and Morpho-syntax Template" description="The LMF structure for the core and the morphosyntax extension. The structure includes example data categories which the user can adapt, unless stated otherwise in the data category description">
+        <schema>
+            <container id="schema-l-id" admin-info="" mandatory="true" multiple="false"
+                description="The container for all the lexical entries of a source language within the database. A Lexicon must contain at least one lexical entry"
+                name="Lexicon" type="lexicon">
+                
+                <container id="schema-le-id" admin-info="" mandatory="true" multiple="true"
+                    description="Represents a word, a multi-word expression, or an affix in a given language"
+                    name="Lexical Entry" type="lexical-entry">
+                    <datacategory id="schema-lID-id" admin-info="" mandatory="true" multiple="false"
+                        description="A unique identifier for a lexical entry. For the sake of refrential integrity this data category should not be removed from the schema"
+                        name="identifier" type="data"> 
+                    </datacategory>
+                    <container id="schema-lemma-id" admin-info="" mandatory="true" multiple="true"
+                        description="Represents a word form chosen by convention to designate the Lexical Entry"
+                        name="Lemma" type="container">
+                        <datacategory id="schema-lemma-written-form-id" admin-info="" mandatory="false" multiple="true"
+                            description="Represents the written form of the Lemma"
+                            name="written form" type="data" /> 
+                        
+                        <datacategory id="schema-lemma-phonetic-form-id" admin-info="" mandatory="false" multiple="true"
+                            description="Represents the phonetic form of the Lemma"
+                            name="phonetic form" type="data" /> 
+                        
+                        <datacategory id="schema-lemma-geographical-varient-id" admin-info="" mandatory="false" multiple="true"
+                            description="Represents the geographical varient of the Lemma"
+                            name="geographical varient" type="data"/> 
+                        
+                        <datacategory id="schema-lemma-scheme-id" admin-info="" mandatory="false" multiple="true"
+                            description=""
+                            name="scheme" type="data"/> 
+                        
+                        <container id="schema-lemma-form-representation-id" admin-info="" mandatory="false" multiple="true"
+                            description="Represents one variant orthography of a Form for a Lemma"
+                            name="Form Representation" type="container">
+                            <datacategory id="schema-lemma-written-form-id" admin-info="" mandatory="false" multiple="true"
+                                description="Represents the written form of the Form Representaion for Lemma"
+                                name="written form" type="data"/>
+                            <datacategory id="schema-lemma-geographical-varient-id" admin-info="" mandatory="false" multiple="true"
+                                description="Represents the geographical varient of the Form Representation for Lemma"
+                                name="geographical varient" type="data"/> 
+                        </container>
+                    </container>
+                    <container id="schema-word-form-id" admin-info="" mandatory="false" multiple="true"
+                        description=""
+                        name="Word Form" type="Word Form">
+                        <datacategory id="schema-word-form-written-form-id" admin-info="" mandatory="false" multiple="true"
+                            description="Represents the written form of the Word Form"
+                            name="written form" type="data"/> 
+                        
+                        <datacategory id="schema-word-form-phonetic-form-id" admin-info="" mandatory="false" multiple="true"
+                            description="Represents the phonetic form of the Word Form"
+                            name="phonetic form" type="data"/> 
+                        
+                        <datacategory id="schema-word-form-hyphenation-id" admin-info="" mandatory="false" multiple="true"
+                            description="Represents the hyphenation forms of the Word Form"
+                            name="hyphenation" type="data"/> 
+                        
+                        <datacategory id="schema-word-form-grammatical-number-id" admin-info="" mandatory="false" multiple="true"
+                            description="Represents the grammatical number for Word Form"
+                            name="grammatical number" type="data"/> 
+                        
+                        <datacategory id="schema-word-form-grammatical-gender-id" admin-info="" mandatory="false" multiple="true"
+                            description="Represents the grammatical gender of the Word Form"
+                            name="grammatical gender" type="data"/> 
+                        
+                        <datacategory id="schema-word-form-grammatical-tense-id" admin-info="" mandatory="false" multiple="true"
+                            description="Represents the grammatical tense of the Word Form"
+                            name="grammatical tense" type="data"/> 
+                        
+                        <datacategory id="schema-word-form-person-id" admin-info="" mandatory="false" multiple="true"
+                            description="Represents what is the person for the Word Form"
+                            name="person" type="data"/> 
+                        
+                        <container id="schema-word-form-form-representation-id" admin-info="" mandatory="false" multiple="true"
+                            description="Represents one variant orthography of a Form"
+                            name="Form Representation" type="container">
+                            <datacategory id="schema-word-form-form-representation-written-form-id" admin-info="" mandatory="false" multiple="true"
+                                description="Represents the written form of the Form Representaion of word form"
+                                name="written form" type="data"/>
+                            <datacategory id="schema-word-form-form-representation-geographical-varient-id" admin-info="" mandatory="false" multiple="true"
+                                description="Represents the geographical varient of the Form Representation for Word Form"
+                                name="geographical varient" type="data"/> 
+                            
+                        </container>
+                    </container>
+                    <container id="schema-stem-id" admin-info="" mandatory="false" multiple="true"
+                        description="Represents one variant orthography of a Form"
+                        name="Stem" type="container">
+                        <container id="schema-stem-form-representation-id" admin-info="" mandatory="false" multiple="true"
+                            description="Represents one variant orthography of a Form for stem"
+                            name="Form Representation" type="container">
+                            <datacategory id="schema-stem-written-form-id" admin-info="" mandatory="false" multiple="true"
+                                description="Represents the written form of the Form Representaion of stem"
+                                name="written form" type="data"/>
+                            <datacategory id="schema-stem-geographical-varient-id" admin-info="" mandatory="false" multiple="true"
+                                description="Represents the geographical varient of the Form Representation for stem"
+                                name="geographical varient" type="data"/> 
+                        </container>
+                    </container>
+                    <container id="schema-related-form-id" admin-info="" mandatory="false" multiple="true"
+                        description="Represents a word form or a morph that can be related to the Lexical Entry"
+                        name="Related Form" type="container">
+                        <datacategory id="schema-related-form-target-id" admin-info="" mandatory="true" multiple="true"
+                            description="refers to one Lexical Entry by its unique identifier. For the sake of refrential integrity this data category should not be removed from the schema"  name="target" type="data" 
+                        />
+                        <datacategory id="schema-related-form-written-form-id" admin-info="" mandatory="false" multiple="true"
+                            description="Represents the written form of the Related Form of another entry"
+                            name="written form" type="data"/> 
+                        
+                        <datacategory id="schema-related-form-phonetic-form-id" admin-info="" mandatory="false" multiple="true"
+                            description="Represents the phonetic form of the Related Form of another entry"
+                            name="phonetic form" type="data"/> 
+                        <datacategory id="schema-related-form-type-id" admin-info="" mandatory="false" multiple="true"
+                            description="Represents the type of the Related Form of another entry"
+                            name="type" type="data"/> 
+                        
+                        <container id="schema-related-form-form-representation-id" admin-info="" mandatory="false" multiple="true"
+                            description="Represents one variant orthography of a Form for a related form"
+                            name="Form Representation" type="container">
+                            <datacategory id="schema-related-form-form-representation-written-form-id" admin-info="" mandatory="false" multiple="true"
+                                description="Represents the written form of the Form Representaion"
+                                name="written form" type="data"/>
+                            <datacategory id="schema-related-form-form-representation-geographical-varient-id" admin-info="" mandatory="false" multiple="true"
+                                description="Represents the geographical varient of the Form Representation for Word Form"
+                                name="geographical varient" type="data"/> 
+                            
+                        </container>
+                    </container>
+                    <container id="schema-list-of-components-id" admin-info="" mandatory="true" multiple="true"
+                        description="Represents the aggregative aspect of multiword expression"
+                        name="List Of Components" type="container">
+                        <container id="schema-components-id" admin-info="" mandatory="true" multiple="true"
+                            description="Represents a reference to a lexical entry for each lexical component in list of components"
+                            name="Components" type="container">
+                            <datacategory id="scheme-entry-reference-id" admin-info=""
+                                description="refers to one Lexical Entry by its unique identifier. For the sake of refrential integrity this data category should not be removed from the schema" mandatory="true"
+                                multiple="true" name="entry" type="data" 
+                            />
+                        </container>
+                    </container>
+                    <container id="schema-sense-id" admin-info="" mandatory="false" multiple="true"
+                        description="Contains attributes that describe meanings of a lexical entry"
+                        name="Sense" type="container"/>
+                        <datacategory id="scheme-sense-identifer-id" admin-info=""
+                        description="identifies this Sense among its siblings. For the sake of refrential integrity this data category should not be removed from the schema" mandatory="false"
+                        multiple="true" name="identifier" type="data" 
+                         />
+                         <datacategory id="schema-sense-reference-id" admin-info="" mandatory="false" multiple="true"
+                        description="refers to the 'parent' Sense using its identifier. For the sake of refrential integrity this data category should not be removed from the schema"
+                        name="parent-sense" type="data"/> 
+                    
+                    <container id="schema-definition-id" admin-info="" mandatory="false" multiple="true"
+                        description="Represents a narrative description of a Sense"
+                        name="Definition" type="container">
+                        <container id="schema-definition-text-representation-id" admin-info="" mandatory="false" multiple="true"
+                            description="Represents one textual content of Definition"
+                            name="Text Representation" type="container">
+                            <datacategory id="schema-definition-text-representaion-text-id" admin-info="" mandatory="true" multiple="true"
+                                description="the actual text"
+                                name="text" type="data"/>
+                        </container>
+                        <container id="schema-statement-id" admin-info="" mandatory="false" multiple="true"
+                            description="Represents a narrative description of a Sense and refines or complements Definition"
+                            name="Statement" type="container">
+                            <container id="schema-statement-text-representation-id" admin-info="" mandatory="false" multiple="true"
+                                description="Represents one textual content of Statement"
+                                name="Text Representation" type="container">
+                                <datacategory id="schema-statement-text-representaion-text-id" admin-info="" mandatory="true" multiple="true"
+                                    description="the actual text"
+                                    name="text" type="data"/>
+                             </container>
+                        </container>
+                       
+                    </container>
+                </container>
+            </container>
+        </schema>
+        <views listView="listViewId" lexicalEntryView="leViewId">
+            <view id="listViewId" type="dsl_view" isBranch="true" name="List view"
+                description="Created by Lexus.">
+                <style/>
+                <structure isBranch="true">
+                    <show optional="false" isBranch="true" type="dsl_show" name="Decorator"
+                        dsl_class="">
+                        <data isBranch="false" type="data category" name="Data Category"
+                            id="schema-lID-id"/>
+                    </show>
+                </structure>
+            </view>
+            <view id="leViewId" isBranch="true" name="Lexical Entry View"
+                description="Created by Lexus." type="dsl_view">
+                <style type="dsl_style"> body { background-color : #333333; } .lexeme { font-size :
+                    20pt; color : grey; }</style>
+                <structure isBranch="true">
+                    <show type="dsl_show" name="Decorator" isBranch="true" dsl_class="lexeme"
+                        optional="false" block="false" localStyle="false">
+                        <data isBranch="false" type="data category" name="Data Category"
+                            id="schema-lID-id"/>
+                    </show>
+                </structure>
+            </view>
+        </views>
+    </template>
+    <template version="1.0" name="MDF" description="The default lexicon structure for MDF">
+        
+        <schema>
+        <container id="uuid:8c336ad8-e23b-4978-b793-2919871a63a0"
+            description="Represents the entire lexicon" type="lexicon" name="Lexicon"
+            mandatory="true" multiple="false" note="" admin-info="">
+            <container
+                description="Represents a word, a multi-word expression, or an affix in a given language"
+                type="lexical-entry" id="uuid:39c22570-deb6-473e-af59-4925c28a16ca">
+                <container xmlns:mdf="http://lexus.mpi.nl/datcat/mdf/"
+                    description="Group added for marker 'lx'" name="Lexeme Group" type="component"
+                    id="uuid:086395d3-257a-4ba6-abca-a6b79db226f6">
+                    <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                        description="The Record marker for each record in a lexical entry. It contains the lexeme or headword (which is commonly mono-morphemic). Since such a lexeme form is often not accessible for vernacular speakers if printed, use the \lc field to provide a more readable form for vernacular speakers."
+                        name="Lexeme" type="data" id="uuid:925e8df3-4036-48b2-81b5-3269697fd637"
+                        dcr:datcat="http://www.isocat.org/datcat/DC-3723" mdf:marker="lx"
+                        mdf:lng="vernacular"/>
+                    <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                        description="Alternate form of lexeme for use in parsing interlinear text. Not for publication."
+                        name="Alternate for parse" type="data"
+                        id="uuid:0cf156a4-0a9d-4f15-a958-42ad553c360d" dcr:datcat="lexus-user:a"
+                        mdf:marker="a" mdf:lng="vernacular"/>
+                    <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                        description="A Shoebox bookkeeping field to help keep track of the last time an entry was edited. One per record (usually the last field) is adequate. Usually inserted automatically by Shoebox. The datestamp field is set up under the Shoebox menu option: Database-Properties-Options tab."
+                        name="Date (last edited)" type="data"
+                        id="uuid:5911a0e7-cd22-4810-999b-60e222d365e5"
+                        dcr:datcat="http://www.isocat.org/datcat/DC-3694" mdf:marker="dt"
+                        mdf:lng="Date"/>
+                    <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                        description="Used to differentiate homonym entries (lexemes that are spelled the same but have no semantic relationship). This field comes directly after the \lx field and simply contains a number, e.g. 1, 2, or 3, etc. Use a Character Range Set."
+                        name="Homonym number" type="data"
+                        id="uuid:1f7adde4-fc11-40ee-9a9b-1ef03873300f"
+                        dcr:datcat="http://www.isocat.org/datcat/DC-3714" mdf:marker="hm"
+                        mdf:lng="English"/>
+                    <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                        description="This should be added only if the lexical entry form is inappropriate for the printed dictionary, and you want to substitute another form for the printed entry. When formatting a document, MDF always replaces the contents of the \lx field with the contents of the \lc field (if present)."
+                        name="Citation form" type="data"
+                        id="uuid:18fa4679-a797-4cb7-a11c-6a4cf1f63f89"
+                        dcr:datcat="http://www.isocat.org/datcat/DC-3716" mdf:marker="lc"
+                        mdf:lng="vernacular"/>
+                    <container description="Group added for marker 'se'" name="Subentry Group"
+                        type="component" id="uuid:184a5634-8de2-4a7b-bded-57fe1c73ed85">
+                        <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                            description="Like the \lx field except it occurs within the record, marking a word (or phrase) as a form derived from the root. Following this marker would be all the fields that comprise a typical lexical entry. There can be several of these subentries within a record. Subentries can have multiple senses (in this hierarchy)."
+                            name="Subentry" type="data"
+                            id="uuid:85571b0f-264a-4012-bb58-1f8a47381bf2"
+                            dcr:datcat="http://www.isocat.org/datcat/DC-3756" mdf:marker="se"
+                            mdf:lng="vernacular"/>
+                        <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                            description="Used for denoting the source language of a borrowed word."
+                            name="Borrowed word (loan)" type="data"
+                            id="uuid:5ca7fe8a-b372-4600-ae31-f31e4f7fdc0c"
+                            dcr:datcat="http://www.isocat.org/datcat/DC-3688" mdf:marker="bw"
+                            mdf:lng="English"/>
+                        <container description="Group added for marker 'et'"
+                            name="Etymology (proto form) Group" type="component"
+                            id="uuid:4ac04fd4-c957-4119-a23a-b157bbc82503">
+                            <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                description="The etymology for the lexeme is put here, e.g.: \et *babuy"
+                                name="Etymology (proto form)" type="data"
+                                id="uuid:5ff313ea-ac68-49b4-8ac8-c712a1e63b1f"
+                                dcr:datcat="http://www.isocat.org/datcat/DC-3704" mdf:marker="et"
+                                mdf:lng="vernacular"/>
+                            <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                description="Any comments the researcher needs to add concerning the etymology of the lexeme can be given here. Not intended for printing."
+                                name="Etymology comment" type="data"
+                                id="uuid:2ef6d47f-eb0e-4ace-8e12-6a8a1bbdc1ba"
+                                dcr:datcat="http://www.isocat.org/datcat/DC-3696" mdf:marker="ec"
+                                mdf:lng="English"/>
+                            <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                description="The published gloss for the etymological reference is given here."
+                                name="Etymology gloss (E)" type="data"
+                                id="uuid:0eb68e1a-2d5d-40ea-80ea-43a453901f8a"
+                                dcr:datcat="http://www.isocat.org/datcat/DC-3698" mdf:marker="eg"
+                                mdf:lng="English"/>
+                            <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                description="The reference or source abbreviation for etymology of the lexeme is given here. Use a Range Set."
+                                name="Etymology source" type="data"
+                                id="uuid:ca1917b7-fcf6-453a-a04b-3b94a3ead0b7"
+                                dcr:datcat="http://www.isocat.org/datcat/DC-3701" mdf:marker="es"
+                                mdf:lng="English"/>
+                        </container>
+                        <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                            description="Used to reference a minimal entry back to its main entry."
+                            name="Main entry cross-ref." type="data"
+                            id="uuid:b761bc23-1930-48f6-bfa9-2962b30a8a55"
+                            dcr:datcat="http://www.isocat.org/datcat/DC-3737" mdf:marker="mn"
+                            mdf:lng="vernacular"/>
+                        <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                            description="Used to show the underlying morphemic structure for complex lexemes."
+                            name="Morphology" type="data"
+                            id="uuid:91c5d8c1-481f-43a6-bdc5-260f7eb412e8"
+                            dcr:datcat="http://www.isocat.org/datcat/DC-3738" mdf:marker="mr"
+                            mdf:lng="vernacular"/>
+                        <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                            description="Used as needed to retain the phonetic information that is lost when an orthographic spelling is used for an entry. Can follow \lx or \se. Details on how to interpret symbols in this field should be included in pronunciation guide."
+                            name="Phonetic form" type="data"
+                            id="uuid:a1a81c91-61cd-4b78-9620-54197d20481a"
+                            dcr:datcat="http://www.isocat.org/datcat/DC-3745" mdf:marker="ph"
+                            mdf:lng="phonetic"/>
+                        <container description="Group added for marker 'ps'"
+                            name="Part of speech Group" type="component"
+                            id="uuid:287f1e7e-1080-4633-b7ce-9c041f6808e6">
+                            <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                description="Classifies the part of speech. This must reflect the part of speech of the vernacular lexeme (not the national or English gloss). Consistent labeling is important; use the Range Set feature. Sense numbers are beneath \ps in this hierarchy; don't mark different \ps fields with sense numbers."
+                                name="Part of speech" type="data"
+                                id="uuid:1b01d29f-0b0f-4d1a-94a7-d3ab8b540cab"
+                                dcr:datcat="http://www.isocat.org/datcat/DC-3748" mdf:marker="ps"
+                                mdf:lng="English"/>
+                            <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                description="Used to give the vernacular for this particular paradigm form. (It is better to use the \pdl field set for this.)"
+                                name="First dual" type="data"
+                                id="uuid:0b961f0e-4452-4a34-9b47-ae04f64e5d45"
+                                dcr:datcat="http://www.isocat.org/datcat/DC-2797" mdf:marker="1d"
+                                mdf:lng="vernacular"/>
+                            <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                description="Used to give the vernacular for this particular paradigm form. (It is better to use the \pdl field set for this.)"
+                                name="First plural exclusive" type="data"
+                                id="uuid:879def42-bce1-4260-9aee-1d40667b4ec9"
+                                dcr:datcat="http://www.isocat.org/datcat/DC-3028" mdf:marker="1e"
+                                mdf:lng="vernacular"/>
+                            <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                description="Used to give the vernacular for this particular paradigm form. (It is better to use the \pdl field set for this.)"
+                                name="First plural inclusive" type="data"
+                                id="uuid:3e022df8-f67c-4732-bcc5-924fae6e415c"
+                                dcr:datcat="http://www.isocat.org/datcat/DC-3674" mdf:marker="1i"
+                                mdf:lng="vernacular"/>
+                            <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                description="Used to give the vernacular for this particular paradigm form. (It is better to use the \pdl field set for this.)"
+                                name="First plural" type="data"
+                                id="uuid:983a7bc3-ba6d-4de9-8765-57eff58a3b3c"
+                                dcr:datcat="http://www.isocat.org/datcat/DC-3675" mdf:marker="1p"
+                                mdf:lng="vernacular"/>
+                            <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                description="Used to give the vernacular for this particular paradigm form. (It is better to use the \pdl field set for this.)"
+                                name="First singular" type="data"
+                                id="uuid:76ddae6b-1945-460e-a59d-c328e808d380"
+                                dcr:datcat="http://www.isocat.org/datcat/DC-3676" mdf:marker="1s"
+                                mdf:lng="vernacular"/>
+                            <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                description="Used to give the vernacular for this particular paradigm form. (It is better to use the \pdl field set for this.)"
+                                name="Second dual" type="data"
+                                id="uuid:b2a5ab8f-fedd-4b9b-9df7-7c9deef5e931"
+                                dcr:datcat="http://www.isocat.org/datcat/DC-3677" mdf:marker="2d"
+                                mdf:lng="vernacular"/>
+                            <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                description="Used to give the vernacular for this particular paradigm form. (It is better to use the \pdl field set for this.)"
+                                name="Second plural" type="data"
+                                id="uuid:68dc2794-1bca-43f0-b0e7-012dcbbd8d7d"
+                                dcr:datcat="http://www.isocat.org/datcat/DC-3678" mdf:marker="2p"
+                                mdf:lng="vernacular"/>
+                            <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                description="Used to give the vernacular for this particular paradigm form. (It is better to use the \pdl field set for this.)"
+                                name="Second singular" type="data"
+                                id="uuid:463d2af6-9963-4619-9377-2b02d2b2fd07"
+                                dcr:datcat="http://www.isocat.org/datcat/DC-3679" mdf:marker="2s"
+                                mdf:lng="vernacular"/>
+                            <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                description="Used to give the vernacular for this particular paradigm form. (It is better to use the \pdl field set for this.)"
+                                name="Third dual" type="data"
+                                id="uuid:143ce791-81de-4d5a-ad46-be603da82627"
+                                dcr:datcat="http://www.isocat.org/datcat/DC-3680" mdf:marker="3d"
+                                mdf:lng="vernacular"/>
+                            <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                description="Used to give the vernacular for this particular paradigm form. (It is better to use the \pdl field set for this.)"
+                                name="Third plural" type="data"
+                                id="uuid:b058908d-829d-42c4-b61a-f6b0248bb0be"
+                                dcr:datcat="http://www.isocat.org/datcat/DC-3681" mdf:marker="3p"
+                                mdf:lng="vernacular"/>
+                            <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                description="Used to give the vernacular for this particular paradigm form. (It is better to use the \pdl field set for this.)"
+                                name="Third singular" type="data"
+                                id="uuid:50055ba3-2840-4ca6-9ea5-ce479811519e"
+                                dcr:datcat="http://www.isocat.org/datcat/DC-3682" mdf:marker="3s"
+                                mdf:lng="vernacular"/>
+                            <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                description="Used to give the vernacular for this particular paradigm form. (It is better to use the \pdl field set for this.)"
+                                name="Non-animate dual" type="data"
+                                id="uuid:a7eeaf2f-531f-49a9-b08f-edfb602e2923"
+                                dcr:datcat="http://www.isocat.org/datcat/DC-3683" mdf:marker="4d"
+                                mdf:lng="vernacular"/>
+                            <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                description="Used to give the vernacular for this particular paradigm form. (It is better to use the \pdl field set for this.)"
+                                name="Non-animate plural" type="data"
+                                id="uuid:fc4dc4fe-f7b2-4afb-8475-453b10bd6669"
+                                dcr:datcat="http://www.isocat.org/datcat/DC-3684" mdf:marker="4p"
+                                mdf:lng="vernacular"/>
+                            <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                description="Used to give the vernacular for this particular paradigm form. (It is better to use the \pdl field set for this.)"
+                                name="Non-animate singular" type="data"
+                                id="uuid:6420bb5b-9576-4b13-8a97-d54967eb2be9"
+                                dcr:datcat="http://www.isocat.org/datcat/DC-3685" mdf:marker="4s"
+                                mdf:lng="vernacular"/>
+                            <container description="Group added for marker 'pd'"
+                                name="Paradigm Group" type="component"
+                                id="uuid:3f8e0d61-bff7-4586-b810-df2a388ffb6f">
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="Used for specifying the noun or verb class, gender, or other paradigm set that the lexeme or headword is associated with. These classes are generally given labels or numbers to differentiate them. Use the Range Set feature for consistency."
+                                    name="Paradigm" type="data"
+                                    id="uuid:c0ed9c55-f353-4cb7-9c2a-70c1ece525b7"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3736"
+                                    mdf:marker="pd" mdf:lng="English"/>
+                                <container description="Group added for marker 'pdl'"
+                                    name="Paradigm label Group" type="component"
+                                    id="uuid:6269a261-1adb-45e0-8f09-aeb34f7e3502">
+                                    <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                        description="Used to label the paradigm form given in the \pdv field. This is useful for paradigm sets that are incomplete or irregular. Use a Range Set."
+                                        name="Paradigm label" type="data"
+                                        id="uuid:1fab099e-cbdf-46ac-9cfc-ec50adbe512a"
+                                        dcr:datcat="http://www.isocat.org/datcat/DC-3741"
+                                        mdf:marker="pdl" mdf:lng="English"/>
+                                    <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                        description="Used for glossing the vernacular paradigm form in English."
+                                        name="Paradigm form gloss (E)" type="data"
+                                        id="uuid:a0dd613f-d776-4a95-9bf2-b46682f12f99"
+                                        dcr:datcat="http://www.isocat.org/datcat/DC-3740"
+                                        mdf:marker="pde" mdf:lng="English"/>
+                                    <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                        description="Used for glossing the vernacular paradigm form in the national language."
+                                        name="Paradigm form gloss (n)" type="data"
+                                        id="uuid:d5aec308-d26b-4a87-bb66-e5a6128d7d2d"
+                                        dcr:datcat="http://www.isocat.org/datcat/DC-3742"
+                                        mdf:marker="pdn" mdf:lng="national"/>
+                                    <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                        description="Used for glossing the vernacular paradigm form in the regional language."
+                                        name="Paradigm form gloss (r)" type="data"
+                                        id="uuid:7385a7c6-866d-473b-a9a5-a5cac8a6a1a8"
+                                        dcr:datcat="http://www.isocat.org/datcat/DC-3743"
+                                        mdf:marker="pdr" mdf:lng="regional"/>
+                                    <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                        description="Used to give the vernacular paradigm form specified by the label in the \pdl field. Used mostly for irregular or incomplete paradigm sets."
+                                        name="Paradigm form" type="data"
+                                        id="uuid:cd802865-3728-413e-bbc2-bb66fb5bc67f"
+                                        dcr:datcat="http://www.isocat.org/datcat/DC-3744"
+                                        mdf:marker="pdv" mdf:lng="vernacular"/>
+                                </container>
+                            </container>
+                            <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                description="This is a special paradigm field used to give the plural form of the lexeme. (It is better to use the \pdl field set for this.)"
+                                name="Plural form" type="data"
+                                id="uuid:d1d8eac5-1d48-426f-8c9c-858dd7121fe1"
+                                dcr:datcat="http://www.isocat.org/datcat/DC-3746" mdf:marker="pl"
+                                mdf:lng="vernacular"/>
+                            <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                description="Classifies the part of speech with labels found in national language dictionaries. If used, this comes after the \ps field. Consistent labeling is important; use the Range Set feature."
+                                name="Part of speech (n)" type="data"
+                                id="uuid:b54eedec-7b15-47b2-be48-f6628b98cea6"
+                                dcr:datcat="http://www.isocat.org/datcat/DC-3747" mdf:marker="pn"
+                                mdf:lng="national"/>
+                            <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                description="A repository for reduplication forms for later study (these forms should be moved to subentries, etc. as more is known about them)."
+                                name="Reduplication form(s)" type="data"
+                                id="uuid:5a5d0f5e-0d1e-436b-b4dc-15a39fb037f7"
+                                dcr:datcat="http://www.isocat.org/datcat/DC-3749" mdf:marker="rd"
+                                mdf:lng="vernacular"/>
+                            <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                description="This is a special paradigm field used to give the singular form of the lexeme. (It is better to use the \pdl field set for this.)"
+                                name="Singular form" type="data"
+                                id="uuid:25b55754-6969-432a-acc1-3c2cf12a0835"
+                                dcr:datcat="http://www.isocat.org/datcat/DC-3757" mdf:marker="sg"
+                                mdf:lng="vernacular"/>
+                            <container description="Group added for marker 'sn'"
+                                name="Sense number Group" type="component"
+                                id="uuid:d565a0bd-eaab-422c-8794-7cfc01cb3794">
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="Where a lexeme has more than one sense, this code is used to mark and number mark the beginning of each section that discusses a new sense. Don't use a sense number to mark a different part of speech; \sn is only used within a given part of speech (in this hierarchy). (Remember to include \sn 1 for records with multiple senses.) Use a Character Range Set."
+                                    name="Sense number" type="data"
+                                    id="uuid:e04bc155-5485-44f4-82b2-e0172f836dc7"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3758"
+                                    mdf:marker="sn" mdf:lng="English"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="Used to reference an antonym of the lexeme, but using the \lf (lexical function) field for this is better practice."
+                                    name="Antonym" type="data"
+                                    id="uuid:db3dff8f-804f-47ea-a1d3-c2fa948174bb"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3686"
+                                    mdf:marker="an" mdf:lng="vernacular"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="Used to record any bibliographic information pertinent to the lexeme. MDF adds the label 'Read:' to this field. For basic information (to reference an entry in a more complete bibliography database) include the following: AuthorLastName, FirstName/Initials date:pp. For a more complete reference include: AuthorLastName, FirstName/Initials. date. Title. City, Publisher. pp. xxx-yyy."
+                                    name="Bibliography" type="data"
+                                    id="uuid:255c292b-5c00-490b-9015-b99666a3078d"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3687"
+                                    mdf:marker="bb" mdf:lng="English"/>
+                                <container description="Group added for marker 'cf'"
+                                    name="Cross-reference Group" type="component"
+                                    id="uuid:32d5f52a-ea91-400f-8de5-4eaaa38f20fe">
+                                    <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                        description="This is a generic reference marker used to link together any two related entries in the lexicon. The content is a vernacular lexeme. If the relationship is known, the lexical function \lf field is a better way to cross-reference two lexemes."
+                                        name="Cross-reference" type="data"
+                                        id="uuid:e6d2cd6d-022f-403e-879e-dea212d8bc68"
+                                        dcr:datcat="http://www.isocat.org/datcat/DC-3817 http://www.isocat.org/datcat/DC-3690"
+                                        mdf:marker="cf" mdf:lng="vernacular"/>
+                                    <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                        description="Gives the English gloss(es) for the vernacular lexeme referenced by the preceding \cf field."
+                                        name="Cross-ref. gloss (E)" type="data"
+                                        id="uuid:02172a0c-244c-42a3-a2bd-934558162d20"
+                                        dcr:datcat="http://www.isocat.org/datcat/DC-3689"
+                                        mdf:marker="ce" mdf:lng="English"/>
+                                    <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                        description="Gives the national language gloss(es) for the vernacular lexeme referenced by the preceding \cf field."
+                                        name="Cross-ref. gloss (n)" type="data"
+                                        id="uuid:96a44894-598e-4da1-947a-166dc1ed3bfe"
+                                        dcr:datcat="http://www.isocat.org/datcat/DC-3691"
+                                        mdf:marker="cn" mdf:lng="national"/>
+                                    <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                        description="Gives the regional language gloss(es) for the vernacular lexeme referenced by the preceding \cf field."
+                                        name="Cross-ref. gloss (r)" type="data"
+                                        id="uuid:8917c389-2f22-4e79-85b3-798290393500"
+                                        dcr:datcat="http://www.isocat.org/datcat/DC-3692"
+                                        mdf:marker="cr" mdf:lng="national"/>
+                                </container>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="Used to fully express the semantic domains of each sense of a lexeme in English. May be verbose. Other fields (\ee, \ue, and \oe) provide for expanded information. Should contain 1) the bundle of semantic distinctive features necessary and sufficient to describe its core meaning, and 2) the range of denotation of the lexeme. Generally, no initial capital is used."
+                                    name="Definition (E)" type="data"
+                                    id="uuid:4aca3a47-5140-4df8-add3-49de6ca67a11"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3693"
+                                    mdf:marker="de" mdf:lng="English"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="Used to fully express the semantic domains of each sense of a lexeme in the national language. May be verbose. Other fields (\en, \un, and \on) provide for expanded information. Should contain 1) the bundle of semantic distinctive features necessary and sufficient to describe its core meaning, and 2) the range of denotation of the lexeme. Generally, no initial capital is used."
+                                    name="Definition (n)" type="data"
+                                    id="uuid:17592c20-3e8a-49a7-ae74-9dc05ab008d1"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3709"
+                                    mdf:marker="dn" mdf:lng="national"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="Used to fully express the semantic domains of each sense of a lexeme in the regional language. May be verbose. Other fields (\er, \ur, and \or) provide for expanded information. Should contain 1) the bundle of semantic distinctive features necessary and sufficient to describe its core meaning, and 2) the range of denotation of the lexeme. Generally, no initial capital is used."
+                                    name="Definition (r)" type="data"
+                                    id="uuid:191c5bdf-01e5-4c5f-9402-dfd940355cb4"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3710"
+                                    mdf:marker="dr" mdf:lng="regional"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="The hardest of all fields to fill in. It requires the researcher to explain, in the vernacular, what the salient concepts are that this &quot;unit of meaning&quot; captures -- from a native speaker's perspective. Obviously not easy and something usually left to much later."
+                                    name="Definition (v)" type="data"
+                                    id="uuid:f970ef74-ab48-45ff-a7d8-f45b770f0d48"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3695"
+                                    mdf:marker="dv" mdf:lng="vernacular"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="This field crosses over with the \de, \ue, and \oe fields, but is intended for more verbose explanations of the headword (for each sense). The researcher should use this field to encode any additional information needed by a non-native speaker to understand and use this lexeme properly. Use capitalization and punctuation as needed."
+                                    name="Encyclopedic info. (E)" type="data"
+                                    id="uuid:3b080573-8dbb-455f-92c4-c827ac901cf7"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3697"
+                                    mdf:marker="ee" mdf:lng="English"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="The national language equivalent to the \ee field. It should cover any information that provides a more complete knowledge-base on the lexeme. Use capitalization and punctuation as needed."
+                                    name="Encyclopedic info. (n)" type="data"
+                                    id="uuid:ecd22bde-7980-41ec-b942-0559e99ab705"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3699"
+                                    mdf:marker="en" mdf:lng="national"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="The regional language equivalent to the \ee field. It should cover any information that provides a more complete knowledge-base on the lexeme. Use capitalization and punctuation as needed."
+                                    name="Encyclopedic info. (r)" type="data"
+                                    id="uuid:aba43aa9-e64e-4fc8-bebe-2711ffbc3f97"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3700"
+                                    mdf:marker="er" mdf:lng="regional"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="This field contains the vernacular description of any pertinent encyclopedic information related to the lexeme or headword, subentry, or sense. This is intended for use in a monolingual dictionary, but can be used in diglot and triglot dictionaries as well. Use capitalization and punctuation as needed."
+                                    name="Encyclopedic info. (v)" type="data"
+                                    id="uuid:73834f91-7cc6-4a6c-a25e-5139a7ac35a0"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3705"
+                                    mdf:marker="ev" mdf:lng="vernacular"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="Intended for interlinear morpheme-level glossing. Join multi-word glosses with (_), e.g. wild_boar; use (space semicolon space) for multiple glosses, e.g. hut ; house ; shack. Used for reversing the dictionary if an \re field is not present (or is present but empty); also as an English definition in a formatted dictionary if there is no \de field (or it is present but empty)."
+                                    name="Gloss (E)" type="data"
+                                    id="uuid:78b247ad-3b19-4f86-a7ec-f4112d09a678"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3707"
+                                    mdf:marker="ge" mdf:lng="English"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="Intended for interlinear morpheme-level glossing. Join multi-word glosses with (_), e.g. wild_boar; use (space semicolon space) for multiple glosses, e.g. hut ; house ; shack. The contents are used for reversing the dictionary if an \rn field is not present (or is present but empty). Also used as a national language definition in a formatted dictionary if there is no \dn field (or it is present but empty)."
+                                    name="Gloss (n)" type="data"
+                                    id="uuid:11f94f39-cae3-4784-884b-69e179242114"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3711"
+                                    mdf:marker="gn" mdf:lng="national"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="Intended for interlinear morpheme-level glossing. Join multi-word glosses with (_), e.g. wild_boar; use (space semicolon space) for multiple glosses, e.g. hut ; house ; shack. Since MDF does not create a reversed index for the regional language, this field is not used for this. But the contents of this field are used as a regional language definition in a formatted dictionary if there is no \dr field (or it is present but empty)."
+                                    name="Gloss (r)" type="data"
+                                    id="uuid:62296e62-0404-4a36-8f67-94f06a16048f"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3712"
+                                    mdf:marker="gr" mdf:lng="regional"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="This field is available for developing a monolingual dictionary. While somewhat meaningless (a vernacular gloss for a vernacular word), this is a useful place to store the explanations a researcher is given by a language assistant concerning the meaning of the headword or lexeme. Later these will be formulated into a more exact definition and transfer to the \dv field."
+                                    name="Gloss (v)" type="data"
+                                    id="uuid:7ed450be-781e-4198-897f-ed4d8c5caeb9"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3713"
+                                    mdf:marker="gv" mdf:lng="vernacular"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="Used to catalog lexical entries according to an etic (published) list of possible semantic domains. Sorting on this field would then gather semantically related entries. Use a Range Set."
+                                    name="Index of semantics" type="data"
+                                    id="uuid:02ff728f-74f5-4cfa-b768-14b606ae53b0"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3715"
+                                    mdf:marker="is" mdf:lng="English"/>
+                                <container description="Group added for marker 'lf'"
+                                    name="Lexical function label Group" type="component"
+                                    id="uuid:f276c071-cdb8-4d1c-ab78-841efe6747fa">
+                                    <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                        description="Used to encode the semantic networks of a language. For consistency, a Range Set should be maintained on the lexical function labels used. When formatted by MDF, these labels can be modified (and even translated) by MDF's Audience CC tables."
+                                        name="Lexical function label" type="data"
+                                        id="uuid:52494453-ae04-4cca-8b5e-39d5ba59489e"
+                                        dcr:datcat="http://www.isocat.org/datcat/DC-3718"
+                                        mdf:marker="lf" mdf:lng="English"/>
+                                    <container description="Group added for marker 'lv'"
+                                        name="Lexical function value Group" type="component"
+                                        id="uuid:cd19164e-14dd-43ce-8ef6-47959cc7b5cc">
+                                        <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                            description="Used for the vernacular lexeme in a lexical function network. The \lv field &quot;points to&quot; the vernacular lexeme (a morpheme, word, or phrase) that is semantically related to the current headword as mapped or cataloged by the label in the \lf field."
+                                            name="Lexical function value" type="data"
+                                            id="uuid:c8ea0c93-8048-4367-b264-8b3d07aafd13"
+                                            dcr:datcat="http://www.isocat.org/datcat/DC-3722"
+                                            mdf:marker="lv" mdf:lng="vernacular"/>
+                                        <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                            description="This is for giving the English gloss of the vernacular lexeme referenced by the lexical function."
+                                            name="Lexical function gloss (E)" type="data"
+                                            id="uuid:55750b7a-2bfa-483d-b5c2-b0b1c831d0ad"
+                                            dcr:datcat="http://www.isocat.org/datcat/DC-3717"
+                                            mdf:marker="le" mdf:lng="English"/>
+                                        <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                            description="This is for giving the national language gloss of the vernacular lexeme referenced by the lexical function."
+                                            name="Lexical function gloss (n)" type="data"
+                                            id="uuid:57c8876b-4dcc-4da6-ad8c-0367ed5e03a4"
+                                            dcr:datcat="http://www.isocat.org/datcat/DC-3719"
+                                            mdf:marker="ln" mdf:lng="national"/>
+                                        <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                            description="This is for giving the regional language gloss of the vernacular lexeme referenced by the lexical function."
+                                            name="Lexical function gloss (r)" type="data"
+                                            id="uuid:39d3ac5f-6ecc-4f70-a4f2-ef811d8908ae"
+                                            dcr:datcat="http://www.isocat.org/datcat/DC-3720"
+                                            mdf:marker="lr" mdf:lng="regional"/>
+                                    </container>
+                                </container>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="Used to elucidate the distinct meanings of the parts of an idiom or complex phrase in a lexical entry (\lx) or subentry (\se)."
+                                    name="Literally" type="data"
+                                    id="uuid:be750e14-5670-4fe1-9a9f-5d48c3605d34"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3721"
+                                    mdf:marker="lt" mdf:lng="English"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="For any ethnographic note pertinent to the lexeme that you want separate from general notes. Capitalization and punctuation should be used as needed."
+                                    name="Notes (anthropology)" type="data"
+                                    id="uuid:23b8e2f0-000d-4592-bdfc-52221dbfeb68"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3725"
+                                    mdf:marker="na" mdf:lng="English"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="For any discourse/text analysis note pertinent to the lexeme that you want separate from general notes. Capitalization and punctuation should be used as needed."
+                                    name="Notes (discourse)" type="data"
+                                    id="uuid:44beef5b-4bad-45eb-8d29-5667b5bbc4b4"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3726"
+                                    mdf:marker="nd" mdf:lng="English"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="For any grammar note pertinent to the lexeme that you want separate from general notes. Capitalization and punctuation should be used as needed."
+                                    name="Notes (grammar)" type="data"
+                                    id="uuid:e16cd0f5-eb50-474d-a28c-42123ea80858"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3727"
+                                    mdf:marker="ng" mdf:lng="English"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="For any phonology note pertinent to the lexeme that you want separate from general notes. Capitalization and punctuation should be used as needed."
+                                    name="Notes (phonology)" type="data"
+                                    id="uuid:4a9e5ba3-35e3-413a-b87d-22e86c25383f"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3728"
+                                    mdf:marker="np" mdf:lng="English"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="For any question or note for further study, pertinent to the lexeme, that you want separate from general notes. Capitalization and punctuation should be used as needed."
+                                    name="Notes (questions)" type="data"
+                                    id="uuid:a1e84184-1bf2-42d4-88cf-9fd82c485c89"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3729"
+                                    mdf:marker="nq" mdf:lng="English"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="For any sociolinguistics note pertinent to the lexeme that you want separate from general notes. Capitalization and punctuation should be used as needed."
+                                    name="Notes (sociolinguistics)" type="data"
+                                    id="uuid:c0d5d44e-5094-412f-ae0c-93e46b93ad0b"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3730"
+                                    mdf:marker="ns" mdf:lng="English"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="A generic dump for all personal notes about an entry, subentry, or sense. More specific note fields provide a finer differentiation to one's notes: \np (phonology), \ng (grammar), \nd (discourse), \na (anthropology), \ns (sociolinguistics), and \nq (questions). All &quot;note fields&quot; should use capitalization and punctuation as needed."
+                                    name="Notes (general)" type="data"
+                                    id="uuid:0e522069-94cb-42a6-843a-3e23bba2ceb9"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3731"
+                                    mdf:marker="nt" mdf:lng="English"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="For denoting in English any semantic and/or grammatical restrictions pertinent to the lexeme. Use capitalization and punctuation as needed."
+                                    name="Only/restrictions (E)" type="data"
+                                    id="uuid:b9087573-847c-46d6-a7c6-decf0fc38ebf"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3732"
+                                    mdf:marker="oe" mdf:lng="English"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="For denoting in the national language any semantic and/or grammatical restrictions pertinent to the lexeme. Use capitalization and punctuation as needed."
+                                    name="Only/restrictions (n)" type="data"
+                                    id="uuid:c105b7d6-b5f7-4ae5-bcd4-d01caa376abe"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3733"
+                                    mdf:marker="on" mdf:lng="national"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="For denoting in the regional language any semantic and/or grammatical restrictions pertinent to the lexeme. Use capitalization and punctuation as needed."
+                                    name="Only/restrictions (r)" type="data"
+                                    id="uuid:cf1aed71-a049-47de-85bd-aa4cfb1cb11f"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3739"
+                                    mdf:marker="or" mdf:lng="regional"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="This field contains the vernacular description of any semantic and/or grammatical restrictions pertinent to the lexeme or headword. This is intended for use in a monolingual dictionary, but can be used in diglot and triglot dictionaries as well. Use capitalization and punctuation as needed."
+                                    name="Only/restrictions (v)" type="data"
+                                    id="uuid:0ac961b1-9df7-423e-a197-e2a5ab1fc24e"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3734"
+                                    mdf:marker="ov" mdf:lng="vernacular"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="This contains either the book and page number reference of a relevant picture (either sketched in a notebook or found in a picture book), or a link to the graphics file of a picture you want to include in your printed dictionary (see MDF documentation for how to create a link)."
+                                    name="Picture" type="data"
+                                    id="uuid:bc9ad7a9-273f-40ee-b125-8030f6ebb3a6"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3735"
+                                    mdf:marker="pc" mdf:lng="English"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="English word(s)/phrase(s); used to reverse the dictionary for an English index. If no \re field is given, the \ge field is used. If an \re * is present, the relevant entry, subentry, or sense will not be included in the reversed index. Put {space semicolon space} between multiple items, e.g. hut ; house."
+                                    name="Reversal (E)" type="data"
+                                    id="uuid:7efcf0ba-8919-4c79-9fcd-e2f736d0143d"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3750"
+                                    mdf:marker="re" mdf:lng="English"/>
+                                <container description="Group added for marker 'rf'"
+                                    name="Reference Group" type="component"
+                                    id="uuid:37fd0114-e0d2-4ad7-b756-419d5f38a10d">
+                                    <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                        description="Used to note the reference for the following example sentence."
+                                        name="Reference" type="data"
+                                        id="uuid:8ec434f5-4c55-4992-bb9d-7bb33dac50d7"
+                                        dcr:datcat="http://www.isocat.org/datcat/DC-3751"
+                                        mdf:marker="rf" mdf:lng="English"/>
+                                    <container description="Group added for marker 'xv'"
+                                        name="Example (v) Group" type="component"
+                                        id="uuid:7f663c39-60ea-48bd-9d64-f56c003a8d83">
+                                        <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                            description="Used to give an example or illustrative sentence in the vernacular to exemplify each separate sense and demonstrate legitimacy of translation equivalents. Should be short and natural. Use capitalization and punctuation as needed."
+                                            name="Example (v)" type="data"
+                                            id="uuid:690b494e-3bfa-49fb-bd1c-39b211b1a6d5"
+                                            dcr:datcat="http://www.isocat.org/datcat/DC-3778"
+                                            mdf:marker="xv" mdf:lng="vernacular"/>
+                                        <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                            description="English translation of the example sentence given in the \xv field. Use capitalization and punctuation as needed."
+                                            name="Example free trans. (E)" type="data"
+                                            id="uuid:79d09f0b-c519-41cc-ad9e-879089f9df23"
+                                            dcr:datcat="http://www.isocat.org/datcat/DC-3775"
+                                            mdf:marker="xe" mdf:lng="English"/>
+                                        <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                            description="National language translation of the example sentence given in the \xv field. Use capitalization and punctuation as needed."
+                                            name="Example free trans. (n)" type="data"
+                                            id="uuid:1ffd5b67-7cbd-4439-82dd-11443fb60e11"
+                                            dcr:datcat="http://www.isocat.org/datcat/DC-3776"
+                                            mdf:marker="xn" mdf:lng="national"/>
+                                        <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                            description="Regional language translation of the example sentence given in the \xv field. Use capitalization and punctuation as needed."
+                                            name="Example free trans. (r)" type="data"
+                                            id="uuid:1b1715c0-c1de-4fca-8b55-ca43507e23ae"
+                                            dcr:datcat="http://www.isocat.org/datcat/DC-3777"
+                                            mdf:marker="xr" mdf:lng="regional"/>
+                                    </container>
+                                </container>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="National language word(s)/phrase(s); used to reverse the dictionary for a national audience index. If no \rn field is given, the \gn field is used. If an \rn * is present, the relevant entry, subentry, or sense will not be included in the reversed index. Put {space semicolon space} between multiple items, e.g. hut ; house."
+                                    name="Reversal (n)" type="data"
+                                    id="uuid:3fc009ed-9bf1-4bc6-890d-bb39672a3f54"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3752"
+                                    mdf:marker="rn" mdf:lng="national"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="Regional language word or phrase that could be used to reverse the dictionary for a regional audience. Currently MDF does not support exporting a regional audience index."
+                                    name="Reversal (r)" type="data"
+                                    id="uuid:c1b19a10-e0bf-4081-a66a-9fc80bf5f09f"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3753"
+                                    mdf:marker="rr" mdf:lng="regional"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="Used to provide a scientific name for a lexeme."
+                                    name="Scientific name" type="data"
+                                    id="uuid:b907c63f-1d3a-477b-98ad-27804c614855"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3754"
+                                    mdf:marker="sc" mdf:lng="English"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="The English version of the \th field and probably the one to use first. Differentiate and catalog the semantic domains of an entry, being careful to not let the English force or mask the vernacular relations. Moving to the vernacular terms (given in \th field) as early as possible is best. Use a Range Set."
+                                    name="Semantic domain" type="data"
+                                    id="uuid:f3702ae7-f9a1-4294-9642-5ef9ac55e9b1"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3755"
+                                    mdf:marker="sd" mdf:lng="English"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="Used to indicate the name and village of the informant who provided the data in the current entry."
+                                    name="Source" type="data"
+                                    id="uuid:6ead645b-66b2-43fa-8fa0-cdce57976d11"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3759"
+                                    mdf:marker="so" mdf:lng="English"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="Used to reference a synonym of the lexeme, but using the \lf (lexical function) field for this is better practice."
+                                    name="Synonym" type="data"
+                                    id="uuid:c6b34fac-4c96-4fed-88a2-f4000c354899"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3761"
+                                    mdf:marker="sy" mdf:lng="vernacular"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="This field allows for a table or tabulated information to be added to the dictionary."
+                                    name="Table" type="data"
+                                    id="uuid:825a8d08-4528-4d5f-a660-a9664b608a42"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3762"
+                                    mdf:marker="tb" mdf:lng="English"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="Used for developing a vernacular-based thesaurus. It is to be labeled with the vernacular term governing the semantic domain of the entry. Sorting on this field (within Shoebox) would yield a vernacular thesaurus. Use a Range Set."
+                                    name="Thesaurus" type="data"
+                                    id="uuid:a7904ad5-5ff9-4808-b984-156f0a986c8f"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3763"
+                                    mdf:marker="th" mdf:lng="vernacular"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="This field should cover, in English, such information as common usage, or restrictions in usage (such as taboos) that is needed so a non-native speaker can use this lexeme properly. Use capitalization and punctuation as needed."
+                                    name="Usage (E)" type="data"
+                                    id="uuid:656d59d6-67f2-41cb-9d51-5788ef953b16"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3764"
+                                    mdf:marker="ue" mdf:lng="English"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="This field should cover, in the national language, such information as common usage, or restrictions in usage (such as taboos) that is needed so a non-native speaker can use this lexeme properly. Use capitalization and punctuation as needed."
+                                    name="Usage (n)" type="data"
+                                    id="uuid:b23b6e7d-6328-45d0-acac-e5bffff37ce6"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3781"
+                                    mdf:marker="un" mdf:lng="national"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="This field should cover, in the regional language, such information as common usage, or restrictions in usage (such as taboos) that is needed so a non-native speaker can use this lexeme properly. Use capitalization and punctuation as needed."
+                                    name="Usage (r)" type="data"
+                                    id="uuid:9ae8dac9-0900-45e5-b6f1-ab16dcaac307"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3782"
+                                    mdf:marker="ur" mdf:lng="regional"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="This field contains the vernacular description of common usage, or restrictions in usage (such as taboos) that is needed to describe the lexeme more fully. Intended for use in a monolingual dictionary, but can be used in diglot and triglot dictionaries as well. Use capitalization and punctuation as needed."
+                                    name="Usage (v)" type="data"
+                                    id="uuid:735e07b4-6a83-456e-8bcc-8bc279d67e9d"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3767"
+                                    mdf:marker="uv" mdf:lng="vernacular"/>
+                                <container description="Group added for marker 'va'"
+                                    name="Variant form(s) Group" type="component"
+                                    id="uuid:6c008bda-50dd-419c-82a9-15dcb073b92a">
+                                    <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                        description="Where variant forms of the lexical entry or subentry can be noted (e.g. forms from another dialect or minor alternations in the focus dialect). Usually these forms occur elsewhere in the dictionary as minor entries. Comments on this field are given with the \ve, \vn, and \vr fields."
+                                        name="Variant form(s)" type="data"
+                                        id="uuid:53a945d0-3ef4-4e04-baba-4411e58320dd"
+                                        dcr:datcat="http://www.isocat.org/datcat/DC-3768"
+                                        mdf:marker="va" mdf:lng="vernacular"/>
+                                    <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                        description="Where English comments can be given for the variant form."
+                                        name="Variant comment (E)" type="data"
+                                        id="uuid:26c6b9c2-fe73-499d-89ed-3b1ed4a16832"
+                                        dcr:datcat="http://www.isocat.org/datcat/DC-3769"
+                                        mdf:marker="ve" mdf:lng="English"/>
+                                    <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                        description="Where national language comments can be given for the variant form."
+                                        name="Variant comment (n)" type="data"
+                                        id="uuid:b6bd6265-8c88-44ff-bf8c-649f2e510a36"
+                                        dcr:datcat="http://www.isocat.org/datcat/DC-3770"
+                                        mdf:marker="vn" mdf:lng="national"/>
+                                    <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                        description="Where regional language comments can be given for the variant form."
+                                        name="Variant comment (r)" type="data"
+                                        id="uuid:737ea262-e797-42fb-a2c3-1d7d3cb53751"
+                                        dcr:datcat="http://www.isocat.org/datcat/DC-3771"
+                                        mdf:marker="vr" mdf:lng="regional"/>
+                                </container>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="English gloss to be used in word-level interlinear glossing."
+                                    name="Word-level gloss (E)" type="data"
+                                    id="uuid:b8bb7f59-335b-4058-83f6-c3d6c1541a9a"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3772"
+                                    mdf:marker="we" mdf:lng="English"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="National language gloss to be used in word-level interlinear glossing."
+                                    name="Word-level gloss (n)" type="data"
+                                    id="uuid:f2a8f953-d81d-423f-b89b-2e1d3447b76e"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3773"
+                                    mdf:marker="wn" mdf:lng="national"/>
+                                <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                                    description="Regional language gloss to be used in word-level interlinear glossing."
+                                    name="Word-level gloss (r)" type="data"
+                                    id="uuid:e2e68e7a-f404-47ae-b90c-7317ef4b4148"
+                                    dcr:datcat="http://www.isocat.org/datcat/DC-3774"
+                                    mdf:marker="wr" mdf:lng="regional"/>
+                            </container>
+                        </container>
+                    </container>
+                    <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                        description="Used to indicate how complete or thoroughly checked an entry is. Use a Range Set."
+                        name="Status" type="data" id="uuid:71c61f0b-7ab1-4400-9bd9-a403679dcdcd"
+                        dcr:datcat="http://www.isocat.org/datcat/DC-3760" mdf:marker="st"
+                        mdf:lng="English"/>
+                    <datacategory xmlns:dcr="http://www.isocat.org/ns/dcr"
+                        description="Underlying form for use in parsing interlinear text. Not for publication."
+                        name="Underlying for parse" type="data"
+                        id="uuid:dab279aa-bbf3-4bf1-892d-f76607ac35bd"
+                        mdf:marker="u" mdf:lng="vernacular"/>
+                </container>
+            </container>
+        </container>
+        </schema>
+        <views listView="listViewId" lexicalEntryView="leViewId">
+            <view id="listViewId" type="dsl_view" isBranch="true" name="List view"
+                description="Created by Lexus.">
+                <style/>
+                <structure isBranch="true">
+                    <show optional="false" isBranch="true" type="dsl_show" name="Decorator"
+                        dsl_class="">
+                        <data isBranch="false" type="data category" name="Data Category"
+                            id="uuid:925e8df3-4036-48b2-81b5-3269697fd637"/>
+                    </show>
+                </structure>
+            </view>
+            <view id="leViewId" isBranch="true" name="Lexical Entry View"
+                description="Created by Lexus." type="dsl_view">
+                <style type="dsl_style"> body { background-color : #333333; } .lexeme { font-size :
+                    20pt; color : grey; }</style>
+                <structure isBranch="true">
+                    <show type="dsl_show" name="Decorator" isBranch="true" dsl_class="lexeme"
+                        optional="false" block="false" localStyle="false">
+                        <data isBranch="false" type="data category" name="Data Category"
+                            id="uuid:925e8df3-4036-48b2-81b5-3269697fd637"/>
+                    </show>
+                </structure>
+            </view>
+        </views>
+    </template>
 </templates>
