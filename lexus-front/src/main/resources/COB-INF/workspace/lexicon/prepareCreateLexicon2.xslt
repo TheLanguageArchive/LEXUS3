@@ -137,6 +137,7 @@
                     <xsl:apply-templates mode="data" select="$template/lexus:schema/*">
                         <xsl:with-param name="map" select="$map" tunnel="yes"/>
                     </xsl:apply-templates>
+                    
                     <!--
                         <lexicon id="{$id}">
                         <lexical-entry id="{concat('uuid:',util:toString(util:randomUUID()))}"
@@ -159,6 +160,9 @@
                         <name>
                             <xsl:value-of select="json/parameters/name"/>
                         </name>
+                        <template>
+                        	<xsl:value-of select="$template/@id"></xsl:value-of>
+                        </template>
                         <description>
                             <xsl:value-of select="json/parameters/description"/>
                         </description>
