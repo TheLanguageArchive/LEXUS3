@@ -934,12 +934,12 @@
                                 multiple="true"
                                 description="Represents a narrative description of a Sense and refines or complements Definition"
                                 name="Statement" type="container">
-                                <container id="schema-definition-text-representation-id"
+                                <container id="schema-statement-text-representation-id"
                                     admin-info="" mandatory="false" multiple="true"
                                     description="Represents one textual content of Statement"
                                     name="Text Representation" type="container">
                                     <datacategory
-                                        id="schema-definition-text-representaion-text-1-id"
+                                        id="schema-statement-text-representaion-text-id"
                                         admin-info="" mandatory="true" multiple="true"
                                         description="the actual text" name="text" type="data"/>
                                 </container>
@@ -948,7 +948,7 @@
                                 mandatory="false" multiple="true"
                                 description="Represents one textual content of Definition"
                                 name="Text Representation" type="container">
-                                <datacategory id="schema-statement-text-representaion-text-id"
+                                <datacategory id="schema-definition-text-representaion-text-id"
                                     admin-info="" mandatory="true" multiple="true"
                                     description="the actual text" name="text" type="data"/>
                             </container>
