@@ -1,5 +1,5 @@
 <templates xmlns="http://www.mpi.nl/lexus">
-    <template version="1.0" name="Default Template"
+    <template version="1.0" name="Default Template" id="template1"
         description="The default lexicon structure of LEXUS 2.">
         <schema>
             <container id="schema-l-id" admin-info="" mandatory="true" multiple="false"
@@ -49,7 +49,7 @@
         </views>
 
     </template>
-    <template version="1.0" name="LMF Core and Morpho-syntax Template"
+    <template version="1.0" name="LMF Core and Morpho-syntax Template" id="template2"
         description="The LMF structure for the core and the morphosyntax extension. The structure includes example data categories which the user can adapt, unless stated otherwise in the data category description">
         <schema>
             <container id="schema-l-id" admin-info="" mandatory="true" multiple="false"
@@ -285,7 +285,7 @@
             </view>
         </views>
     </template>
-    <template version="1.0" name="MDF" description="The default lexicon structure for MDF">
+    <template version="1.0" name="MDF" description="The default lexicon structure for MDF" id="template3">
 
         <schema>
             <container id="uuid:8c336ad8-e23b-4978-b793-2919871a63a0"
@@ -892,7 +892,7 @@
             </view>
         </views>
     </template>
-    <template version="1.0" name="LEGO Template" description="The Default LEGO structure. ">
+    <template version="1.0" name="LEGO Template" description="The Default LEGO structure." id="template4">
         <schema>
             <container id="schema-l-id" admin-info="" mandatory="true" multiple="false"
                 description="The container for all the lexical entries of a source language within the database. A Lexicon must contain at least one lexical entry"
@@ -902,7 +902,7 @@
                     name="Lexical Entry" type="lexical-entry">
                     <datacategory id="schema-lID-id" admin-info="" mandatory="true" multiple="false"
                         description="A unique identifier for a lexical entry. For the sake of refrential integrity this data category should not be removed from the schema"
-                        name="identifier" type="data"> </datacategory>
+                        name="identifier" type="data"></datacategory>
                     <container id="schema-lemma-id" admin-info="" mandatory="true" multiple="true"
                         description="Represents a word form chosen by convention to designate the Lexical Entry"
                         name="Lemma" type="container">
