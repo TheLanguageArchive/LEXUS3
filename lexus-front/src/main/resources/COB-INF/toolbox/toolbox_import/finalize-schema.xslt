@@ -18,28 +18,23 @@
         -->
     <xsl:key name="dcs" match="dcif:dataElementNameSection[dcif:source='MDF'][dcif:dataElementName]" use="dcif:dataElementName"/>
 
-    <!-- Transform mdf:marker attrs to ISOCat references: dcr:datcat="http://www.isocat.org/datcat/DC-3688",
+    <!-- Transform mdf:marker attrs to ISOcat references: dcr:datcat="http://www.isocat.org/datcat/DC-3688",
          or Lexus MDF references: dcr:datcat="http://lexus.mpi.nl/datcat/mdf/xx". -->
     <xsl:template match="lexus:schema//@mdf:marker">
-        <xsl:attribute name="dcr:datcat">
-            <xsl:choose>
-                <!-- First try to match the mdf:marker to ISOCat -->
-                <xsl:when test="key('dcs', data(.), $isocat-to-mdf-dcs)">
-                    <xsl:value-of select="key('dcs', data(.), $isocat-to-mdf-dcs)/ancestor::dcif:dataCategory/@pid"/>
-                </xsl:when>
-                <!-- If that doesn't work, create a reference to our own lexus MDF DCR. -->
-                <xsl:otherwise>
-                    <xsl:text>lexus-user:</xsl:text>
-                    <xsl:value-of select="."/>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:attribute>
-        <xsl:copy/>
+        <!-- Try to match the mdf:marker to the ISOcat MDF DCS -->
+        <xsl:if test="key('dcs', data(.), $isocat-to-mdf-dcs)">
+			<xsl:attribute name="reference">
+          		<xsl:value-of select="."/>
+        	</xsl:attribute>
+        	<xsl:attribute name="registry" select="'MDF'"/>
+        </xsl:if>
     </xsl:template>
     
     <!-- Remove mdf:marker attrs from lexicon. -->
     <xsl:template match="lexus:lexicon//@mdf:marker"/>
     
+    <xsl:template match="@mdf:lng"/>
+
     <xsl:template match="@* | node()">
         <xsl:copy>
             <xsl:apply-templates select="@* | node()"/>
