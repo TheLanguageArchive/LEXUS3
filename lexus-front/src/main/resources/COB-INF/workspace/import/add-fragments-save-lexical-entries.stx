@@ -8,7 +8,7 @@
 
     <stx:variable name="lexiconId" select="''"/>
     <stx:variable name="userId" select="''"/>
-    <stx:variable name="batchSize" select="1000"/>
+    <stx:variable name="batchSize" select="100"/>
     <stx:variable name="stopPos" select="0"/>
     
     <stx:template match="data">
