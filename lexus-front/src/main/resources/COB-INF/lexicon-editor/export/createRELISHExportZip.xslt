@@ -153,7 +153,7 @@
         mode="use_namespace">
         <xsl:param name="ns" select="''"/>
         <xsl:element name="container" namespace="{$ns}">
-            <xsl:copy-of select="@id | @admin-info | @description | @type | @note | @name"/>
+            <xsl:copy-of select="@*"/>
             <xsl:apply-templates select="*" mode="use_namespace">
                 <xsl:with-param name="ns" select="$ns"/>
             </xsl:apply-templates>
@@ -165,46 +165,19 @@
         mode="use_namespace">
         <xsl:param name="ns" select="''"/>
         <xsl:element name="container" namespace="{$ns}">
-            <xsl:copy-of select="@id | @admin-info | @description | @type | @note | @name"/>
+            <xsl:copy-of select="@*"/>
             <xsl:apply-templates select="*" mode="use_namespace">
                 <xsl:with-param name="ns" select="$ns"/>
             </xsl:apply-templates>
         </xsl:element>
     </xsl:template>
 
-    <!-- Transform the registry/reference attributes to datcat="isocat:DC-xxxx" attribute.
-    -->
-    <xsl:template match="schema//container[@type='data']" mode="use_namespace"
-        xmlns:dcr="http://www.isocat.org/ns/dcr">
+    <xsl:template match="schema//container[@type='data']" mode="use_namespace">
         <xsl:param name="ns" select="''"/>
-        <xsl:element name="datacategory" namespace="{$ns}"
-            xmlns:isocat="http://www.isocat.org/datcat/">
-            <xsl:apply-templates select="@*" mode="use_namespace">
-                <xsl:with-param name="ns" select="$ns"/>
-            </xsl:apply-templates>
-            <xsl:choose>
-                <xsl:when test="@registry eq 'ISO-12620' and @reference ne ''">
-                    <xsl:attribute name="dcr:datcat" select="@reference"/>
-                </xsl:when>
-                <!--
-                <xsl:when test="@registry eq 'MDF' and @reference ne ''">
-                    <xsl:attribute name="dcr:datcat"
-                        select="concat('lexus-user:', @reference)"/>
-                </xsl:when>-->
-                <xsl:otherwise><!--
-                    <xsl:copy-of
-                        select="@*[local-name() eq 'reference' and local-name() eq 'registry']"/>-->
-                </xsl:otherwise>
-            </xsl:choose>
+        <xsl:element name="datacategory" namespace="{$ns}">
+            <xsl:copy-of select="@*"/>
         </xsl:element>
     </xsl:template>
-
-    <xsl:template match="@reference | @registry | @mdf:*" mode="use_namespace" priority="3"/>
-
-    <xsl:template match="@*" mode="use_namespace" priority="2">
-        <xsl:copy/>
-    </xsl:template>
-
 
     <xsl:template match="meta/owner|meta/users|meta/views|meta/name|meta/description|meta/note"
         mode="use_namespace"/>
