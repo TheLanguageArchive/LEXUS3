@@ -123,9 +123,14 @@
     </distributionManagement>
     <repositories>
         <repository>
-            <id>MPI-Snapshots</id>
-            <name>MPI LAT Repository/</name>
-            <url>http://lux15.mpi.nl/nexus/content/repositories/MPI-Snapshots</url>
+            <id>otego</id> <!-- for cocoon -->
+            <name>otego mirror</name>
+            <url>http://project.otego.com/mirror-maven2</url>
+        </repository>
+        <repository> <!-- for saxon 9.1.0.8 -->
+            <id>JBoss</id>
+            <name>JBoss deprecated repository</name>
+            <url>https://repository.jboss.org/nexus/content/repositories/deprecated</url>
         </repository>
     </repositories>
 
