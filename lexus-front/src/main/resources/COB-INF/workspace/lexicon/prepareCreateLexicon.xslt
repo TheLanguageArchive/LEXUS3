@@ -20,26 +20,126 @@
     <xsl:param name="endpoint"/>
     <xsl:param name="users-collection"/>
 
+    <xsl:param name="templateCatalog"/>
+
     <xsl:variable name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
     <xsl:variable name="schema-lexicon-information-id"
         select="concat('uuid:',util:toString(util:randomUUID()))"/>
-    <xsl:variable name="lexicon-name-id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
-    <xsl:variable name="lexicon-description-id"
-        select="concat('uuid:',util:toString(util:randomUUID()))"/>
-    <xsl:variable name="lexicon-note-id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
-    <xsl:variable name="schema-lexical-entry-id"
-        select="concat('uuid:',util:toString(util:randomUUID()))"/>
-    <xsl:variable name="schema-form-id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
-    <xsl:variable name="schema-sense-id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
-    <xsl:variable name="schema-lexeme-id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
-    <xsl:variable name="listViewId" select="concat('uuid:',util:toString(util:randomUUID()))"/>
-    <xsl:variable name="leViewId" select="concat('uuid:',util:toString(util:randomUUID()))"/>
 
+    <xsl:template match="*[@type='lexicon']" mode="data">
+        <lexicon id="{$id}">
+            <xsl:apply-templates mode="#current"/>
+        </lexicon>
+    </xsl:template>
+
+    <xsl:template match="*[@type='lexical-entry']" mode="data">
+        <xsl:param name="map" tunnel="yes"/>
+        <lexical-entry id="{concat('uuid:',util:toString(util:randomUUID()))}"
+            schema-ref="{$map//entry[from=current()/@id]/to}">
+            <xsl:apply-templates mode="#current"/>
+        </lexical-entry>
+    </xsl:template>
+
+    <xsl:template match="*[@type='container']" mode="data">
+        <xsl:param name="map" tunnel="yes"/>
+        <container id="{concat('uuid:',util:toString(util:randomUUID()))}"
+            schema-ref="{$map//entry[from=current()/@id]/to}" name="{@name}">
+            <xsl:if test="count(./*) > 0"><xsl:apply-templates mode="#current"/></xsl:if>
+        </container>
+    </xsl:template>
+
+    <xsl:template match="*[@type='data']" mode="data">
+        <xsl:param name="map" tunnel="yes"/>
+        <data id="{concat('uuid:',util:toString(util:randomUUID()))}"
+            schema-ref="{$map//entry[from=current()/@id]/to}" name="{@name}">
+            <value>
+                <xsl:value-of select="@name"/>
+            </value>
+        </data>
+    </xsl:template>
+
+    <xsl:template match="@*|text()" mode="schema">
+        <xsl:copy>
+            <xsl:apply-templates select="@*|node()" mode="#current"/>
+        </xsl:copy>
+    </xsl:template>
+    
+    <xsl:template match="element()" mode="schema">
+        <xsl:element name="{local-name()}">
+            <xsl:apply-templates select="@*|node()" mode="#current"/>
+        </xsl:element>
+    </xsl:template>
+    
+    <xsl:template match="@id" mode="schema">
+        <xsl:param name="map" tunnel="yes"/>
+        <xsl:attribute name="id" select="$map//entry[from=current()]/to"/>
+    </xsl:template> 
+    
+    <xsl:template match="lexus:datacategory" mode="schema">
+        <container type="data">
+            <xsl:apply-templates select="@*|node()" mode="#current"/>
+        </container>
+    </xsl:template>
+        
+    <xsl:template match="@*|text()" mode="views">
+        <xsl:copy>
+            <xsl:apply-templates select="@*|node()" mode="#current"/>
+        </xsl:copy>
+    </xsl:template>
+    
+    <xsl:template match="element()" mode="views">
+        <xsl:element name="{local-name()}">
+            <xsl:apply-templates select="@*|node()" mode="#current"/>
+        </xsl:element>
+    </xsl:template>
+    
+    <xsl:template match="@id" mode="views">
+        <xsl:param name="map" tunnel="yes"/>
+        <xsl:attribute name="id" select="$map//entry[from=current()]/to"/>
+    </xsl:template> 
+    
+    <xsl:template match="lexus:views/@*" mode="views">
+        <xsl:param name="map" tunnel="yes"/>
+        <xsl:attribute name="{name()}" select="$map//entry[from=current()]/to"/>
+    </xsl:template> 
+    
     <xsl:template match="/data">
+        <xsl:variable name="templateName" select="json/parameters/template"/>
+        <xsl:message>INFO: template name:<xsl:value-of select="$templateName"/></xsl:message>
+        <xsl:variable name="template"
+            select="document($templateCatalog)//lexus:template[@name=$templateName]"/>
+        <xsl:message>INFO: template:<xsl:value-of select="$template/@name"/>[<xsl:value-of
+                select="$template/@description"/>]</xsl:message>
+
+        <xsl:variable name="map" as="node()">
+            <map>
+                <xsl:for-each select="distinct-values($template//@id)">
+                    <entry>
+                        <start>[</start>
+                        <from>
+                            <xsl:value-of select="current()"/>
+                        </from>
+                        <arrow>]=[</arrow>
+                        <to>
+                            <xsl:value-of select="concat('uuid:',util:toString(util:randomUUID()))"
+                            />
+                        </to>
+                        <stop>]</stop>
+                        <xsl:value-of select="system-property('line.separator')"/>
+                    </entry>
+                </xsl:for-each>
+            </map>
+        </xsl:variable>
+        <xsl:message>INFO: map:<xsl:value-of select="$map"/></xsl:message>
         <data>
             <lexus:create-lexicon>
                 <lexus id="{$id}">
-                    <lexicon id="{$id}">
+                    <xsl:apply-templates mode="data" select="$template/lexus:schema/*">
+                        <xsl:with-param name="map" select="$map" tunnel="yes"/>
+                    </xsl:apply-templates>
+                    
+                    <!--
+                        <lexicon id="{$id}">
                         <lexical-entry id="{concat('uuid:',util:toString(util:randomUUID()))}"
                             schema-ref="{$schema-lexical-entry-id}">
                             <container id="{concat('uuid:',util:toString(util:randomUUID()))}"
@@ -54,11 +154,15 @@
                             <container id="{concat('uuid:',util:toString(util:randomUUID()))}"
                                 name="Sense" schema-ref="{$schema-sense-id}"/>
                         </lexical-entry>
-                    </lexicon>
+                        </lexicon>
+                    -->
                     <meta id="{$id}">
                         <name>
                             <xsl:value-of select="json/parameters/name"/>
                         </name>
+                        <template>
+                        	<xsl:value-of select="$template/@id"></xsl:value-of>
+                        </template>
                         <description>
                             <xsl:value-of select="json/parameters/description"/>
                         </description>
@@ -75,6 +179,10 @@
                             </user>
                         </users>
                         <schema>
+                            <xsl:apply-templates mode="schema" select="$template/lexus:schema/*">
+                                <xsl:with-param name="map" select="$map" tunnel="yes"/>
+                            </xsl:apply-templates>
+                            <!--
                             <container id="{$id}"
                                 description="The container for all the lexical entries of a source language within the database. A Lexicon must contain at least one lexical entry"
                                 name="Lexicon" mandatory="true" multiple="false" type="lexicon"
@@ -98,7 +206,12 @@
                                         type="container" admin-info=""/>
                                 </container>
                             </container>
+                            -->
                         </schema>
+                        <xsl:apply-templates mode="views" select="$template/lexus:views">
+                            <xsl:with-param name="map" select="$map" tunnel="yes"/>
+                        </xsl:apply-templates>
+                        <!--
                         <views listView="{$listViewId}" lexicalEntryView="{$leViewId}">
                             <view id="{$listViewId}" type="dsl_view" isBranch="true"
                                 name="List view" description="Created by Lexus.">
@@ -131,6 +244,7 @@
                                 </structure>
                             </view>
                         </views>
+                        -->
                     </meta>
                 </lexus>
             </lexus:create-lexicon>
