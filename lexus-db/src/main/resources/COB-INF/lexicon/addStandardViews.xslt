@@ -2,6 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:lexus="http://www.mpi.nl/lexus"
     xmlns:xquery="xquery-dialect"
+    xmlns:util="java:java.util.UUID"
     version="2.0">
 
     <xsl:include href="../util/identity.xslt"/>
@@ -60,7 +61,6 @@
                     <xsl:call-template name="declare-namespace"/>
                     declare namespace dcr="http://www.isocat.org/ns/dcr";
                     declare namespace mdf="http://lexus.mpi.nl/datcat/mdf/";
-                    declare namespace util = "java:java.util.UUID";
                     
                     <xsl:call-template name="permissions"/>
                     
@@ -79,8 +79,8 @@
                     let $lexiconId := '<xsl:value-of select="@lexicon"/>'
                     let $lexicon := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $lexiconId]
                     (: new ids for new views :)
-                    let $listView := concat('uuid:',util:toString(util:randomUUID()))
-                    let $lexicalEntryView := concat('uuid:',util:toString(util:randomUUID()))
+                    let $listView := concat('uuid:','<xsl:value-of select="util:toString(util:randomUUID())"/>')
+                    let $lexicalEntryView := concat('uuid:','<xsl:value-of select="util:toString(util:randomUUID())"/>')
                     (: determine lexeme id :)
                     let $lexeme :=
                         if (
