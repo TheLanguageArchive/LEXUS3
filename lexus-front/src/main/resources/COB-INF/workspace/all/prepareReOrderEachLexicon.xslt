@@ -3,7 +3,7 @@
     xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl"
     xmlns:cinclude="http://apache.org/cocoon/include/1.0"
     exclude-result-prefixes="xd"
-    version="1.0">
+    version="2.0">
     
     <xsl:import href="../../util/identity.xslt"/>
     

@@ -14,7 +14,7 @@
 	<xsl:param name="lexicon-id" select="''" />
 
 	<xsl:template match="lexus:display">
-		<target:stylesheet version="1.0">
+		<target:stylesheet version="2.0">
 
 			<target:strip-space elements="*" />
 			<target:preserve-space elements="text" />
