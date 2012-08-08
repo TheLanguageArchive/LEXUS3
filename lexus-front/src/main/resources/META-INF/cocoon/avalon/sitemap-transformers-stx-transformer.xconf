@@ -2,7 +2,7 @@
 <map:components xmlns:map="http://apache.org/cocoon/sitemap/1.0">
     
     <map:transformers>        
-        <map:transformer name="stx" src="org.apache.cocoon.transformation.TraxTransformer">
+        <map:transformer pool-grow="2" pool-max="32" pool-min="8" name="stx" src="org.apache.cocoon.transformation.TraxTransformer">
             <xslt-processor-role>stx</xslt-processor-role>
         </map:transformer>
     </map:transformers>
