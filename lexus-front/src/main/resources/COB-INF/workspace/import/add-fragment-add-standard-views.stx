@@ -7,6 +7,16 @@
     <stx:variable name="lexiconId" select="''"/>
     <stx:variable name="userId" select="''"/>
     
+    <stx:buffer name="user"/>
+
+    <stx:template match="data">
+        <stx:assign name="lexiconId" select="@new-lexicon-id"/>
+        <stx:copy attributes="@*">
+            <stx:process-children/>
+        </stx:copy>
+    </stx:template>
+
+
     <stx:template match="user">
         <stx:assign name="userId" select="@id"/>
         <stx:copy attributes="@*">
@@ -14,17 +24,15 @@
         </stx:copy>
     </stx:template>
 
-    <stx:template match="data">
-    <stx:assign name="lexiconId" select="@new-lexicon-id"/>
-    <data>
-        <stx:process-attributes/>
-        <stx:process-children/>
-        <fragments:transform fragment-name="add-standard-views"
+    <stx:template match="lexus:create-lexicon">
+    	<lexus:create-lexicon>
+        	<stx:process-attributes/>
+        	<stx:process-children/>
+    	</lexus:create-lexicon>      
+    	<fragments:transform fragment-name="add-standard-views"
             fragment-namespace="http://www.mpi.nl/lexus">
 			<lexus:add-standard-views lexicon="{$lexiconId}" user="{$userId}"/>
-        </fragments:transform>
-     </data>
-        
+    	</fragments:transform>
     </stx:template>
 
     <stx:template match="@*">
