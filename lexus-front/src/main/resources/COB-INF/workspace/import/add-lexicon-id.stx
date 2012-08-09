@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <stx:transform xmlns:stx="http://stx.sourceforge.net/2002/ns" xmlns:lexus="http://www.mpi.nl/lexus"
-    xmlns:util="java:java.util.UUID" version="1.0">
+    xmlns:util="java:java.util.UUID" strip-space="yes" version="1.0">
 
     <stx:variable name="lexiconId" select="concat('uuid:',util:toString(util:randomUUID()))"/>
 
