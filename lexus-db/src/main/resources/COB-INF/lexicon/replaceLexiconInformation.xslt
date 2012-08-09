@@ -37,7 +37,7 @@
                         ,
                             <xquery:replace>
                                 <xquery:node>$lexus/meta/description</xquery:node>
-                                <xquery:with>$lexicon-information/desc</xquery:with>
+                                <xquery:with>$lexicon-information/description</xquery:with>
                             </xquery:replace>
                         ,
                             <xquery:replace>
