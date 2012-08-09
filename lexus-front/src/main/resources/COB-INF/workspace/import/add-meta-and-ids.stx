@@ -33,10 +33,9 @@
                         </permissions>
                     </user>
                 </users>
-                <name>
-                </name>
-                <description>
-                </description>
+                <name>Importing lexicon...</name>
+                <description>This lexicon is currently being imported.
+We do not recommend to open it while the import process is still running.</description>
                 <note>
                 </note>
                 <stx:process-children group="meta"/>
