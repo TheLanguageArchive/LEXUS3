@@ -24,9 +24,6 @@
         </stx:copy>
     </stx:template>
 
-    <!-- 
-        Process a lexical-entry.
-        -->
     <stx:template match="lexus:lexicon-information">
         <fragments:transform fragment-name="replace-lexicon-information"
             fragment-namespace="http://www.mpi.nl/lexus">
