@@ -425,30 +425,37 @@
                 <map:transform type="servletServiceFragments">
                     <map:parameter name="service" value="servlet:lexus-db:/lexicon/insertLexicalEntries.xml"/>
                 </map:transform>
-                
+              
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/import-6.xml"/>
-                
-                <map:transform type="stx" src="import/add-fragment-replace-lexicon-information.stx"/>
-                
-                <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/import-7.xml"/>
-                
-                <map:transform type="servletServiceFragments">
-                    <map:parameter name="service" value="servlet:lexus-db:/lexicon/replaceLexiconInformation.xml"/>
-                </map:transform>
-                
-                <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/import-8.xml"/>
                 
                 <map:transform type="stx" src="import/add-fragment-add-standard-views.stx"/>
                 
                 
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/import-9.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-7.xml"/>
                 
                 <map:transform type="servletServiceFragments">
                     <map:parameter name="service" value="servlet:lexus-db:/lexicon/addStandardViews.xml"/>
+                </map:transform>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-8.xml"/>
+                    
+                <!-- Alternative XSLT to the STX 'add-fragment-replace-lexicon-information.stx'. 
+                     At this point of the import pipeline we want to search for the presence of the element 'lexicon-information' 
+                in the import document and act accordingly if it is not there. This is impossible according to my current STX 
+                understanding (descendant axis is not available in STXPath). Thus we use XSLT.
+				     This does not have any major performance impact since at this point of the pipeline the XML documents are 
+				already very small since the entries were already inserted in the DB. -->
+                
+                <map:transform type="saxon" src="import/add-fragment-replace-lexical-information.xslt"/>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-9.xml"/>
+                
+                <map:transform type="servletServiceFragments">
+                    <map:parameter name="service" value="servlet:lexus-db:/lexicon/replaceLexiconInformation.xml"/>
                 </map:transform>
                 
                 <map:transform type="${tee}"
