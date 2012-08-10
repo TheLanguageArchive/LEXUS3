@@ -447,7 +447,7 @@
                 in the import document and act accordingly if it is not there. This is impossible according to my current STX 
                 understanding (descendant axis is not available in STXPath). Thus we use XSLT.
 				     This does not have any major performance impact since at this point of the pipeline the XML documents are 
-				already very small since the entries were already inserted in the DB. -->
+				already very small because the entries were already inserted in the DB. -->
                 
                 <map:transform type="saxon" src="import/add-fragment-replace-lexical-information.xslt"/>
                 
