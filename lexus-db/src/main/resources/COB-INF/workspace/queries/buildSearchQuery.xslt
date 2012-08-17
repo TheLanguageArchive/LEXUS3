@@ -175,7 +175,7 @@
                     <xsl:text>
                     subsequence(
                         for $l in $les
-	                    let $d := $l//data[@schema-ref = "</xsl:text><xsl:value-of select="$firstDC/container/@id" /><xsl:text>"][1]
+	                    let $d := ($l//data[@schema-ref = "</xsl:text><xsl:value-of select="$firstDC/container/@id" /><xsl:text>"])[1]
 	                    order by $d/@sort-key, $d/value
                         return $l , ($startPage * $pageSize) + 1, $pageSize)
                     }                
