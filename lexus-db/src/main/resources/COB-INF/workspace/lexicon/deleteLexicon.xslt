@@ -42,7 +42,7 @@
                         </xquery:delete>
                 };
                 
-                let $user := <xsl:apply-templates select="/data/user" mode="encoded"/>
+                let $user := <xsl:apply-templates select="/data/user | /result/user" mode="encoded"/>
                 let $id := '<xsl:value-of select="lexicon/@id"/>'
                 let $lexus := fn:subsequence(collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $id], 1, 1)
                 return 
