@@ -358,7 +358,7 @@
       Mount subsitemap for LexusLexicalEntryEditor and LexusWorkspaceEditor,
         handle file uploads.
         -->
-        <map:pipeline>
+        <map:pipeline  type="noncaching">
 
             <map:match pattern="LexusLexicalEntryEditor/**">
                 <map:act type="cauth-is-logged-in">
