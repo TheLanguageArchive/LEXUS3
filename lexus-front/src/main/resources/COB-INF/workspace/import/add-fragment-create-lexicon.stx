@@ -30,7 +30,7 @@
     <!-- 
         Process the schema element.
     -->
-    <stx:template match="lexus:schema">
+    <stx:template match="schema">
         <schema>
             <stx:process-attributes/>
             <stx:process-children/>
@@ -40,12 +40,29 @@
     <!-- 
         Process a container.
     -->
-    <stx:template match="lexus:container">
+    <stx:template match="container">
+        <stx:if test="@type = 'lexicon'">
+			<stx:copy attributes="@*[not(name) and not(name()='mandatory') and not(name()='multiple')]">
+			    <stx:attribute name="name" select="'Lexicon'"/>
+                <stx:attribute name="mandatory" select="'false'"/>
+                <stx:attribute name="multiple" select="'true'"/>
+                <stx:process-children/>
+            </stx:copy>
+    </stx:if>
+    <stx:if test="@type = 'lexical-entry'">
+			<stx:copy attributes="@*[not(name) and not(name()='mandatory') and not(name()='multiple')]">
+				<stx:attribute name="name" select="'lexicalEntry'"/>
+                <stx:attribute name="mandatory" select="'false'"/>
+                <stx:attribute name="multiple" select="'true'"/>
+                <stx:process-children/>
+            </stx:copy>
+    </stx:if>
+    <stx:if test="not(@type = 'lexical-entry') and not(@type = 'lexicon')">
         <container>
-            <!--                <stx:attribute name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>-->
             <stx:process-attributes/>
             <stx:process-children/>
         </container>
+    </stx:if>
     </stx:template>
 
     <stx:template match="@*">
