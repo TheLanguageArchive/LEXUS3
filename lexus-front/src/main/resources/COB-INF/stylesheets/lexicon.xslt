@@ -14,6 +14,9 @@
             <string key="name">
                 <xsl:value-of select="meta/name"/>
             </string>
+            <string key="importingName">
+                <xsl:value-of select="meta/importingName"/>
+            </string>
             <string key="description">
                 <xsl:value-of select="meta/description"/>
             </string>

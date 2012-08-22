@@ -29,7 +29,7 @@
                     <xquery:declare-updating-function/> lexus:updateLexiconInformation($lexus, $lexicon-information as node()) {
                         (
                             <xquery:replace>
-                                <xquery:node>$lexus/meta/name</xquery:node>
+                                <xquery:node>$lexus/meta/importingName</xquery:node>
                                 <xquery:with>if ($lexicon-information/name ne '')
                                 				then $lexicon-information/name
                                 				else (element name {"UnamedLexicon!"})</xquery:with>

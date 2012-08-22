@@ -33,7 +33,7 @@
         <stx:assign name="stopPos" select="position() + $batchSize"/>
         <fragments:transform fragment-name="save-lexical-entries"
                 fragment-namespace="http://www.mpi.nl/lexus">
-                <lexus:save-lexical-entries lexicon="{$lexiconId}" user="{$userId}" first="{position()}" last="{$stopPos}">
+                <lexus:save-lexical-entries lexicon="{$lexiconId}" user="{$userId}" first="{position()}">
                     <stx:process-self group="batch-lexical-entries"/>
                     <stx:process-siblings while="lexus:lexical-entry[$stopPos > position()]" group="batch-lexical-entries"/>
                 </lexus:save-lexical-entries>

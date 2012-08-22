@@ -13,6 +13,7 @@
     
     <xsl:template match="lexus:save-lexical-entries">
         <xsl:copy copy-namespaces="no">
+        <xsl:attribute name="count"><xsl:value-of select="count(./lexical-entry)"/></xsl:attribute>
             <xsl:apply-templates select="@*"/>
                 <lexus:query>
                 

@@ -354,7 +354,7 @@
             </map:match>
         </map:pipeline>
 
-        <map:pipeline>
+        <map:pipeline type="noncaching">
             <map:match pattern="importGetLexusMeta/**">
                 <map:generate src="{1}"/>
                 <map:transform type="validate" src="import/lexusMeta.rng"/>
@@ -365,7 +365,7 @@
                 <map:serialize/>
             </map:handle-errors>
         </map:pipeline>
-        <map:pipeline>
+        <map:pipeline type="noncaching">
             <map:match pattern="importGetLexusLexicon/**">
                 <map:generate src="{1}"/>
                 <map:transform type="validate" src="import/lexusLexicon.rng"/>
@@ -378,7 +378,7 @@
         </map:pipeline>
 
 
-        <map:pipeline>
+        <map:pipeline type="noncaching">
 
 
             <!--
@@ -388,27 +388,29 @@
 
                 <map:aggregate element="data">
                     <map:part src="cocoon://user"/>
-                    <map:part src="{naming:java:comp/env/LEXUS/tempDir}/{1}.xml"/>
-                    <map:part src="{naming:java:comp/env/LEXUS/tempDir}/{2}.xml"/>
+                    <map:part
+                        src="cocoon:/importGetLexusMeta/{naming:java:comp/env/LEXUS/tempDir}/{1}.xml" type="stream"/>
+                    <map:part
+                        src="cocoon:/importGetLexusLexicon/{naming:java:comp/env/LEXUS/tempDir}/{2}.xml" type="stream"/>
                 </map:aggregate>
                 
-                <!--<map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/import-0.xml"/>-->
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-0.xml"/>
                 
                 <map:transform type="stx" src="import/add-lexicon-id.stx"/>
                 
-                <!--<map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/import-1.xml"/>-->
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-1.xml"/>
                 
                 <map:transform type="stx" src="import/add-meta-and-ids.stx"/>
                 
-                <!--<map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/import-2.xml"/>-->
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-2.xml"/>
                 
                 <map:transform type="stx" src="import/add-fragment-create-lexicon.stx"/>
                 
-                <!--<map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/import-3.xml"/>-->
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-3.xml"/>
                 
                 <map:transform type="servletServiceFragments">
                     <map:parameter name="service" value="servlet:lexus-db:/workspace/createLexicon.xml"/>
@@ -449,7 +451,7 @@
 				     This does not have any major performance impact since at this point of the pipeline the XML documents are 
 				already very small because the entries were already inserted in the DB. -->
                 
-                <map:transform type="saxon" src="import/add-fragment-replace-lexical-information.xslt"/>
+                <map:transform type="saxon" src="import/add-fragment-replace-lexicon-information.xslt"/>
                 
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/import-9.xml"/>
@@ -461,10 +463,20 @@
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/import-10.xml"/>
 
-                <map:transform type="saxon" src="import/import-2-result.xslt"/>
+                <map:transform type="saxon" src="import/STXreportOnImport.xslt">
+                    <map:parameter name="lexiconFile" value="{1}.xml"/>
+                	<map:parameter name="schemaFile" value="{2}.xml"/>
+                </map:transform>
                 
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/import-11.xml"/>
+                    
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:lexus-db:/workspace/deleteLexicon.xml"/>
+                </map:transform>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-12.xml"/>
                 
                 <map:serialize type="xml"/>
             </map:match>

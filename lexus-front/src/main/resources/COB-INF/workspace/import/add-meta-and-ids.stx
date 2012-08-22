@@ -33,9 +33,9 @@
                         </permissions>
                     </user>
                 </users>
-                <name>Importing lexicon...</name>
+                <importingName>Importing lexicon...</importingName>
                 <description>This lexicon is currently being imported.
-We do not recommend to open it while the import process is still running.</description>
+It cannot be open while the import process is still running.</description>
                 <note>
                 </note>
                 <stx:process-children group="meta"/>
@@ -195,5 +195,13 @@ We do not recommend to open it while the import process is still running.</descr
             </stx:copy>
         </stx:template>
     </stx:group>
+    
+        <!-- Copy everything -->
+
+    <stx:template match="@* | node()">
+        <stx:copy attributes="@*">
+            <stx:process-children/>
+        </stx:copy>
+    </stx:template>
 
 </stx:transform>
