@@ -89,8 +89,26 @@
         <string key="id">
             <xsl:value-of select="@id"/>
         </string>
-        <number key="min">1</number>
-        <number key="max">1</number>
+        <number key="min">
+        	<xsl:choose>
+            	<xsl:when test="@mandatory eq 'true'">
+                	<xsl:text>1</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                	<xsl:text>0</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+        </number>
+        <xsl:choose>
+        	<xsl:when test="@multiple eq 'false'">
+            	<number key="max">
+                	<xsl:text>1</xsl:text>
+                </number>
+            </xsl:when>
+         	<xsl:otherwise>
+            	<null key="max"/>
+            </xsl:otherwise>
+        </xsl:choose>
         <string key="adminInfo">
             <xsl:value-of select="@admin-info"/>
         </string>
@@ -171,8 +189,26 @@
             <string key="id">
                 <xsl:value-of select="@id"/>
             </string>
-            <number key="min">1</number>
-            <null key="max"/>
+	        <number key="min">
+	        	<xsl:choose>
+	            	<xsl:when test="@mandatory eq 'true'">
+	                	<xsl:text>1</xsl:text>
+	                </xsl:when>
+	                <xsl:otherwise>
+	                	<xsl:text>0</xsl:text>
+	                </xsl:otherwise>
+	            </xsl:choose>
+	        </number>
+	        <xsl:choose>
+	        	<xsl:when test="@multiple eq 'false'">
+	            	<number key="max">
+	                	<xsl:text>1</xsl:text>
+	                </number>
+	            </xsl:when>
+	         	<xsl:otherwise>
+	            	<null key="max"/>
+	            </xsl:otherwise>
+	        </xsl:choose>
             <string key="adminInfo">
                 <xsl:value-of select="@admin-info"/>
             </string>
