@@ -2,7 +2,19 @@ Changes for:
 LEXUS-3.0-SNAPSHOT-r${buildNumber}
 
 Fixed tickets:
+#1011 (partially)
 
-
-Other issues:
-Fixed problem with names for new views in some particular cases
+Other issues and improvements:
+1. Upgraded to BaseX 7.3
+2. Fixed problem with names for new views in some particular cases.
+3. Import process revised (ticket: #1011):
+	3.1. RNG schema validation reintroduced for uploaded lexicon and schema files.
+	3.2. Report import information to the UI: on success=true -> imported lexicon information + number of inserted entries. 
+	On success=false -> error descriptions and locations.
+	3.3. Possibility to close the import window and keep on working while a lexicon is being imported (open this lexicon 
+	is programmatically not allowed).
+	3.4. Added intermediate state lexicon information, to warn the user while a lexicon is being imported.
+	3.5. Not caching import pipeline.
+4. For the schema elements "Lexicon" and "Lexical-entry" the "Mandatory" and "multiples allowed" options, are now fixed 
+upon import on LEXUS to "false" and "true" respectively despite of the original values in the imported schema document.
+The values for these options are not changeable anymore once inside Lexus.

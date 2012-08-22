@@ -9,13 +9,13 @@ Tomcat and BaseX.
 2. Apache Tomcat 5.5.x or Jetty 6.1.9. Other JAVA servlet containers
 should be possible but were not tested.
 
-3. BaseX 7.0.2 as XML database engine. Though other database engines are 
+3. BaseX 7.3 as XML database engine. Though other database engines are 
 possible to be used, fast and reliable operation is not warranted.
 
 
 Installation:
 -------------
-1. Download and install BaseX 7.0.2 from:
+1. Download and install BaseX 7.3 from:
 http://files.basex.org/releases
 
 2. Create a new database user in BaseX (by default LEXUS uses the "admin"

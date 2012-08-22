@@ -3,7 +3,7 @@ LEXUS-3.0-SNAPSHOT-r${buildNumber}
  What is it?
  -----------
 LEXUS is a web-based tool to create and edit lexical databases.
-LEXUS provides each user with a workspace containing her lexica.
+LEXUS provides each user with a workspace containing his lexica.
 Lexica can be shared with other users (both read and write permissions
 can be given). A lexicon has lexical entries, one per word. A lexical
 entry describes the different linguistic aspects of a word and contains
