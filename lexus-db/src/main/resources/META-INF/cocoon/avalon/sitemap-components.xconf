@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map:components xmlns:map="http://apache.org/cocoon/sitemap/1.0">
     <map:transformers>
-        <map:transformer name="rest" src="org.apache.cocoon.transformation.RESTTransformer">
+        <map:transformer name="rest" src="org.apache.cocoon.transformation.RESTTransformer"
+        pool-grow="4" pool-max="64" pool-min="16">
             <authentication>
                 <username>admin</username>
                 <password>admin</password>
@@ -9,16 +10,17 @@
             </authentication>
             <encoding>UTF-8</encoding>
         </map:transformer>
-        <map:transformer name="saxon" src="org.apache.cocoon.transformation.TraxTransformer">
+        <map:transformer name="saxon" src="org.apache.cocoon.transformation.TraxTransformer"
+        pool-grow="8" pool-max="128" pool-min="32">
             <xslt-processor-role>saxon</xslt-processor-role>
         </map:transformer>
     </map:transformers>
     <map:serializers>
-        <map:serializer name="xml" mime-type="text/xml"
+        <map:serializer name="xml" mime-type="text/xml" pool-grow="4" pool-max="64" pool-min="16"
             src="org.apache.cocoon.serialization.XMLSerializer">
             <encoding>UTF-8</encoding>
         </map:serializer>
-        <map:serializer name="html" mime-type="text/html; charset=UTF-8"
+        <map:serializer name="html" mime-type="text/html; charset=UTF-8" pool-grow="4" pool-max="64" pool-min="16"
             src="org.apache.cocoon.serialization.HTMLSerializer">
             <encoding>UTF-8</encoding>
             <!-- the following common doctype is only included for completeness, it has no impact on encoding -->
