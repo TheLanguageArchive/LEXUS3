@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>  
-<components>
- <component role="org.apache.excalibur.xml.xslt.XSLTProcessor/stx"
-  class="org.apache.cocoon.components.xslt.TraxProcessor">
-  <parameter name="transformer-factory" value="net.sf.joost.trax.TransformerFactoryImpl"/>
- </component>
-</components>

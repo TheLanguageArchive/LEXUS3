@@ -1,8 +1,44 @@
-<?xml version="1.0" encoding="UTF-8"?>  
+<?xml version="1.0" encoding="UTF-8"?>
 <components>
+ <sitemap file="sitemap.xmap" reload-method="asynchron" check-reload="no"/>
+
  <component role="org.apache.excalibur.xml.xslt.XSLTProcessor/saxon"
-  class="org.apache.cocoon.components.xslt.TraxProcessor">
+  class="org.apache.cocoon.components.xslt.TraxProcessor" pool-grow="8" pool-max="128" pool-min="32">
   <parameter name="use-store" value="true"/>
   <parameter name="transformer-factory" value="net.sf.saxon.TransformerFactoryImpl"/>
  </component>
+ 
+  <component role="org.apache.excalibur.xml.xslt.XSLTProcessor/stx"
+  class="org.apache.cocoon.components.xslt.TraxProcessor" pool-grow="2" pool-max="60" pool-min="15">
+  <parameter name="use-store" value="true"/>
+  <parameter name="transformer-factory" value="net.sf.joost.trax.TransformerFactoryImpl"/>
+ </component>
+ 
+ <component role="org.apache.excalibur.store.Store/TransientStore"
+  class="org.apache.excalibur.store.impl.MRUMemoryStore">
+   <parameter name="maxobjects" value="4000"/>
+   <parameter name="use-cache-directory" value="true"/>
+   <parameter name="eternal" value="false"/>
+   <parameter name="timeToIdleSeconds" value="60"/>
+   <parameter name="timeToLiveSeconds" value="120"/>
+   <parameter name="use-persistent-cache" value="false"/>
+   <parameter name="use-persistent-store" value="false"/>
+ </component>
+ 
+ <component role="org.apache.excalibur.store.Store/Store"
+  class="org.apache.excalibur.store.impl.MRUMemoryStore">
+   <parameter name="maxobjects" value="4000"/>
+   <parameter name="use-persistent-store" value="true"/>
+ </component>
+ 
+ <component role="org.apache.excalibur.store.StoreJanitor"
+  class="org.apache.excalibur.store.impl.StoreJanitorImpl">
+ 		<parameter name="freememory" value="50000000"/>
+		<parameter name="heapsize" value="2508800000"/>
+		<parameter name="cleanupthreadinterval" value="10"/>
+		<parameter name="threadpriority" value="5"/>
+		<parameter name="percent_to_free" value="20"/>
+		<parameter name="invokegc" value="false"/>
+ </component>
+ 
 </components>
