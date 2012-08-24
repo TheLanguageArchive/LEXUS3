@@ -385,7 +385,8 @@
                 Import a BIG Lexus XML lexicon.
                 -->
             <map:match pattern="import/*/*/ImportLexusXML.xml">
-
+				<map:parameter name="expires" value="access plus 1 minutes"/>
+				<map:parameter name="outputBufferSize" value="0"/>
                 <map:aggregate element="data">
                     <map:part src="cocoon://user"/>
                     <map:part

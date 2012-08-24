@@ -31,7 +31,11 @@
 
 
     <map:pipelines>
-
+		<map:component-configurations>
+			<global-variables>
+			  <pipeline-expiration>access plus 2 hours</pipeline-expiration>
+			</global-variables>
+		</map:component-configurations>
 
         <!-- 
         Default URI redirects to index.html
