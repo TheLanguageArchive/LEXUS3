@@ -27,6 +27,7 @@
         | Lexicon pipelines
         +-->
         <map:pipeline id="lexicon" type="noncaching">
+           <map:parameter name="outputBufferSize" value="0"/>
 
             <!-- 
           Generate main workspace data
@@ -176,7 +177,6 @@
                 Insert multiple lexical entries into a lexicon.
             -->
             <map:match pattern="insertLexicalEntries.xml">
-            	<map:parameter name="outputBufferSize" value="0"/>
                 <map:generate src="service-consumer:"/>
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/back-sles-1.xml"/>

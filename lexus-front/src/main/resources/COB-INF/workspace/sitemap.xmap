@@ -326,7 +326,7 @@
         </map:pipeline>
 
         <map:pipeline type="noncaching">
-
+			<map:parameter name="outputBufferSize" value="0"/>
             <!--
             Import a Lexus XML lexicon.
             -->
@@ -355,6 +355,7 @@
         </map:pipeline>
 
         <map:pipeline type="noncaching">
+        	<map:parameter name="outputBufferSize" value="0"/>
             <map:match pattern="importGetLexusMeta/**">
                 <map:generate src="{1}"/>
                 <map:transform type="validate" src="import/lexusMeta.rng"/>
@@ -366,6 +367,7 @@
             </map:handle-errors>
         </map:pipeline>
         <map:pipeline type="noncaching">
+			<map:parameter name="outputBufferSize" value="0"/>
             <map:match pattern="importGetLexusLexicon/**">
                 <map:generate src="{1}"/>
                 <map:transform type="validate" src="import/lexusLexicon.rng"/>
@@ -379,14 +381,13 @@
 
 
         <map:pipeline type="noncaching">
-
+			<map:parameter name="expires" value="access plus 1 minutes"/>
+			<map:parameter name="outputBufferSize" value="0"/>
 
             <!--
                 Import a BIG Lexus XML lexicon.
                 -->
             <map:match pattern="import/*/*/ImportLexusXML.xml">
-				<map:parameter name="expires" value="access plus 1 minutes"/>
-				<map:parameter name="outputBufferSize" value="0"/>
                 <map:aggregate element="data">
                     <map:part src="cocoon://user"/>
                     <map:part
@@ -494,7 +495,7 @@
 
 
         <map:pipeline>
-
+			<map:parameter name="outputBufferSize" value="0"/>
             <map:match pattern="importLexusLexus">
                 <map:generate type="stream">
                     <map:parameter name="form-name" value="lexicon"/>

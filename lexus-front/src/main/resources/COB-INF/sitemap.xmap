@@ -363,7 +363,7 @@
         handle file uploads.
         -->
         <map:pipeline  type="noncaching">
-
+			<map:parameter name="outputBufferSize" value="0"/>
             <map:match pattern="LexusLexicalEntryEditor/**">
                 <map:act type="cauth-is-logged-in">
                     <map:parameter name="application" value="Lexus"/>
