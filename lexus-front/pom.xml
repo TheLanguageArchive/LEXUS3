@@ -28,7 +28,7 @@
     <parent>
         <groupId>nl.mpi.lexus</groupId>
         <artifactId>lexus</artifactId>
-        <version>3.0-SNAPSHOT</version>
+        <version>3.0-RC2</version>
     </parent>
 
     <artifactId>lexus-front</artifactId>
@@ -161,12 +161,12 @@
         <dependency>
             <groupId>nl.mpi.lexus</groupId>
             <artifactId>lexus-db</artifactId>
-            <version>3.0-SNAPSHOT</version>
+            <version>3.0-RC2</version>
         </dependency>
         <dependency>
             <groupId>nl.mpi.lexus</groupId>
             <artifactId>lexus-display</artifactId>
-            <version>3.0-SNAPSHOT</version>
+            <version>3.0-RC2</version>
         </dependency>
         <!-- Uncomment to make ehcache logs works on maven-jetty plugin -->
 		<!--<dependency> 
