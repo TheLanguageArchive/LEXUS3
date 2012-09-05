@@ -1,6 +1,6 @@
 To upgrade from the previous version:
 
-Deploy lexus-webapp-3.0-SNAPSHOT-r${buildNumber}.war to the servlet container
+Deploy lexus-webapp-3.0-RC2-r${buildNumber}.war to the servlet container
 where LEXUS was previously running. 
 
 

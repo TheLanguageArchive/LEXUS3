@@ -1,4 +1,4 @@
-LEXUS-3.0-SNAPSHOT-r${buildNumber}
+LEXUS-3.0-RC2-r${buildNumber}
 
  What is it?
  -----------
@@ -21,7 +21,7 @@ from and stores data to the database.
 
  The Latest Version
  ------------------
-LEXUS-3.0-SNAPSHOT-r${buildNumber}
+LEXUS-3.0-RC2-r${buildNumber}
 
 
  Changes
