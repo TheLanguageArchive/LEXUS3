@@ -1,5 +1,5 @@
 Changes for:
-LEXUS-3.0-RC2-r
+LEXUS-3.0-RC2-r${buildNumber}
 
 Fixed tickets:
 #1011 (partially)
