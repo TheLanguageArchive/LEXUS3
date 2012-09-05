@@ -5,4 +5,4 @@ where LEXUS was previously running.
 
 
 Previously installed version:
-LEXUS-3.0-SNAPSHOT-rXXXX.war
+LEXUS-3.0-RC2-r31661.war
