@@ -255,7 +255,7 @@
         </map:pipeline>
 
         <!-- Serve users' resources. -->
-        <map:pipeline>
+        <map:pipeline type="caching">
             <map:match pattern="resources/*/*">
                 <!-- HHV: TODO: This does NOT check if the user has read rights on the given lexicon! -->
                 <map:act type="cauth-is-logged-in">
@@ -273,7 +273,7 @@
         </map:pipeline>
 
         <!-- Get Lexical Entry View -->
-        <map:pipeline>
+        <map:pipeline type="caching">
             <map:match pattern="entryLayout.htm">
                 <map:redirect-to
                     uri="LexusLexicalEntryEditor/entryLayout.htm?lexicon={request-param:lexicon}&amp;id={request-param:id}"
@@ -282,7 +282,7 @@
         </map:pipeline>
 
         <!-- Help files for the view editor -->
-        <map:pipeline>
+        <map:pipeline type="caching">
             <map:match pattern="help/*.html">
                 <map:read src="resource/external/help/en/{1}.html"/>
             </map:match>
@@ -290,7 +290,7 @@
         <!--
         Serve up all the content for the Flex UI.
         -->
-        <map:pipeline id="flexus">
+        <map:pipeline id="flexus" type="caching">
 
             <!-- Serve the flexus files. -->
             <map:match pattern="*.swf">
