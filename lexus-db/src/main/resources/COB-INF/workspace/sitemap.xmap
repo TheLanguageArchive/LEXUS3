@@ -274,6 +274,9 @@
                     src="{naming:java:comp/env/tee-folder}debug-info/back-sso-3.xml"/>
 
                 <map:call resource="rest"/>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-sso-4.xml"/>
 
                 <map:transform type="saxon" src="sortOrders/updateSortKeys.xslt">
                     <map:parameter name="users-collection" value="{naming:java:comp/env/LEXUS/db-users-collection}"/>
@@ -282,12 +285,12 @@
                 </map:transform>
 
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/back-sso-4.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-sso-5.xml"/>
 
                 <map:call resource="rest"/>
 
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/back-sso-5.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-sso-6.xml"/>
                 <!--        <map:transform type="validate" src="sortOrder/saveSortOrder.xsd"/>-->
                 <map:serialize type="xml"/>
             </map:match>
@@ -374,6 +377,8 @@
             which would be slightly neater, but I'm unsure about the performance. This will do for now.
         -->
         <map:resource name="rest">
+            <map:transform type="${tee}"
+                src="{naming:java:comp/env/tee-folder}debug-info/back-rest-0.xml"/>
             <map:transform type="saxon" src="../util/xquery-dialect.xslt">
                 <map:parameter name="xmldb" value="${xmldb}"/>
             </map:transform>
