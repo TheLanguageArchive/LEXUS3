@@ -142,12 +142,12 @@
             <map:transform type="saxon" src="../../util/${xmldb.rest.transformer}">
                 <map:parameter name="endpoint" value="{naming:java:comp/env/LEXUS/db-rest-endpoint}"/>
             </map:transform>
-                        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-rest-2.xml"/>
+           	<map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-rest-2.xml"/>
             <map:transform type="rest">
                 <map:parameter name="username" value="{naming:java:comp/env/LEXUS/db-username}"/>
                 <map:parameter name="password" value="{naming:java:comp/env/LEXUS/db-password}"/>
             </map:transform>
-            <!--            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-rest-3.xml"/>-->
+            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-rest-3.xml"/>
             <map:transform type="saxon" src="../../util/extractDataFromRestResponse.xslt"/>
         </map:resource>
     </map:resources>

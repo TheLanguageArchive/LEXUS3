@@ -270,8 +270,8 @@
                     <map:parameter name="users-collection" value="{naming:java:comp/env/LEXUS/db-users-collection}"/>
                 </map:transform>
 
-                <!--<map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/back-sso-3.xml"/>-->
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-sso-3.xml"/>
 
                 <map:call resource="rest"/>
 
@@ -281,13 +281,13 @@
                     />
                 </map:transform>
 
-                <!--<map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/back-sso-4.xml"/>-->
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-sso-4.xml"/>
 
                 <map:call resource="rest"/>
 
-                <!--<map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/back-sso-5.xml"/>-->
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-sso-5.xml"/>
                 <!--        <map:transform type="validate" src="sortOrder/saveSortOrder.xsd"/>-->
                 <map:serialize type="xml"/>
             </map:match>
