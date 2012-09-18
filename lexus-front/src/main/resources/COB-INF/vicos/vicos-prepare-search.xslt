@@ -29,7 +29,7 @@
     -->
 
     <xsl:template match="json">
-        <lexus:search-with-query>
+        <lexus:search>
             <query id="no-id" name="vicos-wordlist" description="generated from vicos wordlist request">
                 <expression>
                     <lexicon id="{parameters/id}" name="name unknown in vicos wordlist request">
@@ -41,10 +41,11 @@
                 </expression>
             </query>
             <refiner>
-                <position><xsl:value-of select="parameters/pageNumber"/></position>
+            	<startLetter><xsl:value-of select="parameters/startLetter"/></startLetter>
+                <startPage><xsl:value-of select="parameters/pageNumber"/></startPage>
                 <pageSize><xsl:value-of select="parameters/pageSize"/></pageSize>
             </refiner>
-        </lexus:search-with-query>
+        </lexus:search>
     </xsl:template>
 
 </xsl:stylesheet>

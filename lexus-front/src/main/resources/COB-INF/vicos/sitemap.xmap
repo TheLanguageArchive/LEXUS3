@@ -104,23 +104,29 @@
           <map:parameter name="service" value="servlet:lexus-db:/lexicon/getLexicalEntryData.xml"/>
         </map:transform>
         <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gle-pre.xml"/>
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gle-0.xml"/>
         <map:transform type="saxon"
           src="../lexicon-editor/views/prepareDisplayGeneratorForLexicalEntry.xslt">
           <map:parameter name="view" value="le-view"/>
         </map:transform>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gle-1.xml"/>
         <map:transform type="servletService">
-          <map:parameter name="service" value="lexus-display:/htmlview.xml"/>
+          <map:parameter name="service" value="servlet:lexus-display:/htmlview.xml"/>
         </map:transform>
         <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gle-post.xml"/>
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gle-2.xml"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:lexus-db:/schema-editor/getListView.xml"/>
         </map:transform>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gle-3.xml"/>
         <map:transform type="saxon" src="vicos-getLexicalEntry-2-JSON.xslt"/>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gle-4.xml"/>
         <map:transform type="saxon" src="normalize-space-in-jsonxml.xslt"/>
         <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gle-post2.xml"/>
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gle-5.xml"/>
         <map:serialize type="json"/>
       </map:match>
       
