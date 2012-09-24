@@ -9,10 +9,18 @@
     
     <xsl:template match="/data">
         <xsl:copy>
-            <xsl:copy-of select="@* | node()"/>
+            <xsl:copy-of select="@* | node() except (lexus:get-listview)"/>
+            <xsl:apply-templates select="lexus:get-listview"/>
             <display:lexicon id="{lexus:get-lexical-entry/lexus:result/result/@lexicon}" view="{$view}">
                 <xsl:apply-templates select="lexus:get-lexical-entry/lexus:result/result/lexical-entry"/>
             </display:lexicon>
+        </xsl:copy>
+    </xsl:template>
+    
+    <xsl:template match="lexus:get-listview">
+        <xsl:copy>
+            <xsl:copy-of select="@* except (@lexicon) | node()"/>
+            <xsl:attribute name="lexicon" select="/data/lexus:get-lexical-entry/lexus:result/result/@lexicon"/>
         </xsl:copy>
     </xsl:template>
     

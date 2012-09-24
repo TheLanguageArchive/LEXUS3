@@ -10,6 +10,9 @@
             <id>
                 <xsl:value-of select="parameters/id"/>
             </id>
+            <lexicon>
+            	<xsl:value-of select="parameters/lexicon"/>
+            </lexicon>
         </lexus:get-data>
     </xsl:template>
 

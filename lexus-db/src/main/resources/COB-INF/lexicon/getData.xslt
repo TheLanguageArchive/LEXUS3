@@ -41,7 +41,7 @@
                             then collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $data/lexicon]
                             else
                                 let $lexica := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[meta/users/user/@ref = $user-id]
-                                return $lexica[lexicon//data[@id = $id]] 
+                                return $lexica/lexicon[.//data[@id = $id]] 
                     let $lexiconId := $lexus/@id
                     let $data := $lexus/lexicon//data[@id = $id]
                     
