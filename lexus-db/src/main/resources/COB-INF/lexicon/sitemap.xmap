@@ -73,17 +73,17 @@
             <map:match pattern="getLexicalEntryData.xml">
                 <map:generate src="service-consumer:"/>
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/gled-back-0.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-gled-0.xml"/>
 
                 <map:transform type="saxon" src="getLexicalEntryData.xslt">
                     <map:parameter name="lexica-collection" value="{naming:java:comp/env/LEXUS/db-lexica-collection}"
                     />
                 </map:transform>
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/gled-back-pre.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-gled-pre.xml"/>
                 <map:call resource="rest"/>
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/gled-back-post-2.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-gled-post.xml"/>
                 <map:serialize type="xml"/>
             </map:match>
 

@@ -99,35 +99,47 @@
           <map:part src="cocoon://json"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gled-0.xml"/>
         <map:transform type="saxon" src="vicosPrepareGetLexicalEntryData.xslt"/>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gled-1.xml"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:lexus-db:/lexicon/getLexicalEntryData.xml"/>
         </map:transform>
         <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gle-0.xml"/>
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gled-2.xml"/>
         <map:transform type="saxon"
           src="../lexicon-editor/views/prepareDisplayGeneratorForLexicalEntry.xslt">
           <map:parameter name="view" value="le-view"/>
         </map:transform>
         <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gle-1.xml"/>
-        <map:transform type="servletService">
-          <map:parameter name="service" value="servlet:lexus-display:/htmlview.xml"/>
-        </map:transform>
-        <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gle-2.xml"/>
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gled-3.xml"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:lexus-db:/schema-editor/getListView.xml"/>
         </map:transform>
         <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gle-3.xml"/>
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gled-4.xml"/>
         <map:transform type="saxon" src="vicos-getLexicalEntry-2-JSON.xslt"/>
         <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gle-4.xml"/>
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gled-5.xml"/>
         <map:transform type="saxon" src="normalize-space-in-jsonxml.xslt"/>
         <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gle-5.xml"/>
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gled-6.xml"/>
         <map:serialize type="json"/>
+      </map:match>
+      
+      <map:match pattern="getLexicalEntries.json">
+        <map:aggregate element="data">
+          <map:part src="cocoon://json"/>
+          <map:part src="cocoon://user"/>
+        </map:aggregate>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gles-0.xml"/>
+        <map:transform type="saxon" src="normalize-space-in-jsonxml.xslt"/>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gles-1.xml"/>
+          <map:serialize type="json"/>
       </map:match>
       
       
@@ -139,18 +151,22 @@
           <map:part src="cocoon://json"/>
           <map:part src="cocoon://user"/>
         </map:aggregate>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gliu-0.xml"/>
         <map:transform type="saxon" src="vicosPrepareGetData.xslt"/>
         <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gliu-pre.xml"/>
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gliu-1.xml"/>
         <map:transform type="servletService">
           <map:parameter name="service" value="servlet:lexus-db:/lexicon/getData.xml"/>
         </map:transform>
         <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gliu-post.xml"/>
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gliu-2.xml"/>
         <map:transform type="saxon" src="vicos-getData-2-JSON.xslt"/>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gliu-3.xml"/>
         <map:transform type="saxon" src="normalize-space-in-jsonxml.xslt"/>
         <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gliu-post2.xml"/>
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gliu-4.xml"/>
         <map:serialize type="json"/>
       </map:match>
 
