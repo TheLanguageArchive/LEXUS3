@@ -23,7 +23,7 @@
     - It simply just logs everything into a single log file.
     - Note, that you can use properties for value substitution.
     -->
-  <appender name="CORE" class="org.apache.log4j.RollingFileAppender">
+  <appender name="CORE-FRONT" class="org.apache.log4j.RollingFileAppender">
       <!--
           HHV: Used to be {org.apache.cocoon.work.directory}/cocoon-logs/log4j.log
           -->
@@ -60,23 +60,23 @@
   </appender>
 
   <logger name="sitemap.transformer.lexer" additivity="false">
-    <level value="${org.apache.cocoon.log4j.loglevel}"/>
+    <level value="${nl.mpi.lex.lexus.log4j.loglevel}"/>
     <appender-ref ref="lexer-appender"/>
   </logger>
 
   <logger name="sitemap.transformer.parser" additivity="false">
-    <level value="${org.apache.cocoon.log4j.loglevel}"/>
+    <level value="${nl.mpi.lex.lexus.log4j.loglevel}"/>
     <appender-ref ref="parser-appender"/>
   </logger>
   
   <logger name="rest" additivity="false">
-    <level value="${org.apache.cocoon.log4j.loglevel}"/>
-    <appender-ref ref="CORE"/>
+    <level value="${nl.mpi.lex.lexus.log4j.loglevel}"/>
+    <appender-ref ref="CORE-FRONT"/>
   </logger>
   
   <root>
-    <priority value="${org.apache.cocoon.log4j.loglevel}"/>
-    <appender-ref ref="CORE"/>
+    <priority value="${nl.mpi.lex.lexus.log4j.loglevel}"/>
+    <appender-ref ref="CORE-FRONT"/>
   	<!--<appender-ref ref="stdout"/>   When used in production this causes the log to go to catalina.out as well-->
   </root>
   
