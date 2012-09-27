@@ -22,6 +22,11 @@
                     <text/>
                 </element>
             </optional>
+            <optional>
+                <element name="template">
+                    <text/>
+                </element>
+            </optional>
             <element name="schema">
                 <ref name="container"/>
             </element>
@@ -152,6 +157,12 @@
                         </optional>
                         <optional>
                             <attribute name="note"/>
+                        </optional>
+                        <optional>
+                            <attribute name="registry"/>
+                        </optional>
+                        <optional>
+                            <attribute name="reference"/>
                         </optional>
                         <attribute name="type">
                             <data type="NCName"/>

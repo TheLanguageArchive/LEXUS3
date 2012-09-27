@@ -67,6 +67,9 @@
           </attribute>
           <attribute name="value"/>
           <optional>
+            <attribute name="id"/>
+          </optional>
+          <optional>
             <attribute name="metadataURL"/>
           </optional>
           <optional>
@@ -84,6 +87,11 @@
     <element name="container">
       <optional>
         <attribute name="id">
+          <data type="anyURI"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="note">
           <data type="anyURI"/>
         </attribute>
       </optional>
