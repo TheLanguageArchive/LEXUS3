@@ -134,10 +134,6 @@
         <data>
             <lexus:create-lexicon>
                 <lexus id="{$id}">
-                    <xsl:apply-templates mode="data" select="$template/lexus:schema/*">
-                        <xsl:with-param name="map" select="$map" tunnel="yes"/>
-                    </xsl:apply-templates>
-                    
                     <!--
                         <lexicon id="{$id}">
                         <lexical-entry id="{concat('uuid:',util:toString(util:randomUUID()))}"
@@ -246,6 +242,9 @@
                         </views>
                         -->
                     </meta>
+                    <xsl:apply-templates mode="data" select="$template/lexus:schema/*">
+                        <xsl:with-param name="map" select="$map" tunnel="yes"/>
+                    </xsl:apply-templates>
                 </lexus>
             </lexus:create-lexicon>
             <lexus:get-saved-lexicon id="{$id}"/>
