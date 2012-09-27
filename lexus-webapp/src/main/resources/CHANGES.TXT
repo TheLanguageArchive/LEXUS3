@@ -18,4 +18,5 @@ Other issues and improvements:
 4. For the schema elements "Lexicon" and "Lexical-entry" the "Mandatory" and "multiples allowed" options, are now fixed 
 upon import on LEXUS to "false" and "true" respectively despite of the original values in the imported schema document.
 The values for these options are not changeable anymore once inside Lexus.
-5. Updated ehcache version and configured it to clean itself when less than 50Mb of memory are free.
+5. Configured ehcache it to clean itself when less than 50Mb of memory are free.
+6. Updated "Lexical Entry Detail" tree icons to be the same as in the "Lexicon Browser".
