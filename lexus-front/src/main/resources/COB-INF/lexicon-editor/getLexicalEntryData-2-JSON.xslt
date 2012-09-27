@@ -123,7 +123,8 @@
             <string key="schemaElementId">
                 <xsl:value-of select="@schema-ref"/>
             </string>
-            <xsl:if test="container|data or not(//lexus:get-lexical-entry/lexus:result/result/schema//container[@id eq current()/@schema-ref]/@type)">
+                        <xsl:if test="container|data or not(//lexus:get-lexical-entry/lexus:result/result/schema//container[@id eq current()/@schema-ref]/@type)
+                or //lexus:get-lexical-entry/lexus:result/result/schema//container[@id eq current()/@schema-ref]/@type = 'container'">
                 <array key="children">
                     <xsl:apply-templates select="container|data"/>
                 </array>
