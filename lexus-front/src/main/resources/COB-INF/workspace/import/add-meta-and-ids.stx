@@ -168,6 +168,11 @@ It cannot be open while the import process is still running.</description>
                 <stx:process-children group="lexicon"/>
             </stx:copy>
         </stx:template>
+        
+        
+        <!-- AAM: resources are currently droped upon import -->
+        <stx:template match="lexus:resource">
+        </stx:template>
 
         <!--
             Remove lexus namespace from elements.
