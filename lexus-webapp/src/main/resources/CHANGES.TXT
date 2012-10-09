@@ -3,8 +3,4 @@ LEXUS-3.0-RC2-r${buildNumber}
 
 
 Other issues and improvements:
-1. Upgraded HTML front pages.
-2. Fixed problem in RelaxNG validation schema to allow import with attributes: "sort-key" 
-and  "start-letter" in the "lexical-entry" elements.
-3. Fixed problem importing "lexical-entry" elements containing a "resource" child (by design
-resources are now dropped upon import. They should be included in the upcoming versions).
+1. Lexicon sort orders are now imported to the user workspace if present in a imported lexicon (fixes #2372).
