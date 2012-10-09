@@ -169,9 +169,12 @@
                         </attribute>
                         <zeroOrMore>
                             <element name="value">
-                                <optional>
-                                    <attribute name="dcr:datcat"/>
-                                </optional>
+                        	<optional>
+                            		<attribute name="registry"/>
+                        	</optional>
+                        	<optional>
+                            		<attribute name="reference"/>
+                        	</optional>
                                 <text/>
                             </element>
                         </zeroOrMore>
