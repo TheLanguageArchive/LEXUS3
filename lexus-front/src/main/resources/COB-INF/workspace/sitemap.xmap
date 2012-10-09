@@ -446,6 +446,18 @@
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/import-8.xml"/>
                     
+                <map:transform type="saxon" src="import/add-fragment-save-sort-order.xslt"/>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-9.xml"/>
+                                       
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:lexus-db:/workspace/saveSortOrder.xml"/>
+                </map:transform>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-10.xml"/>
+                    
                 <!-- Alternative XSLT to the STX 'add-fragment-replace-lexicon-information.stx'. 
                      At this point of the import pipeline we want to search for the presence of the element 'lexicon-information' 
                 in the import document and act accordingly if it is not there. This is impossible according to my current STX 
@@ -456,14 +468,14 @@
                 <map:transform type="saxon" src="import/add-fragment-replace-lexicon-information.xslt"/>
                 
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/import-9.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-11.xml"/>
                 
                 <map:transform type="servletServiceFragments">
                     <map:parameter name="service" value="servlet:lexus-db:/lexicon/replaceLexiconInformation.xml"/>
                 </map:transform>
                 
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/import-10.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-12.xml"/>
 
                 <map:transform type="saxon" src="import/STXreportOnImport.xslt">
                     <map:parameter name="lexiconFile" value="{1}.xml"/>
@@ -471,14 +483,14 @@
                 </map:transform>
                 
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/import-11.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-13.xml"/>
                     
                 <map:transform type="servletService">
                     <map:parameter name="service" value="servlet:lexus-db:/workspace/deleteLexicon.xml"/>
                 </map:transform>
                 
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/import-12.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-14.xml"/>
                 
                 <map:serialize type="xml"/>
             </map:match>

@@ -1,17 +1,22 @@
 <?xml version="1.0"?>
 <stx:transform xmlns:stx="http://stx.sourceforge.net/2002/ns" xmlns:lexus="http://www.mpi.nl/lexus"
-    xmlns:fragments="http://org.apache.cocoon.transformation/fragments/1.0"
+    xmlns:fragments="http://org.apache.cocoon.transformation/fragments/1.0" exclude-result-prefixes = "#all"
     xmlns:cinclude="http://apache.org/cocoon/include/1.0" xmlns:util="java:java.util.UUID"
     version="1.0">
 
     <stx:variable name="lexiconId" select="''"/>
+    <stx:variable name="sortorderId" select="concat('uuid:', util:toString(util:randomUUID()))"/>
+    <stx:variable name="sortorderName" select="''"/>
+    <stx:variable name="sortorderDescription" select="''"/>
+    
+    <stx:buffer name="sortorderBuf"/>
 
-    <stx:buffer name="user"/>
 
     <stx:template match="data">
         <stx:assign name="lexiconId" select="@new-lexicon-id"/>
         <stx:copy attributes="@*">
-            <stx:process-children/>
+            <stx:process-children />
+        	<stx:process-buffer name="sortorderBuf"/>
         </stx:copy>
     </stx:template>
 
@@ -36,6 +41,34 @@
             <stx:process-children/>
         </schema>
     </stx:template>
+    
+    <!-- 
+        Process the sortorder element.
+	 -->
+    <stx:template match="sortorders/sortorder">
+        <stx:result-buffer name="sortorderBuf" clear="yes">
+        	<sortorder id="{$sortorderId}">
+                <stx:process-children/>
+            </sortorder>
+            <sortorder-info>
+            	<name><stx:value-of select="$sortorderName"/></name>
+            	<id><stx:value-of select="$sortorderId"/></id>
+            	<description><stx:value-of select="$sortorderDescription"/></description>
+            </sortorder-info>
+        </stx:result-buffer>
+    </stx:template>
+    <stx:template match="sortorders/sortorder/name">
+		<stx:assign name="sortorderName" select="concat('Imported sort order for &quot;', string(.), '&quot; ', substring($sortorderId, string-length($sortorderId) - 3, string-length($sortorderId)))"/>
+		<name>
+			<stx:value-of select="$sortorderName"/>
+		</name>
+    </stx:template>
+		<stx:template match="sortorders/sortorder/description">
+		<stx:assign name="sortorderDescription" select="string(.)"/>
+		<description>
+			<stx:process-children/>
+		</description>
+    </stx:template>  
 
     <!-- 
         Process a container.
@@ -57,19 +90,45 @@
                 <stx:process-children/>
             </stx:copy>
     </stx:if>
-    <stx:if test="not(@type = 'lexical-entry') and not(@type = 'lexicon')">
+    <stx:if test="@type = 'data'">
+    	<stx:if test="exists(@sort-order)">
+			<stx:copy attributes="@*[not(sort-order)]">
+				<stx:attribute name="sort-order" select="$sortorderId"/>
+                <stx:process-children/>
+            </stx:copy>
+        </stx:if>
+        <stx:if test="not(exists(@sort-order))">
+			<stx:copy attributes="@*">
+                <stx:process-children/>
+            </stx:copy>
+        </stx:if>
+    </stx:if>
+    <stx:if test="not(@type = 'lexical-entry') and not(@type = 'lexicon') and not(@type = 'data')">
         <container>
             <stx:process-attributes/>
             <stx:process-children/>
         </container>
     </stx:if>
     </stx:template>
-
+    
+    <stx:template match="meta">
+        <stx:copy attributes="@*">
+            <stx:process-children/>
+        </stx:copy>
+    </stx:template>
+    
+    <stx:template match="*">
+		<stx:element name="{local-name()}">
+			<stx:process-attributes />
+	        <stx:process-children />
+        </stx:element>
+    </stx:template>
+    
     <stx:template match="@*">
         <stx:copy/>
     </stx:template>
 
-    <stx:template match="node()">
+    <stx:template match="text()">
         <stx:copy attributes="@*">
             <stx:process-children/>
         </stx:copy>

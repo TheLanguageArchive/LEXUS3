@@ -29,13 +29,13 @@
     <!-- 
         Process a lexical-entry.
     -->
-    <stx:template match="lexus:lexical-entry">
+    <stx:template match="lexical-entry">
         <stx:assign name="stopPos" select="position() + $batchSize"/>
         <fragments:transform fragment-name="save-lexical-entries"
                 fragment-namespace="http://www.mpi.nl/lexus">
                 <lexus:save-lexical-entries lexicon="{$lexiconId}" user="{$userId}" first="{position()}">
                     <stx:process-self group="batch-lexical-entries"/>
-                    <stx:process-siblings while="lexus:lexical-entry[$stopPos > position()]" group="batch-lexical-entries"/>
+                    <stx:process-siblings while="lexical-entry[$stopPos > position()]" group="batch-lexical-entries"/>
                 </lexus:save-lexical-entries>
             </fragments:transform>
     </stx:template>
@@ -56,7 +56,7 @@
         This groups together the updates for the db.
     -->
     <stx:group name="batch-lexical-entries">
-        <stx:template match="lexus:lexical-entry">
+        <stx:template match="lexical-entry">
             <lexical-entry>
                 <stx:process-attributes group="batch-lexical-entries"/>
                 <stx:process-children group="batch-lexical-entries"/>
@@ -67,7 +67,7 @@
         <!-- 
             Process a container.
         -->
-        <stx:template match="lexus:data">
+        <stx:template match="data">
             <data>
                 <stx:process-attributes group="batch-lexical-entries"/>
                 <stx:process-children group="batch-lexical-entries"/>
@@ -77,7 +77,7 @@
         <!-- 
             Process a container.
         -->
-        <stx:template match="lexus:container">
+        <stx:template match="container">
             <container>
                 <stx:process-attributes group="batch-lexical-entries"/>
                 <stx:process-children group="batch-lexical-entries"/>

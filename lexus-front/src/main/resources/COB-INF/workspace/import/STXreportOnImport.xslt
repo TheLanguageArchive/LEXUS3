@@ -118,13 +118,22 @@
     
     <xsl:template match="lexus:replace-lexicon-information[lexus:result[@success eq 'true']]">
         <lexicon>
-            <xsl:apply-templates select="../lexus:lexicon-information/node()"/>
+            <xsl:apply-templates select="../lexicon-information/node()"/>
             <numberOfEntries><xsl:value-of select="sum(../lexus:save-lexical-entries/@count)"></xsl:value-of></numberOfEntries>
         </lexicon>
     </xsl:template>
+    
+	<xsl:template match="lexus:save-sortorder[lexus:result[@success eq 'true']]">
+		<sortorder>
+			<xsl:apply-templates select="../sortorder-info/node()"/>
+		</sortorder>
+	</xsl:template>
+    
+    
     <xsl:template match="lexus:create-lexicon[lexus:result[@success eq 'true']]"/>
     <xsl:template match="lexus:add-standard-views[lexus:result[@success eq 'true']]"/>
     <xsl:template match="lexus:save-lexical-entries[lexus:result[@success eq 'true']]"/>
+    <xsl:template match="lexus:update-sort-keys[lexus:result[@success eq 'true']]"/>
     
     <xsl:template match="lexus:lexicon">
         <size>
@@ -132,8 +141,7 @@
         </size>
     </xsl:template>
     
-    
-    <xsl:template match="lexus:*">
+    <xsl:template match="*">
         <xsl:element name="{local-name()}">
             <xsl:copy-of select="@*"/>
             <xsl:apply-templates/>

@@ -24,10 +24,10 @@
             <fragments:transform fragment-name="replace-lexicon-information"
                 fragment-namespace="http://www.mpi.nl/lexus">
                 <lexus:replace-lexicon-information lexicon="{$lexiconId}" user="{$userId}">
-                    <xsl:if test="exists(lexus:lexicon-information)">
-                        <xsl:apply-templates select="lexus:lexicon-information" mode="lexus-ns"/>
+                    <xsl:if test="exists(lexicon-information)">
+                        <xsl:apply-templates select="lexicon-information" mode="lexus-ns"/>
                     </xsl:if>
-                    <xsl:if test="not(exists(lexus:lexicon-information))">
+                    <xsl:if test="not(exists(lexicon-information))">
                         <lexus:lexicon-information>
                             <lexus:name>UnamedLexicon!</lexus:name>
                             <lexus:description>LEXUS could not determine a name and description for this imported lexicon.
