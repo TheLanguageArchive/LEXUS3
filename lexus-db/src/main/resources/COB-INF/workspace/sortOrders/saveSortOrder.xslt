@@ -16,8 +16,8 @@
         Also create an lexus:update-sort-keys element for sorting lexica later on.
         -->
     <xsl:template match="lexus:save-sortorder">
-        <xsl:element name="update-sort-keys" namespace="http://www.mpi.nl/lexus">
-            <xsl:copy-of select="sortorder"/>
+        <xsl:element name="lexus:update-sort-keys">
+            <xsl:copy-of select="sortorder" copy-namespaces='no'/>
         </xsl:element>
 
         <xsl:copy>
