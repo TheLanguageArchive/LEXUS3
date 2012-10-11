@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <stx:transform xmlns:stx="http://stx.sourceforge.net/2002/ns" xmlns:lexus="http://www.mpi.nl/lexus"
-    xmlns:fragments="http://org.apache.cocoon.transformation/fragments/1.0" exclude-result-prefixes = "#all"
+    xmlns:fragments="http://org.apache.cocoon.transformation/fragments/1.0"
+    xmlns:ex="http://apache.org/cocoon/exception/1.0" exclude-result-prefixes = "#all"
     xmlns:cinclude="http://apache.org/cocoon/include/1.0" xmlns:util="java:java.util.UUID"
     version="1.0">
 
@@ -122,6 +123,13 @@
 			<stx:process-attributes />
 	        <stx:process-children />
         </stx:element>
+    </stx:template>
+    
+    <!-- Do not remove prefixes from the 'ex' namespace -->
+    <stx:template match="ex:*">
+        <stx:copy attributes="@*">
+            <stx:process-children/>
+        </stx:copy>
     </stx:template>
     
     <stx:template match="@*">
