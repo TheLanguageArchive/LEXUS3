@@ -69,7 +69,7 @@
                                 <text/>
                             </element>
                             <element name="description">
-                                <empty/>
+                                <text/>
                             </element>
                             <element name="mappings">
                                 <zeroOrMore>
