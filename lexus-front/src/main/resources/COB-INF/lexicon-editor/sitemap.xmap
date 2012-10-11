@@ -132,12 +132,12 @@
             <map:match pattern="startLetterSearch.json">
                 <map:generate src="cocoon:/startLetterSearch"/>
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/front-sls-4.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-sls-5.xml"/>
                 <map:transform type="saxon" src="startLetterSearchResult-2-JSON.xslt">
                     <map:parameter name="sessionId" value="{session:id}"/>
                 </map:transform>
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/front-sls-5.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-sls-6.xml"/>
                 <map:serialize type="json"/>
             </map:match>
 
@@ -168,12 +168,15 @@
                 <map:transform type="saxon" src="prepareStartLetterSearch.xslt"/>
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-sls-2.xml"/>
+                <map:transform type="saxon" src="normalizeStartLetterSearch.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-sls-3.xml"/>
                 <map:transform type="servletService">
                     <map:parameter name="service" value="servlet:lexus-db:/lexicon/startLetterSearch.xml"
                     />
                 </map:transform>
                 <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/front-sls-3.xml"/>
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-sls-4.xml"/>
                 <map:transform type="saxon" src="views/prepareDisplayGenerator.xslt"/>
                 <map:transform type="servletService">
                     <map:parameter name="service" value="servlet:lexus-display:/flexhtmlview.xml"/>
