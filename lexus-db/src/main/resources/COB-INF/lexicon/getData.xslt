@@ -37,13 +37,13 @@
                     let $id := $data/id
                     let $user-id := '<xsl:value-of select="/data/user/@id"/>'
                     let $lexus :=
-                        if ($data/lexicon ne '')
+                        if ($data/lexicon ne '' and $data/lexicon ne 'undefined')
                             then collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $data/lexicon]
                             else
                                 let $lexica := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[meta/users/user/@ref = $user-id]
                                 return $lexica/lexicon[.//data[@id = $id]] 
                     let $lexiconId := $lexus/@id
-                    let $data := $lexus/lexicon//data[@id = $id]
+                    let $data := $lexus//data[@id = $id]
                     
                     return element result {
                         attribute lexicon { $lexiconId },
