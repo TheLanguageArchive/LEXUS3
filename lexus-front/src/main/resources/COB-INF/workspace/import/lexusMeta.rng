@@ -74,14 +74,14 @@
                             <element name="mappings">
                                 <zeroOrMore>
                                     <element name="mapping">
-					<interleave>
+										<interleave>
                                         	<element name="to">
-							<text/>
+												<text/>
                                         	</element>
                                         	<element name="from">
                                             		<text/>
                                        		</element>
-					</interleave>
+										</interleave>
                                     </element>
                                 </zeroOrMore>
                             </element>
