@@ -74,12 +74,14 @@
                             <element name="mappings">
                                 <zeroOrMore>
                                     <element name="mapping">
-                                        <element name="to">
-                                            <data type="NCName"/>
-                                        </element>
-                                        <element name="from">
-                                            <text/>
-                                        </element>
+					<interleave>
+                                        	<element name="to">
+							<text/>
+                                        	</element>
+                                        	<element name="from">
+                                            		<text/>
+                                       		</element>
+					</interleave>
                                     </element>
                                 </zeroOrMore>
                             </element>
