@@ -8,5 +8,3 @@ Other issues and improvements:
 3. Fix for #2391, at he UI by disallowing removing/adding new lexicon while creating filter by disabling the 
 buttons. At the back end by normalizing the search query, placing every search rule referring to the same lexicon
 as children of one single 'lexicon' element.
-
- 
