@@ -4,9 +4,9 @@ LEXUS-3.0-RC2-r${buildNumber}
 
 Other issues and improvements:
 1. Lexicon sort orders are now imported to the user workspace if present in a imported lexicon (fixes #2372).
-
-2.ADDED : 
-Fix for #2387, structure tree lost index when two newly added elements where going to be deleted right away.
-Quick fix for #2391, by disallowing removing/adding new lexicon while creating filter by disabling the buttons.
+2. Fix for #2387, structure tree lost index when two newly added elements where going to be deleted right away.
+3. Fix for #2391, at he UI by disallowing removing/adding new lexicon while creating filter by disabling the 
+buttons. At the back end by normalizing the search query, placing every search rule referring to the same lexicon
+as children of one single 'lexicon' element.
 
  
