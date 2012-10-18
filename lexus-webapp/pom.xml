@@ -28,7 +28,7 @@
     <parent>
         <groupId>nl.mpi.lexus</groupId>
         <artifactId>lexus</artifactId>
-        <version>3.0-RC2</version>
+        <version>3.0-RC3</version>
     </parent>
 
     <artifactId>lexus-webapp</artifactId>
@@ -38,17 +38,17 @@
         <dependency>
             <groupId>nl.mpi.lexus</groupId>
             <artifactId>lexus-front</artifactId>
-            <version>3.0-RC2</version>
+            <version>3.0-RC3</version>
         </dependency>
         <dependency>
             <groupId>nl.mpi.lexus</groupId>
             <artifactId>lexus-display</artifactId>
-            <version>3.0-RC2</version>
+            <version>3.0-RC3</version>
         </dependency>
         <dependency>
             <groupId>nl.mpi.lexus</groupId>
             <artifactId>lexus-db</artifactId>
-            <version>3.0-RC2</version>
+            <version>3.0-RC3</version>
         </dependency>
     </dependencies>
     <build>
