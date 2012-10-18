@@ -352,13 +352,13 @@
               <map:part src="cocoon://request"/>
               <map:part src="cocoon://stream"/>
             </map:aggregate>
-            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ws-1.xml"/>
-            <map:transform type="saxon" src="../util/flatten_hrefs_4WS.xslt"/>
-            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ws-2.xml"/>
-            <map:transform type="saxon" src="handle_soap_calls.xslt"/>
-            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ws-3.xml"/>
-            <map:transform type="cinclude"/>
             <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ws-4.xml"/>
+            <map:transform type="saxon" src="../util/flatten_hrefs_4WS.xslt"/>
+            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ws-5.xml"/>
+            <map:transform type="saxon" src="handle_soap_calls.xslt"/>
+            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ws-6.xml"/>
+            <map:transform type="cinclude"/>
+            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/ws-7.xml"/>
             <map:serialize type="xml"/>
           </map:when>
         </map:select>
