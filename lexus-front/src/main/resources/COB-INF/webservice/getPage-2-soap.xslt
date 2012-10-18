@@ -23,7 +23,7 @@
                     &lt;resources xmlns=&quot;http://www.mpi.nl/lexus&quot; version=&quot;1.0&quot;&gt;
                         <xsl:apply-templates select="/data/lexus:get-page/lexus:result/result/lexica/lexicon"/>
                     &lt;/resources&gt;
-</getResourcesReturn>
+				</getResourcesReturn>
             </getResourcesResponse>
          </soapenv:Body>
       </soapenv:Envelope>
