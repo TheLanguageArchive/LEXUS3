@@ -40,6 +40,24 @@
             <xsl:apply-templates />
         </xhtml:table>
     </xsl:template>
+        <xsl:template match="thead">
+        <xhtml:thead xmlns="http://www.w3.org/1999/xhtml">
+            <xsl:apply-templates select="@dsl_class"/>
+            <xsl:variable name="style"><xsl:apply-templates select="@* except (@dsl_class)"/>
+            </xsl:variable>
+            <xsl:if test="$style ne '' or @style ne ''"><xsl:attribute name="style" select="concat(@style, $style)"/></xsl:if>
+            <xsl:apply-templates />
+        </xhtml:thead>
+    </xsl:template>
+    <xsl:template match="tbody">
+        <xhtml:tbody xmlns="http://www.w3.org/1999/xhtml">
+            <xsl:apply-templates select="@dsl_class"/>
+            <xsl:variable name="style"><xsl:apply-templates select="@* except (@dsl_class)"/>
+            </xsl:variable>
+            <xsl:if test="$style ne '' or @style ne ''"><xsl:attribute name="style" select="concat(@style, $style)"/></xsl:if>
+            <xsl:apply-templates />
+        </xhtml:tbody>
+    </xsl:template>
     <xsl:template match="tr">
         <xhtml:tr xmlns="http://www.w3.org/1999/xhtml">
             <xsl:apply-templates select="@dsl_class"/>
