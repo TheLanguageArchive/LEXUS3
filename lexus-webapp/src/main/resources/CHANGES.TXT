@@ -3,8 +3,16 @@ LEXUS-3.0-RC2-r${buildNumber}
 
 
 Other issues and improvements:
-1. Lexicon sort orders are now imported to the user workspace if present in a imported lexicon (fixes #2372).
-2. Fix for #2387, structure tree lost index when two newly added elements where going to be deleted right away.
-3. Fix for #2391, at he UI by disallowing removing/adding new lexicon while creating filter by disabling the 
-buttons. At the back end by normalizing the search query, placing every search rule referring to the same lexicon
-as children of one single 'lexicon' element.
+1. Fix for #2372. Lexicon sort orders are now imported to the user workspace if present in an imported lexicon.
+2. Fix for #2387. Structure tree does not lose index when two newly added elements are going to be deleted right away.
+3. Fix for #2391. 
+	3.1 Possible to search using a filter containing two 'lexicon' elements referring to the same lexicon (added 
+	normalizing XSLT template to move every search rule referring to the same lexicon, inside one single 'lexicon' element 
+	when a filter is executed). 
+	3.2 Creating a filter containing two 'lexicon' elements is now disallowed (option to remove/add new lexicon to a filter 
+	disabled at the UI by graying out the buttons).
+4. Fix for #2429. White spaces between 'text' elements and datacategory values removed (specifed "indent='no'" in the 
+configuration of the cocoon HTML serializer). 
+5. Fix for #2390. Pop ups launched from the lexus menu are not anymore hidden behind the lexical entry HTML view (hiding 
+the iFrame before drawing the pop up and showing it again when the pop up is closed).
+6. Moved cocoon configuration of serializers to front module.
