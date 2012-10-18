@@ -1,5 +1,5 @@
 Changes for:
-LEXUS-3.0-RC2-r${buildNumber}
+LEXUS-3.0-RC3-r${buildNumber}
 
 
 Other issues and improvements:
