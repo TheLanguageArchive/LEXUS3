@@ -23,6 +23,7 @@
 
 
         <map:pipeline id="lexicon" type="caching">
+           <map:parameter name="outputBufferSize" value="0"/>
 
             <!-- 
           Get the Lexical Entry View.
