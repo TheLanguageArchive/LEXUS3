@@ -14,7 +14,7 @@
 
     <groupId>nl.mpi.lexus</groupId>
     <artifactId>lexus</artifactId>
-    <version>3.0-RC2</version>
+    <version>3.0-RC3</version>
     <name>Lexus</name>
     <url>http://www.lat-mpi.eu/tools/lexus</url>
     <description>
