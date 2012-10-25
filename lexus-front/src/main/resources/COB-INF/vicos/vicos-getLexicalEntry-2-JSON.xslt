@@ -82,13 +82,22 @@
     <xsl:template match="lexical-entry//data">
         <object>
             <string key="id"><xsl:value-of select="@id"/></string>
+            <xsl:if test="exists(resource[@type = 'image'])">
+                <object key="multimedia">
+                    <string key="mimetype"><xsl:value-of select="resource/@mimetype"/></string>
+                    <string key="value"><xsl:value-of select="resource/@value"/></string>
+                    <string key="archive"><xsl:value-of select="resource/@archive"/></string>
+                    <string key="type"><xsl:value-of select="resource/@type"/></string>
+                    <string key="url"><xsl:value-of select="concat('resources/', //result/@lexicon, '/', resource/@value)"/></string>
+                </object>
+            </xsl:if>
             <string key="value"><xsl:value-of select="value"/></string>
             <string key="schemaElementId"><xsl:value-of select="@schema-ref"/></string>
             <string key="label"><xsl:value-of select="@name"/></string>
             <string key="notes"></string>
         </object>
     </xsl:template>
-    
+        
     <!-- Copy the xhtml -->
     <xsl:template match="xhtml:*">
         <xsl:element name="{local-name()}" namespace="http://www.w3.org/1999/xhtml">
