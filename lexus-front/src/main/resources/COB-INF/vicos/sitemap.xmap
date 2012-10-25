@@ -48,11 +48,19 @@
       -->
       <map:match pattern="getDataCategories.json">
         <map:generate src="cocoon://LexusWorkspaceEditor/getDataCategories"/>
+	    <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gdc-1.xml"/>
+	    <map:transform type="saxon" src="vicos-prepareGetSortOrders.xslt"/>
+	    <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gdc-2.xml"/>
+	    <map:transform type="servletService">
+        	<map:parameter name="service" value="servlet:lexus-db:/workspace/getSortOrders.xml"/>
+        </map:transform>
         <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gdc-pre.xml"/>
-        <map:transform type="saxon" src="../workspace/queries/dataCategories-2-JSON.xslt"/>
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gdc-3.xml"/>
+        <map:transform type="saxon" src="vicos-dataCategories-2-JSON.xslt"/>
         <map:transform type="${tee}"
-          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gdc-post.xml"/>
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gdc-4.xml"/>
         <map:serialize type="json"/>
       </map:match>
 
