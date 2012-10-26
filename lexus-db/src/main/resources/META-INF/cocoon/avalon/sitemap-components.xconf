@@ -2,7 +2,7 @@
 <map:components xmlns:map="http://apache.org/cocoon/sitemap/1.0">
     <map:transformers>
         <map:transformer name="rest" src="org.apache.cocoon.transformation.RESTTransformer"
-        pool-grow="4" pool-max="64" pool-min="16">
+        pool-grow="4" pool-max="128" pool-min="32">
             <authentication>
                 <username>admin</username>
                 <password>admin</password>
@@ -11,7 +11,7 @@
             <encoding>UTF-8</encoding>
         </map:transformer>
         <map:transformer name="saxon" src="org.apache.cocoon.transformation.TraxTransformer"
-        pool-grow="8" pool-max="128" pool-min="32">
+        pool-grow="32" pool-max="512" pool-min="128">
             <xslt-processor-role>saxon</xslt-processor-role>
         </map:transformer>
     </map:transformers>

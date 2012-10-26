@@ -3,7 +3,7 @@
  <sitemap file="sitemap.xmap" reload-method="asynchron" check-reload="no"/>
 
  <component role="org.apache.excalibur.xml.xslt.XSLTProcessor/saxon"
-  class="org.apache.cocoon.components.xslt.TraxProcessor" pool-grow="8" pool-max="128" pool-min="32">
+  class="org.apache.cocoon.components.xslt.TraxProcessor" pool-grow="32" pool-max="512" pool-min="128">
   <parameter name="use-store" value="true"/>
   <parameter name="transformer-factory" value="net.sf.saxon.TransformerFactoryImpl"/>
  </component>
