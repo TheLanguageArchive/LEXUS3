@@ -1,24 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:lexus="http://www.mpi.nl/lexus" version="2.0">
-    <!--
-        
-        Input is:
-        <data>
-        <get-data>
-        <id>25</id>
-        </get-data>
-        <user>...</user>
-        </data>
-        
-        Generate the following information from the database:
-        <result lexicon="...">
-            <data id="uuid:d99c60dd-f316-4919-b18e-0e50556c45ec" schema-refd="uuid:9e1dbc3c-55d1-4ba2-96b8-391f779a16ab" ...>
-                <value></value>
-                ....
-            </data>
-        </result>
-    -->
+
     <xsl:include href="../util/identity.xslt"/>
     <xsl:include href="../util/encodeXML.xslt"/>
     <xsl:include href="../util/xquery-components.xslt"/>
@@ -33,21 +16,19 @@
                     (: <xsl:value-of select="base-uri(document(''))"/> :)
                     <xsl:call-template name="declare-namespace"/> 
                     
-                    let $data := <xsl:apply-templates select="." mode="encoded"/>
-                    let $id := $data/id
+                    let $id := '<xsl:value-of select="/data/lexus:get-data/id"/>'
+                    let $lexicon-id := '<xsl:value-of select="/data/lexus:get-data/lexicon"/>'
                     let $user-id := '<xsl:value-of select="/data/user/@id"/>'
-                    let $lexus :=
-                        if ($data/lexicon ne '' and $data/lexicon ne 'undefined')
-                            then collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $data/lexicon]
+                    let $entry :=
+                        if ($lexicon-id ne '' and $lexicon-id ne 'undefined')
+                            then collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $lexicon-id]//data[@id = $id]
                             else
                                 let $lexica := collection('<xsl:value-of select="$lexica-collection"/>')/lexus[meta/users/user/@ref = $user-id]
-                                return $lexica/lexicon[.//data[@id = $id]] 
-                    let $lexiconId := $lexus/@id
-                    let $data := $lexus//data[@id = $id]
+                                return $lexica/lexicon//data[@id = $id]
                     
                     return element result {
-                        attribute lexicon { $lexiconId },
-                        $data
+                        attribute lexicon { $lexicon-id },
+                        $entry
                     }
                 </lexus:text>
             </lexus:query>
