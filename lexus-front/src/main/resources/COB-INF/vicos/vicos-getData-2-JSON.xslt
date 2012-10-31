@@ -43,10 +43,9 @@
 
     <xsl:template match="/">
         <object>
-            <xsl:apply-templates select="data/lexus:get-data/lexus:result"/>
             <object key="status">
                 <xsl:choose>
-                    <xsl:when test="data/lexus:get-data/lexus:result[@success = 'true']">
+                    <xsl:when test="data/lexus:get-data/lexus:result[@success = 'true'] and exists(data/lexus:get-data/lexus:result/result/data/@id)">
                         <true key="success"/>
                     </xsl:when>
                     <xsl:otherwise>
@@ -54,6 +53,7 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </object>
+            <xsl:apply-templates select="data/lexus:get-data/lexus:result[@success = 'true' and exists(./result/data/@id)]"/>
         </object>
     </xsl:template>
 
