@@ -247,7 +247,7 @@
 
 
             <!--
-        Used by Vicos to get info on a data element.
+        Used by Vicos to get a data element.
       -->
             <map:match pattern="getData.xml">
                 <map:generate src="service-consumer:"/>
@@ -258,6 +258,25 @@
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/gd-back-pre.xml"/>
                 <map:call resource="rest"/>
+                <map:serialize type="xml"/>
+            </map:match>
+            
+        	<!--
+        Used by Vicos to get the context lexical entry of a data element.
+      -->
+            <map:match pattern="getLexicalEntryFromData.xml">
+                <map:generate src="service-consumer:"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-glefd-1.xml"/>
+                <map:transform type="saxon" src="getLexicalEntryFromData.xslt">
+                    <map:parameter name="lexica-collection" value="{naming:java:comp/env/LEXUS/db-lexica-collection}"
+                    />
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-glefd-2.xml"/>
+                <map:call resource="rest"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-glefd-3.xml"/>
                 <map:serialize type="xml"/>
             </map:match>
 

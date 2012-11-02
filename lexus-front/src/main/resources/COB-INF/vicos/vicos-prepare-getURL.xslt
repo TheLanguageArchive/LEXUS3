@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl" 
+    xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl" xmlns:lexus="http://www.mpi.nl/lexus"
     exclude-result-prefixes="xd" version="2.0">
     <xd:doc scope="stylesheet">
         <xd:desc>
@@ -44,13 +44,31 @@
     	<xsl:apply-templates />
     </xsl:template>
     
-    <xsl:template match="json">
-    	<data>
-    		<result>
-    			<url><xsl:value-of select="concat($contextURL, 'EntryViewer.html?id=', ./parameters/id/text())"/></url>
-    		</result>
-    		<requesterId><xsl:value-of select="$requester"/></requesterId>
-    	</data>
+    <xsl:template match="data">
+	    <xsl:choose>
+	    	<xsl:when test="json/parameters/type = 'liu'">
+	    		<data>
+			    	<lexus:get-entry-from-data>
+			            <id>
+			                <xsl:value-of select="json/parameters/id/text()"/>
+			            </id>
+			            <user>
+			                <xsl:value-of select="user/@id"/>
+			            </user>
+		        	</lexus:get-entry-from-data>
+			        <contextURL><xsl:value-of select="$contextURL"/></contextURL>		        	
+		        	<requesterId><xsl:value-of select="$requester"/></requesterId>
+	        	</data>
+	    	</xsl:when>
+	    	<xsl:otherwise>
+		    	<data>
+		    		<result>
+		    			<url><xsl:value-of select="concat($contextURL, 'EntryViewer.html?id=', json/parameters/id/text())"/></url>
+		    		</result>
+		    		<requesterId><xsl:value-of select="$requester"/></requesterId>
+		    	</data>
+	    	</xsl:otherwise>
+	    </xsl:choose>
     </xsl:template>
     
     
