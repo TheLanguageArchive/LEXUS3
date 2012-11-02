@@ -19,7 +19,7 @@
                     let $id := '<xsl:value-of select="/data/lexus:get-data/id"/>'
                     let $lexicon-id := '<xsl:value-of select="/data/lexus:get-data/lexicon"/>'
                     let $user-id := '<xsl:value-of select="/data/user/@id"/>'
-                    let $entry :=
+                    let $data :=
                         if ($lexicon-id ne '' and $lexicon-id ne 'undefined')
                             then collection('<xsl:value-of select="$lexica-collection"/>')/lexus[@id = $lexicon-id]//data[@id = $id]
                             else
@@ -28,7 +28,7 @@
                     
                     return element result {
                         attribute lexicon { $lexicon-id },
-                        $entry
+                        $data
                     }
                 </lexus:text>
             </lexus:query>
