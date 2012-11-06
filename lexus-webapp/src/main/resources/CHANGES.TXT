@@ -3,7 +3,7 @@ LEXUS-3.0-RC3-r${buildNumber}
 
 
 Other issues and improvements:
-1. Added ViCoS. 
+1. Enabled ViCoS. 
 1. Fix for #2372. Lexicon sort orders are now imported to the user workspace if present in an imported lexicon.
 2. Fix for #2387. Structure tree does not lose index when two newly added elements are going to be deleted right away.
 3. Fix for #2391. 
