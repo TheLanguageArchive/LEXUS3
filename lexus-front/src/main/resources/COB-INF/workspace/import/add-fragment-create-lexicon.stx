@@ -44,6 +44,14 @@
     </stx:template>
     
     <!-- 
+        Process the sortorders element so it does not propagate further than this
+        transform.
+	-->
+    <stx:template match="sortorders">
+		<stx:process-children/>
+    </stx:template>
+    
+    <!-- 
         Process the sortorder element.
 	 -->
     <stx:template match="sortorders/sortorder">
