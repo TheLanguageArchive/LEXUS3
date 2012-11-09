@@ -89,15 +89,15 @@
     <xsl:template match="lexus:save-sortorder/sortorder">
         <xsl:copy>
             <xsl:apply-templates select="@*|node()"/>
-            <xquery>
-                <functions>
-                    <xsl:apply-templates select="." mode="sort-key"/>
-                    <xsl:text>                        
-                    </xsl:text>
-                    <xsl:apply-templates select="." mode="start-letter"/>
-                </functions>
-            </xquery>
         </xsl:copy>
+        <xquery>
+        	<functions>
+            	<xsl:apply-templates select="." mode="sort-key"/>
+               	<xsl:text>                        
+                </xsl:text>
+                <xsl:apply-templates select="." mode="start-letter"/>
+            </functions>
+        </xquery>
     </xsl:template>
 
 

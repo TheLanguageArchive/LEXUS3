@@ -17,7 +17,10 @@
         -->
     <xsl:template match="lexus:save-sortorder">
         <xsl:element name="lexus:update-sort-keys">
-            <xsl:copy-of select="sortorder" copy-namespaces='no'/>
+            <xsl:element name="sortorder">
+            	<xsl:copy-of select="sortorder/node() | sortorder/@*" copy-namespaces='no'/>
+            	<xsl:copy-of select="xquery" copy-namespaces='no'/>
+            </xsl:element>
         </xsl:element>
 
         <xsl:copy>
