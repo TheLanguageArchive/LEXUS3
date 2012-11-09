@@ -67,7 +67,7 @@
         </stx:result-buffer>
     </stx:template>
     <stx:template match="sortorders/sortorder/name">
-		<stx:assign name="sortorderName" select="concat('Imported sort order for &quot;', string(.), '&quot; ', substring($sortorderId, string-length($sortorderId) - 3, string-length($sortorderId)))"/>
+		<stx:assign name="sortorderName" select="concat('Imported from &quot;', string(.), '&quot; sort order. #', substring($sortorderId, string-length($sortorderId) - 3, string-length($sortorderId)))"/>
 		<name>
 			<stx:value-of select="$sortorderName"/>
 		</name>
