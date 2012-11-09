@@ -17,3 +17,8 @@ configuration of the cocoon HTML serializer).
 5. Fix for #2390. Pop ups launched from the lexus menu are not anymore hidden behind the lexical entry HTML view (hiding 
 the iFrame before drawing the pop up and showing it again when the pop up is closed).
 6. Moved cocoon configuration of serializers to front module.
+7. Fixed round trip import/export issues when the lexicon has an assigned sort order.
+	7.1 The xquery functions used to update the sort keys of the entries after saving a sort order, were moved out of the 
+	sort order element in the 'saveSortOrder.xml' pipeline. So these functions don't get saved inside the database.
+	7.2 Added template in the STX XML import, to explicitly handle the '<sortorders>' element in the schema file, so it is 
+	not	miss saved inside lexicon document in the database.
