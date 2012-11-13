@@ -22,3 +22,4 @@ the iFrame before drawing the pop up and showing it again when the pop up is clo
 	sort order element in the 'saveSortOrder.xml' pipeline. So these functions don't get saved inside the database.
 	7.2 Added template in the STX XML import, to explicitly handle the '<sortorders>' element in the schema file, so it is 
 	not	miss saved inside lexicon document in the database.
+8. Fixed problem where users could not be edited by the administrator when lexus database was not called 'lexus'.
