@@ -3,23 +3,5 @@ LEXUS-3.0-RC3-r${buildNumber}
 
 
 Other issues and improvements:
-1. Enabled ViCoS. 
-1. Fix for #2372. Lexicon sort orders are now imported to the user workspace if present in an imported lexicon.
-2. Fix for #2387. Structure tree does not lose index when two newly added elements are going to be deleted right away.
-3. Fix for #2391. 
-	3.1 Possible to search using a filter containing two 'lexicon' elements referring to the same lexicon (added 
-	normalizing XSLT template to move every search rule referring to the same lexicon, inside one single 'lexicon' element 
-	when a filter is executed). 
-	3.2 Creating a filter containing two 'lexicon' elements is now disallowed (option to remove/add new lexicon to a filter 
-	disabled at the UI by graying out the buttons).
-4. Fix for #2429. White spaces between 'text' elements and datacategory values removed (specifed "indent='no'" in the 
-configuration of the cocoon HTML serializer). 
-5. Fix for #2390. Pop ups launched from the lexus menu are not anymore hidden behind the lexical entry HTML view (hiding 
-the iFrame before drawing the pop up and showing it again when the pop up is closed).
-6. Moved cocoon configuration of serializers to front module.
-7. Fixed round trip import/export issues when the lexicon has an assigned sort order.
-	7.1 The xquery functions used to update the sort keys of the entries after saving a sort order, were moved out of the 
-	sort order element in the 'saveSortOrder.xml' pipeline. So these functions don't get saved inside the database.
-	7.2 Added template in the STX XML import, to explicitly handle the '<sortorders>' element in the schema file, so it is 
-	not	miss saved inside lexicon document in the database.
-8. Fixed problem where users could not be edited by the administrator when lexus database was not called 'lexus'.
+1. Fixed problem where users could not be edited by the administrator when lexus database was not called 'lexus'.
+2. Added 'final database migration warning' to the login page.
