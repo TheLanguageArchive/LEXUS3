@@ -116,7 +116,7 @@
             .msg {
                 position:absolute;
                 left:664px;
-                top:114px;
+                top:138px;
                 width:300px;
                 height:40px;
                 border:2px solid white;
