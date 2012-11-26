@@ -2,5 +2,4 @@ Changes for:
 LEXUS-3.0-RELEASE-r${buildNumber}
 
 
-Other issues and improvements:
-1. Removed 'final database migration warning' to the login page.
+This is the first release version of LEXUS 3.
