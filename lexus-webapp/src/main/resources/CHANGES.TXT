@@ -1,7 +1,6 @@
 Changes for:
-LEXUS-3.0-RC3-r${buildNumber}
+LEXUS-3.0-RELEASE-r${buildNumber}
 
 
 Other issues and improvements:
-1. Fixed problem where users could not be edited by the administrator when lexus database was not called 'lexus'.
-2. Added 'final database migration warning' to the login page.
+1. Removed 'final database migration warning' to the login page.
