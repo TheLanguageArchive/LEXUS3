@@ -28,7 +28,7 @@
   <parent>
     <groupId>nl.mpi.lexus</groupId>
     <artifactId>lexus</artifactId>
-    <version>3.0-RC3</version>
+    <version>3.0-RELEASE</version>
   </parent>
   
   <artifactId>lexus-db</artifactId>
