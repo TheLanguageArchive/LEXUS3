@@ -14,7 +14,7 @@
 
     <groupId>nl.mpi.lexus</groupId>
     <artifactId>lexus</artifactId>
-    <version>3.0-RC3</version>
+    <version>3.0-RELEASE</version>
     <name>Lexus</name>
     <url>http://www.lat-mpi.eu/tools/lexus</url>
     <description>
@@ -122,11 +122,11 @@
         </snapshotRepository>
     </distributionManagement>
     <repositories>
-        <repository>
-            <id>otego</id> <!-- for cocoon -->
+<!--        <repository>
+            <id>otego</id> <!-\- for cocoon -\->
             <name>otego mirror</name>
             <url>http://project.otego.com/mirror-maven2</url>
-        </repository>
+        </repository>-->
         <repository> <!-- for saxon 9.1.0.8 -->
             <id>JBoss</id>
             <name>JBoss deprecated repository</name>
