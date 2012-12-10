@@ -9,14 +9,14 @@
     <parent>
         <groupId>nl.mpi</groupId>
         <artifactId>parent</artifactId>
-        <version>1.4</version>
+        <version>1.5</version>
     </parent>
 
     <groupId>nl.mpi.lexus</groupId>
     <artifactId>lexus</artifactId>
-    <version>3.0-RELEASE</version>
+    <version>3.0.1-SNAPSHOT</version>
     <name>Lexus</name>
-    <url>http://www.lat-mpi.eu/tools/lexus</url>
+    <url>http://tla.mpi.nl/tools/tla-tools/lexus</url>
     <description>
         Lexus is a web-based tool to create and edit lexical databases.
         Lexus is currently being developed by The Language Achive at the Max Planck Institute for Psycholinguistics in Nijmegen.
