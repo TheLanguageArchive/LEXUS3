@@ -1,5 +1,16 @@
 Changes for:
-LEXUS-3.0-RELEASE-r${buildNumber}
+LEXUS-${project.version}-r${buildNumber}
 
-
-This is the first release version of LEXUS 3.
+- Fixed various UI problems when loading the view editor for a lexicon 
+with 0 views. (occurring with some lexica migrated from LEXUS 2)
+- Fixed problem causing iFrames not to disappear (includes ticket #XXX 
+and multimedia pop ups).
+- Order of elements in the schema is now enforced in the lexicon editor
+(new drag&drop rules).
+- Copy of elements in the lexical entry tree now includes all children
+of the dragged element.
+- Lexicon editor is now fully aware of the lexicon schema and enforces 
+it at the UI level (also includes ticket #XXXX).
+- Moved to Apache Flex SDK 4.8
+- Fixed some problems with Flex HTML template.
+ 
