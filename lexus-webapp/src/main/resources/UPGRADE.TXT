@@ -1,8 +1,8 @@
 To upgrade from the previous version:
 
-Deploy lexus-webapp-3.0-RELEASE-r${buildNumber}.war to the servlet container
+Deploy lexus-webapp-${project.version}-r${buildNumber}.war to the servlet container
 where LEXUS was previously running. 
 
 
 Previously installed version:
-LEXUS-3.0-RC3-34282.war
+LEXUS-3.0-RELEASE-r34491.war

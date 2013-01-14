@@ -1,4 +1,5 @@
-LEXUS-3.0-RELEASE-r${buildNumber}
+LEXUS-${project.version}-r${buildNumber}
+
 
  What is it?
  -----------
@@ -21,7 +22,7 @@ from and stores data to the database.
 
  The Latest Version
  ------------------
-LEXUS-3.0-RELEASE-r${buildNumber}
+LEXUS-${project.version}-r${buildNumber}
 
 
  Changes
