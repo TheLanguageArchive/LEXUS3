@@ -36,7 +36,6 @@
     </xsl:template>
 
 
-
     <!--
         A block div element. 
     -->
@@ -55,14 +54,52 @@
             <xsl:apply-templates select="@* | node()"/>
         </fo:inline>
     </xsl:template>
-
-    <xsl:template match="@bold[.='true']">
-        <xsl:attribute name="font-weight">bold</xsl:attribute>
+    
+    
+    <!--
+        A line feed element.
+        The 'inline' element is needed otherwise the FOP processor ignores line feeds
+        placed right after another line feed.
+    -->
+    <xsl:template match="br">
+        <fo:block/>
+        <xsl:if test="not(./following-sibling::*[1][self::hr] or ./following-sibling::*[1][self::div[@block eq 'true']])">
+	        <fo:inline >
+	        		<xsl:text>&#xA;</xsl:text>
+	        </fo:inline>
+        </xsl:if>
+    </xsl:template>
+    
+    
+	<!--
+        A horizontal line element.
+    -->
+    <xsl:template match="hr">
+    	<fo:block text-align-last="justify">
+	        <fo:leader leader-pattern="rule" rule-style="solid" color="black">
+		        <xsl:choose>
+		        	<xsl:when test="exists(@size)">
+						<xsl:attribute name="rule-thickness"><xsl:value-of select="concat(@size, 'px')"/></xsl:attribute>
+		        	</xsl:when>
+		        	<xsl:otherwise>
+						<xsl:attribute name="rule-thickness">0.5pt</xsl:attribute>
+		        	</xsl:otherwise>
+		        </xsl:choose>
+	        </fo:leader>
+        </fo:block>
     </xsl:template>
 
 
-    <xsl:template match="@italic[.='true']">
+    <xsl:template match="@fontWeight[.='bold']">
+        <xsl:attribute name="font-weight">bold</xsl:attribute>
+    </xsl:template>
+
+    <xsl:template match="@fontStyle[.='italic']">
         <xsl:attribute name="font-style">italic</xsl:attribute>
+    </xsl:template>
+
+    <xsl:template match="@textDecoration[.='underline']">
+        <xsl:attribute name="text-decoration">underline</xsl:attribute>
     </xsl:template>
 
 
@@ -71,7 +108,6 @@
             <xsl:value-of select="."/>
         </xsl:attribute>
     </xsl:template>
-
 
     <xsl:template match="@fontFamily">
         <xsl:attribute name="font-family">
@@ -85,6 +121,7 @@
             <xsl:value-of select="concat('#', substring-after(., '0x'))"/>
         </xsl:attribute>
     </xsl:template>
+
     <xsl:template match="@color[starts-with(., '#')]">
         <xsl:attribute name="color">
             <xsl:value-of select="."/>
@@ -92,6 +129,7 @@
     </xsl:template>
 
 
+<!-- AAM: not checked from this point on. -->
     <xsl:template match="@background-color">
         <xsl:attribute name="background-color">
             <xsl:value-of select="concat('#', substring-after(., '0x'))"/>
@@ -106,14 +144,6 @@
     </xsl:template>
 
 
-
-    <xsl:template match="@font-family">
-        <xsl:attribute name="font-family">
-            <xsl:value-of select="."/>
-        </xsl:attribute>
-    </xsl:template>
-
-
     <xsl:template match="@block"/>
 
 
@@ -121,23 +151,26 @@
         <fo:table border-width="0.4mm" border-style="solid">
             <xsl:apply-templates/>
         </fo:table>
-
     </xsl:template>
+    
     <xsl:template match="thead">
         <fo:table-header>
             <xsl:apply-templates/>
         </fo:table-header>
     </xsl:template>
+    
     <xsl:template match="tbody">
         <fo:table-body>
             <xsl:apply-templates/>
         </fo:table-body>
     </xsl:template>
+    
     <xsl:template match="tr">
         <fo:table-row>
             <xsl:apply-templates/>
         </fo:table-row>
     </xsl:template>
+    
     <xsl:template match="th">
         <fo:table-cell border-width="0.1mm" border-style="solid">
             <fo:block>
@@ -145,6 +178,7 @@
             </fo:block>
         </fo:table-cell>
     </xsl:template>
+    
     <xsl:template match="td">
         <fo:table-cell border-width="0.1mm" border-style="solid">
             <fo:block>
@@ -152,7 +186,6 @@
             </fo:block>
         </fo:table-cell>
     </xsl:template>
-
 
 
     <xsl:template match="img">
