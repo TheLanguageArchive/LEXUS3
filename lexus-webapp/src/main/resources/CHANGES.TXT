@@ -1,16 +1,34 @@
 Changes for:
 LEXUS-${project.version}-r${buildNumber}
 
+
 - Fixed various UI problems when loading the view editor for a lexicon 
 with 0 views. (occurring with some lexica migrated from LEXUS 2)
+
 - Fixed problem causing iFrames not to disappear (includes ticket #2678 
 and multimedia pop ups).
+
 - Order of elements in the schema is now enforced in the lexicon editor
 (new drag&drop rules).
+
 - Copy of elements in the lexical entry tree now includes all children
 of the dragged element.
+
 - Lexicon editor is now fully aware of the lexicon schema and enforces 
 it at the UI level (also includes ticket #2109).
+
+- Fixed Flex exception (npe) when user tries to edit a non-editable 
+layout element, such as a 'Line break', by double-clicking it.
+
+- Fixed problem with PDF text going out of the page (#2392).
+
+- Added support for 'Line break' and 'Horizontal line' layout elements
+to PDF generator.
+
+- Added support for 'bold', 'italic' and 'underlined' text options, to
+PDF generator.
+
 - Moved to Apache Flex SDK 4.8
+
 - Fixed some problems with Flex HTML template.
  
