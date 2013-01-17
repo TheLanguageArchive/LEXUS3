@@ -60,6 +60,9 @@
             <encoding>UTF-8</encoding>
             <indent>no</indent>
         </map:serializer>
+        <map:serializer name="fo2pdf" mime-type="application/pdf" pool-grow="4" pool-max="64" pool-min="16"
+        	src="org.apache.cocoon.blocks.fop.FOPNGSerializer">
+        </map:serializer>
         <map:serializer name="html" mime-type="text/html; charset=UTF-8" pool-grow="4" pool-max="64" pool-min="16"
             src="org.apache.cocoon.serialization.HTMLSerializer">
             <encoding>UTF-8</encoding>
