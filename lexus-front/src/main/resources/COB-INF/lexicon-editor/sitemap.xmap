@@ -345,35 +345,34 @@
                     <map:part src="export/basePDF.xml"/>
                     <map:part src="cocoon://user"/>
                 </map:aggregate>
-                <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-1.xml"/>-->
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-1.xml"/>
 
                 <map:transform type="saxon" src="export/fillInLexiconIDForPDFExport.xslt">
                     <map:parameter name="id" value="{request-param:id}"/>
                 </map:transform>
-                <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-2.xml"/>-->
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-2.xml"/>
                 <map:transform type="saxon" src="prepareStartLetterSearch.xslt"/>
-                <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-3.xml"/>-->
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-3.xml"/>
                 <map:transform type="servletService">
-                    <map:parameter name="service" value="servlet:lexus-db:/lexicon/startLetterSearch.xml"
-                    />
+                    <map:parameter name="service" value="servlet:lexus-db:/lexicon/startLetterSearch.xml"/>
                 </map:transform>
 
-                <!--<map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-4.xml"/>-->
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-4.xml"/>
 
                 <map:transform type="saxon" src="views/prepareDisplayGeneratorForPDF.xslt">
                     <map:parameter name="view" value="{request-param:view}"/>
                 </map:transform>
 
-                <!--<map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-5.xml"/>-->
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-5.xml"/>
 
                 <map:transform type="servletService">
                     <map:parameter name="service" value="servlet:lexus-display:/xsl-fo-view.xml"/>
                 </map:transform>
 
-                <!--<map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-6.xml"/>-->
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-6.xml"/>
 
                 <map:transform type="resource-resolver">
                     <map:parameter name="resources-uri"
@@ -382,18 +381,18 @@
                         value="{naming:java:comp/env/LEXUS/resourceDirectory}"/>
                 </map:transform>
 
-                <!--<map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-7.xml"/>-->
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-7.xml"/>
 
                 <map:transform type="saxon"
                     src="views/move-resource-url-to-src-attribute-in-xsl-fo.xslt"/>
 
-                <!--<map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-8.xml"/>-->
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-8.xml"/>
 
                 <map:transform type="saxon" src="views/xsl-fo-document.xslt"/>
-                <!--<map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-9.xml"/>-->
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-9.xml"/>
                 <map:serialize type="fo2pdf"/>
             </map:match>
 
