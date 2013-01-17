@@ -11,7 +11,7 @@
 
     <xsl:template match="text">
         <fo:inline>
-            <xsl:value-of select="translate(. , ' ', '&#160;')"/>
+            <xsl:value-of select="."/>
         </fo:inline>
     </xsl:template>
 
