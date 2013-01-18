@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<map:sitemap xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://apache.org/cocoon/sitemap/1.0 http://cocoon.apache.org/schema/sitemap/cocoon-sitemap-1.0.xsd"
+  xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+
+
+  <map:pipelines>
+
+    <map:pipeline id="vicos">
+
+      <!-- 
+          Get the users lexica.
+          -->
+      <map:match pattern="getLexica.json">
+        <map:generate src="cocoon://LexusWorkspaceEditor/getPage"/>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gl-pre.xml"/>
+        <map:transform type="saxon" src="../workspace/getPage/page-2-JSON.xslt">
+          <map:parameter name="sessionId" value="{session:id}"/>
+          <map:parameter name="VICOS"
+            value="{request:servletPath}/{naming:java:comp/env/VICOS/contextPath}"/>
+          <map:parameter name="lexica-element" value="lexica"/>
+        </map:transform>
+        <map:transform type="saxon" src="normalize-space-in-jsonxml.xslt"/>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gl-post.xml"/>
+        <map:serialize type="json"/>
+      </map:match>
+
+      <!-- 
+        Get the lexicons datacategories.
+      -->
+      <map:match pattern="getDataCategories.json">
+        <map:generate src="cocoon://LexusWorkspaceEditor/getDataCategories"/>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gdc-pre.xml"/>
+        <map:transform type="saxon" src="../workspace/queries/dataCategories-2-JSON.xslt"/>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gdc-post.xml"/>
+        <map:serialize type="json"/>
+      </map:match>
+
+
+      <!-- 
+        Get the wordlist, it's like a search query. But of course, it's also just NOT like a search query. Because if it actually
+        WAS a search query, the server might use the exact same code, which would be easy. But the original Lexus/Vicos devs
+        did not like easy. Or robust. No, they liked things complicated and error prone. So that only Real Developers (TM) can
+        understand them, perhaps. And yes, I am slightly frustrated.
+      -->
+      <map:match pattern="getWordList.json">
+        <map:aggregate element="data">
+          <map:part src="cocoon://json"/>
+          <map:part src="cocoon://user"/>
+        </map:aggregate>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gwl-pre.xml"/>
+        <map:transform type="saxon" src="vicos-prepare-search.xslt"/>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:db:/workspace/queries/search.xml"/>
+        </map:transform>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gwl-post.xml"/>
+        <map:transform type="saxon" src="vicos-search-results-2-JSON.xslt"/>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gwl-post2.xml"/>
+        <map:serialize type="json"/>
+      </map:match>
+
+      <!-- 
+      Get a lexical entry.
+      
+      Make it look something like this:
+      
+      {"id":"Tue Feb 22 15:25:22 CET 2011",
+      "result":{"entry":"\n<span><span id=\"NmU1ZjBkMzYtYmRkNy00ODMwLTljNWQtOWYwMTY3NjY2MDQ5\">a dnyaa<\/span><\/span>\n",
+      "lius":[{"id":"NmU1ZjBkMzYtYmRkNy00ODMwLTljNWQtOWYwMTY3NjY2MDQ5","value":"a dnyaa","schemaElementId":"MmM5MDkwYTIxMzRlZTUzZDAxMTM2Mzc5MzIwMTA2YmQ=",
+      "label":"lexeme","notes":null}]},
+      "requester":"",
+      "status":{"message":"At your service","duration":"158","insync":true,"success":true},"requestId":""}
+    -->
+      <map:match pattern="getLexicalEntry.json">
+        <map:aggregate element="data">
+          <map:part src="cocoon://json"/>
+          <map:part src="cocoon://user"/>
+        </map:aggregate>
+        <map:transform type="saxon" src="vicosPrepareGetLexicalEntryData.xslt"/>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:db:/lexicon/getLexicalEntryData.xml"/>
+        </map:transform>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gle-pre.xml"/>
+        <map:transform type="saxon"
+          src="../lexicon-editor/views/prepareDisplayGeneratorForLexicalEntry.xslt">
+          <map:parameter name="view" value="le-view"/>
+        </map:transform>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:display:/htmlview.xml"/>
+        </map:transform>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gle-post.xml"/>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:db:/schema-editor/getListView.xml"/>
+        </map:transform>
+        <map:transform type="saxon" src="vicos-getLexicalEntry-2-JSON.xslt"/>
+        <map:transform type="saxon" src="normalize-space-in-jsonxml.xslt"/>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gle-post2.xml"/>
+        <map:serialize type="json"/>
+      </map:match>
+      
+      
+      <!-- 
+        Get a data element.
+              -->
+      <map:match pattern="getLinguisticInformationUnit.json">
+        <map:aggregate element="data">
+          <map:part src="cocoon://json"/>
+          <map:part src="cocoon://user"/>
+        </map:aggregate>
+        <map:transform type="saxon" src="vicosPrepareGetData.xslt"/>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gliu-pre.xml"/>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:db:/lexicon/getData.xml"/>
+        </map:transform>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gliu-post.xml"/>
+        <map:transform type="saxon" src="vicos-getData-2-JSON.xslt"/>
+        <map:transform type="saxon" src="normalize-space-in-jsonxml.xslt"/>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-gliu-post2.xml"/>
+        <map:serialize type="json"/>
+      </map:match>
+
+
+      <!-- 
+        Get lots of data elements.
+      -->
+      <map:match pattern="getLinguisticInformationUnits.json">
+        <map:aggregate element="data">
+          <map:part src="cocoon://json"/>
+          <map:part src="cocoon://user"/>
+        </map:aggregate>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-glius-pre.xml"/>
+        <map:transform type="saxon" src="vicosPrepareGetDataElements.xslt"/>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:db:/lexicon/getDataElements.xml"/>
+        </map:transform>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-glius-post.xml"/>
+        <map:transform type="saxon" src="vicos-getData-2-JSON.xslt"/>
+        <map:transform type="saxon" src="normalize-space-in-jsonxml.xslt"/>
+        <map:transform type="${tee}"
+          src="{naming:java:comp/env/tee-folder}debug-info/vicos-glius-post2.xml"/>
+        <map:serialize type="xml"/>
+      </map:match>
+    </map:pipeline>
+
+  </map:pipelines>
+
+</map:sitemap>

@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetnamespace="http://www.mpi.nl/lexus/webservice/" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://www.mpi.nl/lexus/webservice/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns1="urn:LEXUS" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+ <wsdl:types>
+  <schema targetNamespace="urn:LEXUS" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="SecurityException">
+    <sequence/>
+   </complexType>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="getResourceStructureResponse">
+
+      <wsdl:part name="getResourceStructureReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getResourceResponse">
+
+      <wsdl:part name="getResourceReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getHTMLViewResponse">
+
+      <wsdl:part name="getHTMLViewReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getResourcesResponse">
+
+      <wsdl:part name="getResourcesReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="loginRequest">
+
+      <wsdl:part name="a_userName" type="soapenc:string"/>
+
+      <wsdl:part name="a_password" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getResourcesRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="getResourceRequest">
+
+      <wsdl:part name="a_resourceIdentifier" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getHTMLViewRequest">
+
+      <wsdl:part name="a_entryID" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDataCategoriesRequest">
+
+      <wsdl:part name="a_resourceID" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="searchRequest">
+
+      <wsdl:part name="a_queryString" type="soapenc:string"/>
+
+      <wsdl:part name="a_startPage" type="xsd:int"/>
+
+      <wsdl:part name="a_pageSize" type="xsd:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="SecurityException">
+
+      <wsdl:part name="fault" type="tns1:SecurityException"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="searchResponse">
+
+      <wsdl:part name="searchReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="loginResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="getResourceStructureRequest">
+
+      <wsdl:part name="a_resourceID" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDataCategoriesResponse">
+
+      <wsdl:part name="getDataCategoriesReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="LexiconServiceImpl">
+
+      <wsdl:operation name="getResource" parameterOrder="a_resourceIdentifier">
+
+         <wsdl:input message="impl:getResourceRequest" name="getResourceRequest"/>
+
+         <wsdl:output message="impl:getResourceResponse" name="getResourceResponse"/>
+
+         <wsdl:fault message="impl:SecurityException" name="SecurityException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getResources">
+
+         <wsdl:input message="impl:getResourcesRequest" name="getResourcesRequest"/>
+
+         <wsdl:output message="impl:getResourcesResponse" name="getResourcesResponse"/>
+
+         <wsdl:fault message="impl:SecurityException" name="SecurityException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="search" parameterOrder="a_queryString a_startPage a_pageSize">
+
+         <wsdl:input message="impl:searchRequest" name="searchRequest"/>
+
+         <wsdl:output message="impl:searchResponse" name="searchResponse"/>
+
+         <wsdl:fault message="impl:SecurityException" name="SecurityException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="login" parameterOrder="a_userName a_password">
+
+         <wsdl:input message="impl:loginRequest" name="loginRequest"/>
+
+         <wsdl:output message="impl:loginResponse" name="loginResponse"/>
+
+         <wsdl:fault message="impl:SecurityException" name="SecurityException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDataCategories" parameterOrder="a_resourceID">
+
+         <wsdl:input message="impl:getDataCategoriesRequest" name="getDataCategoriesRequest"/>
+
+         <wsdl:output message="impl:getDataCategoriesResponse" name="getDataCategoriesResponse"/>
+
+         <wsdl:fault message="impl:SecurityException" name="SecurityException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getResourceStructure" parameterOrder="a_resourceID">
+
+         <wsdl:input message="impl:getResourceStructureRequest" name="getResourceStructureRequest"/>
+
+         <wsdl:output message="impl:getResourceStructureResponse" name="getResourceStructureResponse"/>
+
+         <wsdl:fault message="impl:SecurityException" name="SecurityException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getHTMLView" parameterOrder="a_entryID">
+
+         <wsdl:input message="impl:getHTMLViewRequest" name="getHTMLViewRequest"/>
+
+         <wsdl:output message="impl:getHTMLViewResponse" name="getHTMLViewResponse"/>
+
+         <wsdl:fault message="impl:SecurityException" name="SecurityException"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="LexusWebServiceSoapBinding" type="impl:LexiconServiceImpl">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="getResource">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getResourceRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getResourceResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="SecurityException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="SecurityException" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getResources">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getResourcesRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getResourcesResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="SecurityException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="SecurityException" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="search">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="searchRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="searchResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="SecurityException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="SecurityException" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="login">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="loginRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="loginResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="SecurityException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="SecurityException" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDataCategories">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getDataCategoriesRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getDataCategoriesResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="SecurityException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="SecurityException" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getResourceStructure">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getResourceStructureRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getResourceStructureResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="SecurityException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="SecurityException" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getHTMLView">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getHTMLViewRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getHTMLViewResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="SecurityException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="SecurityException" namespace="http://www.mpi.nl/lexus/webservice/" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="LexiconServiceImplService">
+
+      <wsdl:port binding="impl:LexusWebServiceSoapBinding" name="LexusWebService">
+
+         <wsdlsoap:address location="%base_url%"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

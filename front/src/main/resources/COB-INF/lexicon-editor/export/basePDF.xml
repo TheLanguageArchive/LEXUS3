@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<json xmlns:json="http://apache.org/cocoon/json/1.0">
+    <parameters>
+        <lexicon/>
+        <refiner>
+            <startLetter/>
+            <searchTerm/>
+            <pageSize>100000000000</pageSize>
+            <startPage>0</startPage>
+        </refiner>
+    </parameters>
+</json>

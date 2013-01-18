@@ -1,0 +1,174 @@
+<?xml version="1.0"?>
+<stx:transform xmlns:stx="http://stx.sourceforge.net/2002/ns"
+  xmlns:lexus="http://www.mpi.nl/lexus"
+  xmlns:util="java:java.util.UUID" version="1.0">
+
+  <stx:variable name="count" select="0"/>
+  <stx:variable name="lexiconId" select="concat('uuid:',util:toString(util:randomUUID()))"/>
+  <stx:variable name="userId" select="''"/>
+  <stx:variable name="name" select="''"/>
+  <stx:variable name="description" select="''"/>
+  <stx:variable name="note" select="''"/>
+  <stx:variable name="containerCount" select="0"/>
+  <stx:buffer name="meta"/>
+
+  <stx:template match="lexus:import-lexicon">
+    <stx:copy attributes="@*">
+        <stx:attribute name="id" select="$lexiconId"/>
+        <stx:process-children/>
+    </stx:copy>
+  </stx:template>
+
+  <stx:template match="lexus:user">
+    <stx:assign name="userId" select="@id"/>
+  </stx:template>
+
+
+  <stx:template match="lexus:meta">
+    <lexus:lexus>
+      <meta id="{$lexiconId}">
+      <!--      <xsl:apply-templates select="../lexus:lexicon/lexus:lexicon-information/lexus:*"/>-->
+      <owner ref="{$userId}"/>
+      <users>
+        <user ref="{$userId}">
+          <permissions>
+            <read>true</read>
+            <write>true</write>
+          </permissions>
+        </user>
+      </users>
+      <name>
+        <stx:value-of select="$name"/>
+      </name>
+      <description>
+        <stx:value-of select="$description"/>
+      </description>
+      <note>
+        <stx:value-of select="$note"/>
+      </note>
+      <stx:process-children group="meta"/>
+      </meta>
+      <lexus:lexicon>
+        <stx:attribute name="id" select="$lexiconId"/>
+      </lexus:lexicon>
+    </lexus:lexus>
+  </stx:template>
+
+  <stx:group name="meta">
+    <!--
+    Create lexus:container with @type and possibly @id for lexus:datacategory.
+  -->
+    <stx:template match="lexus:datacategory">
+      <lexus:container>
+        <stx:process-attributes/>
+        <stx:attribute name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
+        <stx:attribute name="type" select="'data'"/>
+        <stx:if test="not(@id)">
+          <stx:attribute name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
+        </stx:if>
+        <stx:if test="lexus:value">
+          <lexus:valuedomain>
+            <stx:process-children/>
+          </lexus:valuedomain>
+        </stx:if>
+        <stx:process-children/>
+      </lexus:container>
+    </stx:template>
+
+
+
+    <!--
+      Rewite lexus:value in the schema to lexus:domainvalue elements.
+    -->
+    <stx:template match="lexus:value">
+      <!--      <stx:result-buffer name="lexus">-->
+      <lexus:domainvalue>
+        <stx:process-attributes/>
+        <stx-process-children/>
+      </lexus:domainvalue>
+      <!--      </stx:result-buffer>-->
+    </stx:template>
+
+
+    <!-- Copy everything -->
+
+    <stx:template match="@* | node()">
+      <!--      <stx:result-buffer name="lexus">-->
+      <stx:copy attributes="@*">
+        <stx:process-children/>
+      </stx:copy>
+      <!--      </stx:result-buffer>-->
+    </stx:template>
+  </stx:group>
+
+
+  <stx:template match="lexus:lexicon">
+    <!--    <stx:result-buffer name="lexus">-->
+<!--    <lexicon>
+      <stx:attribute name="id" select="$lexiconId"/>
+-->      <!--    </stx:result-buffer>-->
+      <!--<stx:process-buffer name="lexus" group="copy"/>-->
+      <stx:process-children group="lexicon"/>
+<!--    </lexicon>-->
+  </stx:template>
+
+  <!-- HHV: cinclude is ws. niet de beste manier.
+  
+    We gaan hier ids toewijzen + userdata invoegen en schuiven dan alles door naar de backend.
+    Die handelt 't verder af met REST calls, 1 voor het maken van het lexicon, en N voor het invoegen
+    van lexical entries.
+    -->
+  <stx:group name="lexicon">
+    <stx:template match="lexus:lexicon-information">
+      <stx:process-children/>
+    </stx:template>
+    <stx:template match="lexus:name">
+      <stx:assign name="name" select="."/>
+    </stx:template>
+    <stx:template match="lexus:description">
+      <stx:assign name="description" select="."/>
+    </stx:template>
+    <stx:template match="lexus:note">
+      <stx:assign name="note" select="."/>
+    </stx:template>
+
+    <stx:template match="lexus:lexical-entry">
+      <stx:copy attributes="@*">
+        <stx:attribute name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
+        <stx:assign name="count" select="$count + 1"/>
+        <stx:process-children/>
+      </stx:copy>
+    </stx:template>
+    
+    <stx:template match="lexus:container">
+      <stx:copy attributes="@*">
+        <stx:attribute name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
+        <stx:process-children/>
+      </stx:copy>
+    </stx:template>
+    
+    <stx:template match="lexus:data">
+      <stx:copy attributes="@*">
+        <stx:attribute name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
+        <stx:process-children/>
+      </stx:copy>
+    </stx:template>
+
+    <stx:template match="node()">
+      <stx:copy attributes="@*">
+        <stx:process-children/>
+      </stx:copy>
+    </stx:template>
+
+  </stx:group>
+
+  <!-- Copy everything -->
+  <stx:group name="copy">
+    <stx:template match="node()">
+      <stx:copy attributes="@*">
+        <stx:process-children/>
+      </stx:copy>
+    </stx:template>
+  </stx:group>
+
+</stx:transform>

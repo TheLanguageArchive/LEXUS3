@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<stx:transform xmlns:stx="http://stx.sourceforge.net/2002/ns" xmlns:lexus="http://www.mpi.nl/lexus"
+  xmlns:cinclude="http://apache.org/cocoon/include/1.0" xmlns:util="java:java.util.UUID"
+  version="1.0">
+
+  <stx:variable name="lexiconId" select="''"/>
+
+  <stx:template match="lexus:import-lexicon">
+    <stx:copy attributes="@*">
+      <stx:process-children/>
+    </stx:copy>
+  </stx:template>
+
+  <stx:template match="lexus:lexus">
+    <stx:assign name="lexiconId" select="@id"/>
+    <cinclude:includexml>
+      <cinclude:src>servlet:back:/workspace/import/importLexicon.xml</cinclude:src>
+      <cinclude:configuration>
+        <cinclude:parameter>
+          <cinclude:name>method</cinclude:name>
+          <cinclude:value>POST</cinclude:value>
+        </cinclude:parameter>
+      </cinclude:configuration>
+      <cinclude:parameters>
+        <cinclude:parameter>
+          <cinclude:name>lexicon</cinclude:name>
+          <cinclude:value>
+            <stx:copy attributes="@*">
+              <stx:process-children/>
+            </stx:copy>
+          </cinclude:value>
+        </cinclude:parameter>
+      </cinclude:parameters>
+    </cinclude:includexml>
+  </stx:template>
+
+  <stx:template match="node()">
+    <stx:copy attributes="@*">
+      <stx:process-children/>
+    </stx:copy>
+  </stx:template>
+</stx:transform>

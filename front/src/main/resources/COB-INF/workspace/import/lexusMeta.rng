@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar ns="http://www.mpi.nl/lexus" xmlns="http://relaxng.org/ns/structure/1.0" xmlns:dcr="http://www.isocat.org/ns/dcr" xmlns:mdf="http://lexus.mpi.nl/datcat/mdf/" 
+  datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <start>
+    <element name="meta">
+      <optional>
+        <attribute name="id">
+          <data type="anyURI"/>
+        </attribute>
+      </optional>
+      <attribute name="version">
+        <data type="decimal"/>
+      </attribute>
+      <element name="schema">
+        <ref name="container"/>
+      </element>
+    </element>
+  </start>
+  <define name="container">
+    <element name="container">
+      <optional>
+        <attribute name="admin-info"/>
+      </optional>
+      <attribute name="description"/>
+      <attribute name="id">
+        <data type="anyURI"/>
+      </attribute>
+      <optional>
+        <attribute name="name"/>
+      </optional>
+      <optional>
+        <attribute name="mandatory">
+          <data type="boolean"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="multiple">
+          <data type="boolean"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="note"/>
+      </optional>
+      <attribute name="type">
+        <data type="NCName"/>
+      </attribute>
+      <zeroOrMore>
+        <choice>
+          <ref name="container"/>
+          <element name="datacategory">
+            <optional>
+              <attribute name="dcr:datcat"/>
+            </optional>
+            <optional>
+              <attribute name="mdf:marker"/>
+            </optional>
+            <optional>
+              <attribute name="mdf:lng"/>
+            </optional>
+            <optional>
+              <attribute name="admin-info"/>
+            </optional>
+            <attribute name="description"/>
+            <attribute name="id">
+              <data type="anyURI"/>
+            </attribute>
+            <optional>
+              <attribute name="mandatory">
+                <data type="boolean"/>
+              </attribute>
+            </optional>
+            <optional>
+              <attribute name="multiple">
+                <data type="boolean"/>
+              </attribute>
+            </optional>
+            <optional>
+              <attribute name="name"/>
+            </optional>
+            <optional>
+              <attribute name="note"/>
+            </optional>
+            <attribute name="type">
+              <data type="NCName"/>
+            </attribute>
+            <zeroOrMore><element name="value"><text/></element></zeroOrMore>
+          </element>
+        </choice>
+      </zeroOrMore>
+    </element>
+  </define>
+</grammar>

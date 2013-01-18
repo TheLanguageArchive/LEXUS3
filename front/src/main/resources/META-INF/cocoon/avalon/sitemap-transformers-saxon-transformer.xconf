@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map:components xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+    
+    <map:generators default="file">
+        <map:generator name="text" src="org.apache.cocoon.generation.TextGenerator"
+            logger="sitemap.generator.textgenerator"/>
+    </map:generators>
+    
+    <map:actions>
+        <map:action name="json-field" src="org.apache.cocoon.acting.JSONField"/>
+    </map:actions>
+    
+    <map:transformers>
+        <map:transformer name="saxon" src="org.apache.cocoon.transformation.TraxTransformer">
+            <xslt-processor-role>saxon</xslt-processor-role>
+        </map:transformer>
+        
+        <!--<map:transformer name="stx" src="org.apache.cocoon.transformation.TraxTransformer">
+            <xslt-processor-role>stx</xslt-processor-role>
+        </map:transformer>-->
+        <!--<map:transformer name="stx2"
+            logger="sitemap.transformer.stx"
+            src="org.apache.cocoon.transformation.TraxTransformer">
+            <transformer-factory>net.sf.joost.trax.TransformerFactoryImpl</transformer-factory>
+        </map:transformer>-->
+        
+        <map:transformer name="tee" src="org.apache.cocoon.transformation.alternative.TeeTransformer"/>
+        <map:transformer name="no-op" src="org.apache.cocoon.transformation.NoOpTransformer"/>
+        
+        <map:transformer logger="sitemap.transformer.xslt" name="multifragment-xslt"
+                       pool-grow="2" pool-max="32" pool-min="8"
+                       src="org.apache.cocoon.transformation.MultiFragmentTraxTransformer">
+                     <use-request-parameters>false</use-request-parameters>
+                     <use-session-parameters>false</use-session-parameters>
+                     <use-cookie-parameters>false</use-cookie-parameters>
+                     <xslt-processor-role>saxon</xslt-processor-role>
+                     <check-includes>true</check-includes>
+        </map:transformer>
+        
+        <map:transformer name="lexer" src="org.apache.cocoon.transformation.LexicalTransformer"
+            logger="sitemap.transformer.lexer"/>
+        <map:transformer name="parser" src="org.apache.cocoon.transformation.ParserTransformer"
+        logger="sitemap.transformer.parser"/>
+        
+        <map:transformer name="resource-resolver" src="nl.mpi.lexus.transformation.ResourceIdToURLTransformer"
+            logger="sitemap.transformer.resource-resolver"/>
+        
+        
+        <map:transformer name="imdi-archive" src="nl.mpi.lexus.transformation.ImdiArchiveTransformer"
+            logger="sitemap.transformer.imdi-archive">
+<!--            <eaf-handler>${env.LEXUS/EAF-Handler}</eaf-handler>-->
+        </map:transformer>
+        
+    </map:transformers>
+</map:components>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<map:sitemap xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://apache.org/cocoon/sitemap/1.0 http://cocoon.apache.org/schema/sitemap/cocoon-sitemap-1.0.xsd"
+    xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+
+
+    <map:pipelines>
+
+
+        <map:pipeline id="sortOrders">
+
+
+
+            <!-- 
+        Get sort orders
+      -->
+            <map:match pattern="loadWSSortOrders.json">
+                <map:generate src="cocoon:/getSortOrders"/>
+                <map:transform type="saxon" src="sortOrders-2-JSON.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-so-5.xml"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+            <map:match pattern="getSortOrders.json">
+                <map:generate src="cocoon:/getSortOrders"/>
+                <map:transform type="saxon" src="sortOrders-2-JSON.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-so-4.xml"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+
+            <map:match pattern="loadSortOrder.json">
+                <map:generate src="cocoon:/getSortOrders"/>
+                <map:transform type="saxon" src="sortOrder-2-JSON.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-so-3.xml"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+            <map:match pattern="getSortOrders">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://json"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-so-0.xml"/>
+                <map:transform type="saxon" src="prepareGetSortOrders.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-so-1.xml"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:db:/workspace/getSortOrders.xml"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-so-2.xml"/>
+                <map:serialize type="xml"/>
+            </map:match>
+
+            <!-- 
+        Save a sortorder.
+      -->
+            <map:match pattern="saveSortOrder.json">
+                <map:generate src="cocoon:/saveSortOrder"/>
+                <map:transform type="saxon" src="savedSortOrder2JSON.xslt"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+            <map:match pattern="saveSortOrder">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://json"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-sso-1.xml"/>
+                <map:transform type="saxon" src="prepareSaveSortOrder.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-sso-2.xml"/>
+                <map:transform type="saxon" src="copySaveToSavedSortOrder.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-sso-3.xml"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:db:/workspace/saveSortOrder.xml"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-sso-4.xml"/>
+                <map:serialize type="xml"/>
+            </map:match>
+
+            <!-- 
+        Create sort order.
+        {
+        "id": "EACB869B-B032-F91F-3565-263BEFDC4D73",
+        "requester": "workspace",
+        "parameters":         {
+        "data": null,
+        "name": "sortorder name",
+        "description": "sortorder description"
+        }
+      -->
+            <map:match pattern="createSortOrder.json">
+                <map:generate src="cocoon:/saveSortOrder"/>
+                <map:transform type="saxon" src="savedSortOrder2JSON.xslt"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+            <!-- 
+          Delete a sortorder.
+        -->
+            <map:match pattern="deleteSortOrder.json">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://json"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="saxon" src="prepareDeleteSortOrder.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:db:/workspace/deleteSortOrder.xml"
+                    />
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>
+                <map:transform type="saxon" src="deletedSortOrder2JSON.xslt"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+        </map:pipeline>
+
+    </map:pipelines>
+
+</map:sitemap>

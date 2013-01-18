@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<isocat-mdf-lmf xmlns="http://www.mpi.nl/lat/lexus">
+    <mapping isocat="http://www.isocat.org/datcat/DC-1325" mdf="lx" lmf="Form" mdfName="Lexeme"/>
+    <mapping isocat="http://www.isocat.org/datcat/DC-1325" mdf="lc" lmf="Form" mdfName="Citation form"/>
+    <mapping isocat="http://www.isocat.org/datcat/DC-1837" mdf="ph" lmf="Form" mdfName="Phonetic form"/>
+    <mapping isocat="http://www.isocat.org/datcat/DC-330" mdf="va" lmf="Form" mdfName="Variant form(s)"/>
+    <mapping isocat="http://www.isocat.org/datcat/DC-" mdf="ve" lmf="Form" mdfName="Variant comment (E)"/>
+    <mapping isocat="http://www.isocat.org/datcat/DC-1345" mdf="ps" lmf="Form" mdfName="Part of speech"/>
+    <mapping isocat="http://www.isocat.org/datcat/DC-2638" mdf="mr" lmf="Form" mdfName="Morphology"/>
+</isocat-mdf-lmf>

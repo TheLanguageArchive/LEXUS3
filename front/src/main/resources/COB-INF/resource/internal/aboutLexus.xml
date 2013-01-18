@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : aboutLexus.xml
+    Created on : 30 maart 2010, 16:53
+    Author     : huiver
+    Description:
+        Contains information about Lexus to be displayed in the About Box.
+-->
+
+<about>
+    <name>Lexus</name>
+    <version>${project.version}</version>  <!-- ${project.version} -->
+    <scm><revision>${buildNumber}</revision></scm> <!-- ${prefix.revision} -->
+</about>

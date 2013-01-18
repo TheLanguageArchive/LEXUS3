@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<map:sitemap xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://apache.org/cocoon/sitemap/1.0 http://cocoon.apache.org/schema/sitemap/cocoon-sitemap-1.0.xsd"
+    xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+
+
+    <map:pipelines>
+
+
+
+
+        <map:pipeline id="workspace">
+            <!--
+    
+    HHV: This is no longer necessary (I think). It was used to reorder lexical entries, but with Andres new export
+    function LE are correctly exported (I Think)....
+    Lots of thinking going on, not much knowing...
+    
+      <map:match pattern="reOrder.xml">
+        <map:generate src="all/getAllLexiconIds.xml"/>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:db:/workspace/getAllLexiconIds.xml"/>
+        </map:transform>
+        <map:transform src="all/prepareReOrderEachLexicon.xslt"/>
+        <map:transform type="cinclude"/>
+        <map:serialize/>
+      </map:match>
+
+      <map:match pattern="reOrderLexicon.xml">
+        <map:generate src="all/getAllLexiconIds.xml"/>
+        <map:transform src="all/reOrderLexicon.xslt">
+          <map:parameter name="id" value="{request-param:id}"/>
+        </map:transform>
+        <map:transform type="servletService">
+          <map:parameter name="service" value="servlet:db:/workspace/reOrderLexicon.xml"/>
+        </map:transform>
+        <map:serialize/>
+      </map:match>-->
+
+            <!-- 
+          Main workspace data
+          -->
+            <map:match pattern="getPage.json">
+                <map:generate src="cocoon:/getPage"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>
+                <map:transform type="saxon" src="getPage/page-2-JSON.xslt">
+                    <map:parameter name="sessionId" value="{session:id}"/>
+                    <map:parameter name="VICOS"
+                        value="{request:servletPath}/{naming:java:comp/env/VICOS/contextPath}"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+            <map:match pattern="getPage">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://json"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="saxon" src="getPage/prepareGetPage.xslt"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:db:/workspace/getPage.xml"/>
+                </map:transform>
+                <map:serialize type="xml"/>
+            </map:match>
+
+
+            <!-- 
+          Get user profiles
+          -->
+            <map:match pattern="getProfiles.json">
+                <map:generate src="cocoon:/getProfiles"/>
+                <map:transform type="saxon" src="getProfiles/profiles-2-JSON.xslt"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+            <map:match pattern="getProfiles">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://json"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:db:/workspace/getProfiles.xml"/>
+                </map:transform>
+                <map:serialize type="xml"/>
+            </map:match>
+
+            <map:match pattern="*SortOrder**">
+                <map:mount uri-prefix="" src="sortOrders/sitemap.xmap"/>
+            </map:match>
+
+
+            <!-- 
+        Get users
+      -->
+            <map:match pattern="getUsers.json">
+                <map:generate src="cocoon:/getUsers"/>
+                <map:transform type="saxon" src="users/users-2-JSON.xslt"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+            <map:match pattern="getUsers">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://json"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:db:/workspace/getUsers.xml"/>
+                </map:transform>
+                <map:serialize type="xml"/>
+            </map:match>
+
+            <!-- 
+        Save a user.
+      -->
+            <map:match pattern="saveUser.json">
+                <map:generate src="cocoon:/saveUser"/>
+                <map:transform type="saxon" src="users/savedUser-2-JSON.xslt"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+            <map:match pattern="saveUser">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://json"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="saxon" src="users/prepareSaveUser.xslt"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:db:/workspace/saveUser.xml"/>
+                </map:transform>
+                <map:serialize type="xml"/>
+            </map:match>
+
+
+            <!-- 
+        Save a lexicon, just the name and description.
+      -->
+            <map:match pattern="saveLexicon.json">
+                <map:generate src="cocoon:/saveLexicon"/>
+                <map:transform type="saxon" src="lexicon/savedLexicon-2-JSON.xslt"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+            <map:match pattern="saveLexicon">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://json"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="saxon" src="lexicon/prepareSaveLexicon.xslt"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:db:/workspace/saveLexicon.xml"/>
+                </map:transform>
+                <map:serialize type="xml"/>
+            </map:match>
+
+            <!-- 
+        Create lexicon.
+      -->
+            <map:match pattern="createLexicon.json">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://json"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="saxon" src="lexicon/prepareCreateLexicon.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-create-lexicon-1.xml"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:db:/workspace/createLexicon.xml"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-create-lexicon-2.xml"/>
+                <map:transform type="saxon" src="lexicon/savedLexicon-2-JSON.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-create-lexicon-3.xml"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+            <!-- 
+        Delete lexicon.
+      -->
+            <map:match pattern="deleteLexicon.json">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://json"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="saxon" src="lexicon/prepareDeleteLexicon.xslt"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:db:/workspace/deleteLexicon.xml"/>
+                </map:transform>
+                <map:transform type="saxon" src="lexicon/deletedLexicon-2-JSON.xslt"/>
+                <map:serialize type="json"/>
+            </map:match>
+        </map:pipeline>
+
+        <map:pipeline type="noncaching">
+
+            <!--
+        Import a Lexus XML lexicon.
+      -->
+            <map:match pattern="import/*/*/ImportLexusXML.xml">
+                <map:aggregate element="import-lexicon" ns="http://www.mpi.nl/lexus">
+                    <map:part
+                        src="cocoon:/importGetLexusMeta/{naming:java:comp/env/LEXUS/tempDir}/{1}.xml"/>
+                    <map:part
+                        src="cocoon:/importGetLexusLexicon/{naming:java:comp/env/LEXUS/tempDir}/{2}.xml"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-1.xml"/>
+                <map:transform type="saxon" src="import/createLexusDocument.xslt"/>
+                <map:transform type="saxon" src="import/addStandardViews.xslt"/>
+                <!--        <map:transform type="validate" src="import/lexusLexus.rng"/>-->
+                <map:transform type="saxon" src="import/prepareLexusDocumentForDatabase.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-2.xml"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:db:/workspace/createLexicon.xml"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-3.xml"/>
+                <map:transform type="saxon" src="import/reportOnImport.xslt"/>
+                <map:serialize type="xml"/>
+            </map:match>
+        </map:pipeline>
+
+        <map:pipeline>
+            <map:match pattern="importGetLexusMeta/**">
+                <map:generate src="{1}"/>
+                <map:transform type="validate" src="import/lexusMeta.rng"/>
+                <map:serialize/>
+            </map:match>
+            <map:handle-errors when="always">
+                <map:generate type="exception"/>
+                <map:serialize/>
+            </map:handle-errors>
+        </map:pipeline>
+        <map:pipeline>
+            <map:match pattern="importGetLexusLexicon/**">
+                <map:generate src="{1}"/>
+                <map:transform type="validate" src="import/lexusLexicon.rng"/>
+                <map:serialize/>
+            </map:match>
+            <map:handle-errors when="always">
+                <map:generate type="exception"/>
+                <map:serialize/>
+            </map:handle-errors>
+        </map:pipeline>
+
+
+        <map:pipeline>
+
+
+            <!--
+        Import a BIG Lexus XML lexicon.
+      -->
+            <map:match pattern="import/*/*/ImportBIGLexusXML.xml">
+
+                <map:aggregate element="import-lexicon" ns="http://www.mpi.nl/lexus">
+                    <map:part src="cocoon://user"/>
+                    <map:part src="{naming:java:comp/env/LEXUS/tempDir}/{2}.xml"/>
+                    <map:part src="{naming:java:comp/env/LEXUS/tempDir}/{1}.xml"/>
+                </map:aggregate>
+                <map:transform type="stx" src="import/add-meta-and-ids.stx"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-1.xml"/>
+                <map:transform type="stx" src="import/add-cincludes-lexus.stx"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-2.xml"/>
+                <map:transform type="cinclude"/>
+                <map:transform type="stx" src="import/add-cincludes-lexical-entries.stx"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-3.xml"/>
+                <!--        <map:transform type="cinclude"/>-->
+                <!--        <map:transform type="stx" src="import/count-ids.stx"/>-->
+                <map:serialize type="xml"/>
+            </map:match>
+
+            <map:handle-errors when="always">
+                <map:generate type="exception"/>
+                <map:serialize/>
+            </map:handle-errors>
+        </map:pipeline>
+
+        <map:pipeline>
+
+            <map:match pattern="importLexusLexus">
+                <map:generate type="stream">
+                    <map:parameter name="form-name" value="lexicon"/>
+                </map:generate>
+                <map:serialize/>
+            </map:match>
+        </map:pipeline>
+
+
+
+        <map:pipeline id="querybuilder" type="noncaching">
+
+            <!-- 
+        No idea why this is necessary, i.e. what it is used for,
+        but it is a request from the client side so a response needs to be served.
+        It seems to be a static file.
+      -->
+            <map:match pattern="QueryBuilder/getConditions.json">
+                <map:act type="cauth-is-logged-in">
+                    <map:parameter name="application" value="Lexus"/>
+                    <map:read src="../resource/external/getConditions.js"/>
+                </map:act>
+                <map:redirect-to uri="index.html"/>
+            </map:match>
+
+
+            <!-- 
+        Get queries
+      -->
+            <map:match pattern="loadWSQueries.json">
+                <map:generate src="cocoon:/getQueries"/>
+                <map:transform type="saxon" src="queries/queries-2-JSON.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/queries-load-1.xml"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+            <map:match pattern="getQueries">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://json"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="servletService">
+                    <map:parameter name="service"
+                        value="servlet:db:/workspace/queries/getQueries.xml"/>
+                </map:transform>
+                <map:serialize type="xml"/>
+            </map:match>
+
+            <map:match pattern="QueryBuilder/getLexica.json">
+                <map:generate src="cocoon:/getPage"/>
+
+                <map:transform type="saxon" src="queries/lexica-2-JSON.xslt"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+
+            <map:match pattern="QueryBuilder/getDataCategories.json">
+                <map:generate src="cocoon:/getDataCategories"/>
+                <map:transform type="saxon" src="queries/dataCategories-2-JSON.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-getdc-post2.xml"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+            <map:match pattern="getDataCategories">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://json"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-getdc-pre.xml"/>
+                <map:transform type="saxon" src="queries/prepareGetDataCategories.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-getdc-pre2.xml"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service"
+                        value="servlet:db:/workspace/queries/getDataCategories.xml"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-getdc-post.xml"/>
+                <map:serialize type="xml"/>
+            </map:match>
+
+
+            <!--
+        Save a query.
+        -->
+            <map:match pattern="QueryBuilder/saveQuery.json">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://json"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-save-query-1.xml"/>
+                <map:transform type="saxon" src="queries/prepare-save-query.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-save-query-2.xml"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service"
+                        value="servlet:db:/workspace/queries/saveQuery.xml"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-save-query-3.xml"/>
+                <map:transform type="saxon" src="queries/saved-query-2-JSON.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-save-query-4.xml"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+            <!--
+        Delete a query.
+      -->
+            <map:match pattern="QueryBuilder/deleteQuery.json">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://json"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/delete-query-1.xml"/>
+                <map:transform type="saxon" src="queries/prepare-delete-query.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/delete-query-2.xml"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service"
+                        value="servlet:db:/workspace/queries/deleteQuery.xml"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/delete-query-3.xml"/>
+                <map:transform type="saxon" src="queries/deleted-query-2-JSON.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/delete-query-4.xml"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+            <!--
+          Use given query to search the users' lexica.
+          -->
+            <map:match pattern="QueryBuilder/search.json">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://json"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-search-1.xml"/>
+                <map:transform type="saxon" src="queries/prepare-search.xslt"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:db:/workspace/queries/search.xml"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-search-2.xml"/>
+                <map:transform type="saxon" src="queries/process-search-results.xslt"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:display:/flexhtmlview.xml"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-search-3.xml"/>
+                <map:transform type="saxon" src="queries/search-results-2-JSON.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-search-4.xml"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+        </map:pipeline>
+
+
+
+
+    </map:pipelines>
+
+</map:sitemap>
