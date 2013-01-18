@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+				layout="vertical"
+				creationComplete="init()"
+				title="Import Lexus XML files"
+				showCloseButton="true"
+				width="800" height="370" y="50"
+				close="close();" xmlns:local="*">
+<mx:Script>
+	<![CDATA[
+		import com.adobe.net.URI;
+		import com.adobe.serialization.json.JSON;
+		
+		import mx.collections.ArrayCollection;
+		import mx.managers.PopUpManager;
+		import mx.rpc.events.ResultEvent;
+		import mx.utils.ArrayUtil;
+		
+		import nl.mpi.lexus.LexusUtil;
+		import nl.mpi.lexus.YesNo;
+		import nl.mpi.lexus.event.NewLexiconEvent;
+		import nl.mpi.lexus.service.LexusService;
+		
+		private var urlRequest:URLRequest;
+		[Bindable] private var typFileReference:FileReference;
+		[Bindable] private var dataFileReference:FileReference;
+
+		private var params:Object; // For sending the remote IDs to the converter
+		private var popupDownloadConverted:FileDownloadBoxWithStartButton; // Used to download the converted toolbox files, after uploads are done.
+
+		[Bindable] public var sessionId:String;
+		
+		
+				
+		private function init():void {
+			params = new Object();
+		}
+		
+		private function close():void {
+			PopUpManager.removePopUp(this);
+		}
+		
+		/*
+		 * Delegate methods for UploadTwoFiles.
+		 */
+		
+		public function getTitle(utf:UploadTwoFiles, fileNumber:int):String {
+			return fileNumber == 1
+				? "Select the file containing the structure of the lexicon"
+				: "Select the file containing the data of the lexicon";
+		}
+		
+		public function getBrowseTitle(utf:UploadTwoFiles, fileNumber:int):String {
+			return fileNumber == 1
+				? "Browse for schema/structure file"
+				: "Browse for data file";
+		}
+		
+		/*
+		 * Get filefilter for browsing first file.
+		 */
+		public function getFilter1(utf:UploadTwoFiles):FileFilter
+		{
+			return new FileFilter("Toolbox", "*.xml");
+		}
+		/*
+		 * Get filefilter for browsing second file.
+		 */
+		public function getFilter2(utf:UploadTwoFiles):FileFilter
+		{
+			return new FileFilter("Toolbox", "*.xml");
+		}
+		
+		/*
+ 		 * Return false if upload cannot start, true otherwise.
+		 * Additional actions can be taken.
+		 */
+		public function uploadCanStart(utf:UploadTwoFiles, file_1_Reference:FileReference, file_2_Reference:FileReference):Boolean
+		{
+			try {
+				if (file_1_Reference.name && file_2_Reference.name) {
+					//popupDownloadConverted = FileDownloadBoxWithStartButton(PopUpManager.createPopUp(this, FileDownloadBoxWithStartButton, false));
+					//PopUpManager.centerPopUp(popupDownloadConverted);
+					return true;
+				}
+			} catch (error:Error) { // Skipping this 'cos both files must be selected first.
+				YesNo.alert("Please select the .xml files first.");
+				return false;
+			}
+			return false;
+		}
+		
+		/*
+		 * Get URLRequest object for specified file.
+		 */
+		public function getURLRequest(utf:UploadTwoFiles, fileNumber:int, file_Reference:FileReference):URLRequest {
+			return new URLRequest(LexusService.getAbsoluteURL("StagingFileHandler/uploadFile.xml;jsessionid=" + this.sessionId));
+		}
+		
+		public function uploadFile1Completed(utf:UploadTwoFiles, data:XML):void {
+			params.typFileId = data.Filedata;
+		}
+		public function uploadFile2Completed(utf:UploadTwoFiles, data:XML):void {
+			params.dataFileId = data.Filedata;
+		}
+		public function finished(utf:UploadTwoFiles):void {
+			//this.parent.removeChild(this);
+			LexusUtil.showWait(this, "Importing lexicon");
+			var lexicon:Object = new Object;
+			lexicon.importingName = "Importing lexicon...";
+			var owner:Object = new Object;
+			owner.name = "?";
+			lexicon.owner = owner;
+			lexicon.id = "_tmp";
+			lexicon.description = "This lexicon is currently being imported.\nWe do not recommend to open it while the import process is still running."; 
+			lexicon.note = "";
+			lexicon.size = "?";
+			var evt:Event = new NewLexiconEvent("new", lexicon);
+			dispatchEvent(evt);
+			var ls:LexusService = new LexusService();
+			ls.getXML("LexusWorkspaceEditor/import/"+params.typFileId+"/"+params.dataFileId+"/ImportLexusXML.xml", importFinished);
+		}
+		
+		private function importFinished(event:ResultEvent):void {
+			LexusUtil.parseXML(String(event.result),
+				function(data:XML):void {
+					if (data.success == 'true') {
+						var successString:String = "Import succeeded.\n\n";
+						successString += "Lexicon\n    Name: \'" + data.lexicon.name + "\'\n\n";
+						
+						if (data.lexicon.description.toString() != "")
+							successString += "    Description: \'" + data.lexicon.description + "\'\n\n";
+						if (data.lexicon.note.toString() != "")
+						successString += "    Notes: \'" + data.lexicon.note + "\'\n";
+						
+						successString += "    Number of entries: " + data.lexicon.numberOfEntries + "\n\n";
+						if (data.sortorder.name.toString() != ""){
+							successString += "Sort Order\n    Name: \'" + data.sortorder.name + "\'\n\n";
+							if (data.sortorder.description.toString() != "")
+								successString += "    Description: \'" + data.sortorder.description + "\'";
+						}
+						YesNo.info(successString);
+					}
+					else {
+						YesNo.alert("Import failed!\n\nServer reports:\n" + data.message);
+					}
+					var evt:Event = new NewLexiconEvent("finish", data.lexicon);
+					dispatchEvent(evt);
+					LexusUtil.removeWait();
+					close();
+				}
+			);
+		}
+	]]>
+</mx:Script>
+	<local:UploadTwoFiles id="utf" delegate="{this}" />
+</mx:TitleWindow>

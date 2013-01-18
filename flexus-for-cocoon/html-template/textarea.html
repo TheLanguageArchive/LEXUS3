@@ -1,0 +1,79 @@
+<html>
+  <head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    
+<script type="text/javascript">
+
+//	<![CDATA[
+	
+	function load()
+	{
+		// alert("this="+this + "this.parent.FABridge.flash="+this.parent.FABridge.flash);
+	    this.parent.FABridge.addInitializationCallback("flash", function()
+		{
+		    var flexApp = parent.FABridge.flash.root();
+		    
+		    // ---------------------------------------------------------------
+		    // Register event handler(s)
+		    // ---------------------------------------------------------------
+		    flexApp.addEventListener("IFrameMessageEvent", function(event) {processIFrameMessage(event.getMessageType(), event.getDataValue())});
+		});
+	}
+
+	function processIFrameMessage(type, data)
+	{
+		if (type=="content") {
+			document.getElementById("unicodeInputTextArea").value = data;
+		}
+		if (type=="size") {
+			document.getElementById("unicodeInputTextArea").style.height = data.height;
+			document.getElementById("unicodeInputTextArea").style.width = data.width;
+		}
+		if (type=="focus") {
+			// alert("Html page will focus on unicodeInputTextArea.");
+			document.getElementById("unicodeInputTextArea").focus();
+		}
+	}
+	
+	function currentInterface() {
+		if (navigator.appName.indexOf("Microsoft") != -1) {
+			return parent.window["Lexus"];
+		}
+		else {
+			return parent.document.Lexus;
+		}
+	}	
+
+
+	function unicodeInputTextAreaChanged(event) {
+		var targ;
+		// alert("this="+this + "this.parent.FABridge="+this.parent.FABridge);
+		if (!event) event = window.event;
+		if (event.target) targ = event.target;
+		else if (event.srcElement) targ = event.srcElement;
+		if (targ.nodeType == 3) // defeat Safari bug
+			targ = targ.parentNode;
+		var flexApp = this.parent.FABridge.flash.root();
+		flexApp.iFrameCallback("content", targ.value);
+	}	
+	
+	
+	function unicodeInputTextAreaBlur(event) {
+		var flexApp = this.parent.FABridge.flash.root();
+		flexApp.iFrameCallback("close", "");
+	}	
+
+//	-->
+</script>
+    
+  </head>
+  <body onload="load()" style="padding:0; margin:0; background-colour: red;">
+    <div style="display:inline; z-index=100;">
+    	<textarea name="unicodeInputTextArea" id="unicodeInputTextArea"
+      		onkeyup="unicodeInputTextAreaChanged(event)" onblur="unicodeInputTextAreaBlur(event)"
+   	  		cols="40" rows="2" style="background-color: #ddd; z-index: 10;">&#160;
+   	  	</textarea>
+   	</div>
+  </body>
+</html>

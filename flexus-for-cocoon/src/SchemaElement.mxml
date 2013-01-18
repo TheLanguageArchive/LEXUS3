@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+		   width="100%"
+		   height="100%"
+		   creationComplete="init1()"
+		   xmlns:local="*">
+	<mx:Metadata> [Event(name="change", type="flash.event.Event")] </mx:Metadata>
+	<mx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.core.FlexGlobals;
+			import mx.core.UIComponent;
+			import mx.events.CloseEvent;
+			import mx.events.ListEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			import nl.mpi.lexus.LexusUtil;
+			import nl.mpi.lexus.event.ValueDomainChangeEvent;
+			import nl.mpi.lexus.service.LexusService;
+
+			[Bindable]
+			private var application:Object = FlexGlobals.topLevelApplication;
+			
+			private var workspaceSortOrders:ArrayCollection;
+			[Bindable]
+			private var sortOrders:ArrayCollection;
+
+			private var lexusService:LexusService = new LexusService();
+
+			[Bindable]
+			private var schemaElement:Object;
+			private var breakupPoint:int = 40;
+
+			private function init1():void {
+				lexusService.send("SortOrderEditor/getSortOrders.json", null, this.name, onJSONLoadSortOrders);
+			}
+
+			private function onJSONLoadSortOrders(event:ResultEvent):void {
+				LexusUtil.parseJSON(String(event.result), function(data:Object):void {
+					workspaceSortOrders = new ArrayCollection(data.result.sortOrders);
+				});
+			}
+
+			public function init(data:Object, mayWrite:Boolean):void {
+				this.schemaElement = data;
+				this.showData(data, !mayWrite);
+				var chooseSortOrder:Object = new Object();
+				chooseSortOrder.name = "<No sortOrder present>";
+				this.sortOrders = new ArrayCollection();
+				this.sortOrders.addItem(chooseSortOrder);
+				// HHV: prevent undefined later on...
+				if (null == this.schemaElement.sortOrder) {
+					this.schemaElement.sortOrder = chooseSortOrder;
+				}
+				var index:int = -1;
+				if (this.workspaceSortOrders != null) {
+					for (var i:int = 0; i < this.workspaceSortOrders.length; i++) {
+						var sortOrder:Object = this.workspaceSortOrders.getItemAt(i);
+						this.sortOrders.addItem(sortOrder);
+						if (this.schemaElement.sortOrder.hasOwnProperty("id") && this.schemaElement.sortOrder.id == sortOrder.id)
+							index = i;
+					}
+				}
+				this.dc_sortOrderList.selectedIndex = index + 1;
+			}
+
+			private function showData(schemaElement:Object, readOnly:Boolean):void {
+				if (schemaElement == null)
+					return;
+				switch (schemaElement.type) {
+					case "Lexicon":
+						dc_typePanel.visible = false;
+						dc_reference.visible = false;
+						// HHV: Menzo requested removal dc_conceptualDomain.visible = false;
+						dc_sortOrderTab.enabled = false;
+						se_name.editable = false;
+						se_description.editable = !readOnly;
+						se_adminInfo.editable = !readOnly;
+						se_mandatory.enabled = false;
+						se_multiples.enabled = false;
+						se_notes.editable = !readOnly;
+						break;
+					case "LexicalEntry":
+						dc_typePanel.visible = false;
+						dc_reference.visible = false;
+						// HHV: Menzo requested removal dc_conceptualDomain.visible = false;
+						dc_sortOrderTab.enabled = false;
+						se_name.editable = false;
+						se_description.editable = !readOnly;
+						se_adminInfo.editable = !readOnly;
+						se_mandatory.enabled = false;
+						se_multiples.enabled = false;
+						se_notes.editable = !readOnly;
+						break;
+					case "Form":
+						dc_typePanel.visible = false;
+						dc_reference.visible = false;
+						// HHV: Menzo requested removal dc_conceptualDomain.visible = false;
+						dc_sortOrderTab.enabled = false;
+						se_name.editable = false;
+						se_description.editable = !readOnly;
+						se_adminInfo.editable = !readOnly;
+						se_mandatory.enabled = !readOnly;
+						se_multiples.enabled = !readOnly;
+						se_notes.editable = !readOnly;
+						break;
+					case "Sense":
+						dc_typePanel.visible = false;
+						dc_reference.visible = false;
+						// HHV: Menzo requested removal dc_conceptualDomain.visible = false;
+						dc_sortOrderTab.enabled = false;
+						se_name.editable = false;
+						se_description.editable = !readOnly;
+						se_adminInfo.editable = !readOnly;
+						se_mandatory.enabled = !readOnly;
+						se_multiples.enabled = !readOnly;
+						se_notes.editable = !readOnly;
+						break;
+					case "container":
+						dc_typePanel.visible = false;
+						dc_reference.visible = false;
+						// HHV: Menzo requested removal dc_conceptualDomain.visible = false;
+						dc_sortOrderTab.enabled = false;
+						se_name.editable = !readOnly;
+						se_description.editable = !readOnly;
+						se_adminInfo.editable = !readOnly;
+						se_mandatory.enabled = !readOnly;
+						se_multiples.enabled = !readOnly;
+						se_notes.editable = !readOnly;
+						break;
+					case "data category":
+						dc_typePanel.visible = !readOnly;
+						dc_sortOrderList.enabled = !readOnly;
+						dc_sortOrderGrid.enabled = !readOnly;
+						dc_sortOrderTab.enabled = true;
+						/* HHV: By Menoz's request
+						dc_conceptualDomain.visible = !readOnly;
+						dc_valueDomain.text = this.getValueDomain();
+						 */
+						switch (schemaElement.DCR) {
+							case "MDF":
+								dc_reference.visible = true;
+								se_name.editable = false;
+								se_description.editable = false;
+								se_adminInfo.editable = !readOnly;
+								se_adminInfo.editable = !readOnly;
+								se_mandatory.enabled = !readOnly;
+								se_multiples.enabled = !readOnly;
+								se_notes.editable = !readOnly;
+								break;
+							case "12620":
+								dc_reference.visible = true;
+								se_name.editable = false;
+								se_description.editable = false;
+								se_adminInfo.editable = !readOnly;
+								se_adminInfo.editable = !readOnly;
+								se_mandatory.enabled = !readOnly;
+								se_multiples.enabled = !readOnly;
+								se_notes.editable = !readOnly;
+								break;
+							default:
+								dc_reference.visible = false;
+								se_name.editable = !readOnly;
+								se_description.editable = !readOnly;
+								se_adminInfo.editable = !readOnly;
+								se_adminInfo.editable = !readOnly;
+								se_mandatory.enabled = !readOnly;
+								se_multiples.enabled = !readOnly;
+								se_notes.editable = !readOnly;
+								break;
+						}
+						break;
+				}
+			}
+
+			private function initUserDefined(event:MouseEvent):void {
+				this.schemaElement.DCR = null;
+				this.schemaElement.DCRReference = null;
+				writePanel.executeChildBindings(true);
+				fireChangeEvent();
+				this.showData(this.schemaElement, false);
+			}
+
+			private function initMDF(event:MouseEvent):void {
+				var popMDF:DCR_MDF = DCR_MDF(PopUpManager.createPopUp(UIComponent(FlexGlobals.topLevelApplication), DCR_MDF, true));
+				popMDF.schemaElement = this.schemaElement;
+				// The change event will notify of any changes
+				popMDF.addEventListener("change", this.onDCRContentChange);
+				popMDF.addEventListener(CloseEvent.CLOSE, this.onDCRContentChange);
+				PopUpManager.centerPopUp(popMDF);
+			}
+
+			private function init12620(event:MouseEvent):void {
+				var pop12620:DCR_12620 = DCR_12620(PopUpManager.createPopUp(UIComponent(FlexGlobals.topLevelApplication), DCR_12620, true));
+				pop12620.schemaElement = this.schemaElement;
+				pop12620.addEventListener("change", this.onDCRContentChange);
+				pop12620.addEventListener(CloseEvent.CLOSE, this.onDCRContentChange);
+				PopUpManager.centerPopUp(pop12620);
+			}
+
+			private function onDCRContentChange(event:Event):void {
+				writePanel.executeChildBindings(true);
+				fireChangeEvent();
+				this.showData(this.schemaElement, false);
+			}
+
+			/**
+			 * Breaks up the specified text by inserting
+			 **/
+			private function breakup(text:String):String {
+				var result:String;
+				if (text.length <= this.breakupPoint)
+					result = text;
+				else {
+					for (var i:int = this.breakupPoint; i < text.length; i++) {
+						if (text.charAt(i) == " ") {
+							result = text.substring(0, i);
+							result += "\n";
+							result += this.breakup(text.substring(i));
+							break;
+						}
+					}
+
+				}
+				if (result == null)
+					result = text;
+
+				return result;
+			}
+
+			private function onChange(event:Event):void {
+				switch (event.currentTarget) {
+					case this.se_name:
+						this.schemaElement.name = this.se_name.text;
+						break;
+					case this.se_description:
+						this.schemaElement.description = this.se_description.text;
+						break;
+					case this.se_adminInfo:
+						this.schemaElement.adminInfo = this.se_adminInfo.text;
+						break;
+					case this.se_mandatory:
+						this.schemaElement.min = this.se_mandatory.selected ? 1 : 0;
+						break;
+					case this.se_multiples:
+						this.schemaElement.max = this.se_multiples.selected ? null : 1;
+						break;
+					case this.se_notes:
+						this.schemaElement.note = this.se_notes.text;
+						break;
+				}
+				fireChangeEvent();
+			}
+
+			private function fireChangeEvent():void {
+				var event:Event = new Event("change");
+				dispatchEvent(event);
+			}
+
+			private function isUserDefined(a_schemaElement:Object):Boolean {
+				return (a_schemaElement.DCR != 'MDF' && a_schemaElement.DCR != '12620');
+			}
+
+			private function modifyConceptualDomain():void {
+				var popValueDomain:ValueDomainWindow = ValueDomainWindow(PopUpManager.createPopUp(UIComponent(FlexGlobals.topLevelApplication), ValueDomainWindow, true));
+				var tmpColl:ArrayCollection = (this.schemaElement.valuedomain == null || this.schemaElement.valuedomain.length == 0) ? new ArrayCollection() : new ArrayCollection(this.schemaElement.valuedomain);
+				var tmp2Coll:ArrayCollection = new ArrayCollection();
+				for (var i:int = 0; i < tmpColl.length; i++)
+					tmp2Coll.addItem(tmpColl.getItemAt(i));
+				popValueDomain.valueDomain = tmp2Coll;
+				popValueDomain.addEventListener("change", this.onValueDomainChange);
+				PopUpManager.centerPopUp(popValueDomain);
+			}
+
+			private function onValueDomainChange(event:ValueDomainChangeEvent):void {
+				this.schemaElement.valuedomain = event.valueDomain.source;
+				// HHV: Menzo requested removal this.dc_valueDomain.text = this.getValueDomain();
+				fireChangeEvent();
+			}
+
+			private function getValueDomain():String {
+				var result:String = "";
+				var valColl:ArrayCollection = (this.schemaElement.valuedomain == null || this.schemaElement.valuedomain.length == 0) ? new ArrayCollection() : new ArrayCollection(this.schemaElement.valuedomain);
+
+				if (valColl.length == 0)
+					result = "ANY";
+				else {
+
+					for (var i:int = 0; i < valColl.length; i++) {
+						if (i > 0)
+							result += ", ";
+						result += valColl.getItemAt(i).value;
+					}
+				}
+				return result;
+			}
+
+			private function onSortOrderChange(event:ListEvent):void {
+				var selSortOrder:Object = this.dc_sortOrderList.selectedItem;
+				this.schemaElement.sortOrder = selSortOrder;
+				fireChangeEvent();
+			}
+		]]>
+	</mx:Script>
+
+
+	<mx:VDividedBox id="writePanel"
+					width="100%"
+					height="100%">
+		<mx:Panel title="General information"
+				  width="100%"
+				  height="100%">
+			<mx:HBox width="100%"
+					 height="100%">
+				<mx:Grid width="90%">
+					<mx:GridRow id="dc_reference">
+						<mx:GridItem>
+							<mx:Label text="Reference:"/>
+						</mx:GridItem>
+						<mx:GridItem>
+							<mx:Text text="{this.schemaElement.DCRReference}"/>
+						</mx:GridItem>
+					</mx:GridRow>
+					<mx:GridRow>
+						<mx:GridItem>
+							<mx:Label text="Name:"/>
+						</mx:GridItem>
+						<mx:GridItem>
+							<mx:TextInput id="se_name"
+										  text="{this.schemaElement.name}"
+										  change="onChange(event)"/>
+						</mx:GridItem>
+					</mx:GridRow>
+					<mx:GridRow>
+						<mx:GridItem>
+							<mx:Label text="Description:"/>
+						</mx:GridItem>
+						<mx:GridItem>
+							<mx:TextArea id="se_description"
+										 text="{this.schemaElement.description}"
+										 change="onChange(event)"
+										 width="600"/>
+						</mx:GridItem>
+					</mx:GridRow>
+					<mx:GridRow>
+						<mx:GridItem>
+							<mx:Label text="Admin Info:"/>
+						</mx:GridItem>
+						<mx:GridItem>
+							<mx:TextArea id="se_adminInfo"
+										 text="{this.schemaElement.adminInfo}"
+										 change="onChange(event)"
+										 width="600"/>
+						</mx:GridItem>
+					</mx:GridRow>
+					<mx:GridRow>
+						<mx:GridItem>
+							<mx:Label text="Mandatory:"/>
+						</mx:GridItem>
+						<mx:GridItem>
+							<mx:CheckBox id="se_mandatory"
+										 selected="{this.schemaElement.min !='0'}"
+										 enabled="true"
+										 change="onChange(event)"/>
+						</mx:GridItem>
+					</mx:GridRow>
+					<mx:GridRow>
+						<mx:GridItem>
+							<mx:Label text="Multiples allowed:"/>
+						</mx:GridItem>
+						<mx:GridItem>
+							<mx:CheckBox id="se_multiples"
+										 selected="{this.schemaElement.max ==null}"
+										 enabled="true"
+										 change="onChange(event)"/>
+						</mx:GridItem>
+					</mx:GridRow>
+					<!--
+					<mx:GridRow id="dc_conceptualDomain">
+						<mx:GridItem>
+							<mx:Label text="Value domain:"/>
+						</mx:GridItem>
+						<mx:GridItem>
+							<mx:Text id="dc_valueDomain" text=""/>
+							<mx:Button label="Modify" click="modifyConceptualDomain()"/>
+						</mx:GridItem>
+					</mx:GridRow>
+					-->
+				</mx:Grid>
+				<mx:Panel id="dc_typePanel"
+						  title="Registry"
+						  width="10%"
+						  height="100%"
+						  layout="vertical">
+					<mx:RadioButton groupName="dc_type"
+									selected="{this.isUserDefined(this.schemaElement)}"
+									id="dc_userDefined"
+									label="user defined"
+									click="initUserDefined(event)"/>
+					<mx:RadioButton groupName="dc_type"
+									selected="{this.schemaElement.DCR=='MDF'}"
+									id="dc_MDF"
+									label="Toolbox MDF"
+									click="initMDF(event)"/>
+					<mx:RadioButton groupName="dc_type"
+									selected="{this.schemaElement.DCR=='12620'}"
+									id="dc_ISO12620"
+									label="ISO 12620"
+									click="init12620(event)"/>
+				</mx:Panel>
+			</mx:HBox>
+		</mx:Panel>
+		<mx:TabNavigator id="propertiesTab"
+						 width="100%"
+						 height="100%"
+						 creationPolicy="all">
+			<mx:Panel id="dc_sortOrderTab"
+					  label="Sort order"
+					  title="Sort order"
+					  width="100%"
+					  height="100%">
+				<mx:VBox width="100%">
+					<mx:HBox width="10%">
+						<mx:Label text="SortOrder"/>
+						<mx:ComboBox id="dc_sortOrderList"
+									 dataProvider="{this.sortOrders}"
+									 labelField="name"
+									 change="onSortOrderChange(event)"/>
+					</mx:HBox>
+					<mx:DataGrid id="dc_sortOrderGrid"
+								 width="100%"
+								 height="90%"
+								 dataProvider="{this.dc_sortOrderList.selectedItem.data}">
+						<mx:columns>
+							<mx:DataGridColumn headerText="StartLetter"
+											   dataField="startLetter"/>
+
+							<mx:DataGridColumn headerText="Characters"
+											   dataField="characters"/>
+						</mx:columns>
+					</mx:DataGrid>
+				</mx:VBox>
+			</mx:Panel>
+			<mx:Panel id="notesTab"
+					  label="Notes"
+					  width="100%"
+					  height="100%"
+					  icon="{application.noteIcon}"
+					  verticalAlign="middle"
+					  horizontalAlign="center">
+				<mx:TextArea id="se_notes"
+							 text="{this.schemaElement.note}"
+							 change="onChange(event)"
+							 width="100%"
+							 height="100%"
+							 alpha="0.7"
+							 paddingBottom="10"
+							 paddingLeft="10"
+							 paddingRight="10"
+							 paddingTop="10"/>
+			</mx:Panel>
+		</mx:TabNavigator>
+	</mx:VDividedBox>
+</mx:Canvas>

@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+				title="Create a new lexicon"
+				showCloseButton="true"
+				creationComplete="init()"
+				close="PopUpManager.removePopUp(this);" width="462" height="340">
+	
+	
+	<mx:Metadata>
+		
+		[Event(name="updateLexicon", type="flash.event.Event")]
+		
+	</mx:Metadata>
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.events.ValidationResultEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			import nl.mpi.lexus.LexusUtil;
+			import nl.mpi.lexus.YesNo;
+			import nl.mpi.lexus.service.LexusService;
+			
+			[Bindable][Embed(source="../assets/images/iconza_24x24/warning_24x24.png")] private var warnIcon:Class;
+
+			
+			[Bindable]
+			public var lexicon:Object;
+			[Bindable]
+			private var _lexica:ArrayCollection;
+			[Bindable]
+			private var _templates:ArrayCollection;
+			
+			
+			// Define public setter. 
+			public function get lexica():ArrayCollection {
+				return _lexica;
+			}
+			
+			// Define public setter. 
+			public function set lexica(value:ArrayCollection):void {
+				_lexica = value;
+			}
+			
+			// Define public setter. 
+			public function get templates():ArrayCollection {
+				return _templates;
+			}
+			
+			// Define public setter. 
+			public function set templates(value:ArrayCollection):void {
+				
+				_templates = value;
+				tmplates.selectedItem=_templates[0];
+				updateTemplateDescription();
+				init();				
+				
+			}
+			
+			
+			/**
+			 * Initializing, a new lexicon is created
+			 * */ 
+			private function init():void{
+				this.lexicon = new Object();
+				this.lexicon.size = 0;
+				this.lexicon_name.setFocus();
+				this.lexicon.template = tmplates == null ? "" : tmplates.selectedItem.name;
+				
+			}
+			/**
+			 * Attempts to store the lexicon to the server. The (succesfull) response is forwarded to onSaveResult
+			 **/ 
+			private function requestSave():void {
+				switch( this.checkNewLexiconData()){
+					//success -> save
+					case 0 :
+						saveBtn.enabled = false;
+						cancelBtn.enabled = false;
+						var lexusService:LexusService = new LexusService();
+						lexusService.send("LexusWorkspaceEditor/createLexicon.json", this.lexicon, "workspace", onSaveResult);
+						break;
+					case 001 :
+						YesNo.alert("A lexicon with the name \"" + lexicon_name.text +"\" already exists!\nPlease choose a different name for the new lexicon.");
+						break;
+					
+				}
+				
+			}
+			/**
+			 * Callback method for the server lexicon save response. A new Event is dispatched to signal creation of a new lexicon.
+			 * 
+			 **/ 
+			private function onSaveResult(event:ResultEvent):void {
+				LexusUtil.parseJSON(String(event.result),
+					function(data:Object):void {  
+						lexicon = data.result.lexicon;
+						var evnt:Event = new Event("updateLexicon");
+						dispatchEvent(evnt); 
+						removeMe();
+					}
+				);
+			}
+			
+			private function removeMe():void {
+				PopUpManager.removePopUp(this);
+			}
+			
+			/**
+			 * Key event handler for the save button.If enter is pressed the lexicon is propogated to the server
+			 **/ 
+			private function onKeyUpSave(event:KeyboardEvent):void{
+				//Enter pressed
+				if( event.keyCode == 13)
+					this.requestSave();
+				
+			}
+			/**
+			 * Key event handler for the cancel button
+			 **/ 
+			private function onKeyUpCancel(event:KeyboardEvent):void{
+				//Enter pressed
+				if( event.keyCode == 13)
+					PopUpManager.removePopUp(this);
+			}
+			/**
+			 *  Event listener for the valid and invalid events.
+			 **/ 
+			private function handleValid(eventObj:ValidationResultEvent):void {
+				if(eventObj.type==ValidationResultEvent.VALID)    
+					// Enable saveBtn button.
+					saveBtn.enabled = true;
+				else
+					saveBtn.enabled = false;
+			}
+			
+			protected function _name_changeHandler(event:Event):void
+			{
+				
+				switch( this.checkNewLexiconData()){
+					//success
+					case 0:
+						warnIco.visible = false;
+						break;
+					case 001:
+						warnIco.visible = true;
+						break;					
+				}
+			}
+			
+			private function updateTemplateDescription():void
+			{
+				if (tmplates != null)
+					template_description.text =  tmplates.selectedItem.description;
+				   	description_label.visible = true;
+					
+			}
+			
+			
+			protected function checkNewLexiconData():int
+			{
+				var invalid:int = 0;
+				for each (var item:Object in lexica){
+					if (item.name.toString() == lexicon_name.text){
+						invalid = 001;
+					}
+				}
+				return invalid;	
+			}
+			
+		]]>
+	</mx:Script>
+	<mx:StringValidator id="reqValid" source="{lexicon_name}" property="text" triggerEvent="change"
+						minLength="1" valid="handleValid(event)" invalid="handleValid(event)"/>
+	<mx:Canvas width="100%">
+		<mx:Grid width="100%" height="100%">
+			<mx:GridRow width="100%">
+				<mx:GridItem>
+					<mx:Label text="Name:"/>
+				</mx:GridItem>
+				<mx:GridItem width="100%">
+					<mx:TextInput id="lexicon_name" text="{lexicon.name}" width="100%" change="_name_changeHandler(event)"/>	
+				</mx:GridItem>
+				<mx:GridItem verticalAlign="middle">
+					<mx:Image id="warnIco" source="{warnIcon}" visible="false" 
+							  toolTip="A lexicon with the name &quot;{lexicon_name.text}&quot; already exists! &#xa;Please choose a different name for the new lexicon."
+							  height="16" width="16"/>	
+				</mx:GridItem>
+			</mx:GridRow>
+			<mx:GridRow width="100%">
+				<mx:GridItem>
+					<mx:Label text="Description:"/>
+				</mx:GridItem>
+				<mx:GridItem width="100%">
+					<mx:TextArea id="lexicon_description" text="{lexicon.description}" width="100%"/>	
+				</mx:GridItem>
+			</mx:GridRow>
+			<mx:GridRow width="100%">
+				<mx:GridItem>
+					<mx:Label text="Note:"/>
+				</mx:GridItem>
+				<mx:GridItem width="100%">
+					<mx:TextArea id="lexicon_note" text="{lexicon.note}" width="100%"/>	
+				</mx:GridItem>				
+			</mx:GridRow>
+			
+			<mx:GridRow width="100%">
+				<mx:GridItem>
+					<mx:Label text="Templates: "/>
+				</mx:GridItem>
+				<mx:GridItem width="100%">
+					<mx:ComboBox id="tmplates" dataProvider="{_templates}" width="100%"
+								 labelField="name" change="updateTemplateDescription()"/>
+				</mx:GridItem>
+				
+			</mx:GridRow>
+			<mx:GridRow width="100%">
+				<mx:GridItem>
+					<mx:Label id="description_label" text="Description: " visible="false" />
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:Label id="template_description" text=""/>
+				</mx:GridItem>
+				
+			</mx:GridRow>
+			
+			
+		</mx:Grid>
+		
+		
+		
+	</mx:Canvas>
+	
+	<mx:ControlBar horizontalAlign="right" width="100%">
+		<mx:Button id="saveBtn" label="Save" click="requestSave();" keyUp="onKeyUpSave(event)" enabled="false"/>
+		<mx:Button id="cancelBtn" label="Cancel" click="PopUpManager.removePopUp(this);"  keyUp="onKeyUpCancel(event)" enabled="true"/>
+	</mx:ControlBar>
+	<mx:Binding source="lexicon_name.text" destination="lexicon.name"/>
+	<mx:Binding source="lexicon_description.text" destination="lexicon.description"/>
+	<mx:Binding source="lexicon_note.text" destination="lexicon.note"/>
+	<mx:Binding source="tmplates.selectedItem.name" destination="lexicon.template"/>
+</mx:TitleWindow>

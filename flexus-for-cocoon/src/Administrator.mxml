@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:mpi="nl.mpi.lexus.*" xmlns="*"
+		   layout="vertical" creationComplete="init();" label="Users">
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.collections.Sort;
+			import mx.collections.SortField;
+			import mx.containers.HBox;
+			import mx.containers.Panel;
+			import mx.controls.Alert;
+			import mx.controls.Image;
+			import mx.controls.dataGridClasses.DataGridColumn;
+			import mx.core.FlexGlobals;
+			import mx.core.UIComponent;
+			import mx.events.CloseEvent;
+			import mx.events.DataGridEvent;
+			import mx.events.MenuEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			import mx.utils.ObjectUtil;
+			import mx.utils.StringUtil;
+			
+			import nl.mpi.lexus.LexusUtil;
+			import nl.mpi.lexus.YesNo;
+			import nl.mpi.lexus.event.ValueChangeEvent;
+			import nl.mpi.lexus.service.LexusService;
+
+
+			[Bindable][Embed(source="../assets/images/iconza_24x24/warning_24x24.png")] private var warnIcon:Class;
+
+			[Bindable]
+			private var application:Object = FlexGlobals.topLevelApplication;
+
+			[Bindable]
+			public var user: Object;
+			
+			[Bindable] public var users:ArrayCollection;
+			
+			[Bindable] public var accesslevels:Array = [10, 30]; // ATM everybody has 10, except the Administrator, she has 30.
+			
+			private var lexusService:LexusService = new LexusService();
+			private var descending:Boolean = false;
+			private var selectedSortColumn:int = -1;
+			private var oldAccount:String = null;
+			private var item:Object = new Object();
+
+			
+			private function init():void {
+				this.mainCanvas.enabled = false;
+				user = new Object();
+				LexusUtil.showWait(this, "Loading users");
+				lexusService.send("LexusWorkspaceEditor/getUsers.json", null, this.name, onUsersLoad);
+			}
+			
+			/**
+			 * Event Handler for the onLoad event. This will load the JSON object and perform initialization
+			 * */
+			private function onUsersLoad(event:ResultEvent):void {
+				LexusUtil.parseJSON(String(event.result),
+					function(data:Object):void {
+						users = new ArrayCollection(data.result.users);
+						usersDG.dataProvider = users;
+						
+						//AAM:Set the sort parameters for the users DataGrid
+						users.sort = new Sort();
+						users.sort.fields = [new SortField("name", true, false)];
+						//AAM: Refresh the sort here so the sort arrow appears in the 'name' column from the beguining
+						users.refresh();
+						users.sort.fields.push(new SortField("account", true, false));
+						users.sort.fields.push(new SortField("email", true, false));
+						users.sort.fields.push(new SortField("accesslevel", true, true));
+						
+						selectedSortColumn = 0;
+
+						
+						usersView.title = "Users (" + users.length + ")";
+						LexusUtil.removeWait();
+					}
+				);
+				this.mainCanvas.enabled = true;
+			}
+			
+			/**
+			 * Event handler for the Menu control's click event.
+			 **/
+			private function onMenuSelect(event:MenuEvent):void {
+				FlexGlobals.topLevelApplication.dispatchEvent(event);
+			}
+			
+			
+			private function newUser(event: MouseEvent):void {
+				var pop2:AddUser = AddUser(PopUpManager.createPopUp(UIComponent(FlexGlobals.topLevelApplication),AddUser,true));
+				pop2.users = users;
+				pop2.addEventListener("newUser", this.handleNewAddUserUpdate);
+				PopUpManager.centerPopUp(pop2);
+			}
+			
+			private function handleNewAddUserUpdate(event:ValueChangeEvent):void{
+				if(event.value.saveSuccess == false){
+					var failCode:int = -1;
+					for each (var item:Object in users){
+						if (item.name.toString() == event.value.username){
+							failCode = 001;
+							break;
+						}
+					}
+					switch(failCode){
+						case -1:
+							YesNo.alert("An error has ocurred while creating the new user, please try again later.");
+							break;
+						case 001:
+							YesNo.alert("An account with the name \"" + event.value.username +"\" already exists!\nPlease choose a different account name for the new user.");
+							break;
+					}
+					
+				}
+				init();
+			}
+			
+			/**
+			 * Attempts to store the user on the server. The (succesfull) response is forwarded to onSaveResult
+			 **/ 
+		/*	private function requestSave():void {
+				var lexusService:LexusService = new LexusService();
+				lexusService.send("LexusWorkspaceEditor/saveUser.json", userData, "workspace", onSaveResult);
+			}*/
+			/**
+			 * Callback method for the server user save response. A new Event is dispatched to signal creation of a new lexicon.
+			 * 
+			 **/ 
+			private function onSaveResult(event:ResultEvent):void {
+				LexusUtil.parseJSON(String(event.result),
+					function(data:Object):void {
+						var evnt:Event = new Event("newUser");
+						dispatchEvent(evnt);
+						init();
+					}
+				);
+			}
+			
+			/**
+			 * Get String repr. of access level.
+			 **/
+			public function getAccessLevelAsString(data:Object):String {
+				var al:String = "*** UNKNOWN ACCESS LEVEL ***";
+				switch (data) {
+					case  0: al = "USER"; break;
+					case 10: al = "USER"; break;
+					case 20: al = "USER"; break;
+					case 30: al = "ADMINISTRATOR"; break;
+				}
+				return al;
+			}
+			public function getAccessLevelAsString2(data:Object, dummy:Object):String {
+				return getAccessLevelAsString(data.accesslevel);
+			}
+			
+			
+			private function removeUser(event: MouseEvent):void {
+				YesNo.confirmDelete("Are you sure you want to remove this user?", confirmDeleteUserHandler);
+				
+			}
+			
+			private function confirmDeleteUserHandler(event:CloseEvent):void {
+				if (event.detail == Alert.YES) {
+					LexusUtil.showWait(this, "Removing user");
+					FlexGlobals.topLevelApplication.enabled = false;
+					
+					user.id = this.usersDG.selectedItem.id;
+					
+					lexusService.send("LexusWorkspaceEditor/deleteUser.json", user, this.name, onRemoveResult);		
+				} 
+			}
+		
+			
+			/**
+			 * Callback method for the server user remove response. A new Event is dispatched to signal deletion of a user.
+			 * 
+			 **/ 
+			private function onRemoveResult(event:ResultEvent):void {
+				LexusUtil.parseJSON(String(event.result),
+					function(data:Object):void {
+						user = new Object();
+						//AAM: Ican't find any handler for this ???:/
+						var evnt:Event = new Event("removedUser");
+						dispatchEvent(evnt);
+						
+						var idx:int = usersDG.selectedIndex;
+						(usersDG.dataProvider as ArrayCollection).removeItemAt( idx);
+						usersDG.selectedItem = (usersDG.dataProvider as ArrayCollection).getItemAt(idx,0);
+						
+						LexusUtil.removeWait();
+						FlexGlobals.topLevelApplication.enabled = true;
+						
+						
+					}
+				);
+			}
+			
+			
+			/**
+			 * Handle Collection change event.
+			 **/
+			/*
+			private function userChanged(event:CollectionEvent):void {
+			switch (event.kind) {
+			case CollectionEventKind.ADD:
+			for (var i:uint = 0; i < event.items.length; i++) {
+			addUser(event.items[i]);
+			}
+			break;
+			
+			case CollectionEventKind.UPDATE:
+			for (var i:uint = 0; i < event.items.length; i++) {
+			if (event.items[i] is PropertyChangeEvent) {
+			if (PropertyChangeEvent(event.items[i]) != null) {
+			updateReservationBox(Reservation(PropertyChangeEvent(
+			event.items[i]).source));
+			}
+			}
+			else if (event.items[i] is Reservation) {
+			updateReservationBox(Reservation(event.items[i]));
+			}
+			}
+			break;
+			}
+			}
+			*/
+			
+			protected function usersDG_headerReleaseHandler(event:DataGridEvent):void
+			{
+				if(selectedSortColumn != event.columnIndex)
+					descending = true;
+				
+				switch (event.columnIndex){
+				 case 0 :
+					//AAM:Set the sort parameters for the users DataGrid
+					users.sort = new Sort();
+					users.sort.fields = [new SortField("name", true, descending)];
+					//AAM: Refresh the sort here so the sort arrow appears in the 'name' column from the beguining
+					users.refresh();
+					users.sort.fields.push(new SortField("account", true, descending));
+					users.sort.fields.push(new SortField("email", true, false));
+					users.sort.fields.push(new SortField("accesslevel", true, !descending));
+					break;
+				 case 1 :
+					 users.sort = new Sort();
+					 users.sort.fields = [new SortField("account", true, descending)];
+					 users.refresh();
+					 users.sort.fields.push(new SortField("name", true, descending));
+					 users.sort.fields.push(new SortField("email", true, false));
+					 users.sort.fields.push(new SortField("accesslevel", true, !descending));
+					 break;
+				 case 3 :
+					 users.sort = new Sort();
+					 users.sort.fields = [new SortField("email", true, descending)];
+					 users.refresh();
+					 users.sort.fields.push(new SortField("name", true, descending));
+					 users.sort.fields.push(new SortField("account", true, descending));
+					 users.sort.fields.push(new SortField("accesslevel", true, !descending));
+					 break;
+				 case 4 :
+					 users.sort = new Sort();
+					 users.sort.fields = [new SortField("accesslevel", true, !descending)];
+					 users.refresh();
+					 users.sort.fields.push(new SortField("name", true, descending));
+					 users.sort.fields.push(new SortField("account", true, descending));
+					 users.sort.fields.push(new SortField("email", true, false));
+					 break;
+				}
+				descending = !descending;
+				selectedSortColumn = event.columnIndex;
+			}
+			
+			protected function checkData_ChangeHandler(event:DataGridEvent):void
+			{
+				if (oldAccount == null){
+					this.item = usersDG.selectedItem;
+					oldAccount = usersDG.selectedItem.account;
+				}
+					
+				callLater(checkData, [event]);
+			}
+			
+			protected function checkData(event:DataGridEvent):void
+			{				
+				switch( this.checkNewUserData()){
+					//success
+					case 0:
+						if(oldAccount != null){
+							var lexusService:LexusService = new LexusService();
+													
+							lexusService.send("LexusWorkspaceEditor/saveUser.json", users.getItemAt(users.getItemIndex(item)), "workspace", onSaveResult);
+						}
+						oldAccount = null;
+						break;
+					case 001:
+						YesNo.alert("An account with the name \"" + users.getItemAt(users.getItemIndex(item)).account +"\" already exists!\nPlease choose a different account name for the new user.");
+						users.getItemAt(users.getItemIndex(item)).account = oldAccount;
+						oldAccount = null;
+						break;
+					case 002:
+						YesNo.alert("There are forbidden characters in the selected username!\nUsernames can just contain charaters in the ranges: 'a-z' and 'A-Z' or the symbols '-' and '_'.");
+						users.getItemAt(users.getItemIndex(item)).account = oldAccount;
+						oldAccount = null;
+					break;
+				}
+			}
+			
+			protected function checkNewUserData():int
+			{
+				var invalid:int = 0;
+				//AAM: check if the account name already exists
+				for each (var it:Object in users){
+					if (it.account.toString() == users.getItemAt(users.getItemIndex(item)).account &&
+						it.id.toString() != users.getItemAt(users.getItemIndex(item)).id){
+						invalid = 001;
+						break;
+					}
+				}
+				//AAM: check for forbidden characters
+				if(invalid == 0){
+					var strippedAccountName:String = StringUtil.restrict((users.getItemAt(users.getItemIndex(item)).account as String), "[a-zA-Z0-9]-_");
+					if(strippedAccountName != (users.getItemAt(users.getItemIndex(item)).account as String)){
+						invalid = 002;
+					}
+				}
+				return invalid;	
+			}
+
+		]]>
+	</mx:Script>
+	
+	<mx:Component className="AccessLevelEditor">
+		<mx:VBox backgroundColor="yellow" width="110">
+			<mx:Script>
+				<![CDATA[
+					// Define a property for returning 
+					// the new value to the cell.
+					[Bindable] public var cbAccessLevel:int;
+				]]>     
+			</mx:Script>
+			<mx:ComboBox id="pickAccessLevel" width="110"
+						 selectedItem="{data.accesslevel}" labelFunction="outerDocument.getAccessLevelAsString"
+						 updateComplete="cbAccessLevel = pickAccessLevel.selectedItem.valueOf()"
+						 dataProvider="{outerDocument.accesslevels}">
+			</mx:ComboBox>
+		</mx:VBox>
+	</mx:Component>
+	
+	<mx:Canvas id="mainCanvas" width="100%" height="100%">
+		<mx:HBox width="100%" height="100%" paddingLeft="4" paddingRight="4" paddingBottom="4" paddingTop="0" verticalGap="0">
+			<mx:VBox id="adminMain" visible="true" width="100%" height="100%" verticalGap="0">
+				<mx:Canvas width="100%" height="100%"
+						   backgroundAlpha="0.0">
+					<mx:Panel id="usersView"  title="Users" width="700" height="100%">
+						<mx:HBox width="100%" height="100%">
+							<mx:VBox width="100%" height="100%">
+								<mpi:DoubleClickDataGrid id="usersDG" xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" itemEditEnd="checkData_ChangeHandler(event)"
+														 editable="true" rowCount="22" headerRelease="usersDG_headerReleaseHandler(event)"> <!--  change="userChanged(event)" -->
+									<mpi:columns>
+										<mx:DataGridColumn headerText="Name" dataField="name" width="200"/>
+										<mx:DataGridColumn headerText="Username" dataField="account" width="150" /><!-- restrict="a-zA-Z0-9\-_" -->
+										<mx:DataGridColumn headerText="Password" dataField="password" width="100" sortable="false"/>
+										<mx:DataGridColumn headerText="E-mail" dataField="email" width="200"/><!-- restrict="a-zA-Z0-9\-_" -->
+										<mx:DataGridColumn headerText="Access level" dataField="accesslevel"
+														   labelFunction="getAccessLevelAsString2" width="121" editorDataField="cbAccessLevel"
+														   itemEditor="AccessLevelEditor"/>
+									</mpi:columns>
+								</mpi:DoubleClickDataGrid>
+							</mx:VBox>
+						</mx:HBox>
+						<mx:ControlBar horizontalAlign="left" width="100%">
+							<mx:Image source="{application.addIcon}"
+									  click="newUser(event)" toolTip="Add user"/>
+							<mx:Image source="{application.removeIcon}"
+									  click="removeUser(event)" toolTip="Remove user"/>
+						</mx:ControlBar>
+						
+					</mx:Panel>
+				</mx:Canvas>
+			</mx:VBox>
+		</mx:HBox>
+	</mx:Canvas>
+</mx:Module>

@@ -1,0 +1,741 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" xmlns:com="com.*" xmlns:local="*" xmlns:mpi="nl.mpi.lexus.*">
+	<mx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.events.CloseEvent;
+			import mx.events.ListEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			import mx.utils.ObjectUtil;
+			
+			import nl.mpi.lexus.LexusUtil;
+			import nl.mpi.lexus.YesNo;
+			import nl.mpi.lexus.event.QueryElementChangeEvent;
+			import nl.mpi.lexus.event.QueryEvent;
+			import nl.mpi.lexus.service.LexusService;
+			
+			[Bindable]
+			private var application:Object = FlexGlobals.topLevelApplication;			
+			
+			[Bindable]
+			private var _query: Object;
+			
+			/**
+			 * If not null the query needs to be saved.
+			 **/
+			[Bindable]
+			private var _saveQuery:Object = null;
+			
+			//Internally used temp storage object used for label construction
+			private var lastQueryItem: Object = null;
+			
+			// Cache for datacategories returned from server, no need to repeatedly get the same DCs.
+			private var DCscache:Object = new Object();
+			
+			[Bindable][Embed(source = "../assets/images/icon_searchDataCategory.png")] public var searchDataCategoryIconClass: Class;
+			[Bindable][Embed(source = "../assets/images/icon_searchQuery.png")] public var queryIconClass: Class;
+			
+			/* Define a variable to be able to change the texts. Later, when we grow up we might have i18n, then a single var will be handy. */
+			[Bindable]
+			public var texts_code:String = "query";
+			
+			[Bindable]
+			public var queryList:QueryList;
+			
+			private var lexusService: LexusService = new LexusService();
+			
+			/**
+			 * The lexicon for this QueryBuilder. If not set the _availableLexica will be used.
+			 */
+			private var _lexicon: Object = null;
+			private var _availableLexica:Object;
+			public var newQuery:Boolean = false;
+			public var newElement:Boolean = false;
+			public var updateInitiatedAt:String = "-";
+			
+			
+			public function set query(data: Object): void {
+				_query = data;
+				init();
+			}
+			
+			public function get query(): Object {
+				return _query;
+			}
+			
+			public function set saveQuery(data: Object): void {
+				_saveQuery = data;
+			}
+			
+			public function get saveQuery(): Object {
+				return _saveQuery;
+			}
+			
+			public function set lexicon(lexicon: Object): void {
+				this._lexicon = lexicon;
+			}
+			public function get lexicon(): Object {
+				return _lexicon;
+			}
+			
+			public function set availableLexica(availableLexica:Object): void {
+				// HHV: use the list of lexica from the Application level if available.
+				if (application.lexica) {
+					this._availableLexica = application.lexica;					
+				}
+				else {
+					this._availableLexica = availableLexica;
+				}
+			}
+			
+			private function init(): void {
+				if (this._query != null) {
+					// Before we set the index we'll need the tree first
+					//See: http://butterfliesandbugs.wordpress.com/2007/11/08/workaround-for-selectedindex-on-tree-not-showing-up/
+					queryTree.validateNow();
+					queryTree.expandChildrenOf(_query, true);
+					queryTree.selectedIndex = 0;
+				}
+			}
+			
+			private function returnLexiconNode(id:String):Object{
+				for each(var it:Object in this._availableLexica){
+					if (it.id == id){
+						return it;
+					}
+				}
+				return null;
+			}
+			
+			private function composeQueryLabel(item: Object): String {
+				var label: String = "";
+				var children: ArrayCollection;
+				
+				if(lastQueryItem != null && lastQueryItem.children != null)
+					children = new ArrayCollection(lastQueryItem.children);
+				
+				
+				if (children != null && item.type == "data category" && lastQueryItem != null && item != lastQueryItem && (lastQueryItem.type != "lexicon" || children.getItemIndex(item) != 0)) {
+					if (children.getItemIndex(item) == 0)
+						label += "and "; 
+					else
+						label += "or ";
+				}
+				//to have semantic logic when 'not; is selected: 'is not', 'contains not', 'begins not with', 'ends not with'
+				if(item.type == 'lexicon'){
+					if(texts_code == "query"){
+						var lex:Object = this.returnLexiconNode(item.id);
+						if(lex != null)
+							label = lex.name
+						else
+							label = "<deleted lexicon!>";
+					}
+					else
+						label = _lexicon.name;
+				}
+				else
+					label += item.name + " ";
+				var contitionString:String = "";
+				if (item.condition != null)
+					contitionString = item.condition;
+				if(item.negation == true)
+					contitionString = contitionString.replace(" ", " not ");
+				label += contitionString + " ";
+				if (item.negation == true && contitionString == item.condition)
+					label += "not ";
+				if (item.value != null)
+					label += item.value;
+				
+				if(item.type == "lexicon" && texts_code == "filter"){
+					label = label + "(Not editable!)";
+				}
+				
+				
+				if (item.children != null)
+					lastQueryItem = item;
+				return label;
+			}
+			
+			private function getQueryIcon(item: Object): Class {
+				var iconClass: Class = null;
+				if (item.type == "data category") {
+					iconClass = this.searchDataCategoryIconClass;
+				}
+				else if (item.type == "lexicon") {
+					iconClass = application.lexiconIconClass;
+				}
+				else if (item.type == "query") {
+					iconClass = this.queryIconClass;
+				}
+				return iconClass;
+			}
+			
+			public function saveNeeded(): Boolean {
+				if (_saveQuery != null) {
+					return true;
+				}
+				return false;
+			}
+			public function requestSave(): Boolean {
+				if (isCompleteSpecification(_saveQuery)) {
+					_requestSave();
+					return true;
+				}
+				else {
+					YesNo.confirmDiscard("The " + (texts_code == "query" ? "query" : "filter") + " '" + _saveQuery.name +
+						"' is not complete yet. It must have a " + (texts_code == "query" ? "query" : "filter") + " element," +
+						" at least one lexicon and at least one data category.\n Do you wish to discard the changes?", confirmDiscardHandler);
+				}
+				return false;
+			}
+			private function _requestSave(): void {
+				YesNo.confirmSave("Do you want to save the " + (texts_code == "query" ? "query" : "filter") + " " + _saveQuery.name + "?", confirmSaveHandler);
+			}
+			private function confirmSaveHandler(event: CloseEvent): void {
+				if (event.detail == Alert.YES) {
+					save();
+				} else if (event.detail == Alert.NO) {
+					cleanUnsavedData();
+				}
+			}
+			public function cleanUnsavedData():void{
+				
+				//verify if it was a newly created query and remove it upon user 'cancel' action.
+				var i:int = 0;
+				if (_saveQuery != null && _saveQuery.id == ""){
+					for each(var qr:Object in queryList.queries){
+						if (qr.id == _saveQuery.id ){
+							//Remove newly created item in the query list.
+							queryList.queries.removeItemAt(i);
+							//queryList.queryList.dataProvider = qrArray;
+							
+							//Select the index before the one just removed. Unlless the user has explicitly selected
+							//another index
+							if(queryList.queryList.selectedIndex == -1)
+								queryList.queryList.selectedIndex = queryList.queries.length - 1;						
+						}
+						i++
+					}
+				}
+				
+				
+				//Save current selected index from the QueryList (UIComponent) list of queries (see: <mx:List id="queryList"...>),
+				//since it is lost when we refresh its dataprovider (through queryList.queries) to reload the original data.
+				var selectedIndex:Number = queryList.queries.getItemIndex(queryList.queryList.selectedItem);
+				
+				//Reload the list of queries dataProvider with the original data, so the changes are discarded.
+				queryList.queries = ObjectUtil.copy(application.queries) as ArrayCollection;
+				
+				//Restore the originally selected index.
+				queryList.queryList.selectedIndex = selectedIndex;
+				
+				//refresh the query tree -> call the method since it trigers init() to expand the query children
+				//note:if we read out queryList.queryList.selectedItem, the old item is loaded. aparently it is not updated on time
+				if (selectedIndex != -1)
+					query = queryList.queries.getItemAt(selectedIndex);
+				else
+					_query = null;
+				_saveQuery = null;
+				
+				queryTree.invalidateList();
+				queryTree.invalidateDisplayList();
+				
+				if(queryList.createNewQueryFlag){
+					queryList.createNewQuery();
+				}
+				
+				queryList.initializeButtons();
+				
+				//refresh the queries search combo box with unsaved data. This allows searching without saving the query first
+				var queryEvent:QueryEvent = new QueryEvent(QueryEvent.REFRESH, _query);
+				dispatchEvent(queryEvent);
+			}
+			
+			public function save():void {
+				if (isCompleteSpecification(_saveQuery)) {
+					var param: Object = new Object();
+					if (_lexicon != null)
+						param.lexicon = _lexicon.id;
+					param.query = _saveQuery;
+					lexusService.send("QueryBuilder/saveQuery.json", param, name, onSaveResult);
+				}
+				else {
+					//YesNo.alert("The query is not complete yet. It must have a query element, at least one lexicon and at least one data category.");
+					YesNo.confirmDiscard("The " + (texts_code == "query" ? "query" : "filter") + " '" + _saveQuery.name + "' is not complete yet. It must have a " + (texts_code == "query" ? "query" : "filter") + " element," +
+						" at least one lexicon and at least one data category.\n Do you wish to discard the changes?", confirmDiscardHandler);
+					
+				}
+			}
+			private function onSaveResult(event: ResultEvent): void {
+				
+				LexusUtil.parseJSON(String(event.result),
+					function(data:Object):void {  
+						if (data.status.success == true) {
+							var savedQuery:Object = data.result;
+							querySaved();
+							queryList.querySaved(savedQuery);
+							
+						}
+					}
+				);
+			}
+			private function confirmDiscardHandler(event: CloseEvent): void {
+				if (event.detail == Alert.NO) {
+					//Go back to the incomplete query
+					queryList.queryList.selectedItem = _saveQuery;
+					queryList.initializeButtons();
+					query = queryList.queries.getItemAt(queryList.queryList.selectedIndex);			
+					return;
+				} else if (event.detail == Alert.YES) {
+					cleanUnsavedData();
+				}
+			}
+			private function querySaved():void {
+				this._saveQuery = null;
+				LexusUtil.forceTreeRedraw(queryTree, queryTree.dataProvider);
+			}
+			
+			private function getConditionIcon(item: Object): Class {
+				if (this[item.@icon]) {
+					return this[item.@icon];
+				}
+				return null;
+			}
+			
+			/**
+			 * Request user input confirmation for removing a query element.
+			 **/
+			private function requestRemoveQueryElement(): void {
+				var selItem: Object = queryTree.selectedItem;
+				var parent: Object = queryTree.getParentItem(selItem);
+				// HHV: If parent == null then we're at the query node itself. Queries are removed in the QueryList component so we just ignore it here.
+				if (parent != null) {
+					YesNo.confirmDelete("Are you sure you want to remove this " + (texts_code == "query" ? "query" : "filter") + " element?", confirmDeleteHandler);
+				}
+			}
+			/**
+			 * Handles the remove query element confirmation decission obtained from the user
+			 **/
+			public function confirmDeleteHandler(event: CloseEvent): void {
+				if (event.detail == Alert.YES) {
+					var selItem: Object = queryTree.selectedItem;
+					queryTree.selectedIndex = (queryTree.selectedIndex - 1);
+					var parent: Object = queryTree.getParentItem(selItem);
+					var children: Array = parent.children;
+					children.splice(children.indexOf(selItem), 1);
+					queryTree.invalidateDisplayList();
+					queryTree.invalidateList();
+					_saveQuery = _query;
+					
+					queryList.initializeButtons();
+				}
+			}
+			
+			private function getLexiconParent(item:Object):Object{
+				var parent:Object = queryTree.getParentItem(item);
+				if(parent.type == "lexicon")
+					return parent;
+				else
+					return this.getLexiconParent(parent);
+			}
+			
+			
+			/**
+			 * Opens the popup for adding a new Query element
+			 **/
+			private function addQueryElement(): void {
+				if(texts_code == "query" &&
+					((this.queryTree.selectedItem.type == "lexicon" && this.returnLexiconNode(queryTree.selectedItem.id) == null) ||
+						this.queryTree.selectedItem.type == "data category" && this.returnLexiconNode(this.getLexiconParent(queryTree.selectedItem).id) == null)){
+					YesNo.alert("The selected lexicon has been deleted and is not vailable anymore");
+					return;
+				}
+				var popUp: AddQueryElement = AddQueryElement(PopUpManager.createPopUp(application as DisplayObject, AddQueryElement, true));
+				popUp.texts_code = texts_code;
+				popUp.queries = queryList.queries;
+				popUp.addEventListener("update", this.handleQueryElementUpdate);
+				popUp.availableLexica = _availableLexica;
+				if (_lexicon != null) {
+					popUp.lexicon = _lexicon;	
+				}
+				popUp.queryEditor = this;
+				var lexiconId:String = currentLexicon();
+				if (lexiconId != null)
+					popUp.currentLexiconId = lexiconId;
+				popUp.modificationState = AddQueryElement.STATE_ADD;
+				popUp.queryElement = queryTree.selectedItem;
+				popUp.direction = AddQueryElement.FORWARD;
+				popUp.redrawPreviouseBtn();
+				popUp.redrawOkOrNextBtn();
+				PopUpManager.centerPopUp(popUp);
+			}
+			/**
+			 * Opens the popup for modifying a query element
+			 **/
+			private function modifyQueryElement(): void {
+				if(texts_code == "query" &&
+					((this.queryTree.selectedItem.type == "lexicon" && this.returnLexiconNode(queryTree.selectedItem.id) == null) ||
+						this.queryTree.selectedItem.type == "data category" && this.returnLexiconNode(this.getLexiconParent(queryTree.selectedItem).id) == null)){
+					YesNo.alert("The selected lexicon has been deleted and is not vailable anymore");
+					return;
+				}
+				var popUp: AddQueryElement = AddQueryElement(PopUpManager.createPopUp(application as DisplayObject, AddQueryElement, true));
+				popUp.queries = queryList.queries;
+				popUp.texts_code = texts_code;
+				popUp.addEventListener("update", this.handleQueryElementUpdate);
+				popUp.availableLexica = _availableLexica;
+				popUp.queryEditor = this;
+				if (_lexicon != null) {
+					popUp.lexicon = _lexicon;	
+				}
+				var lexiconId:String = currentLexicon();
+				if (lexiconId != null)
+					popUp.currentLexiconId = lexiconId;
+				popUp.modificationState = AddQueryElement.STATE_MODIFY;
+				popUp.queryElement = queryTree.selectedItem;
+				updateInitiatedAt = this.queryTree.selectedItem.type;	
+				popUp.redrawPreviouseBtn();
+				popUp.redrawOkOrNextBtn();
+				PopUpManager.centerPopUp(popUp);
+			}
+			
+			private function moveBackToQueryElement(): void {
+				if(texts_code == "query" &&
+					((this.queryTree.selectedItem.type == "lexicon" && this.returnLexiconNode(queryTree.selectedItem.id) == null) ||
+						this.queryTree.selectedItem.type == "data category" && this.returnLexiconNode(this.getLexiconParent(queryTree.selectedItem).id) == null)){
+					YesNo.alert("The selected lexicon has been deleted and is not vailable anymore");
+					return;
+				}
+				
+				var popUp: AddQueryElement = AddQueryElement(PopUpManager.createPopUp(application as DisplayObject, AddQueryElement, true));
+				popUp.queries = queryList.queries;
+				popUp.texts_code = texts_code;
+				popUp.addEventListener("update", this.handleQueryElementUpdate);
+				popUp.availableLexica = _availableLexica;
+				popUp.queryEditor = this;
+				if (_lexicon != null) {
+					popUp.lexicon = _lexicon;	
+				}
+				var lexiconId:String = currentLexicon();
+				if (lexiconId != null)
+					popUp.currentLexiconId = lexiconId;
+				popUp.modificationState = AddQueryElement.STATE_MODIFY;
+				popUp.queryElement = queryTree.selectedItem;
+				popUp.redrawPreviouseBtn();
+				popUp.redrawOkOrNextBtn();
+				PopUpManager.centerPopUp(popUp);
+			}
+			
+			// Called from the query-list to edit a new query immediately.
+			public function editNewQuery(): void {
+				newQuery = true;
+				newElement = false;
+				updateInitiatedAt = this.queryTree.selectedItem.type;	
+				modifyQueryElement();
+			}
+			
+			//called when adding the new element button is clicked.
+			public function handleNewElement():void{
+				newElement = true;
+				newQuery = false;
+				updateInitiatedAt = this.queryTree.selectedItem.type;	
+				addQueryElement();
+				
+				
+			}
+			
+			//called when modifying an element button is clicked.
+			public function clickModifyElement():void{
+				newElement = false;
+				newQuery = false;	
+				modifyQueryElement();
+				
+				
+			}
+			/**
+			 * Handles the update event from the popup handling creation or modification of a query element
+			 **/
+			private function handleQueryElementUpdate(event: QueryElementChangeEvent): void {			    
+				var queryElement: Object = event.queryElement;
+				var parentQueryElement: Object = this.queryTree.selectedItem;
+				
+				
+				_saveQuery = _query;
+				this.queryTree.validateNow();
+				callLater(this.queryTree.expandItem,[parentQueryElement, true]);
+				queryTree.invalidateList();
+				queryList.queryList.invalidateList();
+				
+				
+				//added for the case that we are moving back and selectedItem and current element are the same.
+				
+				if	(parentQueryElement == queryElement && queryElement.type != "query"){
+					parentQueryElement = this.queryTree.getParentItem(queryElement);
+				}
+				
+				
+				if (this.texts_code == "filter")
+				{	// we are in datacaetegory window and previous is clicked, go to query window.
+					if (event.direction)
+					{ if (queryElement.type == "data category")
+					{queryTree.selectedItem = this.queryTree.getParentItem(parentQueryElement);
+						queryTree.invalidateList();
+						callLater(moveBackToQueryElement);
+						
+					}
+					} // we are in newly created query window and next/ok is clicked
+					else{
+						if((queryElement.type == "query" && this.newQuery) || ((queryElement.type == "lexicon") && (this.newElement || this.newQuery)))
+							if (queryElement.children.length == 0)		
+							{	// create the datacategory
+								queryTree.selectedItem = queryElement;
+								queryTree.invalidateList();
+								callLater(this.queryTree.expandItem,[queryElement, true]);
+								callLater(addQueryElement);
+							}
+							else 
+							{	//go back to the datacategory
+								var fchild:Object = queryElement.children[queryElement.children.length-1];
+								var grandchild:Object = fchild.children[fchild.children.length-1];
+								queryTree.selectedItem = grandchild;
+								queryTree.invalidateList();
+								callLater(moveBackToQueryElement);
+							}
+					}
+				}
+				else{
+					
+					
+					if (queryElement.hasOwnProperty("children"))
+					{
+						/*
+						If the query element is a query or a lexicon without children,
+						immediately popup a new box foradding a child.
+						*/
+						if ((queryElement.type == "query" || queryElement.type == "lexicon") && queryElement.children.length == 0 && !event.direction) {
+							queryTree.selectedItem = queryElement;
+							queryTree.invalidateList();
+							callLater(this.queryTree.expandItem,[queryElement, true]);
+							callLater(addQueryElement);
+						}
+						
+						/*
+						if going back from query to lexicon, or from lexicon to datacategory 
+						the selected Item should become the lexicon(or datacategory) element that was recently created.
+						*/
+						
+						if (queryElement.children.length != 0 && ( (queryElement.type == "query" && (this.newElement || this.newQuery)) || ((queryElement.type == "lexicon") && (this.newElement || this.newQuery) && !event.direction))) 	{
+							var qchild:Object = queryElement.children[queryElement.children.length-1];
+							queryTree.selectedItem = qchild;
+							queryTree.invalidateList();
+							callLater(moveBackToQueryElement);
+						}
+					}
+					/* in going back from lexicon to query , or from data category to lexicon.
+					
+					*/
+					
+					if (event.direction && (queryElement.type == "data category" ||  queryElement.type == "lexicon") ) {
+						
+						queryTree.selectedItem = parentQueryElement;
+						queryTree.invalidateList();
+						callLater(moveBackToQueryElement);
+					}
+				}
+				//refresh the queries with unsaved data. This allows searching without saving the query first
+				var queryEvent:QueryEvent = new QueryEvent(QueryEvent.REFRESH, _saveQuery);
+				dispatchEvent(queryEvent);
+				queryList.initializeButtons();
+				
+				
+			}
+			
+			public function isCompleteSpecification(query: Object): Boolean {
+				//check type
+				if (query.type != "query") {
+					return false;
+				}
+				if (query.children == null || query.children.length == 0) {
+					return false;
+				}
+				
+				for (var i: int = 0; i < query.children.length; i++) {
+					var lexicon: Object = query.children[i];
+					if (lexicon.type != "lexicon") {
+						return false;
+					}
+					if (lexicon.children == null || lexicon.children.length == 0) {
+						return false;
+					}
+					//First level check of data categories
+					for (var j: int = 0; j < lexicon.children.length; j++) {
+						var dc: Object = lexicon.children[j];
+						if (dc.type != "data category") {
+							return false;
+						}
+					}
+				}
+				return true;
+			}
+			
+			
+			/*
+			* Cache the dataCategories.json responses from the server.
+			*/
+			public function setDataCategories(lexiconId:String, dcs:Object):void {
+				DCscache[lexiconId] = dcs;
+			}
+			public function getDataCategories(lexiconId:String):Object {
+				return DCscache[lexiconId];
+			}
+			/*
+			* Determine current lexicon, e.g. _lexicon.id or the id of the lexicon parent of a DC.
+			*/
+			public function currentLexicon():String {
+				if (this._lexicon != null) {
+					return this._lexicon.id;
+				}
+				else if (null != queryTree.selectedItem) {
+					var qItem:Object = queryTree.selectedItem;
+					if (qItem.type == 'lexicon') {
+						return qItem.id;
+					}
+					else {
+						return getLexiconId(queryTree.dataProvider, qItem);
+					}
+				}
+				else {
+					return null;
+				}
+			}
+			
+			/*
+			* Find id of lexicon containing queryElement.
+			*/
+			public function getLexiconId(tree:Object, queryElement:Object):String {
+				for (var i:Number = 0; i < tree.length; i++) {
+					var query:Object = tree.getItemAt(i);
+					for (var j:Number = 0; j < query.children.length; j++) {
+						var lexicon:Object = query.children[j];
+						if (lexiconContainsElement(lexicon, queryElement)) {
+							return lexicon.id;
+						}
+					}
+				}
+				return null;
+			}
+			
+			/*
+			* Find id of lexicon containing queryElement.
+			*/
+			public function lexiconContainsElement(element:Object, queryElement:Object):Boolean {
+				if (element == queryElement)
+					return true;
+				
+				if (element.children) {
+					for (var j:Number = 0; j < element.children.length; j++) {
+						if (lexiconContainsElement(element.children[j], queryElement)) {
+							return true;
+						}					
+					}
+				}
+				return false;
+			}
+			
+			private function tree_itemDoubleClick(evt:ListEvent):void {
+				newElement = false;
+				newQuery = false;
+				modifyQueryElement();
+			}
+			
+			private function removeBtnEnabled():Boolean{
+				if (_query != null && queryTree != null && queryTree.selectedItem != null && ! (queryTree.selectedItem.type == "lexicon" && texts_code == "filter" )){
+					var selItem: Object = queryTree.selectedItem;
+					var parent: Object = queryTree.getParentItem(selItem);				
+					if (parent != null) {
+						removeBTN.toolTip = "Remove " + (texts_code == "query" ? "query" : "filter") + " element";
+						removeBTN.source = application.removeIcon;
+						removeBTN.enabled = true;
+						return true;
+					} 
+					else{
+						removeBTN.enabled = false;
+						removeBTN.toolTip = "Cannot remove the " + (texts_code == "query" ? "query" : "filter") + " base node." +
+							"To remove this " + (texts_code == "query" ? "query" : "filter") + " use the left side panel.";
+						removeBTN.source = application.removeIconGrayed;
+						return false;
+					}
+				} else {
+					removeBTN.enabled = false;
+					if (!(texts_code == "filter" ))
+						removeBTN.toolTip = "No " + (texts_code == "query" ? "query" : "filter") + " element to remove.";
+					else
+						removeBTN.toolTip = "Cannot remove the filter's base lexicon. To remove this filter use the left side panel.";
+					
+					removeBTN.source = application.removeIconGrayed;
+					return false;
+				}
+			}
+			
+			private function addBtnEnabled():Boolean{
+				if (_query != null && queryTree.selectedItem != null &&  !(queryTree.selectedItem.type == "query" && texts_code == "filter" )){
+					addBTN.toolTip = "Add " + (texts_code == "query" ? "query" : "filter") + " element";
+					addBTN.source = application.addIcon;
+					addBTN.enabled = true;
+					return true;
+				} else {
+					addBTN.enabled = false;
+					addBTN.toolTip = "Parent element not selected.";
+					addBTN.source = application.addIconGrayed;
+					return false;
+				}
+			}
+			
+			private function modifyBtnEnabled():Boolean{
+				if (_query != null && queryTree.selectedItem != null){
+					if(texts_code != "query" && queryTree.selectedItem.type == "lexicon"){
+						queryTree.doubleClickEnabled = false;
+						modifyBTN.enabled = false;
+						modifyBTN.toolTip = "Cannot edit 'Lexicon' element in a filter.";
+						modifyBTN.source = application.wrenchIconGrayed;
+						return false;
+					} else{
+						queryTree.doubleClickEnabled = true;
+						//queryTree.toolTip = "Double click an element to modify it.";
+						modifyBTN.toolTip = "Modify " + (texts_code == "query" ? "query" : "filter") + " element";
+						modifyBTN.source = application.wrenchIcon;
+						modifyBTN.enabled = true;
+						return true;
+					}
+				} else {
+					queryTree.doubleClickEnabled = false;
+					modifyBTN.enabled = false;
+					modifyBTN.toolTip = "Element not selected.";
+					modifyBTN.source = application.wrenchIconGrayed;
+					return false;
+				}
+			}
+			
+			private function redrawButtons(evt:Event):void{
+				removeBtnEnabled();
+				addBtnEnabled();
+				modifyBtnEnabled();
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:Panel id="title" height="100%" width="100%" title="{texts_code=='query' ? 'Query' : 'Filter'} editor {_saveQuery != null ? '*' : ''}">
+		<mpi:AutoSizeTree id="queryTree" width="100%" height="100%" labelFunction="composeQueryLabel"
+						  iconFunction="getQueryIcon" change="redrawButtons(event)" valueCommit="redrawButtons(event)" selectedIndex="0" 
+						  itemDoubleClick="tree_itemDoubleClick(event)" doubleClickEnabled="true"
+						  dataProvider="{_query}"/>
+		<mx:ControlBar horizontalAlign="left" width="100%">
+			<mx:Image id="addBTN" click="handleNewElement()" enabled="{addBtnEnabled()}"/>
+			<mx:Image id="removeBTN" click="requestRemoveQueryElement()" enabled="{removeBtnEnabled()}"/>
+			<mx:Image id="modifyBTN" click="clickModifyElement()" enabled="{modifyBtnEnabled()}"/>
+		</mx:ControlBar>
+	</mx:Panel>
+</mx:Canvas>

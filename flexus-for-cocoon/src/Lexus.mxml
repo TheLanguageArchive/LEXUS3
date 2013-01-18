@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:mpi="nl.mpi.lexus.*"
+	xmlns:flexiframe="com.google.code.flexiframe.*"
+	layout="absolute" creationComplete="init()" xmlns:local="*"
+	fontFamily="Arial Unicode MS" fontSize="12">
+	
+	<mx:Style source="styles/lexus.css"/>
+	<!-- <mx:Style source="styles/ConventionsLana.css"/>  -->
+	<mx:Style source="../assets/css/Styles.css"/>
+
+	<mx:Script>
+		<![CDATA[
+			import com.google.code.flexiframe.IFrame;
+			
+			import mx.collections.XMLListCollection;
+			import mx.controls.Alert;
+			import mx.controls.TextArea;
+			import mx.core.UIComponent;
+			import mx.core.UITextField;
+			import mx.events.ChildExistenceChangedEvent;
+			import mx.events.ItemClickEvent;
+			import mx.events.MenuEvent;
+			import mx.events.ModuleEvent;
+			import mx.managers.HistoryManager;
+			import mx.managers.PopUpManager;
+			import mx.managers.SystemManager;
+			import mx.rpc.events.ResultEvent;
+			
+			import nl.mpi.lexus.Console;
+			import nl.mpi.lexus.LexusUtil;
+			import nl.mpi.lexus.YesNo;
+			import nl.mpi.lexus.event.ConsoleEvent;
+			import nl.mpi.lexus.service.LexusService;
+			
+			[Event(name="DirectionEvent", type="flash.events.Event")]
+			
+			public var mainRef:UIComponent;
+			public var modules:Object;
+			private var focusObject:InteractiveObject = null;
+			//private var ctrlS:Boolean = false;
+//			private var keysPressed:int = 0;
+//			private static const CTRL_KEY = 1;
+			
+			private var unicodeOverlayTarget:UITextField = null;
+			
+			[Bindable] public var lexusUser:Object;
+			[Bindable] public var lexica: Object;
+			[Bindable] public var queries: Object;
+			
+			public var aboutLexus:Object;
+			public var VICOS:Object;
+			private var timer:Timer = null;
+			
+			public var lexiconId:String;
+			
+			[Bindable][Embed(source="../assets/images/iconza_24x24/round_add_24x24.png")] public var addIcon:Class;
+			[Bindable][Embed(source="../assets/images/iconza_24x24/round_add_24x24_grayed.png")] public var addIconGrayed:Class;
+			[Bindable][Embed(source="../assets/images/iconza_24x24/round_remove_24x24.png")] public var removeIcon:Class;
+			[Bindable][Embed(source="../assets/images/iconza_24x24/round_remove_24x24_grayed.png")] public var removeIconGrayed:Class;
+			[Bindable][Embed(source="../assets/images/iconza_24x24/wrench_24x24.png")] public var wrenchIcon:Class;
+			[Bindable][Embed(source="../assets/images/iconza_24x24/wrench_24x24_grayed.png")] public var wrenchIconGrayed:Class;
+			[Bindable][Embed(source="../assets/images/iconza_24x24/trash_24x24.png")] public var trashIcon:Class;
+			[Bindable][Embed(source="../assets/images/iconza_24x24/lens_24x24.png")] public var searchIcon:Class;
+			[Bindable][Embed(source="../assets/images/iconza_24x24/lens_24x24_grayed.png")] public var searchIconGrayed:Class;
+			[Bindable][Embed(source="../assets/images/iconza_24x24/round_first_arrow_24x24.png")] public var firstIcon:Class;
+			[Bindable][Embed(source="../assets/images/iconza_24x24/round_first_arrow_24x24_grayed.png")] public var firstIconGrayed:Class;
+			[Bindable][Embed(source="../assets/images/iconza_24x24/round_left_arrow_24x24.png")] public var leftIcon:Class;
+			[Bindable][Embed(source="../assets/images/iconza_24x24/round_left_arrow_24x24_grayed.png")] public var leftIconGrayed:Class;
+			[Bindable][Embed(source="../assets/images/iconza_24x24/round_right_arrow_24x24.png")] public var rightIcon:Class;
+			[Bindable][Embed(source="../assets/images/iconza_24x24/round_right_arrow_24x24_grayed.png")] public var rightIconGrayed:Class;
+			[Bindable][Embed(source="../assets/images/iconza_24x24/round_last_arrow_24x24.png")] public var lastIcon:Class;
+			[Bindable][Embed(source="../assets/images/iconza_24x24/round_last_arrow_24x24_grayed.png")] public var lastIconGrayed:Class;            
+			[Bindable][Embed(source="../assets/images/iconza_24x24/round_up_arrow_24x24.png")] public var upIcon:Class;
+			[Bindable][Embed(source="../assets/images/iconza_24x24/round_up_arrow_24x24_grayed.png")] public var upIconGrayed:Class;
+			[Bindable][Embed(source="../assets/images/iconza_24x24/round_down_arrow_24x24.png")] public var downIcon:Class;
+			[Bindable][Embed(source="../assets/images/iconza_24x24/round_down_arrow_24x24_grayed.png")] public var downIconGrayed:Class;
+			[Bindable][Embed(source="../assets/images/iconza_24x24/info_24x24.png")] public var infoIcon:Class;            
+      		[Bindable][Embed(source="../assets/images/LEXUS_IKON1.gif")] public var lexusIconSmall:Class;			
+			[Bindable][Embed(source="../assets/images/iconza_16x16/table_16x16.png")] public var tableIcon:Class;
+			[Bindable][Embed(source="../assets/images/iconza_16x16/table_head_16x16.png")] public var tableHeadIcon:Class;
+			[Bindable][Embed(source="../assets/images/iconza_16x16/table_body_16x16.png")] public var tableBodyIcon:Class;
+			[Bindable][Embed(source="../assets/images/iconza_16x16/table_row_16x16.png")] public var tableRowIcon:Class;			
+			[Bindable][Embed(source="../assets/images/iconza_16x16/table_column_16x16.png")] public var tableColumnIcon:Class;			
+			[Bindable][Embed(source="../assets/images/iconza_16x16/layout_16x16.png")] public var layoutIcon:Class;			
+			[Bindable][Embed(source="../assets/images/iconza_16x16/document_16x16.png")] public var documentIcon:Class;			
+			[Bindable][Embed(source="../assets/images/icon_dataCategory20x20.png")]public var dataCategoryIcon:Class;			
+			[Bindable][Embed(source="../assets/images/icon_component20x20.png")] public var containerIcon:Class;            
+			[Bindable][Embed(source="../assets/images/iconza_16x16/database_16x16.png")] public var decoratorIcon:Class;
+			[Bindable][Embed(source="../assets/images/iconza_16x16/multiplierIcon_16x16.png")] public var multiplierIcon:Class;
+			[Bindable][Embed(source="../assets/images/iconza_16x16/line_break_16x16.png")] public var lineBreakIcon:Class;
+			[Bindable][Embed(source="../assets/images/iconza_16x16/h_line_16x16.png")] public var horizontalLineIcon:Class;
+			[Bindable][Embed(source="../assets/images/icon_zoom.jpg")] public var zoomIconClass:Class;			
+			[Bindable][Embed(source="../assets/images/icon_note.gif")] public var noteIcon:Class;			
+			[Bindable][Embed(source="../assets/images/icon_confirmSave.jpg")] public var confirmSaveIcon:Class;			
+			[Bindable][Embed(source="../assets/images/icon_confirmDelete.jpg")] public var confirmDeleteIcon:Class;
+			[Bindable][Embed(source="../assets/images/icon_view.gif")] public var viewIconClass:Class;			
+			[Bindable][Embed(source="../assets/images/beginsWith.gif")] public var beginsWithIconClass:Class;
+			[Bindable][Embed(source="../assets/images/endsWith.gif")] public var endsWithIconClass:Class;
+			[Bindable][Embed(source="../assets/images/is.gif")] public var isIconClass:Class;
+			[Bindable][Embed(source="../assets/images/contains.gif")] public var containsIconClass:Class;
+			[Bindable][Embed(source="../assets/images/icon_lexicon.png")] public var lexiconIconClass: Class;
+
+			
+			public var sessionId:String = "";
+			
+			public function init():void {
+				mainRef = this; // for Vicos module
+				modules = new Object();
+
+				// HHV: For capturing CTRL-S to save modified data...
+				// HHV: Doesn't seem to work anymore (at least not on Mac?)
+				// application.addEventListener(KeyboardEvent.KEY_DOWN, keyHandlerCapture, true);
+				// application.addEventListener(KeyboardEvent.KEY_UP, keyHandlerBubble);
+				
+				if (ExternalInterface.available) {
+	                try {
+						ExternalInterface.addCallback("getBrowserData", processBrowserData);
+						// ExternalInterface.addCallback("sendOffRequest", sendRequest);
+						// ExternalInterface.addCallback("getBrowserVersion", processBrowserVersion);
+						
+						if( !this.checkJavaScriptReady()){
+							trace("Javascript is not yet ready");
+							var readyTimer:Timer = new Timer(100, 0);
+                        	readyTimer.addEventListener(TimerEvent.TIMER, timerHandler);
+                        	readyTimer.start();
+						}
+						else {
+							trace("Jacascript ready");
+						}
+	                }
+	                catch( error:SecurityError){
+	                	YesNo.alert("SecurityError")
+	                }
+	                catch( error:Error){
+	                	YesNo.alert("Error");
+	                }
+				}
+				else
+					YesNo.alert("ExternalInterface not yet ready");
+				
+				var lexID:String = ExternalInterface.call( "getQueryVariable", "lexiconID");
+				//Alert.show( "FROM request:" + lexID);
+				if( lexID != null){
+					
+					_openLexiconBrowser(lexID);
+				}
+				else
+					_openWorkspace();
+				
+				
+				this.addEventListener(ConsoleEvent.LOG, console.log);
+
+			}
+			
+			/**
+			 * Callbacks for the HTML/Unicode textinput fields hack.
+			 **/
+			
+ 			private function processBrowserData(value:String):void {
+				if (null != unicodeOverlayTarget) {
+					unicodeOverlayTarget.text = value;
+					var eventObj:Event = new Event(flash.events.Event.CHANGE);
+					unicodeOverlayTarget.dispatchEvent(eventObj);
+				}
+			}             
+            
+
+/*
+           private function resetFocus():void{
+               stage.focus = focusObject;
+           }
+			*/
+			/*
+	        // Global keyboard shortcut handler
+	        private function keyHandlerCapture(event:KeyboardEvent):void {
+	            var bCtrlPressed:Boolean = event.ctrlKey;
+	            if (bCtrlPressed) {
+					keysPressed |= CTRL_KEY;
+	            }
+	        }
+			*/
+			/*
+	        private function keyHandlerBubble(event:KeyboardEvent):void {
+               	if (ctrlS) {
+               		//callLater(function(t) {focusManager.setFocus(t);}, [event.target]);
+	               	//callLater(function(t) {t.editable = true;}, [event.target]);
+	               	//YesNo.alert("focus="+stage.focus + ", focusObject="+focusObject);
+               		//callLater(function(f) {stage.focus = f;}, [focusObject]);
+               		ctrlS = false;
+               	}
+	        }
+*/
+	        
+			// Event handler for the Standard Menu choices.
+            private function onMenuSelect(event:MenuEvent):void {
+            	// If the current module handled the event, return.
+            	if (modules[modules["current"]].onMenuSelect(event)) {
+            		return;
+            	};
+            	var evtName:String = event.item.@eventName;
+            	switch (evtName) { 
+                	case "workspace":
+                		_openWorkspace();
+                		break;
+                	case "lexicon_browser":
+			    		if (!this.lexiconId) {
+			   				YesNo.info("Please select a lexicon first");
+			    			return;
+			    		}
+			    		_openLexiconBrowser(this.lexiconId);
+                		break;
+                 	case "schema_editor":
+			    		if (!this.lexiconId) {
+			   				YesNo.info("Please select a lexicon first");
+			    			return;
+			    		}
+			    		_openSchemaEditor(this.lexiconId);
+                		break;				
+                	case "unicode":
+                		break;
+					case "console":
+						console.visible = !console.visible;
+						break;
+                	case "about":
+                		var popAbout:AboutLexus = AboutLexus(PopUpManager.createPopUp(this,AboutLexus,true));
+    					PopUpManager.centerPopUp(popAbout);
+                		break;
+                	case "logOff":
+						logout();
+                		break;
+                	case "help":
+                		ExternalInterface.call("function() {window.open('http://tla.mpi.nl/tools/tla-tools/lexus', 'Lexus help');}");
+                		break;
+                }
+            }
+			
+			/*
+			 * Called from Workspace after a new lexicon is created.
+			 */
+			public function switchToSchemaEditor(lexiconId:String):void {
+				this.lexiconId = lexiconId;
+				_openSchemaEditor(lexiconId);
+			}
+
+			public function logout():void {
+				ExternalInterface.call("function() {\n" + 
+        				" var dl = new String(document.location);\n" + 
+        				" var li = dl.lastIndexOf('\/');\n" +
+        				" var newLoc = dl.substring(0, li+1);\n" + 
+        				" document.location.href=newLoc + 'logout.htm';\n" +
+        				"}");
+			}
+			
+			private function checkJavaScriptReady():Boolean {
+	            var isReady:Boolean = ExternalInterface.call("isReady");
+	            return isReady;
+	        }
+			private function timerHandler(event:TimerEvent):void {
+	            trace("Checking JavaScript status...\n");
+	            var isReady:Boolean = checkJavaScriptReady();
+	            if (isReady) {
+	                trace("JavaScript is ready.\n");
+	                Timer(event.target).stop();
+	            }
+	            else {
+	            	//trace("**** JavaScript NOT ready. ****\n");
+	            }
+	        }
+
+			public function _openSchemaEditor(a_lexiconId:String):void {
+				this.enabled = false;
+				this.lexiconId = a_lexiconId;
+				moduleLoader.addEventListener(ModuleEvent.READY, schemaEditorReady);
+				moduleLoader.url = "SchemaEditor.swf?nc=" + new Date().getTime();
+			}
+			private function schemaEditorReady(event:ModuleEvent):void {
+				moduleLoader.removeEventListener( ModuleEvent.READY, schemaEditorReady);
+				var schemaEditor:SchemaEditor = moduleLoader.child as SchemaEditor;
+				schemaEditor.openLexicon(this.lexiconId);
+				modules["schema_editor"] = schemaEditor;
+				modules["current"] = "schema_editor";
+			}
+			public function _openLexiconBrowser(a_lexiconID:String):void {
+				this.enabled = false;
+				this.lexiconId = a_lexiconID;
+				moduleLoader.addEventListener(ModuleEvent.READY, lexiconBrowserReady);
+				moduleLoader.url = "LexiconBrowser.swf?nc="+ new Date().getTime();
+			}
+			private function lexiconBrowserReady(event:ModuleEvent):void {
+				moduleLoader.removeEventListener(ModuleEvent.READY, lexiconBrowserReady);
+				var lexiconBrowser:LexiconBrowser = moduleLoader.child as LexiconBrowser; 
+				lexiconBrowser.openLexicon(this.lexiconId);
+				modules["lexicon_browser"] = lexiconBrowser;
+				modules["current"] = "lexicon_browser";
+			}
+			public function _openWorkspace():void {
+				this.enabled = false;
+				moduleLoader.addEventListener(ModuleEvent.READY, workspaceReady);
+				moduleLoader.url = "Workspace.swf?nc="+ new Date().getTime();
+			}
+			private function workspaceReady(event:ModuleEvent):void {
+  			  	moduleLoader.removeEventListener(ModuleEvent.READY, workspaceReady);
+				var workspace:Workspace = moduleLoader.child as Workspace;
+				modules["workspace"] = workspace;
+				modules["current"] = "workspace";			}
+			
+			
+			public function moduleInitialised(moduleCode:String):void {
+				menuBar.init(moduleCode, lexusUser);
+//				menuBar.adaptMenuToModule(moduleCode);
+//				menuBar.adaptMenuToUser(lexusUser);
+				/**
+				 * Hack hack hack, the console show the icons in the wrong place.
+				 * When it is moved, the icons move to the right place.
+				 * So, I move it.
+				 * Hack hack hack.
+				 * */
+				// console.width = 700;
+				this.dispatchEvent(new ConsoleEvent(ConsoleEvent.LOG, ConsoleEvent.INFO, "Lexus", "user is "+(lexusUser.administator?"":"not ")+"administrator"));
+				if (!this.enabled) this.enabled = true;
+				if (!menuBar.visible) menuBar.visible = true;
+			}
+	
+			
+			public function overlayUnicodeInput(focus:FocusEvent):void {
+				if (flash.utils.getQualifiedClassName(focus.target) == "mx.core::UITextField") {
+					var element:UITextField = (mx.core.UITextField) (focus.target);
+					if (element.type == TextFieldType.INPUT) {
+						var unicodeOverlayActive:Boolean = (XML) (menuBar.dataProvider)..menuitem.(attribute("name")=="unicode_input")[0].attribute("toggled") == true;
+						if (unicodeOverlayActive) {
+							if (unicodeOverlayTarget != element) {
+								callLater(activeUnicodeOverlay, [element]);
+							}
+						}
+					}
+				}
+			}
+			
+			
+			public function activeUnicodeOverlay(element:UITextField):void {
+				var p2:Point = element.localToGlobal(new Point(0, 0));
+				var text:String = element.text;
+				var width:int = element.width;
+				var height:int = element.height;
+
+				unicodeOverlayTarget = element;
+
+				trace("switching focus to unicode iFrame:"+unicodeIFrame+" at ("+p2.x+", "+p2.y+", +"+width+", +"+height+")");
+				unicodeIFrame.includeInLayout = true;
+				unicodeIFrame.visible = true;
+				unicodeIFrame.height = height;
+				unicodeIFrame.width = width;
+				unicodeIFrame.move(p2.x, p2.y);
+				var ev:IFrameMessageEvent = new IFrameMessageEvent("content", text);
+				this.dispatchEvent(ev);
+				ev = new IFrameMessageEvent("size", {"width":width - 18, "height":height});
+				this.dispatchEvent(ev);
+				ev = new IFrameMessageEvent("focus", "");
+				this.dispatchEvent(ev);
+			}
+			
+			/**
+			 * Callback from the HTML page in the unicode iframe.
+			 */
+			public function iFrameCallback(message:String, data:String): void
+			{
+				if (null != unicodeOverlayTarget) {
+					if (message == "content") {
+						unicodeOverlayTarget.text = data;
+						unicodeOverlayTarget.dispatchEvent(new Event(flash.events.Event.CHANGE,true,false));
+					}
+					if (message == "close") {
+						trace("removing focus from:"+unicodeOverlayTarget);
+						unicodeIFrame.visible = false;
+						unicodeIFrame.includeInLayout = false;
+					}
+				}
+			}
+		]]>
+	</mx:Script>
+
+	
+	<!-- Initialises FABridge  -->
+	<fab:FABridge bridgeName="flash" id="flash" xmlns:fab="bridge.*" />
+	<flexiframe:IFrame id="unicodeIFrame" source="textarea.html" width="400" height="60"
+					   includeInLayout="false" visible="false" />
+
+	<mx:Box width="100%" height="100%" id="BaseBox">
+		<!-- \/\/\/\/     visible="false" ==> Do not show the menu until Workspace.mxml has loaded the username -->
+		<mpi:LexusMenu id="menuBar" itemClick="onMenuSelect(event)" visible="false"/>
+		<mx:Box width="100%" height="100%" label="Old UI">
+			<mx:ModuleLoader id="moduleLoader" width="100%" height="100%" paddingTop="-4"/>
+		</mx:Box>
+	<!--
+		<mx:TabNavigator id="tn"
+						 width="100%" 
+						 height="100%" 
+						 creationPolicy="auto">
+			<mx:VBox id="WorkspaceTab" label="Workspace">
+				<local:Workspace/>
+				</mx:VBox>
+			<mx:VBox id="LexiconEditorTab" label="Lexicon Editor">
+				<local:LexiconBrowser/>
+			</mx:VBox>
+			<mx:VBox id="SchemaEditorTab" label="Schema Editor">
+				<local:SchemaEditor/>
+			</mx:VBox>
+			
+		</mx:TabNavigator> -->
+	</mx:Box>
+
+	<mpi:Console id="console" y="50" width="80%" height="200" layout="absolute" visible="false"
+				 title="Lexus Console" />
+	
+</mx:Application>

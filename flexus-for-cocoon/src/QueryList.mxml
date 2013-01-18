@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="400" height="300" xmlns:com="com.*">
+	<mx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.events.CloseEvent;
+			import mx.events.ListEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import nl.mpi.lexus.LexusUtil;
+			import nl.mpi.lexus.YesNo;
+			import nl.mpi.lexus.event.QueryEvent;
+			import nl.mpi.lexus.service.LexusService;
+			
+			[Bindable]
+			private var application:Object = FlexGlobals.topLevelApplication;
+			
+			[Bindable] private var _queries: ArrayCollection;
+			
+			/* Define a variable to be able to change the texts. Later, when we grow up we might have i18n, then a single var will be handy. */
+			[Bindable] public var texts_code:String = "query";
+			
+			[Bindable] public var searchComponent:SearchComponent;
+			
+			[Bindable] public var queryEditor:QueryEditor;
+			
+			private var lexusService: LexusService = new LexusService();
+			
+			private var _createNewQueryFlag:Boolean = false;
+
+			/**
+			 * The lexicon for this QueryBuilder.
+			 */
+			private var _lexicon: Object = null;
+			
+			public function get createNewQueryFlag():Boolean
+			{
+				return _createNewQueryFlag;
+			}
+
+			public function set createNewQueryFlag(value:Boolean):void
+			{
+				_createNewQueryFlag = value;
+			}
+
+			public function set queries(data: ArrayCollection): void {
+				var idx:Number = queryList.selectedIndex;
+				_queries = data;
+				init();
+				
+				//If an index was selected when the setter was called and subsequently lost (wich can happen
+				//if the setter is called and queryEditor.query != null), recover the lost index.
+				if (queryList.selectedIndex == -1 && idx != -1){
+					queryList.invalidateList();
+					queryList.selectedIndex = idx;
+					queryEditor.query = queryList.selectedItem;
+				}
+			}
+			
+			public function get queries(): ArrayCollection {
+				return _queries;
+			}
+			
+			
+			public function set lexicon(lexicon: Object): void {
+				this._lexicon = lexicon;
+			}
+			public function get lexicon(): Object {
+				return _lexicon;
+			}
+			
+			private function init(): void {
+				if (this._queries != null && queryEditor.query == null) {
+					
+					// Before we set the index we'll need the tree first
+					//See: http://butterfliesandbugs.wordpress.com/2007/11/08/workaround-for-selectedindex-on-tree-not-showing-up/
+					queryList.invalidateList();
+					
+					if ((queryList.dataProvider as ArrayCollection).length > 0){
+						queryList.selectedIndex = 0;
+						queryEditor.query = queryList.selectedItem;
+						
+					}
+					else
+						queryList.selectedIndex = -1;
+					initializeButtons();
+					
+				} 
+			}
+			
+			public function initializeButtons():void {
+				
+				if(texts_code == "query")
+					runSearch.visible = true;
+				else
+					runSearch.visible = false;
+				
+				if (this._queries.length > 0){
+					if(runSearch.visible){
+						if(queryList.selectedItem != null){
+							if(queryEditor.isCompleteSpecification(queryList.selectedItem)){
+								runSearch.enabled = true;
+								runSearch.toolTip = "Run selected " + texts_code + ".";
+								runSearch.source = application.searchIcon;
+							} else {
+								runSearch.enabled = false;
+								runSearch.source = application.searchIconGrayed;
+								runSearch.toolTip = "The query '" + queryList.selectedItem.name + "' is not complete yet. It must have a query element," +
+										" at least one lexicon and at least one data category.";
+							}
+						}else
+								runSearch.toolTip = "No query selected. Please select a query from the list first."
+						
+					
+					}
+					QL_removeBTN.enabled = true;
+					QL_removeBTN.toolTip = "Remove " + texts_code;
+					QL_removeBTN.source = application.removeIcon;
+				} else {
+					if(runSearch.visible){
+						runSearch.enabled = false;
+						runSearch.toolTip = "You have no " + (texts_code == "query" ? "queries" : "filters")
+							+ " to run. Please create a search " + texts_code + " first.";
+						runSearch.source = application.searchIconGrayed;
+					}
+					QL_removeBTN.enabled = false;
+					QL_removeBTN.toolTip = "There are no " + (texts_code == "query" ? "queries" : "filters")
+						+ " you can delete";
+					QL_removeBTN.source = application.removeIconGrayed;
+				}			
+			}
+			
+			private function getQueryIcon(item: Object): Class {
+				return FlexGlobals.topLevelApplication.lexiconIconClass;
+			}
+			
+			private function selectedItemChanged(event: ListEvent): void {
+				initializeButtons();
+				if (queryEditor.saveNeeded()) {
+					queryEditor.requestSave();
+				}
+				queryEditor.query = queryList.selectedItem;
+			}
+			
+			
+			/**
+			 * Rquest user input confirmation for removing a query element.
+			 **/
+			private function requestRemoveQueryElement(): void {
+				YesNo.confirmDelete("Are you sure you want to remove this " + texts_code + "?", confirmDeleteHandler);
+			}
+			/**
+			 * Handles the remove query element confirmation decission obtained from the user
+			 **/
+			private function confirmDeleteHandler(event: CloseEvent): void {
+				if (event.detail == Alert.YES) {
+					var selItem: Object = queryList.selectedItem;
+					
+				//	queryList.selectedIndex = (queryList.selectedIndex - 1);
+					var children1: ArrayCollection = (queryList.dataProvider as ArrayCollection);
+					var param: Object = new Object();
+					param.query = selItem;
+					if (_lexicon != null) {
+						param.lexicon = _lexicon.id;
+					}
+					this.lexusService.send("QueryBuilder/deleteQuery.json", param, this.name, onDeleteQuery);
+					queryList.invalidateDisplayList();
+					queryList.invalidateList();
+				}
+			}
+			private function onDeleteQuery(event: ResultEvent): void {
+				LexusUtil.parseJSON(String(event.result),
+					function(data:Object):void {  
+						var delQueryID:String = data.result.id;
+						var queries:ArrayCollection = (queryList.dataProvider as ArrayCollection);
+						var index:int = - 1;
+						for (var i: int = 0; i < queries.length; i++) {
+							if (queries.getItemAt(i).id == delQueryID) {
+								index = i;
+								break;
+							}
+						}
+						if (index != - 1) {
+							var idx:int = queryList.selectedIndex;
+							var deletedQuery:Object = queries.getItemAt(index);
+							queries.removeItemAt(index);
+							//Ssha:Bugfix 2011
+							queryList.validateNow();
+							queryList.selectedIndex = queryList.dataProvider.length - 1 > idx ? idx : queryList.dataProvider.length - 1;
+							queryEditor.query = queryList.selectedItem;
+							
+							var event:QueryEvent = new QueryEvent(QueryEvent.DELETE, deletedQuery);
+							dispatchEvent(event);
+							
+							//AAM:BugFix 989
+							queryEditor.saveQuery = null;
+						}
+						else {
+							YesNo.alert("Unable to synchronize with server");
+						}
+						initializeButtons();
+					}
+				);
+			}
+			
+			
+			/**
+			 * Opens the popup for adding a new Query.
+			 **/
+			private function addQuery(): void {
+				//AAM: we can't proceed with the 'save' if the specification is not complete
+				//the 'save' action does this same test and throws a warning pop up in case of 'true'.
+				//This pop up will crash with the one launched by openNewQueryPopUp()! Thus we handle this case
+				//separatly.
+				if (queryEditor.query == null || queryEditor.isCompleteSpecification(queryEditor.query)){
+					if (queryEditor.saveNeeded()) {
+						//AAM: we need to handle this case separatly not using queryEditor.requestSave(),
+						//so we can launch the new query/element pop up just after the answer to the 
+						//YesNo question. Otherwise two pop ups will be staked in the UI.
+						YesNo.confirmSave("Do you want to save the modified " + texts_code + "?",
+							function(event:CloseEvent):void {
+								if (event.detail == Alert.YES) {
+									_createNewQueryFlag = true;
+									FlexGlobals.topLevelApplication.enabled = false;
+									queryEditor.save();
+								}else if (event.detail == Alert.NO) {
+									_createNewQueryFlag = true;
+									queryEditor.cleanUnsavedData();
+								}
+							}
+						);
+					} 
+					else
+						openNewQueryPopUp();
+				} else {
+					YesNo.confirmDiscard("The query '" + queryEditor.query.name + "' is not complete yet. It must have a query element," +
+						" at least one lexicon and at least one data category.\n Do you wish to discard the changes?", confirmDiscardAfterAddHandler);
+				}
+			}
+			
+			private function confirmDiscardAfterAddHandler(event: CloseEvent): void {
+				if (event.detail == Alert.NO) {
+					//Go back to the incomplete query
+					queryList.selectedItem = queryEditor.query;
+					initializeButtons();
+					queryEditor.query = queries.getItemAt(queryList.selectedIndex);			
+					return;
+				} else if (event.detail == Alert.YES) {
+					queryEditor.cleanUnsavedData();
+					openNewQueryPopUp();
+				}
+			}
+			
+			
+			/**
+			 * Convenience method to avoid code duplication in the addQuery() method. 
+			 * Mind that the popUp can just show up after the the user answered to
+			 * an eventual YesNo confirmation.
+			 **/
+			private function openNewQueryPopUp():void {
+				if (_queries == null) {
+					_queries = new ArrayCollection();
+				}
+				var newQueryFilterName:String = "New " + texts_code;
+				var i:int = 1;
+				
+				for (var j:int = 0; j < _queries.length; j++){
+					var qr:Object = _queries[j];
+					if (qr.name == newQueryFilterName){
+						newQueryFilterName = "New " + texts_code + " " + i;
+						i++
+						j = -1;
+					}
+				}
+				
+				
+				
+				
+				
+				var newQuery:Object = { "id": "", "name" : newQueryFilterName, "description" : "", "type" : "query", "children" : [], "isBranch":"true" };
+				_queries.addItem(newQuery);
+				queryList.invalidateList();
+				queryList.selectedIndex = _queries.length - 1;
+				queryEditor.query = newQuery;
+				queryEditor.saveQuery = newQuery;
+				queryEditor.editNewQuery();
+				initializeButtons();
+			}
+			
+			
+			/**
+			 * Handles the update event from the popup handling creation or modification of a query element
+			 **/
+			public function querySaved(query:Object): void {
+				var event:QueryEvent;
+				var currentQueries:ArrayCollection = (queryList.dataProvider as ArrayCollection);
+				var found:Boolean = false;
+				var added:Boolean = false;
+				var i:int = -1;
+				for (i = 0 ; i < currentQueries.length ; i++) {
+					if (currentQueries.getItemAt(i).id == query.id || currentQueries.getItemAt(i).id == "") {
+						found = true;
+						if (currentQueries.getItemAt(i).id == "")
+							added = true;
+						
+						//AAM: TODO: review! Breaks the dataprovider of query when selecting back the saved query! data is not
+						//properly loaded!
+						//	currentQueries.setItemAt(query, i);
+						if (currentQueries.getItemAt(i).id == "")
+							currentQueries.getItemAt(i).id = query.id;
+						queryList.invalidateList();
+						break;
+					}
+				}
+				this.createNewQuery();
+				event = new QueryEvent(added ? QueryEvent.ADD : QueryEvent.SAVE, query);
+				dispatchEvent(event);
+				if (queryList.selectedIndex == -1)
+					queryList.selectedIndex = i;  
+			}
+			
+			/**
+			 * Handles the search action
+			 **/
+			public function createNewQuery(): void {
+				if(_createNewQueryFlag == true){
+					openNewQueryPopUp();
+					FlexGlobals.topLevelApplication.enabled = true;
+					_createNewQueryFlag = false;
+				}
+			}
+			
+			/**
+			 * Handles the search action
+			 **/
+			public function onSearchHandler(): void {
+				if (queryEditor.isCompleteSpecification(queryEditor.query)) {
+					this.searchComponent.executeQuery();
+				} else
+					YesNo.alert("The query '" + queryList.selectedItem.name + "' is not complete yet. It must have a query element," +
+						" at least one lexicon and at least one data category.");
+			}
+			
+		]]>
+	</mx:Script>
+	
+	<mx:Panel horizontalAlign="left" title="{texts_code=='query' ? 'Queries' : 'Filters'}" height="100%" width="100%">
+		<mx:List id="queryList" width="100%" height="100%" labelField="name" 
+				 iconFunction="getQueryIcon" change="selectedItemChanged(event)" doubleClick="onSearchHandler()" 
+				 doubleClickEnabled="true" dataProvider="{_queries}"/>
+		<mx:ControlBar horizontalAlign="left" width="100%">
+			<mx:Image id="QL_addBTN" source="{application.addIcon}" buttonMode="true"
+					  useHandCursor="false"	click="addQuery()" toolTip="Add {texts_code=='query' ? 'query' : 'filter'}"/>
+			<mx:Image id="QL_removeBTN" source="{application.removeIcon}" buttonMode="true"
+					  useHandCursor="false"	click="requestRemoveQueryElement()" toolTip="Remove {texts_code=='query' ? 'query' : 'filter'}"/>
+			<mx:Spacer width="70%"/>
+			<mx:Image id="runSearch" source="{application.searchIcon}" buttonMode="true" visible="{texts_code=='query' ? true : false}"
+					  useHandCursor="false" toolTip="Run selected {texts_code}." click="onSearchHandler()"/>
+			<!--			<mx:Spacer width="100%"/>
+			<mx:Button id="runSearch" click="onSearchHandlere()" label="Search"/>-->
+		</mx:ControlBar>
+	</mx:Panel>
+</mx:Canvas>
