@@ -20,6 +20,14 @@ it at the UI level (also includes ticket #2109).
 - Fixed Flex exception (npe) when user tries to edit a non-editable 
 layout element, such as a 'Line break', by double-clicking it.
 
+- Fixed some problems with Flex HTML template.
+
+- Moved to Apache Flex SDK 4.8
+
+- Improved 'Export to PDF' pop up window.
+
+- Updated to Apache FOP (PDF generator) 1.1
+
 - Fixed problem with PDF text going out of the page (#2392).
 
 - Added support for 'Line break' and 'Horizontal line' layout elements
@@ -28,7 +36,6 @@ to PDF generator.
 - Added support for 'bold', 'italic' and 'underlined' text options, to
 PDF generator.
 
-- Moved to Apache Flex SDK 4.8
+- Added support for 'Table' layout elements. (includes ticket #2565)
 
-- Fixed some problems with Flex HTML template.
  
