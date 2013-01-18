@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<result xmlns:rest="http://org.apache.cocoon.transformation/rest/1.0"
+    xmlns:exist="http://exist.sourceforge.net/NS/exist">
+    <users>
+        <user id="1">
+            <name>Huib Verweij</name>
+        </user>
+        <user id="2">
+            <name>Jacquelijn Ringersma</name>
+        </user>
+        <user id="3">
+            <name>Marc Kemps-Snijders</name>
+        </user>
+    </users>
+    <lexicon id="1">
+        <lexiconInformation>
+            <feat name="name">Huib's Lexicon.</feat>
+            <feat name="description">De beschrijving van Huib's Lexicon....</feat>
+        </lexiconInformation>
+        <meta>
+            <users>
+                <user ref="1" type="owner">
+                    <permissions>
+                        <lexicon>
+                            <read>true</read>
+                            <write>true</write>
+                        </lexicon>
+                        <moderator>true</moderator>
+                    </permissions>
+                </user>
+                <user ref="2">
+                    <permissions>
+                        <lexicon>
+                            <read>true</read>
+                            <write>true</write>
+                        </lexicon>
+                    </permissions>
+                </user>
+                <user ref="3">
+                    <permissions>
+                        <lexicon>
+                            <read>true</read>
+                            <write>false</write>
+                        </lexicon>
+                    </permissions>
+                </user>
+            </users>
+            <schema/>
+            <sortorder ref="1"/>
+        </meta>
+        <size>379</size>
+        <users>
+            <user id="1">
+                <name>Huib Verweij</name>
+            </user>
+            <user id="2">
+                <name>Jacquelijn Ringersma</name>
+            </user>
+            <user id="3">
+                <name>Marc Kemps-Snijders</name>
+            </user>
+        </users>
+    </lexicon>
+    <lexicon id="2">
+        <lexiconInformation>
+            <feat name="name">Iwaidja</feat>
+        </lexiconInformation>
+        <meta>
+            <users>
+                <user ref="2" type="owner">
+                    <permissions>
+                        <lexicon>
+                            <read>true</read>
+                            <write>true</write>
+                        </lexicon>
+                    </permissions>
+                </user>
+                <user ref="1">
+                    <permissions>
+                        <lexicon>
+                            <read>true</read>
+                            <write>true</write>
+                        </lexicon>
+                    </permissions>
+                </user>
+                <user ref="3">
+                    <permissions>
+                        <lexicon>
+                            <read>true</read>
+                            <write>false</write>
+                        </lexicon>
+                    </permissions>
+                </user>
+            </users>
+            <schema/>
+            <sortorder ref="1"/>
+        </meta>
+        <size>379</size>
+        <users>
+            <user id="1">
+                <name>Huib Verweij</name>
+            </user>
+            <user id="2">
+                <name>Jacquelijn Ringersma</name>
+            </user>
+            <user id="3">
+                <name>Marc Kemps-Snijders</name>
+            </user>
+        </users>
+    </lexicon>
+    <lexicon id="4">
+        <lexiconInformation>
+            <feat name="name">Yeli Dnye</feat>
+        </lexiconInformation>
+        <meta>
+            <users>
+                <user ref="1" type="owner">
+                    <permissions>
+                        <lexicon>
+                            <read>true</read>
+                            <write>true</write>
+                        </lexicon>
+                        <moderator>true</moderator>
+                    </permissions>
+                </user>
+                <user ref="2">
+                    <permissions>
+                        <lexicon>
+                            <read>true</read>
+                            <write>false</write>
+                            <write-moderated>true</write-moderated>
+                        </lexicon>
+                    </permissions>
+                </user>
+                <user ref="3">
+                    <permissions>
+                        <lexicon>
+                            <read>true</read>
+                            <write>false</write>
+                        </lexicon>
+                    </permissions>
+                </user>
+            </users>
+            <schema/>
+            <sortorder ref="1"/>
+        </meta>
+        <size>379</size>
+        <users>
+            <user id="1">
+                <name>Huib Verweij</name>
+            </user>
+            <user id="2">
+                <name>Jacquelijn Ringersma</name>
+            </user>
+            <user id="3">
+                <name>Marc Kemps-Snijders</name>
+            </user>
+        </users>
+    </lexicon>
+    <user id="1">
+        <name>Huib Verweij</name>
+        <login>hhv</login>
+        <accesslevel>10</accesslevel>
+        <workspace>
+            <sortorders>
+                <sortorder id="1" name="Yeli Dnye sortorder"/>
+            </sortorders>
+            <queries>
+                <query id="1"/>
+            </queries>
+        </workspace>
+    </user>
+</result>

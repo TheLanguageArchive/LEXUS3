@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map:components xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+    <map:transformers>
+        <map:transformer name="rest" src="org.apache.cocoon.transformation.RESTTransformer">
+            <authentication>
+                <username>admin</username>
+                <password>boe</password>
+                <preemptive-authentication>true</preemptive-authentication>
+            </authentication>
+            <encoding>UTF-8</encoding>
+        </map:transformer>
+        <map:transformer name="saxon" src="org.apache.cocoon.transformation.TraxTransformer">
+            <xslt-processor-role>saxon</xslt-processor-role>
+        </map:transformer>
+    </map:transformers>
+    <map:serializers>
+        <map:serializer name="xml" mime-type="text/xml"
+            src="org.apache.cocoon.serialization.XMLSerializer">
+            <encoding>UTF-8</encoding>
+        </map:serializer>
+        <map:serializer name="html" mime-type="text/html; charset=UTF-8"
+            src="org.apache.cocoon.serialization.HTMLSerializer">
+            <encoding>UTF-8</encoding>
+            <!-- the following common doctype is only included for completeness, it has no impact on encoding -->
+            <doctype-public>-//W3C//DTD HTML 4.01 Transitional//EN</doctype-public>
+            <doctype-system>http://www.w3.org/TR/html4/loose.dtd</doctype-system>
+        </map:serializer>
+    </map:serializers>
+</map:components>
