@@ -22,6 +22,9 @@ layout element, such as a 'Line break', by double-clicking it.
 
 - Fixed some problems with Flex HTML template.
 
+- Enabled browser history inside the UI ('Go back' and 'Go forward' 
+in the browser now respects to the UI status).
+
 - Moved to Apache Flex SDK 4.8
 
 - Improved 'Export to PDF' pop up window.
