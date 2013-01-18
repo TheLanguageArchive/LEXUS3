@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+    title="Please wait"
+    showCloseButton="true"
+    close="PopUpManager.removePopUp(this);" 
+    height="148" titleIcon="{FlexGlobals.topLevelApplication.lexusIconSmall}">
+    <mx:Script>
+        <![CDATA[
+			import mx.core.FlexGlobals;
+			import mx.events.ValidationResultEvent;
+			import mx.managers.PopUpManager;
+            
+            [Bindable]
+            public var infoMessage: String;            
+          
+            private function onKeyUpOk(event:KeyboardEvent):void{
+            	//Enter pressed
+            	if(event.keyCode == 13)
+	               PopUpManager.removePopUp(this);
+            }
+        ]]>
+    </mx:Script>
+ 	<mx:Style>
+	    .message {
+	        fontStyle: italic;
+	        fontWeight: bold;
+	        fontSize: 16pt;
+    	}
+	</mx:Style>
+
+    <mx:Canvas width="100%" height="100%">
+	    <mx:VBox width="100%" height="100%" horizontalAlign="center">
+		    <mx:Text id="message" styleName = "message" text="{this.infoMessage}"/>
+	    	<!-- <mx:Image id="img" source="{this.spinningIcon}"/> -->
+	     	<mx:SWFLoader x="0" y="0" id="swfl" horizontalAlign="center" verticalCenter="0" horizontalCenter="0" width="40" height="40"
+	     	 source="wait.swf" autoLoad="true" scaleContent="false" visible="true"/>
+     	</mx:VBox>
+    </mx:Canvas>
+</mx:TitleWindow>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+    title="URL attached to node" x="168" y="86">
+
+	<mx:Metadata>
+		[Event(name="urlAdded", type="events.URLUpdateEvent")]
+	</mx:Metadata>
+
+    <mx:Script>
+        <![CDATA[
+            import mx.managers.PopUpManager;
+            import mx.controls.Text;
+           	import events.URLUpdateEvent;
+           
+           	public function set url(url:String):void{
+           		if (url == ""){
+           			urlText.text = "http://";
+           		}
+           		else{
+           			urlText.text = url;
+           		}
+       			this.stage.focus = urlText;
+       			urlText.selectionBeginIndex = urlText.selectionEndIndex = urlText.text.length; 
+           	} 
+           
+            // Event handler for the OK button.
+            private function returnURL():void {
+            	var url:String = urlText.text; 
+            	if (url != null && url != "http://"){
+                	var event:URLUpdateEvent = new URLUpdateEvent(URLUpdateEvent.URL_ADDED, url); 
+                	dispatchEvent(event);
+             	}                 
+                PopUpManager.removePopUp(this);
+            }
+        ]]>
+    </mx:Script>
+
+    <mx:HBox>
+        <mx:Label text="Enter url: "/>
+        <mx:TextInput id="urlText" text="" width="100%"/>
+    </mx:HBox>
+
+    <mx:HBox>
+        <mx:Button label="OK" click="returnURL();"/>
+        <mx:Button label="Cancel" click="PopUpManager.removePopUp(this);"/>
+    </mx:HBox>
+
+</mx:TitleWindow>

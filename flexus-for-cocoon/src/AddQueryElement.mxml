@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+    title="{texts_code=='query' ? 'Query' : 'Filter'} builder"
+    showCloseButton="true"
+    close="PopUpManager.removePopUp(this);"  width="500" height="400" xmlns:com="com.*">
+
+	<mx:Metadata>
+       [Event(name="update", type="nl.mpi.lexus.event.QueryElementChangeEvent")]
+    </mx:Metadata>
+    
+
+    <mx:Script>
+        <![CDATA[
+			import com.adobe.serialization.json.JSON;
+			
+			import mx.collections.ArrayCollection;
+			import mx.collections.ArrayList;
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.events.CloseEvent;
+			import mx.events.ListEvent;
+			import mx.events.ValidationResultEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			import nl.mpi.lexus.LexusUtil;
+			import nl.mpi.lexus.YesNo;
+			import nl.mpi.lexus.event.NewSchemaElementEvent;
+			import nl.mpi.lexus.event.QueryElementChangeEvent;
+			import nl.mpi.lexus.service.LexusService;
+           
+            
+			/* Define a variable to be able to change the texts. Later, when we grow up we might have i18n, then a single var will be handy. */
+			[Bindable] public var texts_code:String;
+			
+          	[Bindable] private var lexica:Object = null;
+			private var _lexicon:Object;
+			private var _availableLexica:Object;
+			private var _queryBuilder:Object;
+			public var currentLexiconId:String = "";
+			
+           	[Bindable] private var dataCategories:Object = null;
+			
+			public var beginsWithIconClass:Class = FlexGlobals.topLevelApplication.beginsWithIconClass;
+			public var endsWithIconClass:Class = FlexGlobals.topLevelApplication.endsWithIconClass;
+			public var isIconClass:Class = FlexGlobals.topLevelApplication.isIconClass;
+			public var containsIconClass:Class = FlexGlobals.topLevelApplication.containsIconClass;
+			
+            [Bindable] public var conditionItems:Object = [
+					{
+						"icon": "isIconClass",
+						"condition": "is",
+						"label": "is"
+					},
+					{
+						"icon": "containsIconClass",
+						"condition": "contains",
+						"label": "contains"
+					},
+					{
+						"icon": "beginsWithIconClass",
+						"condition": "begins with",
+						"label": "begins with"
+					},
+					{
+						"icon": "endsWithIconClass",
+						"condition": "ends with",
+						"label": "ends with"
+					}
+			    ];
+			
+            [Bindable] private var _queryElement:Object;
+           
+            private var _state:int = STATE_MODIFY;
+            static public var STATE_ADD : int = 0;
+			static public var STATE_MODIFY: int= 1;
+
+            private var lexusService:LexusService = new LexusService();
+            
+            public function set lexicon(lexicon:Object):void {
+				_lexicon = lexicon;
+            	var arrColl:ArrayCollection = new ArrayCollection();
+            	arrColl.addItem(lexicon);
+            	this.lexica = arrColl;            	
+            }
+			
+			public function set availableLexica(availableLexica:Object): void {
+				this._availableLexica = availableLexica;
+			}
+			public function set queryBuilder(queryBuilder:Object): void {
+				this._queryBuilder = queryBuilder;
+			}
+			
+			
+			public function set queryElement( obj:Object):void{
+				this._queryElement = obj;
+				init();
+				
+			}
+			public function set modificationState( state:int):void{
+				if( state == STATE_ADD || state == STATE_MODIFY)
+					_state = state;
+				init();
+			}
+			
+			
+			
+			/**
+			 * Event Handler for the onLoad event for loading data categories. This will load the JSON object and perform initial initialization
+			 * */
+			private function onJSONLoadDataCategories(event:ResultEvent):void
+			{
+				LexusUtil.parseJSON(String(event.result),
+					function(data:Object):void {
+						dataCategories = data.result.dataCategories;
+						callLater(setInitialDataCategory);
+						_queryBuilder.setDataCategories(currentLexiconId, dataCategories);
+						detailsCanvas.enabled = true;
+					}
+				);
+			}
+            
+            /**
+            * Initialization method. This method is called in set XXX property 
+            * methods and are called to prepare this component.
+            **/
+            private function init():void{
+            	switch( _state){
+            		case STATE_ADD:
+            			typeBox.visible = true;
+            			typeBox.height= 50;
+            			break;
+            		case STATE_MODIFY:
+            			typeBox.visible = false;
+            			typeBox.height=0;
+            			break;
+            	}
+            	var cType:String = this.getCreationSubType();
+            	this.customType.text = cType;
+            	
+            	currentState = cType;
+            	this.prepareState( cType);
+            	
+            	
+            }
+            
+            /**
+            * Prepares all necessay operations for the specified state
+            **/ 
+            private function prepareState(state:String):void {
+            	switch( state){
+            		case "query":
+            			this.customType.visible=false;
+            			break;
+            		case "lexicon":
+            			this.detailsCanvas.enabled = true;
+            			if( this.lexica == null)
+							this.lexica = this._availableLexica;
+	            		else
+	            			this.detailsCanvas.enabled = true;
+            			//this.lexiconService.send();
+            			break;
+            		case "data category":
+						var cachedDCs:Object = _queryBuilder.getDataCategories(currentLexiconId);
+						if (cachedDCs) {
+							dataCategories = cachedDCs;
+							callLater(setInitialDataCategory);
+						}
+						else {
+            				this.detailsCanvas.enabled = false;
+							var params:Object = new Object();
+							params.id = currentLexiconId;
+            				this.lexusService.send("QueryBuilder/getDataCategories.json", params, "QueryBuilder", this.onJSONLoadDataCategories);
+						}            			
+						callLater(setInitialCondition);
+            			break;
+            	}
+            }
+           
+            
+            
+            /**
+            * Performs the update process on the current queryElement. 
+            * This may either be a modification or adding of a new schema element.
+            **/ 
+            private function updateQueryElement():void{
+            	var element:Object;
+				var coll:ArrayCollection;
+            	
+				okBtn.enabled = false;
+				cancelBtn.enabled = false;
+            	switch( this._state){
+            		case STATE_ADD:
+            			element = new Object();
+						element.id=null;
+            			break;
+            		case STATE_MODIFY:
+            			element = _queryElement;
+            			break;
+            	}
+            	
+            	
+            	switch (currentState) {
+            		case "query":
+            			element.name = q_name.text;
+            			element.description = q_description.text;
+            			element.type="query";
+            			break;
+            		case "lexicon":
+            			var lexicon:Object = l_nameList.selectedItem;
+            			element.name= lexicon.name;
+            			element.id = lexicon.id;
+            			element.type="lexicon";
+            			element.children = new Array();
+            			if (_state == STATE_ADD) {
+	            			coll = new ArrayCollection(_queryElement.children); // Add it to parent.
+	            			coll.addItem( element);
+	            		}
+            		
+            			break;
+            		case "data category":
+            			var dc:Object = dc_nameList.selectedItem;
+            			element.id = dc.id;
+            			element.name = dc.name;
+            			element.negation = dc_negation.selected;
+            			element.condition = dc_condition.selectedItem.condition;
+            			element.value = dc_value.text;
+            			element.type="data category";
+            			
+						if (_state == STATE_ADD) {
+							element.children = new Array();
+							coll = new ArrayCollection(_queryElement.children); // Add it to parent.
+							coll.addItem( element);
+						}
+            			break;
+
+            	}
+            	var event:Event = new QueryElementChangeEvent("update", element, this._state);
+                dispatchEvent(event);
+                PopUpManager.removePopUp(this);
+            }
+			
+            // Event listener for the valid and invalid events.
+            private function handleValid(eventObj:ValidationResultEvent):void {
+                if (eventObj.type==ValidationResultEvent.VALID)    
+                    okBtn.enabled = true;
+                else
+                    okBtn.enabled = false;
+            }
+			
+			
+            /**
+            * Handler for the change event of the lexicon combobox
+            **/ 
+            private function onLexiconChange( event:ListEvent):void{
+             	var lexItem:Object = l_nameList.selectedItem;
+             	if( _queryElement.type == "lexicon" && lexItem.id != _queryElement.id){
+	            	YesNo.confirmSave("Are you sure you want to change this lexicon?\nAll your search terms for your original lexicon will be removed.", confirmLexiconChangeHandler);
+             	}
+             	else{
+             		switchLexica();
+             	}
+             		
+             	
+			}
+			/**
+			 * Handles the user decission event that is required after a user decides to change the lexicon
+			 **/ 
+            private function confirmLexiconChangeHandler(event:CloseEvent):void{
+            	if (event.detail == Alert.YES) {
+            		
+					switchLexica();
+				} 
+				else
+					setInitialLexicon();
+            }
+            /**
+            * Changes the lexicon
+            */
+            private function switchLexica():void{
+            	var lexItem:Object = l_nameList.selectedItem;
+            	l_description.text = lexItem.description;
+            	
+            }
+            /**
+            * Sets the initially selected lexicon in the lexicon combobox
+            **/ 
+            private function setInitialLexicon():void{
+            	if( this._queryElement.type == "lexicon"){
+            		//The current element is a lexicon..Wewill set the 
+            		var lexId:String = this._queryElement.id;
+					if( l_nameList != null){
+		            	var lexs:ArrayCollection = (l_nameList.dataProvider as ArrayCollection);
+		            	for( var i:int = 0; i < lexs.length; i++){
+		            		var lexItem:Object = lexs.getItemAt( i);
+		            		if( lexItem.id == lexId){
+		            			l_nameList.selectedItem = lexItem;
+		            			l_description.text = lexItem.description;
+		            			break;
+		            		}
+		            	}
+					}
+            	}
+            	else if((l_nameList.dataProvider as ArrayCollection).length >0){
+            		l_nameList.selectedIndex = 0;
+            		l_description.text = l_nameList.selectedItem.description;	 
+            		
+            	}
+            }
+            /**
+            * Sets the initially selected data category from in the data category combobox
+            */
+            private function setInitialDataCategory():void{
+            	if( this._queryElement.type == "data category"){
+            		var dc_id:String = this._queryElement.id;
+            		var dcs:ArrayCollection = (dc_nameList.dataProvider as ArrayCollection);
+            		for( var i:int = 0; i < dcs.length; i++){
+            			var dcItem:Object = dcs.getItemAt(i);
+            			if (dcItem.id == dc_id) {
+            				dc_nameList.selectedIndex = i;
+            				break;
+            			}
+            		}
+            	}
+            	else if( (dc_nameList.dataProvider as ArrayCollection).length > 0){
+            		dc_nameList.selectedIndex = 0;
+            	}
+         
+            }
+            private function setInitialCondition():void{
+            	if( this._queryElement.type == "data category"){
+            		var condition:Object = this._queryElement.condition;
+            		var conditions:ArrayCollection = (dc_condition.dataProvider as ArrayCollection);
+            		for( var i:int = 0; i < conditions.length; i++){
+            			var condItem:Object = conditions.getItemAt( i);
+            			if( condItem.condition == condition){
+            				dc_condition.selectedIndex = i;
+            				break;
+            			}
+            		}
+            	}
+            }
+            /**
+            * Handles the event when the user presses the okay button
+            **/ 
+            private function onHandleOk( event:MouseEvent):void{
+            	updateQueryElement();
+            }
+            /**
+            * Handles key press events on the okay button. When the ok button has focus and the user presses enter then the 
+            * update process is activated.
+            **/ 
+            private function onKeyUpOk(event:KeyboardEvent):void{
+            	//Enter pressed
+            	if( event.keyCode == 13)
+	               this.updateQueryElement();
+            }
+            /**
+            * Returns the sub type of the current query element. It describes the 'derived' type of the current
+            * queryElement based on the _state(ADD or MODIFY) and the element's own type
+            **/ 
+            private function getCreationSubType():String{
+            	if( this._queryElement == null)
+            		return "query";
+            		
+            	switch( this._state){
+            		case STATE_ADD:
+            			switch( this._queryElement.type){
+		            		case "query":
+		            			return "lexicon";
+		            			
+		            		case "lexicon":
+		            			return "data category";
+		            			
+		            		case "data category":
+		            			return "data category";
+		            			
+		            	}
+            			break;
+            		case STATE_MODIFY:
+            			return this._queryElement.type;
+            			break;
+            	}
+            	
+            	return null;
+            }
+
+        ]]>
+    </mx:Script>
+<mx:states>
+	        <mx:State name="query" basedOn="">
+
+
+            <mx:AddChild 
+                relativeTo="{detailsCanvas}" 
+                position="lastChild" 
+                creationPolicy="all"
+            >
+				<mx:Panel title="{texts_code=='query' ? 'Query' : 'Filter'}" width="100%" height="100%">
+					<mx:Grid width="80%" horizontalAlign="center">
+						<mx:GridRow>
+							<mx:GridItem>
+								<mx:Label text="Name"/>
+							</mx:GridItem>
+							<mx:GridItem>
+								<mx:TextArea id="q_name" text="{_queryElement.name}"/>
+							</mx:GridItem>
+						</mx:GridRow>
+						<mx:GridRow>
+							<mx:GridItem>
+								<mx:Label text="Description"/>
+							</mx:GridItem>
+							<mx:GridItem>
+								<mx:TextArea id="q_description" text="{_queryElement.description}"/>
+							</mx:GridItem>
+						</mx:GridRow>
+					</mx:Grid>			
+				</mx:Panel>		
+            </mx:AddChild>
+            
+        </mx:State>
+		<mx:State name="lexicon" basedOn="">
+
+
+            <mx:AddChild 
+                relativeTo="{detailsCanvas}" 
+                position="lastChild" 
+                creationPolicy="all"
+            >
+            	<mx:Panel title="Lexicon" width="100%" height="100%">
+	            	<mx:VBox width="80%" horizontalAlign="center">
+	                	<mx:ComboBox id="l_nameList" labelField="name" dataProvider="{this.lexica}" change="onLexiconChange(event)"/>
+	                	<mx:Text id="l_description" width="80%"/>
+	                	
+					</mx:VBox>
+				</mx:Panel>
+            </mx:AddChild>
+            
+        </mx:State>
+                <mx:State name="data category" basedOn="">
+
+
+            <mx:AddChild 
+                relativeTo="{detailsCanvas}" 
+                position="lastChild" 
+                creationPolicy="all"
+            >
+				<mx:Panel title="Data category" width="100%" height="100%">
+
+		              <mx:VBox width="80%" horizontalAlign="center">
+							<mx:ComboBox id="dc_nameList" labelField="name" dataProvider="{this.dataCategories}"/>	
+							<mx:HBox>
+								<mx:CheckBox id="dc_negation" selected="{_queryElement.negation}"/>
+								<mx:Label text="not"/>
+								<com:IconComboBox id="dc_condition" dataProvider="{conditionItems}" labelField="label"   iconField="icon" x="10" y="10"/>
+							</mx:HBox>
+							<mx:TextArea  id="dc_value" width="80%" text="{_queryElement.value}"/>
+							
+										
+						</mx:VBox>
+				</mx:Panel>
+            </mx:AddChild>
+            
+        </mx:State>
+
+
+</mx:states> 
+
+	     
+    <mx:Canvas width="100%" height="100%">
+	   <mx:VBox width="100%" height="100%">
+	   	
+	  
+			<mx:HBox id="typeBox" width="100%" height="50" visible="false">
+				<mx:Label id="customType" text="{this.getCreationSubType()}" />					
+			</mx:HBox>
+			<mx:Canvas id="detailsCanvas" width="100%" height="100%"/>
+			
+		</mx:VBox>
+     	
+    </mx:Canvas>
+	
+    <mx:ControlBar horizontalAlign="center" width="100%">
+        <mx:Button id="okBtn" label="Ok"  click="onHandleOk(event)"  keyUp="onKeyUpOk(event)" enabled="true"/>
+    
+        <mx:Button id="cancelBtn" label="Cancel" click="PopUpManager.removePopUp(this);"  keyUp="onKeyUpOk(event)" enabled="true"/>
+    </mx:ControlBar>
+	
+</mx:TitleWindow>

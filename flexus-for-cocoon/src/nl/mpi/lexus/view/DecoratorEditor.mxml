@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:NodeEditor xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:view="nl.mpi.lexus.view.*">
+	
+	<mx:VBox id="show">
+		<mx:HBox>
+			<mx:Label text="Include only when content available"/>
+			<mx:CheckBox id="optional" selected="{_value.@optional == 'true'}"/>
+		</mx:HBox>
+		<mx:Panel title="Font">
+			<mx:VBox paddingLeft="10" paddingRight="10" paddingTop="10" paddingBottom="10">
+				<mx:HBox>
+					<!-- <mx:Label text="Family:"/> -->
+					<view:FontStyleList id="show_fontFamily" selectedFontName="{_value.@fontFamily}"/>
+				</mx:HBox>
+				<mx:Text fontSize="8" color="#FF0000" text="Use Helvetica, Times, Courier, Symbol or ZapfDingbats for PDF fonts."/>
+				<mx:Spacer height="10"/>
+				<mx:HBox>
+					<mx:HBox>
+						<!-- <mx:Label text="Color:"/> -->
+						<mx:ColorPicker id="show_cp" showTextField="true" selectedColor="{int(_value.@color)}" />
+					</mx:HBox>
+					<mx:Spacer width="20"/>
+					<mx:HBox>
+						<!-- <mx:Label text="Size:"/> -->
+						<mx:ComboBox id="show_fontSize" selectedItem="{_value.@fontSize}"> 
+							<mx:dataProvider>
+								<mx:String>8</mx:String>
+								<mx:String>10</mx:String>
+								<mx:String>12</mx:String>
+								<mx:String>14</mx:String>
+								<mx:String>18</mx:String>
+								<mx:String>20</mx:String>
+							</mx:dataProvider>
+						</mx:ComboBox>
+					</mx:HBox>			
+				</mx:HBox>
+				<mx:HBox>
+					<mx:Label text="Display as separate block"/>
+					<mx:CheckBox id="block" selected="{_value.@display == 'true'}"/>
+				</mx:HBox>	
+			</mx:VBox>
+		</mx:Panel>		
+		<mx:HBox>
+			<mx:Label text="Define CSS class (used for defining CSS in the Lexical Entry View)"/>
+			<mx:CheckBox id="localStyle" selected="{_value.@localStyle == 'false'}"/>
+		</mx:HBox>
+		<mx:HBox includeInLayout="{localStyle.selected == true}" visible="{localStyle.selected == true}">
+			<mx:Label text="Class:"/>
+			<mx:TextInput id="dsl_class_attribute_value" restrict="0-9 a-z A-Z _\-"
+						  width="150" 
+						  text="{_value.@dsl_class}"
+						  enter="done()"/>
+		</mx:HBox>
+		<mx:HBox width="100%">
+			<mx:Button name="cancel" label="Cancel" click="quit();"/>
+			<mx:Spacer width="100%"/>
+			<mx:Button name="ok" label="Ok" click="done();"/>			
+		</mx:HBox>
+	</mx:VBox>
+	
+</view:NodeEditor>

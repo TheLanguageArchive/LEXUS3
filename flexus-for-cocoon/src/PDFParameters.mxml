@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:mpi="nl.mpi.lexus.*" xmlns="*"
+		   label="PDF Parameters"  showCloseButton="true" close="close();"
+		   width="400" height="300">
+	
+	<mx:Script>
+		<![CDATA[
+			import com.adobe.serialization.json.JSON;
+			
+			import flash.sampler.getInvocationCount;
+			
+			import mx.collections.ArrayCollection;
+			import mx.collections.ICollectionView;
+			import mx.collections.IViewCursor;
+			import mx.containers.Grid;
+			import mx.containers.GridItem;
+			import mx.containers.GridRow;
+			import mx.containers.HBox;
+			import mx.containers.Panel;
+			import mx.containers.TabNavigator;
+			import mx.controls.Alert;
+			import mx.controls.Image;
+			import mx.controls.TextArea;
+			import mx.controls.VideoDisplay;
+			import mx.controls.dataGridClasses.DataGridColumn;
+			import mx.core.Container;
+			import mx.core.FlexGlobals;
+			import mx.core.IUIComponent;
+			import mx.core.UIComponent;
+			import mx.core.UITextField;
+			import mx.events.CloseEvent;
+			import mx.events.CollectionEvent;
+			import mx.events.CollectionEventKind;
+			import mx.events.DragEvent;
+			import mx.events.FlexEvent;
+			import mx.events.IndexChangedEvent;
+			import mx.events.ListEvent;
+			import mx.events.MenuEvent;
+			import mx.events.PropertyChangeEvent;
+			import mx.events.StateChangeEvent;
+			import mx.events.VideoEvent;
+			import mx.managers.DragManager;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			import nl.mpi.lexus.LexiconTreeItemRenderer;
+			import nl.mpi.lexus.LexusUtil;
+			import nl.mpi.lexus.YesNo;
+			import nl.mpi.lexus.event.ImportCompleteEvent;
+			import nl.mpi.lexus.service.LexusService;
+			
+			[Bindable] public var theUrl:String;
+			[Bindable] public var lexiconId:String;
+			[Bindable] public var filename:String;
+			[Bindable] private var views:XMLList;
+			
+			private var lexusService:LexusService = new LexusService();
+			
+			public function start():void {
+				LexusUtil.showWait(this, "Loading views");
+				
+				lexusService.sendXMLAndParseXML("LexusSchemaEditor/getViews.xml?lexiconId="+this.lexiconId, <dummy/>,
+					function(data:XML):void {
+						var listView:String = data.@listView;
+						var leView:String = data.@lexicalEntryView;
+						FlexGlobals.topLevelApplication.enabled = true;
+						var vl:XMLList = data.view.(@id != listView && @id != leView);
+						views = vl;
+						var size:int = vl.length();
+						viewsList.selectedIndex = size >= 0 ? 0 : -1;
+						LexusUtil.removeWait();
+						if (size == 0) {
+							YesNo.info("You'll need to define a view first." +
+								" You can define a view for lexical entries in the PDF in the Views tab of the Schema Editor.");
+							close();
+						}
+					}
+				);
+				
+			}
+			
+			
+			/**
+			 * Returns the icon identifying a view
+			 **/ 
+			private function getViewIcon(item:Object):Class{
+				return FlexGlobals.topLevelApplication.viewIconClass;
+			}
+			
+			private function close(event:MouseEvent = null):void {
+				PopUpManager.removePopUp(this);
+			}
+			
+			
+			/**
+			 * OK button clicked.
+			 */
+			private function okHandler(event:MouseEvent):void
+			{
+				PopUpManager.removePopUp(this);
+				var urlRequest:URLRequest = new URLRequest(theUrl + "?id="+lexiconId + "&view=" + viewsList.selectedItem.@id);
+				navigateToURL(urlRequest, "_blank");
+			}
+					]]>
+	</mx:Script>
+	
+	<mx:Canvas id="mainCanvas" width="100%" height="100%">
+		<mx:HBox width="100%" height="100%" paddingLeft="4" paddingRight="4" paddingBottom="4" paddingTop="0" verticalGap="0">
+			<mx:VBox id="ppMain" visible="true" width="100%" height="100%" verticalGap="0">
+				<mx:Canvas width="100%" height="100%"
+						   backgroundAlpha="0.0">
+					<mx:Panel id="viewsView"  title="Views" width="700">
+						<mx:HBox width="100%" >
+							<mx:VBox width="100%">
+								<mpi:AutoSizeList id="viewsList" width="100%" height="100%" 
+												  dataProvider="{viewsListDataProvider}" labelField="@name"
+												  iconFunction="getViewIcon" selectedIndex="-1"/>
+							</mx:VBox>
+						</mx:HBox>
+					</mx:Panel>
+				</mx:Canvas>
+				<mx:HBox width="100%" height="10">
+					
+				</mx:HBox>
+				<mx:HBox width="100%">
+					<mx:Spacer width="100%"/>
+				<mx:Button id="ok" label="OK" click="okHandler(event);" enabled="true" />						   
+				</mx:HBox>
+			</mx:VBox>
+		</mx:HBox>
+	</mx:Canvas>
+	
+	<mx:XMLListCollection id="viewsListDataProvider" source="{views}" />
+	
+</mx:TitleWindow>

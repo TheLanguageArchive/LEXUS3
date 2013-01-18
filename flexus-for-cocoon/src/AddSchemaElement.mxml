@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+    title="New schema element"
+    showCloseButton="true"
+    close="PopUpManager.removePopUp(this);"  width="500" height="400">
+
+	<mx:Metadata>
+        [Event(name="new", type="nl.mpi.lexus.event.NewSchemaElementEvent")]
+    </mx:Metadata>
+    
+
+    <mx:Script>
+        <![CDATA[
+        	import nl.mpi.lexus.event.NewSchemaElementEvent;
+        	import mx.events.ValidationResultEvent;
+        	import mx.managers.PopUpManager;
+           
+                    
+          
+            private function onKeyUpOk(event:KeyboardEvent):void{
+            	//Enter pressed
+            	if( event.keyCode == 13)
+	               this.createSchemaElement();
+            }
+            
+            
+            private function createSchemaElement():void{
+            	var schemaElement:Object = new Object();
+            	schemaElement.name = _name.text;
+            	schemaElement.description = _description.text;
+            	schemaElement.adminInfo = _adminInfo.text;
+            	schemaElement.min = _mandatory.selected?"1":"0";
+            	schemaElement.max = _multiples.selected?null:"1";
+            	schemaElement.type= _type.selectedValue;
+            	schemaElement.style = new Object();
+            	
+            	
+            	
+            	
+            	
+            	switch( schemaElement.type){
+            		case "component":
+            			schemaElement.children = new Array();
+            			break;
+            		case "data category":
+            			//schemaElement.children = null;
+            			schemaElement.DCR = null;
+            			schemaElement.DCRReference = null;
+            			schemaElement.valuedomain = null;
+            			break;
+            	}
+				var event:Event = new NewSchemaElementEvent("new", schemaElement);
+                dispatchEvent( event);
+                PopUpManager.removePopUp(this);
+	
+            	
+            }
+             // Event listener for the valid and invalid events.
+            private function handleValid(eventObj:ValidationResultEvent):void {
+                if(eventObj.type==ValidationResultEvent.VALID)    
+                    // Enable saveBtn button.
+                    okBtn.enabled = true;
+                else
+                    okBtn.enabled = false;
+            }
+
+        ]]>
+    </mx:Script>
+ 
+<mx:Validator id="reqValid" required="true"
+        source="{_type}" property="selectedValue" 
+        valid="handleValid(event)" invalid="handleValid(event)"/>
+        
+    <mx:Canvas width="100%" height="100%">
+	    <mx:Grid width="100%">
+	    	<mx:GridRow>
+				<mx:GridItem>
+					<mx:Label text="Type:"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:HBox width="100%" height="100%">
+					<mx:RadioButtonGroup id="_type"/>
+
+						<mx:RadioButton groupName="_type" value="component" label="component" /> 
+				        <mx:RadioButton groupName="_type" value="data category" label="data category" selected="true"/>
+						
+					</mx:HBox>
+				</mx:GridItem>					
+			</mx:GridRow>
+			<mx:GridRow>
+				<mx:GridItem>
+					<mx:Label text="Name:"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:TextArea id="_name"/>	
+				</mx:GridItem>					
+			</mx:GridRow>
+			<mx:GridRow>
+				<mx:GridItem>
+					<mx:Label text="Description:"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:TextArea id="_description"/>	
+				</mx:GridItem>					
+			</mx:GridRow>
+			<mx:GridRow>
+				<mx:GridItem>
+					<mx:Label text="Admin info"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:TextArea id="_adminInfo"/>	
+				</mx:GridItem>					
+			</mx:GridRow>
+			<mx:GridRow>
+				<mx:GridItem>
+					<mx:Label text="Mandatory:"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:CheckBox id="_mandatory"/>
+				</mx:GridItem>
+			</mx:GridRow>
+			<mx:GridRow>
+				<mx:GridItem>
+					<mx:Label text="Multiples allowed:"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:CheckBox id="_multiples" selected="true" />
+				</mx:GridItem>
+			</mx:GridRow>
+		</mx:Grid>	
+     	
+    </mx:Canvas>
+	
+    <mx:ControlBar horizontalAlign="center" width="100%">
+        <mx:Button id="okBtn" label="Ok" click="createSchemaElement();"  keyUp="onKeyUpOk(event)" enabled="false"/>
+        <mx:Button id="cancelBtn" label="Cancel" click="PopUpManager.removePopUp(this);"  keyUp="onKeyUpOk(event)" enabled="true"/>
+    </mx:ControlBar>
+	
+</mx:TitleWindow>

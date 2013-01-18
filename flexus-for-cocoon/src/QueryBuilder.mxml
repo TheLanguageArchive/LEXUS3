@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" xmlns:com="com.*" xmlns:local="*">
+	<mx:Script>
+		<![CDATA[
+			import com.adobe.serialization.json.JSON;
+			
+			import flash.sampler.getInvocationCount;
+			
+			import mx.collections.ArrayCollection;
+			import mx.collections.ArrayList;
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.effects.easing.Bounce;
+			import mx.events.CloseEvent;
+			import mx.events.ListEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			import nl.mpi.lexus.LexusUtil;
+			import nl.mpi.lexus.YesNo;
+			import nl.mpi.lexus.event.QueryElementChangeEvent;
+			import nl.mpi.lexus.service.LexusService;
+			
+			
+			
+			[Bindable] public var _queries: Array;
+			
+			/* Define a variable to be able to change the texts. Later, when we grow up we might have i18n, then a single var will be handy. */
+			[Bindable] public var texts_code:String = "query";
+			
+			private var lexusService: LexusService = new LexusService();
+			
+			public function set queries(data: Array): void {
+			    _queries = data;
+			}
+			
+			public function get queries(): Array {
+				return _queries;
+			}
+			
+			public function set lexicon(lexicon: Object): void {
+				queryBuilderList.lexicon = lexicon;
+				queryEditor.lexicon = lexicon;
+			}
+			
+			public function set availableLexica(availableLexica:Object): void {
+				// HHV: ALWAYS use the list of lexica from the Application level when it's available.
+				var al:Object = availableLexica;
+				if (FlexGlobals.topLevelApplication.lexica) {
+					al = FlexGlobals.topLevelApplication.lexica;					
+				}
+				queryEditor.availableLexica = al;
+			}
+			
+			
+			
+			public function requestSave(): Boolean {
+				if (saveNeeded()) {
+					queryEditor.requestSave();
+					return true;
+				}
+				return false;
+			}
+			
+			
+			public function saveNeeded(): Boolean {
+				return queryEditor.saveNeeded();
+			}
+			
+			public function save():void {
+				queryEditor.save();
+			}
+			
+			public function editable(editable:Boolean):void {
+				queryBuilderList.QL_addBTN.visible = editable;
+				queryBuilderList.QL_removeBTN.visible = editable;
+			}
+		]]>
+	</mx:Script>
+
+	<mx:Canvas height="100%" width="100%">
+		<mx:HBox height="100%" width="100%">
+			<local:QueryList id="queryBuilderList" width="25%" height="100%"
+							 queries="{_queries}" texts_code="{texts_code}" queryEditor="{queryEditor}"/>
+			<local:QueryEditor id="queryEditor" width="75%" height="100%" texts_code="{texts_code}" queryList="{queryBuilderList}"/>			
+		</mx:HBox>
+
+	</mx:Canvas>
+</mx:Canvas>
