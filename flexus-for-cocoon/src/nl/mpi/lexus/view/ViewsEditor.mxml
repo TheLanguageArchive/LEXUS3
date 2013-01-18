@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+		   xmlns:mpi="nl.mpi.lexus.*"
+		   width="100%" height="100%"
+		   initialize="init();"
+		   xmlns:view="nl.mpi.lexus.view.*">
+	
+	<mx:Script>
+		<![CDATA[			
+			
+			import mx.collections.XMLListCollection;
+			import mx.controls.Alert;
+			import mx.controls.Label;
+			import mx.core.FlexGlobals;
+			import mx.events.CloseEvent;
+			import mx.events.ListEvent;
+			
+			import nl.mpi.lexus.AutoSizeTree;
+			import nl.mpi.lexus.LexusUtil;
+			import nl.mpi.lexus.YesNo;
+			import nl.mpi.lexus.event.ViewChangeEvent;
+			import nl.mpi.lexus.service.LexusService;
+			
+			[Bindable] public var lexiconId:String = "";
+			[Bindable] public var editable:Boolean = false;
+			[Bindable] private var application:Object = FlexGlobals.topLevelApplication;
+			[Bindable] private var views:XML;
+			[Bindable] private var _schemaElementsTree:AutoSizeTree = null;
+			
+			private var lexusView:XML;
+			private var createNewViewFlag:Boolean = false;
+			private var _unsavedViewIndex:int = -1;
+			
+			
+			public function get unsavedViewIndex():int {
+				return _unsavedViewIndex;
+			}
+			
+			public function set unsavedViewIndex(value:int):void {
+				_unsavedViewIndex = value;
+			}
+			
+			public function get schemaElementsTree():AutoSizeTree {
+				return _schemaElementsTree;
+			}
+			
+			public function set schemaElementsTree(value:AutoSizeTree):void {
+				_schemaElementsTree = value;
+			}
+			
+			public function init():void {
+				viewEditor.addEventListener(ViewChangeEvent.SAVED_VIEW, savedViewHandler);
+			}
+			
+			public function getViews():void {
+				var lexusService:LexusService = new LexusService();
+				LexusUtil.showWait(this, "Loading views");
+				FlexGlobals.topLevelApplication.enabled = false;
+				lexusService.sendXMLAndParseXML("LexusSchemaEditor/getViews.xml?lexiconId="+this.lexiconId, <dummy/>,
+					function(data:XML):void {
+						views = data;
+						var vl:XMLListCollection = viewsListDataProvider;
+						var size:int = vl.length;
+						if (size > 0) {
+							var v:XML = vl[0];
+							viewsList.selectedIndex = 0;
+							viewEditor.visible = true;
+							callLater(getView, [v]);
+						} else
+							FlexGlobals.topLevelApplication.enabled = true;
+						callLater(initStandardViews);
+						LexusUtil.removeWait();						
+					}
+				);
+			}
+			
+			private function initStandardViews():void {
+				/* Select proper listView and lexicalEntryView options */
+				var id:String = views.@listView;
+				var view:XMLList = views.view.(@id == id);
+				if (view.length() > 0)
+					list_view.selectedItem = view[0];
+				else
+					list_view.selectedItem = -1;
+				
+				id = views.@lexicalEntryView;
+				view = views.view.(@id == id);
+				if (view.length() > 0) 
+					lexical_entry_view.selectedItem = view[0];
+				else
+					lexical_entry_view.selectedItem = -1;
+				this.setRemoveBtStatus();					
+			}
+			
+			private function setRemoveBtStatus():void{
+				if (list_view.selectedIndex == viewsList.selectedIndex || lexical_entry_view.selectedIndex == viewsList.selectedIndex) {
+					rmViewButton.source = application.removeIconGrayed;
+					rmViewButton.enabled = false;
+					if (list_view.selectedIndex == viewsList.selectedIndex)
+						rmViewButton.toolTip  = "The list view cannot be deleted. Pick another list view, then delete this view.";
+					else if (lexical_entry_view.selectedIndex == viewsList.selectedIndex)
+						rmViewButton.toolTip = "The lexical entry view cannot be deleted. Pick another lexical entry view, then delete this view.";
+				} else{
+					rmViewButton.source = application.removeIcon;
+					rmViewButton.enabled = true;
+					rmViewButton.toolTip = "Remove view";
+				}
+			}
+			
+			/**
+			 * Returns the icon identifying a view
+			 **/ 
+			private function getViewIcon(item:Object):Class{
+				return FlexGlobals.topLevelApplication.viewIconClass;
+			}
+			
+			private function onViewListChange(evt:ListEvent):void {
+				
+				if(viewEditor.viewXML.@id.toString() != viewsList.selectedItem.@id.toString()){
+					var loadItem:Function = function():void {
+						var item:XML = viewsList.selectedItem as XML;
+						viewEditor.visible = true;
+						getView(item);
+					};
+					
+					if (viewEditor.needsSave) {
+						YesNo.confirmSave("Do you want to save the view?", 
+							function(event:CloseEvent):void {
+								if (event.detail == Alert.YES) {
+									viewEditor.save();
+									//AAM:load selected view after saving.
+									getView(viewsList.selectedItem as XML);
+								}
+								else if (event.detail == Alert.NO) {
+									viewEditor.discard();								
+									loadItem.call();
+								}
+							}
+						);
+					}
+					else {
+						loadItem.call();
+					}
+					this.setRemoveBtStatus();
+				}
+			}
+			
+			public function removeDiscardedView():void{
+				var i:int = 0;
+				var item:XML = viewsList.selectedItem as XML;
+				for each (var it:XML in viewsListDataProvider){
+					if (it.@id.toString() == ""){
+						var idx:int = viewsList.selectedIndex;
+						viewsListDataProvider.removeItemAt(i);
+						viewsList.selectedIndex = idx < viewsListDataProvider.length ? idx : idx - 1;
+						item = viewsList.selectedItem as XML;
+						break;
+					}
+					i++;
+				}
+				if(createNewViewFlag == true){
+					createNewView();
+					FlexGlobals.topLevelApplication.enabled = true;
+					createNewViewFlag = false;
+				} else
+					getView(item);
+				
+				//AAM:bugfix. Operating over the dataprovider makes every visual element binded to it
+				//to loose its selection, so we reselect.
+				initStandardViews();
+			}
+			
+			/**
+			 * This method is called after a view has been saved by the viewEditor, 
+			 * the resulting view (XML) is sent to this component through an event,
+			 * so we can update the views list.
+			 * This is necessary, because when a new view is saved,
+			 * it acquires an @id attribute. The @id needs to be in our list.
+			 **/
+			public function savedViewHandler(event:ViewChangeEvent):void {
+				
+				var idx:int = viewsList.selectedIndex;
+				if (unsavedViewIndex != -1) {
+					//AAM: verify if the view we just saved is now previous in the list (happens when the save action was a consequence of
+					//a "save data request" due to the creation of a new view. Do not test in case it is the first view created.
+					var prevViewInListIndex:int = (viewsListDataProvider.length - 2) == -1 ? 0 : viewsListDataProvider.length - 2;
+					if (viewsListDataProvider.getItemAt(prevViewInListIndex).@id != "" || (viewsListDataProvider.length - 2) == -1){
+						
+						if(viewsList.selectedItem.@id.toString() == event.view.@id.toString() || viewsList.selectedItem.@id.toString() == ""){
+							viewEditor.viewXML = event.view;
+						}
+						viewsListDataProvider.setItemAt(event.view, unsavedViewIndex);
+					}
+					else
+						viewsListDataProvider.setItemAt(event.view, unsavedViewIndex - 1);
+					
+					//AAM:bugfix : Operating over the dataprovider makes every visual element binded to it
+					//to loose its selection, so we reselect.
+					viewsList.selectedIndex = idx;
+					initStandardViews();
+					
+					if (viewsList.selectedItem.@id != ""){
+						viewEditor.needsSave = false;
+					}
+				}
+				unsavedViewIndex = -1;
+				if(createNewViewFlag == true){
+					createNewView();
+					FlexGlobals.topLevelApplication.enabled = true;
+					createNewViewFlag = false;
+				}
+			}
+			
+			private function getView(view:XML):void {
+				if(view == null){
+					viewEditor.needsSave = false;
+					viewEditor.visible = false;
+					return;
+				}
+				var lexusService:LexusService = new LexusService();
+				LexusUtil.showWait(this, "Loading view");
+				var id:String = view.@id;
+				var operatingView:XMLList = views.view.(@id == id);
+				//Fetch the full view from the server if it was not fetched before
+				if (operatingView[0].descendants() < 1){
+					FlexGlobals.topLevelApplication.enabled = false;
+					lexusService.sendXMLAndParseXML("LexusSchemaEditor/getView.xml", view,
+						function(data:XML):void {
+							viewEditor.viewXML = data;
+							viewEditor.structureTree.selectedIndex = 0;
+							viewEditor.needsSave = false;
+							viewEditor.lexiconId = lexiconId;
+							
+							//Replace the incomplete view initialy fetched by getViews() by the full
+							//view just fetched here.
+							var idx:int = viewsList.selectedIndex;
+							operatingView[0] = new XMLList(data);
+							viewsList.selectedIndex = idx;
+							initStandardViews();
+							
+							LexusUtil.removeWait();
+							FlexGlobals.topLevelApplication.enabled = true;
+						}
+					);
+				} else {
+					//AAM: Big trees, with many branch and leaf nodes take long time to expand
+					//(more than a second for some views) making the UI feel laggy when reloding 
+					//them. Thus for these trees, we wait 50 ms before loading them to allow the 
+					//screen lock to appear, giving feedback to the user that the UI is busy.
+					//For a tree to be considered 'big' we define the value of 20 decendant nodes 
+					//for its structure.
+					if (operatingView[0].structure.descendants().length() > 20){
+						LexusUtil.showWait(this, "Loading view");
+						FlexGlobals.topLevelApplication.enabled = false;
+						setTimeout(loadStoredView, 50, operatingView);
+					} else
+						loadStoredView(operatingView);
+				}
+			}
+			
+			private function loadStoredView(operatingView:XMLList):void {
+				viewEditor.viewXML = operatingView[0];
+				viewEditor.structureTree.selectedIndex = 0;
+				viewEditor.needsSave = false;
+				viewEditor.lexiconId = lexiconId;
+				LexusUtil.removeWait();
+				FlexGlobals.topLevelApplication.enabled = true;
+			}
+			
+			private function removeView(event:MouseEvent):void {
+				if (list_view.selectedIndex == viewsList.selectedIndex) {
+					YesNo.alert("The list view cannot be deleted. Pick another list view, then delete this view.");
+					return;
+				}
+				if (lexical_entry_view.selectedIndex == viewsList.selectedIndex) {
+					YesNo.alert("The lexical entry view cannot be deleted. Pick another lexical entry view, then delete this view.");
+					return;
+				}
+				YesNo.confirmDelete("Are you sure you want to remove this view?",
+					function(event:CloseEvent):void {
+						if (event.detail == Alert.YES) {
+							var lexusService:LexusService = new LexusService();
+							FlexGlobals.topLevelApplication.enabled = false;
+							LexusUtil.showWaitWindow("Removing view");
+							lexusService.sendXMLAndParseXML("LexusSchemaEditor/deleteView.xml", viewsList.selectedItem as XML, function(data:XML):void { onDeleteViewResult( data) });	
+						} 
+					}
+				);
+			}
+			
+			private function onDeleteViewResult(data:XML):void {
+				var success:String = data.@success;
+				var done:Boolean = success == "true";
+				var id:String = data.view.@id;
+				if (done) {
+					var idx:int = 0;
+					for each(var item:XML in viewsListDataProvider){
+						if(item.@id  == id)
+							break;
+						idx++;						
+					}
+					viewsListDataProvider.removeItemAt(idx);
+					var newIndex:int = idx;
+					if (newIndex >= viewsListDataProvider.length) {
+						newIndex = viewsListDataProvider.length -1;
+					}
+					if (newIndex > -1) {
+						viewsList.selectedIndex = newIndex;
+						getView(viewsList.selectedItem as XML);
+					}
+					else { 
+						viewEditor.visible = false;
+						unsavedViewIndex = -1;
+					}
+				}
+				//AAM: reselect list and entry view. It is unclear why they lose selection upon delete operation
+				initStandardViews();
+				FlexGlobals.topLevelApplication.enabled = true;
+				LexusUtil.removeWait();
+			}
+			
+			private function newView(event:MouseEvent):void {
+				if (viewEditor.needsSave) {
+					YesNo.confirmSave("Do you want to save the view?", 
+						function(event:CloseEvent):void {
+							if (event.detail == Alert.YES) {
+								FlexGlobals.topLevelApplication.enabled = false;
+								viewEditor.save();
+								//Raise a new view flag so the new view gets created just after the response from the save arrived.
+								createNewViewFlag = true;
+							}
+							else if (event.detail == Alert.NO) {
+								createNewViewFlag = true;
+								viewEditor.discard();
+							}
+						}
+					);
+				} else {
+					this.createNewView();
+				}
+			}
+			
+			private function createNewView():void{
+				var newViewName:String = "What a view!";
+				var i:int = 1;
+
+				for (var j:int = 0; j < viewsListDataProvider.length; j++){
+					var viewName:Object = viewsListDataProvider[j].@name;
+					if (viewName == newViewName){
+						newViewName = "What a view! " + i;
+						i++;
+						j = -1;
+					}
+				}
+				var newView:XML = viewEditor.newView(this.lexiconId, newViewName);
+				
+				//AAM: inserting the new item at a specific position as the side effect of reseting the dataProvider,
+				//subsequently all the selections made on UI elements which depend on this same dataprovider are lost.
+				//So we insert the new item at the end and select the last position.
+				viewsListDataProvider.addItem(newView);
+				viewsList.selectedIndex = viewsListDataProvider.length;
+				unsavedViewIndex = viewsList.selectedIndex;
+				viewEditor.visible = true;
+				this.setRemoveBtStatus();	
+			}
+			
+			protected function standard_view_changeHandler(event:ListEvent):void {
+				if(list_view.selectedItem.@id == '' ||lexical_entry_view.selectedItem.@id == ''){
+					YesNo.alert("Newly created views have to be saved before they can be assigned.");
+					initStandardViews();
+					return;
+				}
+				var lexusService:LexusService = new LexusService();
+				var sv:XML = <standardViews/>;
+				sv.@listView = list_view.selectedItem.@id;
+				sv.@lexicalEntryView = lexical_entry_view.selectedItem.@id;
+				if (sv.@listView == sv.@lexicalEntryView) {
+					YesNo.alert("List view and lexical entry view must be different.");
+					initStandardViews();
+				}
+				else {
+					lexusService.sendXMLAndParseXML(
+						"LexusSchemaEditor/saveStandardView.xml?lexiconId="+this.lexiconId, sv,
+						function(data:XML):void {
+							views.@listView = sv.@listView;
+							views.@lexicalEntryView = sv.@lexicalEntryView;
+							initStandardViews();
+						}
+					);
+				}
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:Canvas id="viewEditorTab" label="View editor"  width="100%" height="100%" enabled="{editable}">
+		<mx:HBox width="100%" height="100%">
+			<mx:VBox width="15%" height="100%">
+				<mx:Panel width="100%" height="70%" title="Available views">
+					<mpi:AutoSizeList id="viewsList" width="100%" height="100%" 
+									  dataProvider="{viewsListDataProvider}"
+									  change="onViewListChange(event)" labelField="@name"
+									  iconFunction="getViewIcon" selectedIndex="-1"/>
+					<mx:ControlBar horizontalAlign="left" width="100%">
+						<mx:Image id="addViewButton"
+							source="{application.addIcon}"
+							click="newView(event)" toolTip="Add view"/>
+						<mx:Image id="rmViewButton"
+							source="{application.removeIcon}"
+							click="removeView(event)" toolTip="Remove view"/>
+					</mx:ControlBar>
+				</mx:Panel>
+				<mx:Panel width="100%" height="100%" maxHeight="160" title="Apply Views">
+					<mx:VBox width="100%" height="100%">
+						<mx:Label text="List view"/>
+						<mx:ComboBox id="list_view" dataProvider="{viewsListDataProvider}" labelField="@name" change="standard_view_changeHandler(event)"/>
+					</mx:VBox>
+					<mx:VBox width="100%" height="100%">
+						<mx:Label text="Lexical entry view"/>
+						<mx:ComboBox id="lexical_entry_view" dataProvider="{viewsListDataProvider}" labelField="@name" change="standard_view_changeHandler(event)"/>
+					</mx:VBox>
+				</mx:Panel>
+			</mx:VBox>
+			<view:ViewEditor id="viewEditor" visible="false" width="85%" height="100%" schemaElementsTree="{_schemaElementsTree}"/>
+		</mx:HBox> 
+	</mx:Canvas>
+	<mx:XMLListCollection id="viewsListDataProvider" source="{views.view}" />
+</mx:Canvas>

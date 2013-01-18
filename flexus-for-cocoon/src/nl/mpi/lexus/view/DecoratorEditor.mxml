@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:NodeEditor xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:view="nl.mpi.lexus.view.*">
+	
+	<mx:Script>
+		<![CDATA[
+			import nl.mpi.lexus.event.ValueChangeEvent;
+			
+			/**
+			 *  Event listener for the valid and invalid events.
+			 **/ 
+			private function validateBlockSize(vChangeEvent:ValueChangeEvent):void {
+				if((vChangeEvent.value as String).search('px') > 0 || (vChangeEvent.value as String).search('%') > 0 || (vChangeEvent.value as String) == '') {   
+					// Enable saveBtn button.
+					okBtn.enabled = true;
+					okBtn.toolTip = "";
+				}
+				else {
+					okBtn.enabled = false;
+					okBtn.toolTip = "Block sizes must be either specified in pixels, for absolute sizing (ex: 300px) " +
+						"or in percentage, for relative sizing (ex: 15%).";
+				}			
+			
+			}
+		]]>
+	</mx:Script>
+	<mx:VBox id="show">
+		<mx:Panel title="Block" width="100%">
+			<mx:HBox>
+				<mx:Grid>
+					<mx:GridRow>
+						<mx:GridItem>
+							<mx:Label text="Display as separate block"/>
+						</mx:GridItem>
+						<mx:GridItem>
+							<mx:CheckBox id="block" selected="{_value.@block == 'true'}"/>
+						</mx:GridItem>
+					</mx:GridRow>
+					<mx:GridRow>
+						<mx:GridItem>
+							<mx:Label text="Include only when content available" includeInLayout="{this._value.@type == 'dsl_show'}"
+									  	visible="{this._value.@type == 'dsl_show'}"/>
+						</mx:GridItem>
+						<mx:GridItem>
+							<mx:CheckBox id="optional" selected="{_value.@optional == 'true'}" includeInLayout="{this._value.@type == 'dsl_show'}"
+										visible="{this._value.@type == 'dsl_show'}"/>
+						</mx:GridItem>
+					</mx:GridRow>	
+				</mx:Grid>
+				<mx:Grid>
+					<mx:GridRow>
+						<mx:GridItem>
+							<mx:Spacer width="50"/>
+						</mx:GridItem>
+						<mx:GridItem>
+							<mx:Label text="Width:"/>
+						</mx:GridItem>
+						<mx:GridItem>
+							<mx:TextInput id="dsl_width_value" restrict="0-9 % px" toolTip="Block sizes must be either specified in pixels, for absolute sizing (ex: 300px) or in percentage, for relative sizing (ex: 15%)."
+									  width="50" 
+									  text="{_value.@width}"
+									  change="validateBlockSize(new ValueChangeEvent('change', dsl_width_value.text))"/>
+						</mx:GridItem>
+						<mx:GridItem>
+							<mx:Label text="Height:"/>
+						</mx:GridItem>
+						<mx:GridItem>
+							<mx:TextInput id="dsl_height_value" restrict="0-9 % px" toolTip="Block sizes must be either specified in pixels, for absolute sizing (ex: 300px) or in percentage, for relative sizing (ex: 15%)."
+										  width="50" 
+										  text="{_value.@height}"
+										  change="validateBlockSize(new ValueChangeEvent('change', dsl_height_value.text))"/>
+						</mx:GridItem>
+					</mx:GridRow>
+				</mx:Grid>
+			</mx:HBox>
+		</mx:Panel>
+		<mx:Panel title="Font" width="100%">
+			<mx:VBox paddingLeft="10" paddingRight="10" paddingTop="10" paddingBottom="10">
+				<mx:HBox>
+					<!-- <mx:Label text="Family:"/> -->
+					<view:FontStyleList id="show_fontFamily" selectedFontName="{_value.@fontFamily}"/>
+				</mx:HBox>
+				<mx:Text fontSize="8" color="#FF0000" text="Use Helvetica, Times, Courier, Symbol or ZapfDingbats for PDF fonts."/>
+				<mx:Spacer height="10"/>
+				<mx:HBox>
+					<mx:VBox>
+						<mx:HBox>
+							<mx:Label text="Color:" enabled="{this.clearColor.selected ? false : true}"/>
+							<mx:ColorPicker id="show_cp" showTextField="true" enabled="{this.clearColor.selected ? false : true}"
+											selectedColor="{_value.@color}" />
+							<mx:Button id="clearColor" toggle="true" label="Inherited" height="22"
+									   selected="{_value.hasOwnProperty('@color') ? false : true}"/>
+						</mx:HBox>
+						<mx:Spacer height="10"/>
+						<mx:HBox>
+							<mx:Label text="Size:" enabled="{show_fontSize.selectedIndex > 0}"/>
+							<mx:ComboBox id="show_fontSize" selectedItem="{(_value.hasOwnProperty('@fontSize') &amp;&amp; _value.@fontSize != null)  ? _value.@fontSize : 'Inherited'}"> 
+								<mx:dataProvider>
+									<mx:String>Inherited</mx:String>
+									<mx:String>8</mx:String>
+									<mx:String>10</mx:String>
+									<mx:String>12</mx:String>
+									<mx:String>14</mx:String>
+									<mx:String>18</mx:String>
+									<mx:String>20</mx:String>
+								</mx:dataProvider>
+							</mx:ComboBox>
+						</mx:HBox>
+					</mx:VBox>
+					<mx:Spacer width="20"/>
+					<mx:Grid>
+						<mx:GridRow>
+							<mx:GridItem>
+								<mx:Label text="Bold:" enabled="{!this.fontWeight_disabled.selected}" fontFamily="Verdana" fontWeight="bold"/>
+							</mx:GridItem>
+							<mx:GridItem>
+								<mx:HBox>
+									<mx:RadioButton groupName="fontWeight" id="fontWeight_bold" label="Yes" selected="{_value.@fontWeight == 'bold'}"/>
+									<mx:RadioButton groupName="fontWeight" id="fontWeight_normal" label="No" selected="{_value.@fontWeight == 'normal'}"/>
+								</mx:HBox>
+							</mx:GridItem>
+							<mx:GridItem>
+								<mx:RadioButton groupName="fontWeight" id="fontWeight_disabled" label="Inherited" selected="{!_value.hasOwnProperty('@fontWeight')}"/>
+							</mx:GridItem>
+						</mx:GridRow>
+						<mx:GridRow>
+							<mx:GridItem>
+								<mx:Label text="Italic:" enabled="{!this.fontStyle_disabled.selected}" fontFamily="Verdana" fontStyle="italic"/>
+							</mx:GridItem>
+							<mx:GridItem>
+								<mx:HBox>
+									<mx:RadioButton groupName="fontStyle" id="fontStyle_italic" label="Yes" selected="{_value.@fontStyle == 'italic'}"/>
+									<mx:RadioButton groupName="fontStyle" id="fontStyle_normal" label="No" selected="{_value.@fontStyle == 'normal'}"/>
+								</mx:HBox>
+							</mx:GridItem>
+							<mx:GridItem>
+								<mx:RadioButton groupName="fontStyle" id="fontStyle_disabled" label="Inherited" selected="{!_value.hasOwnProperty('@fontStyle')}"/>
+							</mx:GridItem>
+						</mx:GridRow>
+						<mx:GridRow>
+							<mx:GridItem>
+								<mx:Label text="Underlined:" enabled="{!this.textDecoration_disabled.selected}" fontFamily="Verdana" textDecoration="underline"/>
+							</mx:GridItem>
+							<mx:GridItem>
+								<mx:HBox>
+									<mx:RadioButton groupName="textDecoration" id="textDecoration_underline" label="Yes" selected="{_value.@textDecoration == 'underline'}"/>
+									<mx:RadioButton groupName="textDecoration" id="textDecoration_none" label="No" selected="{_value.@textDecoration == 'none'}"/>
+								</mx:HBox>
+							</mx:GridItem>
+							<mx:GridItem>
+								<mx:RadioButton groupName="textDecoration" id="textDecoration_disabled" label="Inherited" selected="{!_value.hasOwnProperty('@textDecoration')}"/>
+							</mx:GridItem>
+						</mx:GridRow>
+						<mx:GridRow height="10"/>
+						<mx:GridRow>
+							<mx:GridItem>
+								<mx:Label text="Alignment:" enabled="{!this.textAlign_disabled.selected}" fontFamily="Verdana"/>
+							</mx:GridItem>
+							<mx:GridItem>
+								<mx:HBox>
+									<mx:RadioButton groupName="textAlign" id="textAlign_left" label="Left" labelPlacement="left" textAlign="left" selected="{_value.@textAlign == 'left'}"/>
+									<mx:RadioButton groupName="textAlign" id="textAlign_center" label="Center" labelPlacement="top" textAlign="center" selected="{_value.@textAlign == 'center'}"/>
+									<mx:RadioButton groupName="textAlign" id="textAlign_right" label="Right" labelPlacement="right" textAlign="right" selected="{_value.@textAlign == 'right'}"/>
+								</mx:HBox>
+							</mx:GridItem>
+							<mx:GridItem>
+								<mx:RadioButton groupName="textAlign" id="textAlign_disabled" label="Inherited" selected="{!_value.hasOwnProperty('@textAlign')}"/>
+							</mx:GridItem>
+						</mx:GridRow>
+					</mx:Grid>
+				</mx:HBox>
+			</mx:VBox>
+		</mx:Panel>		
+		<mx:HBox>
+			<mx:Label text="Define CSS class (used for defining CSS in the Lexical Entry View)"/>
+			<mx:CheckBox id="localStyle" selected="{_value.@localStyle == 'false'}"/>
+		</mx:HBox>
+		<mx:HBox includeInLayout="{localStyle.selected == true}" visible="{localStyle.selected == true}">
+			<mx:Label text="Class:"/>
+			<mx:TextInput id="dsl_class_attribute_value" restrict="0-9 a-z A-Z _\-"
+						  width="150" 
+						  text="{_value.@dsl_class}"
+						  enter="done()"/>
+		</mx:HBox>
+		<mx:HBox width="100%">
+			<mx:Spacer width="100%"/>
+			<mx:Button name="cancel" label="Cancel" click="quit();"/>
+			<mx:Spacer width="10%"/>
+			<mx:Button name="ok" id="okBtn" label="Ok" click="done();"/>
+			<mx:Spacer width="100%"/>
+		</mx:HBox>
+	</mx:VBox>
+	
+</view:NodeEditor>

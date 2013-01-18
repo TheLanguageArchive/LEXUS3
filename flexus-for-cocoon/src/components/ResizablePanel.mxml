@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ResizeablePanel: displays a min/max text in the status field. 
+When clicked, minimizes/maximizes the panel. -->
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"  
+	creationComplete="setText()" borderAlpha="1">
+	<mx:Script>
+		<![CDATA[
+			private var originalHeight:uint;
+			private function clickedText(evt:MouseEvent):void{
+				if (this.status == "min"){
+					this.status = "max";
+					this.width = 490;
+				} 
+				else{
+					this.status = "min";
+					this.width = 780;					
+				}
+			}
+			
+			private function setText():void{
+				originalHeight = this.height;
+				this.status = "max";		
+				this.statusTextField.addEventListener(MouseEvent.CLICK, clickedText);
+			}			
+		]]>
+	</mx:Script>
+</mx:Panel>

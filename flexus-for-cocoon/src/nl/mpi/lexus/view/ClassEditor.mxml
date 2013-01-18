@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:NodeEditor xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:view="nl.mpi.lexus.view.*">
+	
+	<!-- Let the user edit the class attribute.-->
+	<mx:VBox id="classattr">
+		<mx:HBox>
+			<mx:HBox>
+				<mx:Label text="Width:"/>
+				<mx:TextInput id="dsl_width_value" restrict="0-9 % px"
+							  width="50" 
+							  text="{_value.@width}"
+							  enter="done()"/>
+			</mx:HBox>
+			<mx:HBox>
+				<mx:Label text="Height:"/>
+				<mx:TextInput id="dsl_height_value" restrict="0-9 % px"
+							  width="50" 
+							  text="{_value.@height}"
+							  enter="done()"/>
+			</mx:HBox>
+		</mx:HBox>
+		<mx:HBox>
+			<mx:Label text="Class:"/>
+			<mx:TextInput id="dsl_class_attribute_value" restrict="0-9 a-z A-Z _\-"
+						  width="100%" 
+						  text="{_value.@dsl_class}"
+						  enter="done()"/>
+		</mx:HBox>
+		<mx:HBox width="100%">
+			<mx:Button name="cancel" label="Cancel" click="quit();"/>
+			<mx:Spacer width="100%"/>
+			<mx:Button name="ok" label="Ok" click="done();"/>			
+		</mx:HBox>
+	</mx:VBox>	
+</view:NodeEditor>

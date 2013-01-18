@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<actionScriptProperties mainApplicationPath="Lexus.mxml" projectUUID="1d00b31e-c448-442d-bba7-038a6e1f6e5f" version="6">
+  <compiler additionalCompilerArguments="-locale en_US -link-report link-report.xml  -optimize=true -debug=true" autoRSLOrdering="true" copyDependentFiles="true" flex3CompatMode="true" flexSDK="Apache Flex 4.8.0" fteInMXComponents="false" generateAccessible="true" htmlExpressInstall="true" htmlGenerate="true" htmlHistoryManagement="true" htmlPlayerVersionCheck="true" includeNetmonSwc="false" outputFolderPath="bin-debug" sourceFolderPath="src" strict="true" targetPlayerVersion="0.0.0" useApolloConfig="false" useDebugRSLSwfs="true" verifyDigests="true" warn="true">
+    <compilerSourcePath/>
+    <libraryPath defaultLinkType="3">
+      <libraryPathEntry kind="4" path=""/>
+      <libraryPathEntry kind="1" linkType="1" path="libs"/>
+    </libraryPath>
+    <sourceAttachmentPath/>
+  </compiler>
+  <theme themeIsDefault="false" themeIsSDK="true" themeLocation="${SDK_THEMES_DIR}/frameworks/themes/Halo"/>
+  <applications>
+    <application path="Lexus.mxml"/>
+    <application path="EntryViewer.mxml"/>
+    <application path="LexusWebService.mxml"/>
+  </applications>
+  <modules>
+    <module application="src/Lexus.mxml" destPath="SchemaEditor.swf" optimize="true" sourcePath="src/SchemaEditor.mxml"/>
+    <module application="src/Lexus.mxml" destPath="LexiconBrowser.swf" optimize="true" sourcePath="src/LexiconBrowser.mxml"/>
+    <module application="src/Lexus.mxml" destPath="Workspace.swf" optimize="true" sourcePath="src/Workspace.mxml"/>
+  </modules>
+  <buildCSSFiles/>
+</actionScriptProperties>

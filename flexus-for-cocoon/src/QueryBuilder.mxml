@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" xmlns:local="*">
+	<mx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.core.FlexGlobals;
+			
+			import nl.mpi.lexus.service.LexusService;
+			
+			
+			
+			[Bindable] private var _queries: ArrayCollection;
+			
+			/* Define a variable to be able to change the texts. Later, when we grow up we might have i18n, then a single var will be handy. */
+			[Bindable] public var texts_code:String = "query";
+			[Bindable] public var searchComponent:SearchComponent;
+			
+			
+			private var lexusService: LexusService = new LexusService();
+			
+			public function set queries(data: ArrayCollection): void {
+				_queries = data;
+			}
+			
+			public function get queries(): ArrayCollection {
+				return _queries;
+			}
+			
+			public function set lexicon(lexicon: Object): void {
+				queryBuilderList.lexicon = lexicon;
+				queryEditor.lexicon = lexicon;
+			}
+			
+			public function set availableLexica(availableLexica:Object): void {
+				// HHV: ALWAYS use the list of lexica from the Application level when it's available.
+				var al:Object = availableLexica;
+				if (FlexGlobals.topLevelApplication.lexica) {
+					al = FlexGlobals.topLevelApplication.lexica;					
+				}
+				queryEditor.availableLexica = al;
+			}
+			
+			
+			
+			public function requestSave(): Boolean {
+				if (saveNeeded()) {
+					queryEditor.requestSave();
+					return true;
+				}
+				return false;
+			}
+			
+			
+			public function saveNeeded(): Boolean {
+				return queryEditor.saveNeeded();
+			}
+			
+			public function save():void {
+				queryEditor.save();
+			}
+			
+			public function editable(editable:Boolean):void {
+				queryBuilderList.QL_addBTN.visible = editable;
+				queryBuilderList.QL_removeBTN.visible = editable;
+				queryEditor.addBTN.visible = editable;
+				queryEditor.removeBTN.visible = editable;
+				queryEditor.modifyBTN.visible = editable;
+				queryEditor.queryTree.doubleClickEnabled = editable;
+				queryEditor.queryTree.selectable = editable;
+				queryEditor.queryTree.selectedIndex = -1;
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:Canvas height="100%" width="100%">
+		<mx:HBox height="100%" width="100%">
+			<local:QueryList id="queryBuilderList" width="25%" height="100%"
+							 queries="{_queries}" texts_code="{texts_code}" queryEditor="{queryEditor}" searchComponent="{searchComponent}"/>
+			<local:QueryEditor id="queryEditor" width="75%" height="100%" texts_code="{texts_code}" queryList="{queryBuilderList}"/>			
+		</mx:HBox>
+	</mx:Canvas>
+</mx:Canvas>

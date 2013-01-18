@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+    title="New schema element"
+    showCloseButton="true"
+    close="PopUpManager.removePopUp(this);"  width="500" height="400">
+
+	<mx:Metadata>
+        [Event(name="new", type="nl.mpi.lexus.event.NewSchemaElementEvent")]
+    </mx:Metadata>
+    
+
+    <mx:Script>
+        <![CDATA[
+        	import mx.collections.ArrayCollection;
+        	import mx.events.ValidationResultEvent;
+        	import mx.managers.PopUpManager;
+        	
+        	import nl.mpi.lexus.YesNo;
+        	import nl.mpi.lexus.event.NewSchemaElementEvent;
+			
+			[Bindable][Embed(source="../assets/images/iconza_24x24/warning_24x24.png")] private var warnIcon:Class;
+
+			[Bindable]
+			private var _futureSibblings: ArrayCollection;
+						
+			
+			// Define public getter.
+			public function get futureSibblings():ArrayCollection {
+				return _futureSibblings;
+			}
+			
+			// Define public setter. 
+			public function set futureSibblings(value:ArrayCollection):void {
+				_futureSibblings = value;
+			}
+                    
+          
+            private function onKeyUpOk(event:KeyboardEvent):void{
+            	//Enter pressed
+            	if( event.keyCode == 13)
+	               this.createSchemaElement();
+            }
+            
+            
+            private function createSchemaElement():void{
+            	
+				switch( this.checkNewElementData()){
+					//success -> save
+					case 0 :
+						var schemaElement:Object = new Object();
+						schemaElement.name = _name.text;
+						schemaElement.description = _description.text;
+						schemaElement.adminInfo = _adminInfo.text;
+						schemaElement.min = _mandatory.selected?"1":"0";
+						schemaElement.max = _multiples.selected?null:"1";
+						schemaElement.type= _type.selectedValue;
+						
+						switch( schemaElement.type){
+							case "container":
+								schemaElement.children = new Array();
+								break;
+							case "data category":
+								//schemaElement.children = null;
+								schemaElement.DCR = null;
+								schemaElement.DCRReference = null;
+								schemaElement.valuedomain = null;
+								break;
+						}
+						var event:Event = new NewSchemaElementEvent("new", schemaElement);
+						dispatchEvent( event);
+						PopUpManager.removePopUp(this);
+						break;
+					case 001 :
+						YesNo.alert("A schema element with the name \"" + _name.text +"\" already exists!\nPlease choose a different name for the new schema element.");
+						break;
+					
+				}
+  	
+            }
+             // Event listener for the valid and invalid events.
+            private function handleValid(eventObj:ValidationResultEvent):void {
+                if(eventObj.type==ValidationResultEvent.VALID && _name.text != "")    
+                    // Enable saveBtn button.
+                    okBtn.enabled = true;
+                else
+                    okBtn.enabled = false;
+            }
+			
+			/**
+			 *  Event listener for the valid and invalid events.
+			 **/ 
+			private function handleValidName(eventObj:ValidationResultEvent):void {
+				if(eventObj.type==ValidationResultEvent.VALID && _type.selectedValue != null)    
+					// Enable saveBtn button.
+					okBtn.enabled = true;
+				else
+					okBtn.enabled = false;
+			}
+
+
+			protected function _name_changeHandler(event:Event):void
+			{
+
+					switch( this.checkNewElementData()){
+						//success
+						case 0:
+							warnIco.visible = false;
+							break;
+						case 001:
+							warnIco.visible = true;
+							break;					
+					}
+			}
+			
+			protected function checkNewElementData():int
+			{
+				var invalid:int = 0;
+				for each (var item:Object in futureSibblings){
+					if (item.name.toString() == _name.text && item.type == _type.selectedValue){
+						invalid = 001;
+					}
+				}
+				return invalid;	
+			}
+
+			protected function typeChangeHandler(event:Event):void
+			{
+				this._name_changeHandler(event);
+			}
+
+        ]]>
+    </mx:Script>
+	
+<mx:StringValidator id="reqValidName" source="{_name}" property="text" triggerEvent="change"
+						minLength="1" valid="handleValidName(event)" invalid="handleValidName(event)"/>
+ 
+<mx:Validator id="reqValid" required="true"
+        source="{_type}" property="selectedValue" 
+        valid="handleValid(event)" invalid="handleValid(event)"/>
+        
+    <mx:Canvas width="100%" height="100%">
+	    <mx:Grid width="100%">
+	    	<mx:GridRow>
+				<mx:GridItem>
+					<mx:Label text="Type:"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:HBox width="100%" height="100%">
+					<mx:RadioButtonGroup id="_type" change="typeChangeHandler(event)"/>
+
+						<mx:RadioButton groupName="_type" value="container" label="container" /> 
+				        <mx:RadioButton groupName="_type" value="data category" label="data category" selected="true"/>
+						
+					</mx:HBox>
+				</mx:GridItem>					
+			</mx:GridRow>
+			<mx:GridRow>
+				<mx:GridItem>
+					<mx:Label text="Name:"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:TextArea id="_name" change="_name_changeHandler(event)"/>	
+				</mx:GridItem>
+				<mx:GridItem verticalAlign="middle">
+					<mx:Image id="warnIco" source="{warnIcon}" visible="false" 
+							  toolTip="A schema element with the name &quot;{_name.text}&quot; already exists! &#xa;Please choose a different name for the new schema element."
+							  height="16" width="16"/>	
+				</mx:GridItem>
+			</mx:GridRow>
+			<mx:GridRow>
+				<mx:GridItem>
+					<mx:Label text="Description:"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:TextArea id="_description"/>	
+				</mx:GridItem>					
+			</mx:GridRow>
+			<mx:GridRow>
+				<mx:GridItem>
+					<mx:Label text="Admin info"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:TextArea id="_adminInfo"/>	
+				</mx:GridItem>					
+			</mx:GridRow>
+			<mx:GridRow>
+				<mx:GridItem>
+					<mx:Label text="Mandatory:"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:CheckBox id="_mandatory"/>
+				</mx:GridItem>
+			</mx:GridRow>
+			<mx:GridRow>
+				<mx:GridItem>
+					<mx:Label text="Multiples allowed:"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:CheckBox id="_multiples" selected="true" />
+				</mx:GridItem>
+			</mx:GridRow>
+		</mx:Grid>	
+     	
+    </mx:Canvas>
+	
+    <mx:ControlBar horizontalAlign="center" width="100%">
+        <mx:Button id="okBtn" label="Ok" click="createSchemaElement()"  keyUp="onKeyUpOk(event)" enabled="false"/>
+        <mx:Button id="cancelBtn" label="Cancel" click="PopUpManager.removePopUp(this);"  keyUp="onKeyUpOk(event)" enabled="true"/>
+    </mx:ControlBar>
+	
+</mx:TitleWindow>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+    title="About Lexus" creationComplete="init()"
+    showCloseButton="true"
+    close="close()" width="420" height="100%">
+
+    <mx:Script>
+        <![CDATA[
+			import flash.net.navigateToURL;
+			
+			import mx.core.FlexGlobals;
+			import mx.events.MenuEvent;
+			import mx.events.ValidationResultEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			import nl.mpi.lexus.YesNo;
+			import nl.mpi.lexus.service.LexusService;
+                    
+            [Bindable]
+            public var lexusInfo:XML;
+			
+			public var parentModule:Object;
+		
+			[Bindable]
+			private var application:Object = FlexGlobals.topLevelApplication;
+            
+			[Bindable][Embed(source="../assets/images/MPI-logo.gif")] public var MPIlogo:Class;
+			
+			private var lexusService:LexusService = new LexusService();
+
+            private function onKeyUpOk(event:KeyboardEvent):void {
+            	//Enter pressed
+            	if (event.keyCode == 13)
+	               	close();
+            }
+			
+			
+			public function init():void {
+				lexusService.send("aboutLexus.xml", null, "", loadAboutLexus);
+				okBtn.setFocus();
+			}
+			
+			private function loadAboutLexus(event:ResultEvent):void {
+				lexusInfo = XML(event.result);
+			}
+
+			protected function fortune_clickHandler(event:MouseEvent):void
+			{
+				var popForum:Fortune = Fortune(PopUpManager.createPopUp(this,Fortune,true));
+				PopUpManager.centerPopUp(popForum);
+			}
+			
+			private function close():void {
+				PopUpManager.removePopUp(this)
+				if(this.parentModule != null && this.parentModule.rightTabNav.selectedChild != this.parentModule.lexicalEntryEditor)
+					this.parentModule.iFrame.visible = true;
+			}
+			
+			protected function mpiLogo_clickHandler(event:MouseEvent):void
+			{
+				navigateToURL(new URLRequest("http://www.mpi.nl"));
+			}
+
+        ]]>
+    </mx:Script>
+
+    <mx:Canvas width="100%" height="100%">
+	     <mx:VBox width="100%" height="100%" horizontalAlign="center" borderColor="green"> <!--  borderThickness="1" -->
+	     	<mx:Image source="{MPIlogo}" click="mpiLogo_clickHandler(event)" buttonMode="true"/>
+ 			<mx:HBox verticalAlign="middle" textAlign="center">
+		     	<mx:Image source="{application.lexusIconSmall}" click="fortune_clickHandler(event)" buttonMode="true"/>
+				<mx:Text styleName="aboutLexusName">
+					<mx:htmlText>
+						<![CDATA[<a href="http://tla.mpi.nl/tools/tla-tools/lexus" target="_blank">LEXUS</a>]]>
+					</mx:htmlText>
+				</mx:Text>
+				<mx:Text styleName="LexusWSLink">
+					<mx:htmlText>
+						<![CDATA[<a href="http://tla.mpi.nl/tools/tla-tools/lexus" target="_blank">(webpage)</a>]]>
+					</mx:htmlText>
+				</mx:Text>
+			</mx:HBox>
+	     	<mx:HBox styleName="aboutLexusVersion" textAlign="center" >
+	     		<mx:Text text="Version {lexusInfo.version}"/> 
+				<mx:Text text="(revision {lexusInfo.scm.revision})"/>
+	     	</mx:HBox>
+			<mx:Spacer height="10"/>
+	     	<mx:Text styleName="aboutLexusDescription" width="100%" textAlign="center">
+				<mx:htmlText>
+					<![CDATA[Lexus is a lexicon tool developed by The Language Archive at the Max Planck Institute for Psycholinguistics (MPI), Nijmegen, The Netherlands.&#13;&#13;For assistance or more information please contact us at:&#13;<a href="mailto:lexus@mpi.nl" target="_blank">lexus@mpi.nl</a>]]>
+				</mx:htmlText>
+			</mx:Text>
+			 <mx:Spacer height="5"/>
+			<mx:VBox width="100%" height="100%" horizontalAlign="left">
+				<mx:Text text="Development team:" textAlign="left"/>
+				<mx:TextArea textAlign="left" width="100%" height="100%" editable="false" text="Project manager: Menzo Windhouwer.&#13;Developers: André Moreira, Shakila Shayan."/>
+			</mx:VBox>
+			<mx:Text styleName="aboutLexusExternalCredits" textAlign="center">
+     			<mx:htmlText>
+     				<![CDATA[Some of the icons are from <a href="http://iconza.com/" target="_blank">http://iconza.com/</a>]]>
+     			</mx:htmlText>
+     		</mx:Text>
+	     </mx:VBox>
+    </mx:Canvas>
+	
+    <mx:ControlBar horizontalAlign="center" width="100%">
+        <mx:Button id="okBtn" label="Ok" click="close()" keyUp="onKeyUpOk(event)" enabled="true"/>
+    </mx:ControlBar>
+	
+</mx:TitleWindow>

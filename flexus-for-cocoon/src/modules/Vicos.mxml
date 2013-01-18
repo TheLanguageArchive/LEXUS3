@@ -1,0 +1,613 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module 	xmlns:mx="http://www.adobe.com/2006/mxml" 
+			xmlns:flexlib="http://code.google.com/p/flexlib/"
+			xmlns:modules="modules.*"
+			xmlns:components="components.*"
+			creationComplete="initModule()"
+			width="100%" height="100%" layout="vertical">
+			
+	<mx:Metadata>
+		[Event(name="urlDeleted", type="events.URLUpdateEvent")]
+	</mx:Metadata>
+			
+	<mx:Style>
+	    .linkButtonWindowShade {
+	      	headerClass:ClassReference('mx.controls.LinkButton');
+	      	header-style-name: linkButtonStyle;
+	     
+	     	drop-shadow-enabled:true;
+	     	
+	      	corner-radius:10;
+	      	border-style:solid;
+	    	
+	    	background-color:#efefef;
+	    	background-alpha:.7;
+	    }         
+	    
+	    .linkButtonStyle {
+	    	corner-radius:10;	
+	    	fill-alphas:1,1;
+	    	padding-left:10;
+	    }
+	</mx:Style>
+	
+	<mx:Script>
+		<![CDATA[
+
+			import components.URLWindow;
+			import vicos.dynamics.DynamicUIComponent;
+			import vicos.dynamics.DynamicTimer;
+			import events.URLUpdateEvent;
+			import flash.net.navigateToURL;
+			import vicos.mapper.ImageMapperWindow;
+			import mx.containers.TitleWindow;
+			import mx.controls.Button;
+			import mx.controls.ColorPicker;
+			import mx.controls.Image;
+			import mx.controls.List;
+			import mx.core.FlexGlobals;
+//			import mx.core.Application;
+			import mx.core.UIComponent;
+			import mx.events.DropdownEvent;
+			import mx.events.ColorPickerEvent;
+			import mx.events.DragEvent;
+			import mx.events.ListEvent;
+			import mx.managers.DragManager;
+			import mx.managers.PopUpManager;
+			
+			private static const FORMAT:String = "text";
+		
+//            [Bindable][Embed(source="img/resize_handle.png")]
+//            protected var resizeHandle:Class;				
+			
+			private var fmtActive:TextFormat = new TextFormat("Arial", 14, 0x0000FF, true);
+			private var fmtInactive:TextFormat = new TextFormat("Arial", 14, 0x000000, true);
+			
+			private var entries:Array = [{entry:"aaa"}, {entry:"bbb"}, {entry:"ccc"}, {entry:"ddd"}];
+			
+			private var circleCount:int = 0;
+			private var currentAction:String = "";
+			private var currentSelectedCircle:DynamicUIComponent;
+			private var currentLineSegments:Array;
+			private var currentCircleIndices:Array = new Array();
+			private var imageMapperInnerAreaClicked:Boolean = false;
+			
+			private var clickStarted:Boolean = false;
+			private var clickTimer:DynamicTimer = new DynamicTimer(350, 1);
+			
+			// List of ViCoS actions from the old ViCoS version
+			
+			// Browse: Click on node to get more information
+			// Lexus: Click on node to get Lexical Entry View in Lexus
+			// Overview: Visualise all relations
+			
+			// Attach: Click on node to attach URL
+			// World: Click on node to go to its URL (if existent)
+			// Detach: Click on node to detach URL
+			
+			// Refetch: Refetch data from server for given center node
+			// Colour: Change colour of node
+			
+			private var actions:Array = 
+				new Array(
+					{label:"Move [M]", cm:false, action:"move", letter:"m"},
+					{label:"Connect [C]", cm:true, action:"connect", letter:"c"},
+					{label:"Delete [D]", cm:true, action:"delete", letter:"d"},
+					{label:"Attach [A]", cm:true, action:"attach", letter:"a"},
+					{label:"Detach [T]", cm:true, action:"detach", letter:"t"},
+					{label:"WWW [W]", cm:true, action:"www", letter:"w"},
+					{label:"Colour [L]", cm:true, action:"colour", letter:"l"}
+				);			
+			
+			private function initModule():void{
+				this.addEventListener(URLUpdateEvent.URL_DELETED, deleteURL);
+				clickTimer.addEventListener(TimerEvent.TIMER_COMPLETE, clickTimerEnded);
+				currentLineSegments = new Array();
+			}
+			
+			private function executeDownAction(circle:DynamicUIComponent, action:String = null):void{
+				
+				var comp:DynamicUIComponent = circle.parent as DynamicUIComponent;
+				switch (action){
+					case "move":
+						circle.addEventListener(MouseEvent.MOUSE_MOVE, circleMouseMove);
+						comp.startDrag(false, new Rectangle(30, 30, editorCanvas.width - 60, editorCanvas.height - 60));
+						break;
+					case "connect":
+						break;
+				}				
+			}
+
+			private function executeMoveAction(circle:DynamicUIComponent, action:String = null):void{
+				var comp:DynamicUIComponent = circle.parent as DynamicUIComponent;
+				var clickedNum:Number = Number(comp.name.substring(String("circle").length));				
+				
+				switch (action){
+					case "move":
+						var lineNum:int = currentLineSegments.length;
+						var deleteNums:Array = [];
+						for (var l:int = 0; l < lineNum; l++){
+							var line:UIComponent = currentLineSegments[l] as UIComponent;
+							
+							//line_1_2
+							var num1:Number = Number(line.name.substring(String("line_").length, line.name.lastIndexOf("_")));
+							var num2:Number = Number(line.name.substring(line.name.lastIndexOf("_") + 1));
+							
+							if (num1 == clickedNum || num2 == clickedNum){
+								var otherNum:Number = (num1 == clickedNum) ? num2 : num1;
+								var canvasChild:UIComponent; 
+								for (var c:int = 0; c < editorCanvas.numChildren; c++){
+									canvasChild = editorCanvas.getChildAt(c) as UIComponent;
+									if (canvasChild.name == "circle" + otherNum){
+										break;
+									}
+								}									
+													
+								var newLine:UIComponent = new UIComponent();
+								newLine.name = "line_" + num1 + "_" + num2;
+								newLine.graphics.lineStyle(2, 0xFFD700, 1);
+								newLine.graphics.moveTo(comp.x, comp.y);
+								newLine.graphics.lineTo(canvasChild.x, canvasChild.y);
+								
+								currentLineSegments.splice(l, 1, newLine);
+								
+								editorCanvas.removeChild(line);
+								editorCanvas.addChildAt(newLine, 0);								
+							}
+						}				
+
+						break;
+					case "connect":
+						break;
+				}
+			}
+
+			private function executeUpAction(circle:DynamicUIComponent, action:String = null):void{
+				var comp:DynamicUIComponent = circle.parent as DynamicUIComponent;
+				
+				switch (action){
+					case "move":
+						circle.removeEventListener(MouseEvent.MOUSE_MOVE, circleMouseMove);
+						comp.stopDrag();
+						break;
+					case "connect":
+						if(circle != currentSelectedCircle){
+							var num1:Number = Number(circle.parent.name.substring(String("circle").length));
+							var num2:Number = Number(currentSelectedCircle.parent.name.substring(String("circle").length));
+							
+							var line:UIComponent = new UIComponent();
+							line.name = "line_" + num1 + "_" + num2;
+							line.graphics.lineStyle(2, 0xFFD700, 1);
+							line.graphics.moveTo(circle.parent.x, circle.parent.y);
+							line.graphics.lineTo(currentSelectedCircle.parent.x, currentSelectedCircle.parent.y);
+							
+							currentLineSegments.push(line);
+							
+							editorCanvas.addChildAt(line, 0);
+							
+							trace("lineNum:", currentLineSegments.length);
+						}						
+						break;
+				}					
+			}
+			
+			private function executeDoubleClickAction(circle:DynamicUIComponent):void{
+				var comp:DynamicUIComponent = circle.parent as DynamicUIComponent;
+				if (comp.getChildByName("actionsList") == null){
+					var li:List = createActionsList(comp);
+					comp.timer.ref = li;
+				}				
+				
+				if (currentAction == "connect"){
+					var len:int = currentCircleIndices.length;
+					for (var c:int = 0; c < len; c++){
+						var current:DynamicUIComponent = editorCanvas.getChildByName("circle" + currentCircleIndices[c]) as DynamicUIComponent;
+						if (comp.name == "circle" + currentCircleIndices[c]){
+							currentSelectedCircle = current.getChildByName("circle") as DynamicUIComponent;
+							TextField(UIComponent(current.getChildByName("circle")).getChildByName("circleText")).setTextFormat(fmtActive);				
+						}
+						else{
+							TextField(UIComponent(current.getChildByName("circle")).getChildByName("circleText")).setTextFormat(fmtInactive);
+						}					
+					}
+				}				
+//				else if (currentAction == "move"){
+//					circle.removeEventListener(MouseEvent.MOUSE_MOVE, circleMouseMove);
+//					comp.stopDrag();					
+//				}
+			}
+			
+			public function imageMapperMouseDown(evt:MouseEvent):void{
+//				trace(evt.currentTarget);
+				var comp:UIComponent = evt.currentTarget as UIComponent;
+				if (comp.name == "imageMapperWindow"){
+					if (!imageMapperInnerAreaClicked){
+						var pop:ImageMapperWindow = evt.currentTarget as ImageMapperWindow;
+						pop.hideHandleObjects();
+						pop.startDrag();
+					}	
+				} 
+				else if (comp.name == "innerArea"){
+					imageMapperInnerAreaClicked = true;					
+				}
+			}
+
+			private function imageMapperMouseUp(evt:MouseEvent):void{
+				var pop:ImageMapperWindow = evt.currentTarget as ImageMapperWindow;
+				pop.stopDrag();
+				imageMapperInnerAreaClicked = false;				
+			}
+			
+			private function openImageMapper(evt:MouseEvent):void{
+					
+				var pop:ImageMapperWindow = new ImageMapperWindow();
+				pop.name = "imageMapperWindow";
+				pop.addEventListener(MouseEvent.MOUSE_DOWN, imageMapperMouseDown);
+				pop.addEventListener(MouseEvent.MOUSE_UP, imageMapperMouseUp);
+				
+				pop.visible = true; //changed was false!
+				pop.setImage("vicos/img/corsa2.jpg");
+				pop.title = "Image mapper";
+				pop.x = 10; //p.x + 20;
+				pop.y = 10; //p.y + 20;	
+				this.addChild(pop);	
+			}
+			
+			private function clickTimerEnded(evt:TimerEvent):void{
+				// single click
+//				trace("single click");
+				clickStarted = false;
+				executeUpAction(clickTimer.ref, currentAction);
+			}
+			
+			private function circleMouseUp(evt:MouseEvent):void{
+//				trace("mouse up");
+				var circle:DynamicUIComponent = evt.currentTarget as DynamicUIComponent;
+				
+				if (currentAction == "move"){
+					var comp:DynamicUIComponent = circle.parent as DynamicUIComponent;
+					circle.removeEventListener(MouseEvent.MOUSE_MOVE, circleMouseMove);
+					comp.stopDrag();					
+				}				
+				
+				if (!clickStarted){
+					clickStarted = true;
+					clickTimer.reset();
+					clickTimer.start();
+				}
+				
+				// double click
+				else{
+					clickStarted = false;
+					clickTimer.stop();
+					clickTimer.reset();
+					
+					executeDoubleClickAction(circle);
+					
+//					trace("double click");
+				}
+				clickTimer.ref = circle;
+//				executeUpAction(circle, currentAction);			
+			}
+			
+			private function circleMouseMove(evt:MouseEvent):void{
+//				trace("mouse up");
+				var circle:DynamicUIComponent = evt.currentTarget as DynamicUIComponent;
+				executeMoveAction(circle, currentAction);			
+			}			
+			
+			private function circleMouseDown(evt:MouseEvent):void{
+//				trace("mouse down:");
+				var circle:DynamicUIComponent = evt.currentTarget as DynamicUIComponent;
+				var comp:DynamicUIComponent = circle.parent as DynamicUIComponent;
+				executeDownAction(circle, currentAction);
+				
+				if (currentAction == "connect"){
+					
+				}
+				else{
+					var len:int = currentCircleIndices.length;
+					for (var c:int = 0; c < len; c++){
+						var current:DynamicUIComponent = editorCanvas.getChildByName("circle" + currentCircleIndices[c]) as DynamicUIComponent;
+						if (comp.name == "circle" + currentCircleIndices[c]){
+							currentSelectedCircle = current.getChildByName("circle") as DynamicUIComponent;
+							TextField(UIComponent(current.getChildByName("circle")).getChildByName("circleText")).setTextFormat(fmtActive);				
+						}
+						else{
+							TextField(UIComponent(current.getChildByName("circle")).getChildByName("circleText")).setTextFormat(fmtInactive);
+						}					
+					}
+				}				
+			}				
+			
+			private function listMouseOver(evt:MouseEvent):void{
+				var li:List = evt.currentTarget as List;
+				var comp:DynamicUIComponent = li.parent as DynamicUIComponent;
+				
+				comp.timer.stop();
+				comp.timer.reset();
+				li.alpha = 1;
+			}
+
+			private function listMouseOut(evt:MouseEvent):void{
+				var li:List = evt.currentTarget as List;
+				var comp:DynamicUIComponent = li.parent as DynamicUIComponent;
+				if (comp != null){
+					comp.timer.start();
+				}				
+			}
+			
+			private function createActionsList(comp:DynamicUIComponent):List{
+				var list:List = new List();
+				list.name = "actionsList";
+				list.width = 100;		
+				list.height = 160;
+				list.x = 50;
+				list.y = -30;
+				list.dataProvider = actions;
+				list.addEventListener(ListEvent.CHANGE, listActionSelected);
+				list.addEventListener(MouseEvent.MOUSE_OVER, listMouseOver);
+				list.addEventListener(MouseEvent.MOUSE_OUT, listMouseOut);
+				comp.addChild(list);
+				comp.timer.start();
+				return list;
+			}
+			
+			private function drawCircle(circle:DynamicUIComponent, colour:Number = -1):void{
+				var g:Graphics = circle.graphics;
+				
+				if (colour != -1){
+					circle.colour = colour;	
+				}
+					 
+				g.clear();
+				if (circle.url != ""){
+					g.lineStyle(0, 0x111111);
+				}
+				g.beginFill(circle.colour);
+				g.drawCircle(0, 0, 30);
+				g.endFill();			
+			}
+			
+			private function createCircle(idx:int, x:Number, y:Number, txt:String):void{
+				
+//				trace("idx:", idx);
+				var comp:DynamicUIComponent = new DynamicUIComponent();
+				
+				comp.name = "circle" + idx;
+				comp.x = x;
+				comp.y = y;
+				
+				var circle:DynamicUIComponent = new DynamicUIComponent();
+				circle.name = "circle";
+				circle.colour = 0xFF0000;
+				circle.url = "";
+				drawCircle(circle);
+				
+				circle.addEventListener(MouseEvent.MOUSE_UP, circleMouseUp);
+				circle.addEventListener(MouseEvent.MOUSE_DOWN, circleMouseDown);
+				
+//				circle.doubleClickEnabled = true;
+//				circle.addEventListener(MouseEvent.DOUBLE_CLICK, circleDoubleClick);
+				
+				var label:TextField = new TextField();
+				label.name = "circleText";
+				label.selectable = false;
+				label.text = txt;
+				label.setTextFormat(fmtActive);
+				label.autoSize = TextFieldAutoSize.LEFT;				
+				label.y = -12;
+				
+				circle.addChild(label);
+				comp.addChild(circle);
+				
+				comp.timer = new DynamicTimer(100, 20);
+				
+				comp.timer.addEventListener(TimerEvent.TIMER, timerRunning);
+				comp.timer.addEventListener(TimerEvent.TIMER_COMPLETE, timerCompleted);
+				
+				var li:List = createActionsList(comp);
+				comp.timer.ref = li;
+				
+				editorCanvas.addChild(comp);
+				currentSelectedCircle = circle;
+				
+				var len:int = currentCircleIndices.length;
+				for (var c:int = 0; c < len; c++){
+					var current:DynamicUIComponent = editorCanvas.getChildByName("circle" + currentCircleIndices[c]) as DynamicUIComponent; 
+					TextField(UIComponent(current.getChildByName("circle")).getChildByName("circleText")).setTextFormat(fmtInactive);					
+				}				
+				currentCircleIndices.push(idx);
+			}
+			
+			private function timerRunning(evt:TimerEvent):void{
+				var timer:DynamicTimer = evt.target as DynamicTimer;
+				var li:List = timer.ref as List;
+				//trace(timer.currentCount, timer.ref);
+				if (timer.currentCount >= 10){
+					li.alpha = 1 - (timer.currentCount - 10) / 10; 
+				}
+			}
+
+			private function timerCompleted(evt:TimerEvent):void{
+				var timer:DynamicTimer = evt.target as DynamicTimer;
+				var li:List = timer.ref as List;
+				
+				li.parent.removeChild(li);
+				timer.reset();				
+			}
+			
+			private function editorEntered(evt:DragEvent):void{
+				trace("entered:", evt.dragSource.formats);	
+				
+				// tree
+				if(evt.dragSource.hasFormat("treeItems")){
+					DragManager.acceptDragDrop(Canvas(evt.currentTarget));
+					DragManager.showFeedback(DragManager.COPY);
+				}
+				
+				// datagrid
+				else if(evt.dragSource.hasFormat("items")){
+					DragManager.acceptDragDrop(Canvas(evt.currentTarget));
+					DragManager.showFeedback(DragManager.COPY);
+				}
+			}
+			
+			private function editorDropped(evt:DragEvent):void{
+				trace("dropped");
+				
+				// this is the display object being dropped on
+				var disp:Canvas = evt.currentTarget as Canvas;
+				//trace(disp.id);   // -> editorPanel
+				var p:Point = new Point(disp.mouseX, disp.mouseY);
+				
+				// datagrid
+				if (evt.dragSource.formats.indexOf("items") != -1){
+					var data:Object = evt.dragSource.dataForFormat("items");
+					createCircle(circleCount++, p.x, p.y, data[0]["entry"]);
+				}
+				
+				// tree
+				else if (evt.dragSource.formats.indexOf("treeItems") != -1){
+					createCircle(circleCount++, p.x, p.y, FlexGlobals.topLevelApplication.entryTree.selectedItem.@label);
+				}
+			}			
+			
+			private function listActionSelected(evt:ListEvent):void{
+				trace("selected!");
+				var list:List = evt.target as List;
+				var comp:DynamicUIComponent = list.parent as DynamicUIComponent;
+				var clickedNum:Number = Number(comp.name.substring(String("circle").length));
+				currentAction = actions[list.selectedIndex].action;
+				
+				switch (currentAction){
+					case "delete":
+						currentSelectedCircle = null;
+						
+						var lineNum:int = currentLineSegments.length;
+						var deleteNums:Array = [];
+						for (var l:int = 0; l < lineNum; l++){
+							var line:UIComponent = currentLineSegments[l] as UIComponent;
+							
+							//line_1_2
+							var num1:Number = Number(line.name.substring(String("line_").length, line.name.lastIndexOf("_")));
+							var num2:Number = Number(line.name.substring(line.name.lastIndexOf("_") + 1));
+							
+							if (num1 == clickedNum || num2 == clickedNum){
+								editorCanvas.removeChild(line);					
+								deleteNums.push(l);
+							}
+						}				
+						var len:int = deleteNums.length;
+						if (len > 0){	
+							deleteNums.sort();
+							for (var d:int = len - 1; d >= 0; d--){
+								currentLineSegments.splice(deleteNums[d], 1);
+							}
+						}
+						currentCircleIndices.splice(currentCircleIndices.indexOf(clickedNum), 1);
+						comp.parent.removeChild(comp);
+						currentAction = "";
+						break;		
+					case "attach":
+						var urlWindow:URLWindow = URLWindow(PopUpManager.createPopUp( this, URLWindow , true));
+						urlWindow.addEventListener(URLUpdateEvent.URL_ADDED, addURL);
+						urlWindow.url = currentSelectedCircle.url;
+					
+						var p:Point = new Point();
+			            // Calculate position of TitleWindow in Application's coordinates.
+		                // Position it 25 pixels down and to the right of the currently selected circle
+		                p.x = 0;
+		                p.y = 0;
+		                p = currentSelectedCircle.localToGlobal(p);
+		                
+		                urlWindow.x = p.x + 25;
+		                urlWindow.y = p.y + 25;
+						break;
+					case "detach":
+		                var event:URLUpdateEvent = new URLUpdateEvent(URLUpdateEvent.URL_DELETED); 
+		                dispatchEvent(event);
+					
+//						currentSelectedCircle.url = "";
+//						drawCircle(currentSelectedCircle);
+						break;
+					case "www":
+						if (currentSelectedCircle.url != null && currentSelectedCircle.url != ""){
+							navigateToURL(new URLRequest(currentSelectedCircle.url));
+						}
+						break;
+					case "colour":
+						var cp:ColorPicker = new ColorPicker();
+						cp.name = "colorPicker";
+						cp.selectedColor = currentSelectedCircle.colour;
+						  
+						cp.width = 24;
+						cp.height = 24;
+						cp.y = 30;
+						cp.addEventListener(ColorPickerEvent.CHANGE, colourChanged);
+						cp.addEventListener(DropdownEvent.CLOSE, colorPickerClosed);
+						currentSelectedCircle.addChild(cp);
+						cp.open();
+						break;	
+					default:		
+						break;
+				}
+				list.parent.removeChild(list);
+			}
+			
+			public function addURL(evt:URLUpdateEvent):void{
+				trace("URL added:", evt.url, "**");
+				currentSelectedCircle.url = evt.url;
+				drawCircle(currentSelectedCircle);				
+			}
+			
+			public function deleteURL(evt:URLUpdateEvent):void{
+				trace("URL deleted:", evt.url, "**");
+				currentSelectedCircle.url = evt.url;
+				drawCircle(currentSelectedCircle);			
+			}
+			
+			private function colorPickerClosed(evt:DropdownEvent):void{
+				if (currentSelectedCircle.getChildByName("colorPicker") != null){
+					this.stage.focus = null;
+					currentSelectedCircle.removeChild(currentSelectedCircle.getChildByName("colorPicker"));
+				} 				
+			}
+			
+			private function colourChanged(evt:ColorPickerEvent):void{
+				var cp:ColorPicker = evt.currentTarget as ColorPicker;
+				currentSelectedCircle.removeChild(cp);
+				drawCircle(currentSelectedCircle, evt.color); 
+			}
+			
+		]]>
+	</mx:Script>			
+			
+	<mx:Canvas backgroundColor="0xFFFFFF" width="780" height="597">
+		<mx:VBox x="500" width="100%">
+	      <flexlib:WindowShade styleName="linkButtonWindowShade" 
+	      	label="Entries" width="100%">
+	      	<mx:Image x="0" y="0" width="100%" height="100%" source="vicos/img/entrytabs_ohne.png"/>
+	      </flexlib:WindowShade>
+	      
+	      <flexlib:WindowShade styleName="linkButtonWindowShade" 
+	      	label="Relation manager" opened="false" width="100%">
+			<mx:Image x="0" y="0" width="100%" height="100%" source="vicos/img/relationmanager_ohne.png"/>
+	      </flexlib:WindowShade>
+	      
+	      <flexlib:WindowShade styleName="linkButtonWindowShade"
+	      	label="Text mapper" opened="false" width="100%">
+			<mx:Image x="0" y="0" width="100%" height="150" source="vicos/img/textmanager_ohne.png"/>
+	      </flexlib:WindowShade>
+	    </mx:VBox>
+	    
+		<components:ResizablePanel title="Editor" id="editorPanel" width="490" height="100%">
+			<mx:Canvas id="editorCanvas" x="0" y="0" width="100%" height="100%" backgroundColor="0xFFFFFF" 
+				dragDrop="editorDropped(event)" dragEnter="editorEntered(event)">
+			</mx:Canvas>
+			<mx:ControlBar>
+				<mx:Button label="Image mapper" click="openImageMapper(event)"/>
+			</mx:ControlBar>
+		</components:ResizablePanel>	    
+	</mx:Canvas>	
+</mx:Module>

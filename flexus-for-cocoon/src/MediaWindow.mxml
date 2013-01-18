@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+				xmlns:flexiframe="com.google.code.flexiframe.*"
+				borderAlpha="0.9" borderColor="0xAAAAAA"
+				width="350" height="300"
+				showCloseButton="true" close="onClose(event)" move="onMove(event)" creationComplete="init()">
+	<mx:Script>
+		<![CDATA[
+			import mx.events.MoveEvent;
+			import mx.managers.PopUpManager;
+			import mx.events.CloseEvent;
+			
+			[Bindable] public var currentSource:String;             
+			
+			private function init():void{
+				this.QT.visible=true;
+			}
+			private function onClose(event:CloseEvent):void{
+				this.closeWindow();
+			}
+			public function closeWindow():void {
+				//AAM: setting visible to false used to work in the past. However, by now
+				//all major browers fail to hide the iFrame so instead we remove it
+				//this.QT.visible = false;
+				this.QT.removeIFrame();
+				PopUpManager.removePopUp(this);
+				
+				
+			}                 
+			
+			private function onMove(event:MoveEvent):void{
+				var dx:int = this.x - event.oldX;
+				var dy:int = this.y - event.oldY;
+				QT.move( dx, dy);
+			}
+			
+		]]>
+	</mx:Script>
+	<flexiframe:IFrame id="QT" source="{currentSource}" width="100%" height="100%"/>
+</mx:TitleWindow>
+
