@@ -34,6 +34,49 @@
             <xsl:apply-templates select="@* | node()"/>
         </fo:block>
     </xsl:template>
+    
+    <!--
+        An inline decorator with 'img' grand children is currently displayed as block.
+        Covers the special case for a decorator which has a datacategory with img attachment as 
+        direct child.
+    -->
+    <xsl:template match="div[@type eq 'dsl_show'][@block eq 'false'][./div/div/img]" priority="2">
+        <fo:block>
+            <xsl:apply-templates select="@* | node()"/>
+        </fo:block>
+    </xsl:template>
+    
+    
+    <!--
+        An inline multiplier element. 
+    -->
+    <xsl:template match="div[@type eq 'dsl_multiplier'][@block eq 'false']" priority="1">
+        <fo:inline>
+            <xsl:apply-templates select="@* | node()"/>
+        </fo:inline>
+    </xsl:template>
+
+
+    <!--
+        A block multiplier element. 
+    -->
+    <xsl:template match="div[@type eq 'dsl_multiplier'][@block eq 'true']" priority="1">
+        <fo:block>
+            <xsl:apply-templates select="@* | node()"/>
+        </fo:block>
+    </xsl:template>
+    
+    
+    <!--
+        An inline multiplier with 'img' grand children is currently displayed as block.
+        Covers the special case for a multiplier which has a datacategory with img attachment as 
+        direct child.
+    -->
+    <xsl:template match="div[@type eq 'dsl_multiplier'][@block eq 'false'][./div/div/img]" priority="2">
+        <fo:block>
+            <xsl:apply-templates select="@* | node()"/>
+        </fo:block>
+    </xsl:template>
 
 
     <!--
@@ -58,16 +101,14 @@
     
     <!--
         A line feed element.
-        The 'inline' element is needed otherwise the FOP processor ignores line feeds
-        placed right after another line feed.
+        The invisible (0pt) 'leader' element is needed otherwise the FOP 
+        processor collapses sequential empty block elements to a single one.
     -->
     <xsl:template match="br">
+        <fo:inline>
+       		<fo:leader leader-length="0pt"/>
+        </fo:inline>
         <fo:block/>
-        <xsl:if test="not(./following-sibling::*[1][self::hr] or ./following-sibling::*[1][self::div[@block eq 'true']])">
-	        <fo:inline >
-	        		<xsl:text>&#xA;</xsl:text>
-	        </fo:inline>
-        </xsl:if>
     </xsl:template>
     
     
@@ -148,7 +189,7 @@
 
 
     <xsl:template match="table">
-        <fo:table border-width="0.4mm" border-style="solid">
+        <fo:table border-width="0.4mm" border-style="solid" table-layout="fixed" width="100%">
             <xsl:apply-templates/>
         </fo:table>
     </xsl:template>
