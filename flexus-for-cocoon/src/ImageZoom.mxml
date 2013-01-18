@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+    title=""
+    showCloseButton="true"
+    close="PopUpManager.removePopUp(this);"  width="100%" height="100%">
+
+
+    
+
+    <mx:Script>
+        <![CDATA[
+        	import mx.events.ValidationResultEvent;
+        	import mx.managers.PopUpManager;
+           
+                    
+            [Bindable]
+            public var source: String;
+            
+          
+            private function onKeyUpOk(event:KeyboardEvent):void{
+            	//Enter pressed
+            	if( event.keyCode == 13)
+	               PopUpManager.removePopUp(this);
+            }
+            
+
+        ]]>
+    </mx:Script>
+ 
+
+    <mx:Canvas width="100%" height="100%">
+    	<mx:VBox id="imagePanel" width="75%" paddingTop="3" paddingLeft="3" paddingRight="3" paddingBottom="3"  horizontalAlign="center">
+	     	<mx:ProgressBar id="imgProgress" source="{image}" visible="false" showEffect="Fade" hideEffect="Fade"/>
+	     	
+	     	<mx:Image id ="image" maxWidth="400" maxHeight="400"
+	     		source="{source}" horizontalAlign="center" completeEffect="Fade" open="{imgProgress.visible=true}" complete="{imgProgress.visible=false}"/>
+				     		
+				     	
+		</mx:VBox>
+     	
+    </mx:Canvas>
+	
+    <mx:ControlBar horizontalAlign="center" width="100%">
+        <mx:Button id="okBtn" label="Ok" click="PopUpManager.removePopUp(this);"  keyUp="onKeyUpOk(event)" enabled="true"/>
+    </mx:ControlBar>
+	
+</mx:TitleWindow>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ext:SuperPanel xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:ext="net.brandonmeyer.containers.*"
+				allowDrag="true"
+				allowResize="true"
+				allowClose="false"
+				allowMaximize="true"
+				allowMinimize="true">
+	
+	<mx:Script>
+		<![CDATA[
+			
+			import mx.events.ItemClickEvent;
+			
+			import nl.mpi.lexus.event.ConsoleEvent;
+			
+			private var level:int = ConsoleEvent.DEBUG;
+			
+			public function log(event:ConsoleEvent):void {
+				if (this.visible) {
+					if (event.level <= level) {
+						logContent.text = logContent.text +"\n[" + event.component + "]: " + event.message;
+					}
+				}
+			}
+			
+			
+			private function radioGroup_itemClick(evt:ItemClickEvent):void {
+				level = evt.currentTarget.selectedValue;
+			}
+		]]>
+	</mx:Script>
+	
+	
+	<mx:RadioButtonGroup id="radioGroup"
+						 itemClick="radioGroup_itemClick(event);" />
+	
+	<mx:HBox right="4" y="10" width="250" height="26" borderColor="black" borderStyle="solid">
+		<mx:RadioButton id="radioButton1"
+						label="Fatal"
+						group="{radioGroup}" value="{ConsoleEvent.FATAL}"/>
+		<mx:RadioButton id="radioButton2"
+						label="Error"
+						group="{radioGroup}" value="{ConsoleEvent.ERROR}"/>
+		<mx:RadioButton id="radioButton3"
+						label="Info"
+						group="{radioGroup}" value="{ConsoleEvent.INFO}"/>
+		<mx:RadioButton id="radioButton4"
+						label="Debug"
+						group="{radioGroup}" value="{ConsoleEvent.DEBUG}" selected="true"/>
+	</mx:HBox>
+	<mx:TextArea y="40" width="100%" height="90%" id="logContent" verticalScrollPolicy="auto"
+				 valueCommit="logContent.verticalScrollPosition=logContent.maxVerticalScrollPosition" />
+	
+</ext:SuperPanel>

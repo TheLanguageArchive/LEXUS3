@@ -1,0 +1,438 @@
+body {
+	scrollbar-arrow-color: #9E001C;
+	scrollbar-base-color: #FDFDDA;
+	scrollbar-face-color: #FDFDDA;
+	scrollbar-highlight-color: #D3D3D3;
+	background-color: #FFFFF2;
+}
+
+img1 {
+    border: 1px;
+    border: thin solid #B0B0B0;
+}
+
+img2 {
+    border: 1px;
+    border: thin solid #000000;
+}
+/* img2 is just a slight variation, maybe grey is not strong enough as an img border */ 
+
+a.aImg {
+    border: 1px;
+    border: thin solid #9E001C;
+}
+
+a.aImg:hover {
+    border: 1px;
+    border: thin solid #B0B0B0;
+}
+
+a.aImg:visited {
+    border: 1px;
+    border: thin solid #B0B0B0;
+}
+/* for simple clickable imgs for example */
+
+input.button {
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	font-size: 12px;
+	color: #000000;
+	font-style: normal;
+}
+
+input.text1 {
+	background-color: #737373;
+	border: 1px solid #737373;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-style: normal;
+	color: #FFFFF2;
+}
+
+input.text2 {
+	background-color: #FFFFFF;
+	border: 1px solid #000000;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-style: normal;
+	color: #000000;
+}
+/*
+ *Added by Marc Kemps-Snijders
+*/
+
+textarea.text2 {
+	background-color: #FFFFFF;
+	border: 1px solid #000000;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-style: normal;
+	color: #000000;
+}
+select.text2 {
+	background-color: #FFFFFF;
+	border: 1px solid #000000;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-style: normal;
+	color: #000000;
+}
+/*
+ *End of Added by Marc Kemps-Snijders
+*/
+/* 2 might be a little-bit clearer on old crt's */
+
+h1 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 18px;
+	color: #000000;
+	line-height: 13px;
+	font-style: normal;	
+}
+
+h2 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 16px;
+	color: #000000;
+	line-height: 13px;
+	font-style: normal;	
+}
+
+.text {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	font-size: 14px;
+	color: #000000;
+	line-height: 13px;
+	font-style: normal;
+}
+/* for 'normal' content text */
+
+a {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	font-size: 14px;
+	color: #9E001C;
+	line-height: 13px;
+	font-style: normal;
+	text-decoration: underline;
+}	
+
+a:hover {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	font-size: 14px;
+	color: #9E001C;
+	line-height: 13px;
+	font-style: normal;
+	text-decoration: none;
+}
+
+/*
+a.aSub {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	font-size: 11px;
+	color: #9E001C;
+	line-height: 13px;
+	font-style: normal;
+	text-decoration: underline;
+}
+
+a.aSub:hover {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	font-size: 11px;
+	color: #9E001C;
+	line-height: 13px;
+	font-style: normal;
+	text-decoration: none;
+}
+*/
+
+a.aMenu {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-style: normal;
+	line-height: normal;
+	font-weight: bold;
+	color: #7F7F7F;
+	text-decoration: none;
+	background-color: #FDFDDA;
+		}
+		
+a.aMenu:hover {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-style: normal;
+	line-height: normal;
+	font-weight: bold;
+	color: #FDFDDA;
+	background-color: #9E001C;
+}
+
+a.aMenu:visited {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-style: normal;
+	line-height: normal;
+	font-weight: bold;
+	color: #FDFDDA;
+	background-color: #9E001C;
+}
+
+/*
+a.aSubmenu {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	line-height: normal;
+	font-weight: normal;
+	color: #9E001C;
+	text-decoration: underline;
+		}
+		
+a.aSubmenu:hover {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	line-height: normal;
+	font-weight: normal;
+	color: #9E001C;
+	text-decoration: none;
+}
+
+a.aSubmenu:visited {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-style: normal;
+	line-height: normal;
+	font-weight: normal;
+	color: #9E001C;
+	text-decoration: none;
+}
+*/
+
+table.design1 {
+	background-color: #FDFDDA;
+	border: thin solid #B0B0B0;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	font-size: 12px;
+	color: #000000;
+	line-height: 13px;
+	font-style: normal;
+}
+/*
+- use bg-color #FFFFC4 for highlighting table cells;
+- for cells which need to be seperated stylistically from the table style, for example header or number cells, you could use the following variations: 
+	(header:)
+	background-color: #C0C0C0;
+	border: thin solid #C0C0C0; (border-color of the table style then also has to be changed to this number)
+	font-size: 14px;
+	color: #FFFFF2;
+	
+	background-color: #9E001C;
+	border: thin solid #9E001C; (border-color of the table style then also has to be changed to this number)
+	font-size: 14px;
+	color: #FFFFF2;
+	
+	(other:)
+	background-color: #EEEEEE; or #F5F5F5;
+	border: thin solid #000000; or #C0C0C0; (border-color of the table style then also has to be changed to this number)
+	font-size: 12px;
+	color: #000000;
+	
+ */
+ /*
+ *Added by Marc kemps-snijders
+*/
+thead.header1 {
+	background-color: #9E001C;
+	border: thin solid #9E001C; /*(border-color of the table style then also has to be changed to this number)*/
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	font-size: 14px;
+	color: #FFFFF2;
+	line-height: 13px;
+	font-style: normal;
+}
+thead.header2 {
+	background-color: #C0C0C0;
+	border: thin solid #C0C0C0; /*(border-color of the table style then also has to be changed to this number)*/
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	font-size: 14px;
+	color: #FFFFF2;
+	line-height: 13px;
+	font-style: normal;
+}
+td.header1 {
+	background-color: #9E001C;
+	border: thin solid #9E001C; /*(border-color of the table style then also has to be changed to this number)*/
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	font-size: 14px;
+	color: #FFFFF2;
+	line-height: 13px;
+	font-style: normal;
+}
+/*
+* End of added by Marc Kemps-snijders
+*/
+table.design2 {
+	background-color: #FFFFF2;
+	border: thin solid #9E001C;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	font-size: 12px;
+	color: #9E001C;
+	line-height: 13px;
+	font-style: normal;
+}
+/*
+*Added by Marc kemps-snijders
+*/
+div.groupBox
+{
+	background-color: #FDFDDA;
+	border: thin solid #B0B0B0;
+}
+div.wait
+{
+	background-color: #F0F8FF;
+	border: thin solid #B0B0B0;
+}
+span.firstLetterResults,
+span.fieldlabel
+{
+	COLOR: #000000; 
+	FONT-FAMILY: Arial, Verdana, Geneva, Helvetica, sans-serif; 
+	FONT-SIZE: 11px; 
+	FONT-WEIGHT: bold
+
+}
+span.info
+{
+	COLOR: #000000; 
+	FONT-FAMILY: Arial, Verdana, Geneva, Helvetica, sans-serif; 
+	FONT-SIZE: 10px; 
+	FONT-STYLE: italic;
+
+}
+
+span.firstLetterPagesEnabled,
+span.firstLetterPagesDisabled
+{
+	COLOR: #000000; 
+	FONT-FAMILY: Arial, Verdana, Geneva, Helvetica, sans-serif; 
+	FONT-SIZE: 10px; 
+}
+
+span.warning
+{
+	COLOR: red; 
+	FONT-FAMILY: Arial, Verdana, Geneva, Helvetica, sans-serif; 
+	FONT-SIZE: 10px; 
+	FONT-STYLE: italic;
+
+}
+.appName{
+	color: #a6a6af;
+	font-size: 12px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+.username {
+	color: #000;
+	font-size: 12px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	text-decoration: none; }
+.button {
+    margin: 0 0;
+    border-style: outset;
+    padding:2px;
+    text-align: center;
+    vertical-align: middle;
+    cursor:pointer;
+}
+
+.aButton{
+					
+	border: 5px outset white;
+	margin: 0 5px -5px 0;
+
+}
+.aButton:hover {
+
+	border: 5px inset white;
+	
+}
+.aButton img{
+
+	border-style: none;
+	
+
+
+}
+.aButtonSmall{
+					
+	border: 2px outset white;
+	margin: 0 5px -5px 0;
+
+}
+.aButtonSmall:hover {
+
+	border: 2px inset white;
+
+
+}
+.aButtonSmall img{
+
+	border-style: none;
+	
+
+
+}
+/*
+* End of added by Marc Kemps-snijders
+*/
+/* 
+- use bg-color #FDFDDA for highlighting table cells;
+*/
+/*
+with respect to the table style: I only specified a kind of core here - because attributes like 'alignment' or 'indent' vary from context to context, it
+wouldn't make sense to determine all this in advance; however, all the information you need for new style elements can be derived from this core;
+feel free to make changes and/or complementations, but please always communicate those changes to the other users of this style sheet
+*/
+
+/* Freddy Krueger's 'bloody' quick link buttons */
+.qbutton, a.qbutton:hover{
+    margin: 0 0;
+    border-top: 1px solid #cecece;
+    border-bottom: 2px solid #4a4a4a;
+    border-left: 1px solid #cecece;
+    border-right: 2px solid #4a4a4a;
+    display: block;
+    width: 100px;
+    height: 28px;
+    min-height: 28px;
+    min-width: 100px;
+    max-height: 28px;
+    max-width: 200px;
+    padding:2px;
+    text-align: center;
+    vertical-align: middle;
+}
+a.qbutton:link, a.qbutton:visited {
+    background-color: #D5D5D5;
+    color: #000;
+    text-decoration: none;
+}
+a.qbutton:hover {
+    background-color: #FDFDDA;
+    color: #9E001C;
+    text-decoration: none;
+}

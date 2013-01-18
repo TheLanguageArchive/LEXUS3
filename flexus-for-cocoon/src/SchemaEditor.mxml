@@ -1,0 +1,561 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module xmlns:mx="http://www.adobe.com/2006/mxml"
+		   xmlns:mpi="nl.mpi.lexus.*"
+		   layout="vertical"
+		   width="100%"
+		   height="100%"
+		   xmlns:local="*"
+		   xmlns:view="nl.mpi.lexus.view.*">
+
+	<mx:Script>
+		<![CDATA[
+			import com.adobe.serialization.json.JSON;
+
+			import mx.binding.utils.BindingUtils;
+			import mx.collections.ArrayCollection;
+			import mx.collections.ICollectionView;
+			import mx.collections.IViewCursor;
+			import mx.collections.XMLListCollection;
+			import mx.controls.Alert;
+			import mx.controls.Label;
+			import mx.controls.Text;
+			import mx.controls.textClasses.TextRange;
+			import mx.core.Container;
+			import mx.core.FlexGlobals;
+			import mx.core.IUIComponent;
+			import mx.events.CloseEvent;
+			import mx.events.CollectionEvent;
+			import mx.events.DragEvent;
+			import mx.events.IndexChangedEvent;
+			import mx.events.ListEvent;
+			import mx.events.MenuEvent;
+			import mx.managers.DragManager;
+			import mx.managers.PopUpManager;
+			import mx.messaging.SubscriptionInfo;
+			import mx.rpc.events.ResultEvent;
+
+			import nl.mpi.lexus.AutoSizeTree;
+			import nl.mpi.lexus.LexusUtil;
+			import nl.mpi.lexus.YesNo;
+			import nl.mpi.lexus.event.NewSchemaElementEvent;
+			import nl.mpi.lexus.event.ViewChangeEvent;
+			import nl.mpi.lexus.service.LexusService;
+			import nl.mpi.lexus.view.ViewsEditor;
+
+			[Bindable]
+			private var application:Object = FlexGlobals.topLevelApplication;
+			
+			[Bindable]
+			private var lexiconId:String;
+
+			[Bindable]
+			private var serverData:Object = new Object();
+
+			private var dcOrder:ArrayCollection = new ArrayCollection();
+
+			private var lexusService:LexusService = new LexusService();
+
+			/**
+			 * Marks whether the current schema information sould be saved.
+			 **/
+			private var schemaIsModified:Boolean = false;
+
+			/**
+			 * Maximum length for the title at the top of the screen
+			 **/
+			[Bindable]
+			private var maxTitleLength:int = 140;
+
+
+			/**
+			 * Is the lexicon editable?
+			 **/
+			private var editable:Boolean = false;
+
+			/**
+			 * A place to save an event. In case we need to save some data
+			 *  while processing an event we park the original event here.
+			 **/
+			private var originalEvent:Event;
+
+			public function openLexicon(a_lexiconId:String):void {
+				this.lexiconId = a_lexiconId;
+				var param:Object = new Object();
+				LexusUtil.showWait(this, "Loading structure");
+				param.id = a_lexiconId;
+				lexusService.send("LexusSchemaEditor/getSchema.json", param, this.name, onJSONLoad);
+			}
+
+
+			/**
+			 * Event Handler for the onLoad event. This will parse the JSON object and perform initialization
+			 * */
+			private function onJSONLoad(event:ResultEvent):void {
+				LexusUtil.parseJSON(String(event.result), function(data:Object):void {
+					serverData = data;
+					tree.dataProvider = serverData.result.schema;
+					tree.selectedIndex = 0;
+					editable = serverData.result.lexicon.writable;
+					schemaElementViewer.init(serverData.result.schema, editable);
+					schemaElementViewer.addEventListener("change", onChange);
+					toggleButtonBar(serverData.result.schema);
+					callLater(expandTree);
+					schemaIsModified = false;
+					viewsEditor.lexiconId = lexiconId;
+					viewsEditor.editable = editable;
+					LexusUtil.removeWait();
+
+				});
+				FlexGlobals.topLevelApplication.moduleInitialised("schema_editor");
+			}
+
+
+			private function extractDataCategory(a_id:String, a_schemaElement:Object):Object {
+				if (a_schemaElement.id == a_id)
+					return a_schemaElement;
+				if (a_schemaElement.hasOwnProperty("children")) {
+					var children:ArrayCollection = new ArrayCollection(a_schemaElement.children);
+					for (var i:int = 0; i < children.length; i++) {
+						var s:Object = this.extractDataCategory(a_id, children.getItemAt(i));
+						if (s != null)
+							return s;
+					}
+				}
+				return null;
+			}
+
+			private function expandTree():void {
+				tree.expandChildrenOf(this.serverData.result.schema, true);
+			}
+
+			/**
+			 * Handles the event for changing the right tab
+			 **/
+			private function rightTabChanged(evt:IndexChangedEvent):void {
+				this.tree.dragEnabled = true; // HHV: hack hack hack: always allow dragging.
+
+				if (rightTabNavigator.selectedChild == viewsEditor) {
+					viewsEditor.getViews();
+				}
+
+			}
+
+			private function confirmSave():void {
+				YesNo.confirmSave("Do you want to save your changes?", confirmSaveHandler);
+			}
+
+			private function confirmSaveHandler(event:CloseEvent):void {
+				if (event.detail == Alert.YES) {
+					save();
+				} else {
+					FlexGlobals.topLevelApplication.enabled = false;
+					LexusUtil.showWait(this, "Reloading structure");
+					openLexicon(serverData.result.lexicon.id);
+				}
+				this.schemaIsModified = false; // HHV: hack hack
+				viewsEditor.viewEditor.needsSave = false; // HHV: hack hack
+
+				/**
+				 * If the schema was saved and reloaded again and there's an outstanding menu-event,
+				 * dispatch the event again.
+				 **/
+				if (this.originalEvent != null) {
+					callLater(FlexGlobals.topLevelApplication.menuBar.dispatchEvent, [this.originalEvent]);
+					this.originalEvent = null;
+				}
+			}
+
+			/**
+			 * Event handler for the Menu control's click event.
+			 **/
+			public function onMenuSelect(event:MenuEvent):Boolean {
+				var handled:Boolean = true;
+				this.originalEvent = null;
+				var evtName:String = event.item.@eventName;
+				if (evtName == "save") {
+					save();
+					return true;
+				}
+				//Request Save actions for other menu items
+				if (this.schemaIsModified || viewsEditor.viewEditor.needsSave) {
+					this.originalEvent = event;
+					this.confirmSave();
+					return true;
+				}
+
+				switch (evtName) {
+					case "lexicon_browser":
+					case "workspace":
+					case "about":
+						handled = false;
+						break;
+					default:
+						handled = false;
+						break;
+				}
+				return handled;
+			}
+
+			/* Save unsaved data, called from menu event handler or keyboard handler */
+			public function save():void {
+				if (this.schemaIsModified) {
+					FlexGlobals.topLevelApplication.enabled = false;
+					LexusUtil.showWait(this, "Saving structure");
+					var param:Object = new Object();
+					param.schema = this.serverData.result.schema;
+					param.listView = this.dcOrder.toArray();
+					param.viewId = serverData.result.lexicon.id
+					this.lexusService.send("LexusSchemaEditor/saveSchema.json", param, this.name, function():void {
+						LexusUtil.removeWait();
+						FlexGlobals.topLevelApplication.enabled = true;
+					});
+					this.schemaIsModified = false;
+				}
+				if (viewsEditor.viewEditor.needsSave) {
+					viewsEditor.viewEditor.save();
+				}
+			}
+
+			/* Clickerdeeclick */
+			private function treeItemClicked(evt:ListEvent):void {
+				schemaElementViewer.removeEventListener("change", onChange);
+				var selectedNode:Object = tree.selectedItem;
+				schemaElementViewer.init(selectedNode, editable);
+				schemaElementViewer.addEventListener("change", onChange);
+				this.toggleButtonBar(selectedNode);
+			}
+
+			private function onStyleChange(event:Event):void {
+				this.schemaIsModified = true;
+			}
+
+			/**
+			* Toggles the buttonbar below the schema tree according to the schemaElement properties
+			**/
+			private function toggleButtonBar(schemaElement:Object):void {
+				addBtn.enabled = editable;
+				upBtn.enabled = editable;
+				downBtn.enabled = editable;
+
+				if (schemaElement.type == "LMF base class")
+					removeBtn.enabled = false;
+				else
+					removeBtn.enabled = editable;
+			}
+
+			private function onChange(event:Event):void {
+				var idx:int = tree.selectedIndex;
+				var item:Object = tree.selectedItem;
+				tree.invalidateList();
+				tree.invalidateDisplayList();
+				this.schemaIsModified = true;
+			}
+
+			private function addSchemaElement():void {
+				var item:Object = tree.selectedItem;
+				if (item.type == "data category") {
+					YesNo.alert("It is not possible to add anything to a data category.");
+					return;
+				}
+				var popAdd:AddSchemaElement = AddSchemaElement(PopUpManager.createPopUp(this, AddSchemaElement, true));
+				popAdd.addEventListener("new", this.handleNewSchemaElement);
+				PopUpManager.centerPopUp(popAdd);
+			}
+
+
+			private function handleNewSchemaElement(event:NewSchemaElementEvent):void {
+				var item:Object = tree.selectedItem;
+				if (item.type == "data category")
+					return;
+
+				var children:ArrayCollection = new ArrayCollection(item.children);
+				var index:int = -1;
+				//Inserting the data category at the end of the data category list
+				if (event.schemaElement.type == "data category") {
+					for (var i:int = 0; i < children.length; i++) {
+						var schemaEl:Object = children.getItemAt(i);
+						if (schemaEl.type != "data category") {
+							index = i;
+							break;
+						}
+					}
+				}
+				if (index == -1)
+					children.addItem(event.schemaElement);
+				else
+					children.addItemAt(event.schemaElement, index);
+				tree.invalidateDisplayList();
+				tree.invalidateList();
+				this.schemaIsModified = true;
+			}
+
+			private function removeSchemaElement():void {
+				YesNo.confirmDelete("Are you sure you want to\nremove this schema element?\nLexical entry information for this " + tree.selectedItem.type + " will be permanently lost!!", confirmDeleteHandler);
+			}
+
+			private function confirmDeleteHandler(event:CloseEvent):void {
+				if (event.detail == Alert.YES) {
+					var selItem:Object = tree.selectedItem;
+					tree.selectedIndex = (tree.selectedIndex - 1);
+					toggleButtonBar(tree.selectedItem);
+					var parent:Object = tree.getParentItem(selItem);
+					var children:Array = parent.children;
+					children.splice(children.indexOf(selItem), 1);
+
+					tree.invalidateDisplayList();
+					tree.invalidateList();
+					schemaIsModified = true;
+				}
+			}
+
+			/**
+			 * Returns the icon class for the specified schemaElement. This method is used by the List
+			 * of currently active schema elements to determine the icons associated with the schema elements
+			 **/
+			private function getDataCategoryIconClass(schemaElement:Object):Class {
+				return FlexGlobals.topLevelApplication.dataCategoryIcon;
+			}
+
+			private function mayAddSchemaElement(schemaElement:Object):Boolean {
+				var mayAdd:Boolean = true;
+				if (schemaElement.type != "data category")
+					mayAdd = false;
+				else {
+					for (var i:int = 0; i < this.dcOrder.length; i++) {
+						if (this.dcOrder.getItemAt(i) == schemaElement) {
+							mayAdd = false;
+							break;
+						}
+
+					}
+				}
+				return mayAdd;
+			}
+
+			private function generateSchemaElementView(schemaElement:Object, parent:Container):void {
+				if (schemaElement == null) // HHV: this sometimes happens, maybe due to db-data corruption/bug or bad timing.
+					return;
+				var names:ArrayCollection = new ArrayCollection();
+				names.addItem(schemaElement.name);
+
+				this._generateSchemaElementView(names, schemaElement, parent);
+
+			}
+
+			private function _generateSchemaElementView(labels:ArrayCollection, schemaElement:Object, parent:Container):void {
+				var _parent:Container = new HBox();
+				_parent.setStyle("verticalAlign", "bottom");
+				_parent.addEventListener(MouseEvent.MOUSE_OVER, this.onRollOver);
+				_parent.addEventListener(MouseEvent.MOUSE_OUT, this.onMouseOut);
+				parent.addChild(_parent);
+
+				if (labels.length > 1 && schemaElement.style.textBeforeGroup != null) {
+					var preGroupTxt:Text = new Text();
+					preGroupTxt.text = schemaElement.style.textBeforeGroup;
+					_parent.addChild(preGroupTxt);
+
+				}
+
+				for (var i:int = 0; i < labels.length; i++) {
+					if (schemaElement.style.textBefore != null) {
+						var preTxt:Text = new Text();
+						preTxt.text = schemaElement.style.textBefore;
+						_parent.addChild(preTxt);
+					}
+					var txt:Text = new Text();
+					txt.text = "";
+					if (schemaElement.style.textBeforeUseStyle != null)
+						txt.text += schemaElement.style.textBeforeUseStyle;
+					if (schemaElement.style.smallCaps)
+						txt.text += (labels.getItemAt(i) as String).toLowerCase();
+					else if (schemaElement.style.allCaps)
+						txt.text += (labels.getItemAt(i) as String).toUpperCase();
+					else
+						txt.text += labels.getItemAt(i);
+					if (schemaElement.style.textAfterUseStyle != null)
+						txt.text += schemaElement.style.textAfterUseStyle;
+
+					txt.setStyle("fontFamily", schemaElement.style.fontFamily);
+					txt.setStyle("fontSize", schemaElement.style.fontSize);
+					txt.setStyle("color", schemaElement.style.textColor);
+
+					schemaElement.style.bold ? txt.setStyle("fontWeight", "bold") : txt.setStyle("fontWeight", "normal");
+					schemaElement.style.italic ? txt.setStyle("fontStyle", "italic") : txt.setStyle("fontStyle", "normal");
+					schemaElement.style.underline ? txt.setStyle("textDecoration", "underline") : txt.setStyle("textDecoration", "none");
+
+					_parent.addChild(txt);
+					if (schemaElement.style.textAfter != null) {
+						var postTxt:Text = new Text();
+						postTxt.text = schemaElement.style.textAfter;
+						_parent.addChild(postTxt);
+					}
+
+					if (i != labels.length - 1 && labels.length > 1 && schemaElement.style.punctuationText != null) {
+						var punctTxt:Text = new Text();
+						punctTxt.text = schemaElement.style.punctuationText;
+						_parent.addChild(punctTxt);
+					}
+				}
+				if (labels.length > 1 && schemaElement.style.textAfterGroup != null) {
+					var postGroupTxt:Text = new Text();
+					postGroupTxt.text = schemaElement.style.textAfterGroup;
+					_parent.addChild(postGroupTxt);
+
+				}
+			}
+
+			private function onRollOver(event:MouseEvent):void {
+				event.currentTarget.setStyle("borderStyle", "outset");
+			}
+
+			private function onMouseOut(event:MouseEvent):void {
+				event.currentTarget.setStyle("borderStyle", "none");
+			}
+
+			private function moveElementUp(evt:Event):void {
+				var element:Object = this.tree.selectedItem;
+				var parent:Object = this.tree.getParentItem(element);
+				if (parent != null) {
+					var children:ArrayCollection = new ArrayCollection(parent.children);
+					var index:int = children.getItemIndex(element);
+					if (index > 0) {
+						if (element.type != "data category") {
+							var prevEl:Object = children.getItemAt(index - 1);
+							if (prevEl.type == "data category")
+								return;
+						}
+						children.removeItemAt(index);
+						children.addItemAt(element, index - 1);
+						this.schemaIsModified = true;
+						this.tree.invalidateDisplayList();
+						this.tree.invalidateList();
+					}
+				}
+			}
+
+			private function moveElementDown(evt:Event):void {
+				var element:Object = this.tree.selectedItem;
+				var parent:Object = this.tree.getParentItem(element);
+				if (parent != null) {
+					var children:ArrayCollection = new ArrayCollection(parent.children);
+					var index:int = children.getItemIndex(element);
+					if (index < children.length - 1) {
+						if (element.type == "data category") {
+							var nextEl:Object = children.getItemAt(index + 1);
+							if (nextEl.type != "data category")
+								return;
+						}
+						children.removeItemAt(index);
+						children.addItemAt(element, index + 1);
+						this.schemaIsModified = true;
+						this.tree.invalidateDisplayList();
+						this.tree.invalidateList();
+					}
+				}
+			}
+
+			private function getTreeIcon(element:Object):Class {
+				if (element.type == "data category")
+					return FlexGlobals.topLevelApplication.dataCategoryIcon;
+
+				return FlexGlobals.topLevelApplication.containerIcon;
+
+			}
+
+			private function mouseDown(event:MouseEvent):void {
+				viewsEditor.viewEditor.dragSourceFromSchemaEditor = tree.selectedItem;
+			}
+		]]>
+	</mx:Script>
+
+	<mx:VBox id="main"
+			 width="100%"
+			 height="100%"
+			 verticalGap="0"
+			 focusIn="FlexGlobals.topLevelApplication.overlayUnicodeInput(event)">
+		<mx:Panel width="100%"
+				  height="100%"
+				  status="Schema and view editor"
+				  statusStyleName="panelStatus"
+				  title="{LexusUtil.cutOffString(serverData.result.lexicon.name + ': ' + serverData.result.lexicon.description, maxTitleLength)}"
+				  titleStyleName="panelTitle"
+				  backgroundAlpha="0.0"
+				  borderAlpha="0.0">
+			<mx:TabNavigator width="100%"
+							 height="100%"
+							 creationPolicy="all">
+				<mx:HBox width="100%"
+						 height="100%"
+						 label="Lexicon structure">
+					<mx:HBox width="25%"
+							 height="100%">
+						<mx:VBox width="100%"
+								 height="100%">
+							<mpi:AutoSizeTree horizontalScrollPolicy="auto"
+											  id="tree"
+											  width="100%"
+											  height="100%"
+											  dataProvider="{this.serverData.result.schema}"
+											  dragEnabled="true"
+											  dragMoveEnabled="false"
+											  labelField="name"
+											  change="treeItemClicked(event)"
+											  mouseDown="mouseDown(event)"
+											  iconFunction="getTreeIcon"/>
+							<mx:ControlBar horizontalAlign="center"
+										   height="5%"
+										   width="100%">
+								<mx:Image id="addBtn"
+										  source="{application.addIcon}"
+										  click="addSchemaElement()"
+										  toolTip="Create new element"/>
+								<mx:Image id="removeBtn"
+										  source="{application.removeIcon}"
+										  click="removeSchemaElement()"
+										  toolTip="Remove element"/>
+							</mx:ControlBar>
+						</mx:VBox>
+						<mx:VBox width="5%"
+								 height="100%"
+								 verticalAlign="middle"
+								 horizontalAlign="center">
+							<mx:Image id="upBtn"
+									  source="{application.upIcon}"
+									  click="moveElementUp(event)"
+									  toolTip="Move element up"/>
+							<mx:Image id="downBtn"
+									  source="{application.downIcon}"
+									  click="moveElementDown(event)"
+									  toolTip="Move element down"/>
+						</mx:VBox>
+					</mx:HBox>
+					<mx:Canvas width="75%"
+							   height="100%"
+							   backgroundColor="#FEAF69">
+						<mx:TabNavigator id="rightTabNavigator"
+										 width="100%"
+										 height="100%"
+										 creationPolicy="all"
+										 change="rightTabChanged(event)">
+							<mx:Canvas id="schemaElementTab"
+									   label="Schema element"
+									   width="100%"
+									   height="100%">
+								<local:SchemaElement id="schemaElementViewer"
+													 width="100%"
+													 height="100%"/>
+							</mx:Canvas>
+
+							<view:ViewsEditor id="viewsEditor"
+											  label="View editor"
+											  width="100%"
+											  height="100%"
+											  schemaElementsTree="{tree}"/>
+						</mx:TabNavigator>
+					</mx:Canvas>
+				</mx:HBox>
+			</mx:TabNavigator>
+		</mx:Panel>
+	</mx:VBox>
+
+</mx:Module>
