@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The contents of this file will be loaded for each web application -->
+<Context antiJARLocking="true" path="/mpi/lexus">
+  <!-- Default set of monitored resources -->
+  <WatchedResource>WEB-INF/web.xml</WatchedResource>
+  <!-- Uncomment this to disable session persistence across Tomcat restarts -->
+  <!--
+    <Manager pathname="" />
+  -->
+  <!--VICOS VARIABLES-->
+  <Environment name="VICOS/contextPath" override="false" type="java.lang.String" value="mpi/vicos"/>
+  <!--LEXUS Environment variables -->
+  <!--ISO12620 DCR settings-->
+  <!--Refers to the location of the ISO 12620 DCR -->
+  <Environment name="LEXUS/ISO_12620_DCR" override="false" type="java.lang.String" value="http://lux12.mpi.nl/isocat/rpc/syntax"/>
+  <!--Refers to the name of the ISO 12620 DCR -->
+  <Environment name="LEXUS/ISO_12620_DCR_NAME" override="false" type="java.lang.String" value="SYNTAX ISO21620"/>
+  <!--Refers to the stylesheet used for displaying an ISO12620 datacategory-->
+  <!--<Environment name="LEXUS/ISO12620_stylesheet" value="/srv/webapps/lexus/WEB-INF/xslt/DC2html.xsl" type="java.lang.String" override="false"/>-->
+  <!--Refers to the proxy settings for connecting to the ISO 12620 DCR -->
+  <Environment name="LEXUS/proxy" override="false" type="java.lang.String" value="www-proxy"/>
+  <!--Refers to the proxy port settings for the ISO 12620 DCR -->
+  <Environment name="LEXUS/proxyPort" override="false" type="java.lang.Integer" value="8080"/>
+  <!--Refers to LEXUS temporary directory-->
+  <!--This can be configured to any folder in the system. Folders starting with '/' or with 'X:\' (where X is a Windows drive char) are considered absolute.-->
+  <!-- Insensitive to '/' or'\' on the end -->
+  <Environment name="LEXUS/tempDir" override="false" type="java.lang.String" value="/tmp"/>
+  <!--Refers to the directory where the resources uploaded by the users are stored.-->
+  <!--This can be configured to any directory in the system. If the resource directory is not equal to the its context path, or when
+  		absolute paths are used to specify an external directory, a configuration file mapping the external directory must be
+  		created at $CATALINA_HOME/conf/Catalina/localhost folder. This file must have the name lexusDojo#<LEXUS/resourceContextPath>.xml.
+  		Refer to the Tomcat documentation for more about directory mapping.-->
+  <!-- Insensitive to '/' on the end -->
+  <Environment name="LEXUS/resourceDirectory" override="false" type="java.lang.String" value="/lexus/user-resources/"/>
+  <!--Refers to the server context path for resource files. This path is relative to http://<serverNameUse>/lexusDojo.
+  		Use '/' since it is a context path-->
+  <!-- Insensitive to '/' on the end -->
+  <Environment name="LEXUS/resourceContextPath" override="false" type="java.lang.String" value="/resources/"/>
+  <!--Refers to the maximum upload size for files-->
+  <Environment name="LEXUS/maximumUploadSize" override="false" type="java.lang.Integer" value="20000000"/>
+  <!--Refers to the base directory for resources used by Lexus internally-->
+  <Environment name="LEXUS/resourcesBaseDir" override="false" type="java.lang.String" value="WEB-INF/resources/"/>
+  <!--Refers to the IMDI Continent vocabulary-->
+  <!--<Environment name="LEXUS/IMDI_continents" value="/srv/webapps/lexus/WEB-INF/vocabularies/Continents.xml" type="java.lang.String" override="false"/>-->
+  <!--Refers to the IMDI country vocabulary -->
+  <!--<Environment name="LEXUS/IMDI_countries" value="/srv/webapps/lexus/WEB-INF/vocabularies/Countries.xml" type="java.lang.String" override="false"/>-->
+  <!--Refers to the XSLT file for ODD to HTML documentation transformation -->
+  <Environment name="LEXUS/ODD2HTML_XSL" override="false" type="java.lang.String" value="/WEB-INF/resources/xslt/ODD/odds/odd2html.xsl"/>
+  <!--refers to the XSL file for ODD to RNG transformation -->
+  <Environment name="LEXUS/ODD2RelaxNG_XSL" override="false" type="java.lang.String" value="/WEB-INF/resources/xslt/ODD/odds/odd2relax.xsl"/>
+  <!--SHOEBOX MDF DCR settings-->
+  <Environment name="LEXUS/SHOEBOX_MDF_DCR" override="false" type="java.lang.String" value="/WEB-INF/DCR/ShbxMDF.typ"/>
+  <!-- Defines a XSLT stylesheet for converting old views to new DSL views -->
+  <Environment name="LEXUS/VIEWCONVERTER" override="false" type="java.lang.String" value="/WEB-INF/resources/xslt/htmlViewToDsl.xsl"/>
+  <!--refers to the url for the handler of IMDI files-->
+  <Environment name="LEXUS/IMDI_Handler" override="false" type="java.lang.String" value="http://corpus1.mpi.nl/ds/imdi_browser"/>
+  <!--Refers to the url for the handler of EAF files-->
+  <Environment name="LEXUS/EAF_Handler" override="false" type="java.lang.String" value="http://corpus1.mpi.nl/ds/annex/runLoader"/>
+  <!--End of LEXUS Environment variables -->
+</Context>
