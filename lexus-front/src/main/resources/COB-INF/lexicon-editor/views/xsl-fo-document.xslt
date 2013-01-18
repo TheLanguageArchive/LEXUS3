@@ -103,7 +103,9 @@
                 </fo:static-content>
                 
                 <fo:flow flow-name="body">
-                    <xsl:apply-templates select="//display:lexicon/lexical-entries/lexical-entry"/>
+                	<fo:block>
+                    	<xsl:apply-templates select="//display:lexicon/lexical-entries/lexical-entry"/>
+                    </fo:block>
                 </fo:flow>
             </fo:page-sequence>
 
@@ -111,8 +113,8 @@
     </xsl:template>
 
     <xsl:template match="lexical-entry">
-        <fo:block>
+        <fo:inline>
             <xsl:copy-of select="*"/>
-        </fo:block>
+        </fo:inline>
     </xsl:template>
 </xsl:stylesheet>
