@@ -124,7 +124,7 @@
 	<xsl:template match="text">
 		<xsl:copy>
 			<xsl:copy-of select="@dsl_class" />
-			<xsl:value-of select="translate(@value, ' ', '&#160;')" />
+			<xsl:value-of select="@value" />
 		</xsl:copy>
 	</xsl:template>
 
