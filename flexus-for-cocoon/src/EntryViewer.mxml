@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<!--
+AAM: FB4 ready. 
+When migrating the whole application to spark components (FB4), the "use Flex 3 compatibility mode" option can be turn off 
+and the next mx:Application tag can then be changed to s:Application.
+-->
+
+
+<mx:Application xmlns:mx="library://ns.adobe.com/flex/mx" 
+				xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			    xmlns:s="library://ns.adobe.com/flex/spark" creationComplete="init()" width="100%" height="100%">
+	<fx:Script>
+		<![CDATA[
+        	import nl.mpi.lexus.YesNo;
+			import mx.managers.PopUpManager;
+			import mx.events.MoveEvent;
+			import flash.geom.Rectangle;
+			import mx.core.FlexGlobals;
+			import mx.core.UIComponent;
+			
+			[Bindable][Embed(source="../assets/images/icon_dataCategory20x20.png")]public var dataCategoryIcon:Class;			
+			[Bindable][Embed(source="../assets/images/icon_component20x20.png")] public var containerIcon:Class; 
+			
+			private function init():void{
+				
+				if (ExternalInterface.available) {
+	                try {
+						ExternalInterface.addCallback("showEntry", showEntry);
+						if( !this.checkJavaScriptReady()){
+							trace("Javascript is not yet ready");
+							var readyTimer:Timer = new Timer(100, 0);
+                        	readyTimer.addEventListener(TimerEvent.TIMER, timerHandler);
+                        	readyTimer.start();
+
+						}
+						else{
+							trace("Jacascript ready");
+							var entryId:String = ExternalInterface.call("getParameter", "id");
+							
+							
+							this.showEntry( entryId);
+						}
+	                }
+	                catch( error:SecurityError){
+	                	YesNo.alert( "SecurityError")
+	                }
+	                catch( error:Error){
+	                	YesNo.alert("Error");
+	                }
+	                
+  			  }
+  			  else
+  			  	YesNo.alert("ExternalInterface not yet ready");
+			}
+			private function checkJavaScriptReady():Boolean {
+	            var isReady:Boolean = ExternalInterface.call("isReady");
+	            return isReady;
+	        }
+			private function timerHandler(event:TimerEvent):void {
+	            //trace("Checking JavaScript status...\n");
+	            var isReady:Boolean = checkJavaScriptReady();
+	            if (isReady) {
+	                trace("JavaScript is ready.\n");
+	                Timer(event.target).stop();
+	            }
+	        }
+			public function showEntry( a_entryId:String):void{
+				
+				var popUp:LexicalEntryDetail = LexicalEntryDetail(PopUpManager.createPopUp(this,LexicalEntryDetail,true));
+				popUp.entryId = a_entryId;
+				var glbPt:Point = new Point( 50, 50);
+			    var lclPt:Point = this.globalToLocal( glbPt);
+				popUp.showCloseButton = false;
+        		popUp.height=this.height;
+        		popUp.width=this.width;
+				popUp.addEventListener(MoveEvent.MOVE, window_moveHandler);
+				PopUpManager.centerPopUp(popUp);
+			}
+			
+			protected function window_moveHandler(event:MoveEvent):void
+			{
+				var window:UIComponent = event.currentTarget as UIComponent;
+				var application:UIComponent = FlexGlobals.topLevelApplication as UIComponent;
+				var bounds:Rectangle = new Rectangle(0, 0, application.width, application.height);
+				var windowBounds:Rectangle = window.getBounds(application);
+				var x:Number;
+				var y:Number;
+				if (windowBounds.left <= bounds.left)
+					x = bounds.left;
+				else if (windowBounds.right >= bounds.right)
+					x = bounds.right - window.width;
+				else
+					x = window.x;
+				if (windowBounds.top <= bounds.top)
+					y = bounds.top;
+				else if (windowBounds.bottom >= bounds.bottom)
+					y = bounds.bottom - window.height;
+				else
+					y = window.y;
+				window.move(x, y);
+			}
+			
+		]]>
+	</fx:Script>
+</mx:Application>

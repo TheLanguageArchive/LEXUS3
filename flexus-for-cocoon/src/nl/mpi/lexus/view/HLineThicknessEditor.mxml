@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:NodeEditor xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:view="nl.mpi.lexus.view.*">
+	
+	<!-- Let the user edit the size attribute.-->
+	<mx:VBox id="sizeAttr">		
+		<mx:HBox>
+			<mx:Label text="Thickness:"/>
+			<mx:TextInput id="dsl_size_attribute_value" restrict="0-9"
+						  width="100%" 
+						  text="{_value.@size}"
+						  enter="done()"/>
+		</mx:HBox>
+		<mx:HBox width="100%">
+			<mx:Button name="cancel" label="Cancel" click="quit();"/>
+			<mx:Spacer width="100%"/>
+			<mx:Button name="ok" label="Ok" click="done();"/>			
+		</mx:HBox>
+	</mx:VBox>	
+</view:NodeEditor>

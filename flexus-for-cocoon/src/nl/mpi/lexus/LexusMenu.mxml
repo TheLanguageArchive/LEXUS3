@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:MenuBar xmlns:mx="http://www.adobe.com/2006/mxml" labelField="@label" width="100%" iconField="@icon" 
+    showRoot="false" creationComplete="init('', {})">
+	<mx:Script>
+		<![CDATA[
+			
+			import mx.utils.ObjectUtil;
+			import mx.binding.utils.BindingUtils;
+			import mx.controls.menuClasses.MenuItemRenderer;
+			import mx.core.FlexGlobals;
+
+			[Bindable]
+			private var application:Object = FlexGlobals.topLevelApplication;
+			
+			private var menuXML:XML;
+			
+			/*
+			 * Initialize menu and adapt it to the module and user.
+			 */
+			public function init(moduleCode:String, lexusUser:Object):void {
+				menuXML = ObjectUtil.copy(menuSource) as XML;
+				this.dataProvider = menuXML;
+				adaptMenuToModule(moduleCode);
+				adaptMenuToUser(lexusUser);
+			}
+			
+			
+            // Adapt the menu to the current module.
+            public function adaptMenuToModule(module:String):void {
+				enableNode("workspace", module != 'workspace');
+				deleteNode("import_shbx", module == 'schema_editor');
+				deleteNode("convert_toolbox", module != 'workspace');
+				deleteNode("import_xml", module != 'workspace');
+				deleteNode("export_all_xml", module != 'workspace');
+				deleteNode("export_pdf", module != 'lexicon_browser');
+				deleteNode("export_xml", module != 'lexicon_browser');
+        		// menuXML..menuitem.(attribute("id") == "export_imdi").@enabled = false;
+				enableNode("unicode_input", true);
+				deleteNode("vicos-separator", module != 'workspace');
+				deleteNode("vicos", module != 'workspace');
+				enableNode("schema_editor", module != 'schema_editor');
+				enableNode("lexicon_browser", module != 'lexicon_browser');
+            }
+
+			// Adapt the menu to the current user.
+			public function adaptMenuToUser(lexusUser:Object):void {
+				if (lexusUser.administrator == false) {
+					deleteNode("console", true);
+					deleteNode("export_all_xml", true);
+				}
+			}
+
+			
+			private function deleteNode(node_id:String, deleteNode:Boolean):void {
+				if (deleteNode == true) {
+					var nodeList:XMLList = menuXML..menuitem.(attribute("id") == node_id); 
+					for(var i:int = nodeList.length() -1; i >= 0; i--) {
+						delete nodeList[i];
+					}
+				}
+			}
+
+			
+			private function enableNode(node_id:String, enabled:Boolean):void {
+				menuXML..menuitem.(attribute("id") == node_id).@enabled = enabled;
+			}
+
+      	]]>
+	</mx:Script>
+	
+	<mx:XML format="e4x" id="menuSource">
+        <root>
+           	<menuitem label="" icon="lexusIconSmall" enabled="true">
+		        <menuitem label="About Lexus" eventName="about"/>
+	        </menuitem>
+	        <menuitem label="File">
+	        	<menuitem id="menuSave" label="Save" eventName="save"/>
+				<!-- <menuitem id="import_shbx" label="Import Toolbox" enabled="true" eventName="import_shbx"/> -->
+				<menuitem id="convert_toolbox" label="Convert Toolbox files to Lexus" enabled="true" eventName="convert_toolbox"/>
+				<menuitem id="import_xml" label="Import Lexus XML" enabled="true" eventName="import_xml"/>
+				<menuitem id="export_pdf" label="Export to PDF" enabled="true" eventName="export_pdf"/>
+				<menuitem id="export_xml" label="Export to XML" enabled="true" eventName="export_xml"/>
+				<menuitem id="export_all_xml" label="Export everything as XML" enabled="true" eventName="export_all_xml"/>
+				<!-- <menuitem id="export_imdi" label="Export IMDI" enabled="true" eventName="export_imdi"/> -->
+	        	<menuitem label="Log out" eventName="logOff"/>
+	        </menuitem>
+	        <menuitem label="Switch to" >
+	            <menuitem id="workspace" label="Workspace" eventName="workspace"/>	             
+	            <menuitem id="schema_editor" label="Schema and view editor" eventName="schema_editor"/>
+	            <menuitem id="lexicon_browser" label="Lexicon editor" eventName="lexicon_browser"/>
+				<menuitem id="vicos-separator" type="separator" label="boe"/>
+ 	        	<menuitem id="vicos" label="VICOS" eventName="VICOS"/>
+	        </menuitem>            
+		    <menuitem label="Help">
+		        <menuitem label="Lexus website" eventName="help"/>
+		        <menuitem id="unicode_input" name="unicode_input" label="Activate Unicode input" eventName="unicode" type="check" toggled="false"/>
+				<menuitem id="console" name="Console" label="Enable console" eventName="console" type="check" toggled="false" includeInLayout="false"/>
+		    </menuitem>
+	       	<menuitem label="{application.lexusUser.name}">
+	          	 <menuitem label="Log out" eventName="logOff"/>
+			</menuitem>
+		</root>
+	</mx:XML>
+</mx:MenuBar>

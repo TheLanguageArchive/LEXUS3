@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+    title="Value domain - Add value"
+    showCloseButton="true"
+    creationComplete="init()"
+    close="PopUpManager.removePopUp(this);"  width="367" height="230">
+
+	<mx:Metadata>
+       
+        [Event(name="change", type="flash.event.Event")]
+
+    </mx:Metadata>
+    
+
+    <mx:Script>
+        <![CDATA[
+        	import nl.mpi.lexus.event.ValueChangeEvent;
+        	import nl.mpi.lexus.event.ValueDomainChangeEvent;
+        	import mx.events.ValidationResultEvent;
+        	import mx.managers.PopUpManager;
+           
+                    
+            [Bindable]
+            public var valueObj:Object = new Object();
+            
+          
+           private function init():void{
+           	this.dc_value.setFocus();
+           }
+            private function onKeyUpOk(event:KeyboardEvent):void{
+            	//Enter pressed
+            	if( event.keyCode == 13)
+	               close();
+            }
+            
+            private function close():void{
+            	if( this.valueObj == null)
+            		this.valueObj = new Object();
+            	this.valueObj.value=dc_value.text;
+            	this.valueObj.DCR = "user defined";
+            	this.valueObj.DCRReference = null;
+            	var event:Event = new ValueChangeEvent("change", this.valueObj);
+                dispatchEvent( event);
+            	PopUpManager.removePopUp(this);
+            }
+            
+            private function onChange(event:Event):void{
+            	switch( event.currentTarget){
+            		case this.dc_value:
+            			this.valueObj.DCRReference = null;
+            			this.valueObj.DCR = "user defined";
+            			break;
+            	}
+            }
+            
+
+        ]]>
+    </mx:Script>
+ 
+
+    <mx:Canvas width="100%" height="100%">
+     <mx:HBox width="80%" height="80%">
+     	
+     		<mx:Label text="Value: "/><mx:TextArea id="dc_value" text="{this.valueObj.value}" change="onChange(event)" />
+     		
+     		
+     	
+     </mx:HBox>
+     	
+    </mx:Canvas>
+	
+    <mx:ControlBar horizontalAlign="center" width="100%">
+        <mx:Button id="okBtn" label="Ok" click="this.close()"  keyUp="onKeyUpOk(event)" enabled="true"/>
+    </mx:ControlBar>
+	<mx:Binding source="dc_value.text" destination="this.valueObj.value"/>
+</mx:TitleWindow>

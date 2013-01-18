@@ -1,0 +1,668 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:mpi="nl.mpi.lexus.*"  width="400" height="300">
+	<mx:Metadata> [Event(name="change", type="nl.mpi.lexus.event.SortOrderChangeEvent")] </mx:Metadata>
+	<mx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.controls.TextInput;
+			import mx.core.FlexGlobals;
+			import mx.events.CloseEvent;
+			import mx.events.DataGridEvent;
+			import mx.events.FlexEvent;
+			import mx.events.ListEvent;
+			import mx.events.ValidationResultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.utils.ObjectUtil;
+			import mx.utils.OnDemandEventDispatcher;
+			
+			import nl.mpi.lexus.LexusUtil;
+			import nl.mpi.lexus.YesNo;
+			import nl.mpi.lexus.event.SortOrderChangeEvent;
+			import nl.mpi.lexus.service.LexusService;
+			
+			import spark.components.supportClasses.ItemRenderer;
+			[Bindable][Embed(source="../assets/images/iconza_24x24/warning_24x24.png")] private var warnIcon:Class;
+			
+			[Bindable]
+			private var application:Object = FlexGlobals.topLevelApplication;
+			
+			[Bindable]
+			private var _sortOrder:Object;//The active sortOrder
+			private var _sortOrderCopy:Object;
+
+			[Bindable]
+			public var sortOrderTemplates:Object; //The list of predefined sortOrders
+			public var sortOrderRowOriginal:String = ""; //The original value of data grid section before modification.
+			private var lastClumnIdx:int = -1;
+			private var lexusService:LexusService = new LexusService();
+			public var itemEdtEndAlertEmited:Boolean=false;
+			public var isValid:Boolean=false;
+			
+			public function set sortOrder( data:Object):void{
+				sortOrderGrid.addEventListener(DataGridEvent.ITEM_EDIT_END, onItemEditEnd)
+				_sortOrder = data;
+				_sortOrderCopy = ObjectUtil.copy(data);			
+			}
+			
+			public function get sortOrder():Object{
+				return _sortOrder;
+				
+			}
+			
+			private function onJSONLoadSortOrders(event:ResultEvent):void {
+				LexusUtil.parseJSON(String(event.result),
+					function(data:Object):void {  
+						sortOrderTemplates = data.result.sortOrders;
+					}
+				);
+			}
+			
+			/**
+			 * Refers to a temporary buffer soring the previously selected sortOrder
+			 * This one will be validated on selection of focus changes.
+			 **/
+			private var prevOrder:Object;
+			private function onItemEditEnd(event:DataGridEvent):void {
+				var editor:String = new String((sortOrderGrid.itemEditorInstance as TextInput).text);
+				if( editor == null || editor.length == 0){
+					event.preventDefault();
+					sortOrderGrid.destroyItemEditor();
+					sortOrderGrid.removeEventListener(DataGridEvent.ITEM_EDIT_END, this.onItemEditEnd);
+					if (event.columnIndex == 0)
+						sortOrderGrid.selectedItem.startLetter = sortOrderRowOriginal;
+					else if(event.columnIndex == 1)
+						sortOrderGrid.selectedItem.characters = sortOrderRowOriginal;
+					YesNo.handledAlert(MESSAGE_NO_CHARACTER, alertOkHandler);
+					callLater(sortOrderGrid.addEventListener, [DataGridEvent.ITEM_EDIT_END, onItemEditEnd]);
+				} else if (editor != sortOrderRowOriginal || lastClumnIdx != event.columnIndex){
+						sortOrderGrid.removeEventListener(DataGridEvent.ITEM_EDIT_END, this.onItemEditEnd);
+						switch( event.columnIndex){
+							case 0:
+								
+								if( !this.validateStartLetter( editor)){
+									//Call preventDefault() so that the new value is NOT committed
+									event.preventDefault();
+									//Destroy the instance of the itemEditor by calling destroyEditor()						
+									sortOrderGrid.destroyItemEditor();
+									sortOrderGrid.selectedItem.startLetter = sortOrderRowOriginal;
+									sortOrderGrid.invalidateList();
+									sortOrderGrid.invalidateDisplayList();
+									break;
+									
+								}
+								break;
+							case 1:
+								var startLetter:String = this.sortOrderGrid.selectedItem.startLetter;
+								if (startLetter.length > 1){
+									startLetter = "[" + startLetter + "]";
+								}
+								if( !this.validateEquivalents( editor)){
+									//Call preventDefault() so that the new value is NOT committed
+									event.preventDefault();
+									//Destroy the instance of the itemEditor by calling destroyEditor()	
+									sortOrderGrid.destroyItemEditor();
+									sortOrderGrid.selectedItem.characters = sortOrderRowOriginal;
+									sortOrderGrid.invalidateList();
+									sortOrderGrid.invalidateDisplayList();
+			
+								} else if( editor.indexOf(startLetter) ==-1){
+									//Call preventDefault() so that the new value is NOT committed
+									event.preventDefault();
+									//Destroy the instance of the itemEditor by calling destroyEditor()
+									sortOrderGrid.destroyItemEditor();
+									sortOrderGrid.selectedItem.characters = sortOrderRowOriginal;
+									sortOrderGrid.invalidateList();
+									sortOrderGrid.invalidateDisplayList();
+									YesNo.handledAlert("The value of the 'Start Letter' column must be present in the 'Characters' column", alertOkHandler);
+								}
+									
+								break;
+						}
+						callLater(sortOrderGrid.addEventListener, [DataGridEvent.ITEM_EDIT_END, onItemEditEnd]);
+					}
+					//Data is valid! Dispatch change event
+					if (!event.isDefaultPrevented()){		
+						sortOrderRowOriginal = editor;
+						callLater(addBtnEnabled, [this._sortOrder]);	
+					} else if( !this.itemEdtEndAlertEmited){
+						this.itemEdtEndAlertEmited = true;
+					}
+					var evnt:SortOrderChangeEvent = new SortOrderChangeEvent("change", this._sortOrder);
+					dispatchEvent( evnt);
+					lastClumnIdx = event.columnIndex;
+			}
+			
+			private function sortOrdersHelp(event:MouseEvent):void {
+				var httpService:LexusService = new LexusService();
+				httpService.send("help/sortOdersHelp.html", null, null, function(evt:ResultEvent):void {
+					help.htmlText =  new String(evt.result);
+				});
+				if (help.visible) {
+					help.includeInLayout = false;
+					help.visible = false;				
+				}
+				else {
+					help.includeInLayout = true;
+					help.visible = true;				
+				}
+			}
+			
+			
+			private function validateSortOrder( sortOrderRow:Object):void{
+				this.validateStartLetter( sortOrderRow.startLetter);
+			}
+			
+			private var STATE_KEY:int = 1;
+			private var STATE_KEY_ESCAPED:int = 2;
+			private var STATE_KEY_OPENED:int =  3;
+			
+			private var STATE_MULTI_KEY:int =  6;
+			private var STATE_MULTI_KEY_ESCAPED:int =  7;
+			private var STATE_MULTI_KEY_OPENED:int =  8;
+			private var STATE_INNER_MULTI_KEY_ESCAPED:int =  9;
+			
+			private function validateStartLetter(text:String):Boolean{
+				//value entered in the text field must be filtered
+				//on illegal characters.
+				//In essence the way a start letter field works is that the value of this field will be surrounded by [] when it hits the server.
+				//Furthermore no \, [, ], ( or ) characters are allowed, except if they are preceded by a \ character.
+				
+				var args:Array;
+				
+ 				if( text == null || text.length == 0){
+					
+					//sortOrderGrid.removeEventListener(DataGridEvent.ITEM_EDIT_END, onItemEditEnd);
+					YesNo.handledAlert(MESSAGE_NO_CHARACTER, alertOkHandler);
+					//callLater(sortOrderGrid.addEventListener, [DataGridEvent.ITEM_EDIT_END, onItemEditEnd]);
+					return false;
+				}  
+				if( sortOrderGrid.selectedItem.characters.indexOf(text) ==-1 && sortOrderGrid.selectedItem.characters !=""){
+					
+					//sortOrderGrid.removeEventListener(DataGridEvent.ITEM_EDIT_END, onItemEditEnd);
+					YesNo.handledAlert(" The value of the 'Start Letter' column must be present in the 'Characters' column\n", alertOkHandler);
+					//callLater(sortOrderGrid.addEventListener, [DataGridEvent.ITEM_EDIT_END, onItemEditEnd]);
+					return false;
+					
+				}
+				var state:int = this.STATE_KEY;
+				var key:String=null;
+				var isValid:Boolean = true;
+				for (var i:int=0;i<text.length;i+=1) {
+					if( !isValid)
+						break;
+					
+					var letter:String = text.substring(i,i+1);
+					
+					switch( state){
+						case this.STATE_KEY:
+							if (letter=="\\")
+								state=this.STATE_KEY_ESCAPED;
+							else {
+								if( this.isSpecialCharacter( letter)){
+									isValid = false;
+									args = new Array();
+									args[0] = text;
+									args[1] = letter;
+									args[2] = this.getSpecialCharacters();
+									//sortOrderGrid.removeEventListener(DataGridEvent.ITEM_EDIT_END, onItemEditEnd);
+									YesNo.handledAlert(constructMessage(MESSAGE_NOT_SPECIAL_CHARACTER, args), alertOkHandler);
+									//callLater(sortOrderGrid.addEventListener, [DataGridEvent.ITEM_EDIT_END, onItemEditEnd]);
+								} 
+								key=letter;
+							}
+							break;
+						case STATE_KEY_ESCAPED:
+							if( !this.isSpecialCharacter( letter)){
+								isValid = false;
+								args = new Array();
+								args[0] = text;
+								args[1] = letter;
+								args[2] = this.getSpecialCharacters();
+								//sortOrderGrid.removeEventListener(DataGridEvent.ITEM_EDIT_END, onItemEditEnd);
+								YesNo.handledAlert(constructMessage(MESSAGE_SPECIAL_CHARACTER, args), alertOkHandler);
+								//callLater(sortOrderGrid.addEventListener, [DataGridEvent.ITEM_EDIT_END, onItemEditEnd]);
+								
+							} 
+							key=letter;
+							state=this.STATE_KEY;
+							break;
+					}
+				}
+				
+				if( state != STATE_KEY){
+					this.showStateMessage(state);
+					isValid = false;
+				}
+				return isValid;
+			}	
+			
+			private function validateEquivalents( text:String):Boolean{
+
+				if( text.indexOf(" ") != -1){
+					//sortOrderGrid.removeEventListener(DataGridEvent.ITEM_EDIT_END, onItemEditEnd);
+					YesNo.handledAlert("Whitespaces are not allowed here", alertOkHandler);
+					//callLater(sortOrderGrid.addEventListener, [DataGridEvent.ITEM_EDIT_END, onItemEditEnd]);
+					return false;
+				} 
+				
+				if( text == null || text.length == 0){
+					//sortOrderGrid.removeEventListener(DataGridEvent.ITEM_EDIT_END, onItemEditEnd);
+					YesNo.handledAlert(MESSAGE_NO_CHARACTER, alertOkHandler);
+					//callLater(sortOrderGrid.addEventListener, [DataGridEvent.ITEM_EDIT_END, onItemEditEnd]);
+					return false;
+				}  
+				
+				
+				var state:int = this.STATE_KEY;
+				var key:String=null;
+				var isValid:Boolean = true;
+				for (var i:int=0;i<text.length;i+=1) {
+					if( !isValid)
+						break;
+					var letter:String = text.substring(i,i+1);
+					switch( state){
+						case this.STATE_KEY:
+							if (letter=="\\")
+								state=this.STATE_KEY_ESCAPED;
+							else if( letter == "[")
+								state = STATE_MULTI_KEY;
+							else {
+								if( this.isSpecialCharacter( letter)){
+									isValid = false;
+									var args:Array = new Array();
+									args[0] = text;
+									args[1] = letter;
+									args[2] = this.getSpecialCharacters();
+									//sortOrderGrid.removeEventListener(DataGridEvent.ITEM_EDIT_END, onItemEditEnd);
+									YesNo.handledAlert(this.constructMessage( this.MESSAGE_NOT_SPECIAL_CHARACTER, args), alertOkHandler);
+									//callLater(sortOrderGrid.addEventListener, [DataGridEvent.ITEM_EDIT_END, onItemEditEnd]);
+								} 
+								key=letter;
+							}
+							break;
+						case STATE_KEY_ESCAPED:
+							if( !this.isSpecialCharacter( letter)){
+								isValid = false;
+								args = new Array();
+								args[0] = text;
+								args[1] = letter;
+								args[2] = this.getSpecialCharacters();
+								//sortOrderGrid.removeEventListener(DataGridEvent.ITEM_EDIT_END, onItemEditEnd);
+								YesNo.handledAlert(this.constructMessage( this.MESSAGE_SPECIAL_CHARACTER, args), alertOkHandler);
+								//callLater(sortOrderGrid.addEventListener, [DataGridEvent.ITEM_EDIT_END, onItemEditEnd]);
+							} 
+							key=letter;
+							state=this.STATE_KEY;
+							break;
+						case STATE_MULTI_KEY:
+							if( letter == "\\")
+								state = this.STATE_MULTI_KEY_ESCAPED;
+							else if( letter == "]")
+								state = this.STATE_KEY;
+							else{
+								if( this.isSpecialCharacter( letter)){
+									isValid = false;
+									args = new Array();
+									args[0] = text;
+									args[1] = letter;
+									args[2] = this.getSpecialCharacters();
+									//sortOrderGrid.removeEventListener(DataGridEvent.ITEM_EDIT_END, onItemEditEnd);
+									YesNo.handledAlert(this.constructMessage( this.MESSAGE_NOT_SPECIAL_CHARACTER, args), alertOkHandler);
+									//callLater(sortOrderGrid.addEventListener, [DataGridEvent.ITEM_EDIT_END, onItemEditEnd]);
+								} 
+							}
+							break;
+						case STATE_MULTI_KEY_ESCAPED:
+							if( !this.isSpecialCharacter( letter)){
+								isValid = false;
+								//this.sortOrderGrid.selectedItem = sortOrderRow;
+								args = new Array();
+								args[0] = text;
+								args[1] = letter;
+								args[2] = this.getSpecialCharacters();
+								//sortOrderGrid.removeEventListener(DataGridEvent.ITEM_EDIT_END, onItemEditEnd);
+								YesNo.handledAlert(this.constructMessage( this.MESSAGE_SPECIAL_CHARACTER, args), alertOkHandler);
+								//callLater(sortOrderGrid.addEventListener, [DataGridEvent.ITEM_EDIT_END, onItemEditEnd]);
+							} 
+							state = this.STATE_MULTI_KEY; 
+							break;
+					}
+				}
+				if( state != STATE_KEY){
+					//sortOrderGrid.removeEventListener(DataGridEvent.ITEM_EDIT_END, onItemEditEnd);
+					this.showStateMessage( state);
+					//callLater(sortOrderGrid.addEventListener, [DataGridEvent.ITEM_EDIT_END, onItemEditEnd]);
+					isValid = false;
+				}
+				return isValid;
+			}
+			
+			private var MESSAGE_NOT_SPECIAL_CHARACTER:String = "You have entered a value {0} which should not contain a reserved character ({1}) at this point. Reserved characters are {2}. To include reserved characters please prepend a \\ to {1}";
+			private var MESSAGE_SPECIAL_CHARACTER:String = "You have entered a value {0} which should contain a reserved character ({1}) at this point. Reserved characters are {2}. Possibly you will need to remove the \\ preceding the {1} character";
+			private var MESSAGE_NO_CHARACTER:String = "You must supply at least one character."
+			private var MESSAGE_ESCAPE_STATE:String = "You must supply a character to escape at at the end."
+			private var MESSAGE_MULTIKEY_STATE:String = "You must supply at least a ] character at the end."
+			
+			
+			private function constructMessage( messageTemplate:String, args:Array):String{
+				var message:String = messageTemplate;
+				if( args == null)
+					return message;
+				
+				for( var i:int = 0; i < args.length; i++){
+					var argIdentifier:String = "{" + i + "}";
+					while( message.indexOf( argIdentifier) != -1)
+						message= message.replace( argIdentifier, args[i]);
+				}
+				return message;
+			}
+			
+			private function showStateMessage( state:int):void{
+				switch (state){
+					case STATE_KEY_ESCAPED:
+						YesNo.stop(MESSAGE_ESCAPE_STATE);
+						break; 
+					case STATE_MULTI_KEY_ESCAPED:
+						YesNo.stop(MESSAGE_ESCAPE_STATE);
+						break; 	
+					case STATE_MULTI_KEY:
+						YesNo.stop(MESSAGE_MULTIKEY_STATE);
+						break;
+				}
+			}
+			
+			/**
+			 * Indicates whether the specified letter String containing any reserved characters
+			 **/
+			private function isSpecialCharacter( letter:String):Boolean{
+				return this.getSpecialCharacters().indexOf( letter)!=-1;
+			}
+			
+			/**
+			 * Returns the String containing all reserved characters
+			 **/
+			private function getSpecialCharacters():String{
+				return "()\\[]";
+			}
+			
+			private function createNewSortOrderRow():void{
+				var idx:int = (sortOrderGrid.selectedIndex != -1)?(sortOrderGrid.selectedIndex +1):0;
+				var sortOrderRow:Object = new Object();
+				
+				sortOrderRow.startLetter = "";
+				sortOrderRow.characters = "";
+				
+				if( this._sortOrder.data == null)
+					this._sortOrder.data = new ArrayCollection();
+				(sortOrderGrid.dataProvider as ArrayCollection).addItemAt( sortOrderRow, idx);
+				dispatchEvent(new SortOrderChangeEvent('change', this._sortOrder));
+				
+				//added by ssha highlighting and selecting the newly aded row. re enabeling the remove and disabling the add to prevent further adition before the newly added row is complete.
+				removeBtnEnabled(this._sortOrder);
+				sortOrderGrid.selectedIndex = idx;
+				sortOrderGrid.scrollToIndex(idx);
+				sortOrderGrid.invalidateList();
+				sortOrderGrid.invalidateDisplayList();
+
+				sortOrderRowAdd.source = application.addIconGrayed;
+				sortOrderRowAdd.enabled = false;
+				isValid=false;
+				sortOrderRowAdd.toolTip = "It is not possible to add a new sort order before you complete the current one";
+				
+				
+				
+			}
+			
+			public function handleSortOrderChange(sortOrder:Object):void{
+				if (!validateRows(sortOrder)) {	
+					sortOrderGrid.removeEventListener(DataGridEvent.ITEM_EDIT_END, onItemEditEnd);
+
+					if(this.validateStartLetter(sortOrderGrid.selectedItem.startLetter))
+						this.validateEquivalents(sortOrderGrid.selectedItem.characters);
+					
+					callLater(sortOrderGrid.addEventListener, [DataGridEvent.ITEM_EDIT_END, onItemEditEnd]);
+
+				}
+			}
+			
+			
+			//added by Ssha, to prevent moving away from newly created sort order before it's start letter and chatacter sets are complete.
+			public function validateRows(srtOrder:Object):Boolean {
+				var newRowIndex:int=0;
+				if (srtOrder != null){
+					for each (var item:Object in (srtOrder.data)){
+						if (item.startLetter == "" || item.characters == "" || item.startLetter == null || item.characters == null || (item.startLetter != "" && item.characters!="" && item.characters.indexOf(item.startLetter) == -1) || item.characters.indexOf(" ") != -1 || item.startLetter.indexOf(" ") != -1)
+						{   
+							sortOrderGrid.selectedIndex = newRowIndex;
+							sortOrderGrid.scrollToIndex(newRowIndex);
+							return false;
+							
+						}
+						newRowIndex++;
+						
+					}
+				}else
+					return false;
+				return true;
+				
+			}
+			
+			private function addBtnEnabled(srtOrder:Object):Boolean{
+				if ((srtOrder == null ) || srtOrder.data.length < 1 || validateRows(srtOrder))
+				{	sortOrderRowAdd.toolTip = "Add sort rule";
+					sortOrderRowAdd.source = application.addIcon;
+					sortOrderRowAdd.enabled = true;
+					return true;
+				} else {
+					sortOrderRowAdd.enabled = false;
+					sortOrderRowAdd.toolTip = "You have to complete the the current sort rule or remove it before you can add more.";
+					sortOrderRowAdd.source = application.addIconGrayed;
+					return false;
+				}
+				
+			}
+			private function removeBtnEnabled(srtOrder:Object):Boolean{
+				if (srtOrder.data.length == 0)
+				{   sortOrderRowRemove.source = application.removeIconGrayed;
+					sortOrderRowRemove.toolTip = "There is nothing to remove";
+					sortOrderRowRemove.enabled = false;
+					trash.visible = false;
+					trash.enabled = false;
+					return false;
+				}	
+				else	
+				{	sortOrderRowRemove.enabled = true;
+					sortOrderRowRemove.source = application.removeIcon;
+					sortOrderRowRemove.toolTip = "Remove sort rule";
+					trash.visible = true;
+					trash.enabled = true;
+					return true;
+				}
+				
+			}
+			
+			private function removeSortOrderRow():void{
+				var idx:int = sortOrderGrid.selectedIndex;
+				if( idx >-1)
+					(sortOrderGrid.dataProvider as ArrayCollection).removeItemAt(idx);
+				if(!sortOrderRowAdd.enabled)
+				{	sortOrderRowAdd.source = application.addIcon;
+					sortOrderRowAdd.enabled = true;
+					sortOrderRowAdd.toolTip = "Add sort rule";
+				//	alrt = "";
+				}
+				removeBtnEnabled(this._sortOrder);	
+				dispatchEvent(new SortOrderChangeEvent('change', this._sortOrder));
+				var newIdx:int = (idx - 1 < 0)?0:(idx-1); 
+				sortOrderGrid.invalidateList();
+				sortOrderGrid.invalidateDisplayList();
+				sortOrderGrid.selectedItem = (sortOrderGrid.dataProvider as ArrayCollection).getItemAt(newIdx);
+
+
+
+			}
+			
+			private function confirmClearSortOrderRows():void{
+				YesNo.confirmDelete("Do you want to clear all the elements in this sort order?", clearSortOrderRows);
+			}
+			
+			private function clearSortOrderRows(event:CloseEvent):void{
+				if (event.detail == Alert.YES) {
+					(sortOrderGrid.dataProvider as ArrayCollection).removeAll();
+					removeBtnEnabled(this._sortOrder);
+					addBtnEnabled(this._sortOrder);
+					dispatchEvent(new SortOrderChangeEvent('change', this._sortOrder));
+				}
+			}
+			
+			// Ssha, checking validity of sort order name once it is being modified, giving warning through pop up as well as real time icon appearence.
+			private function nameUpdate(event:FlexEvent):void {
+				
+				var sortOrderTempCopy:Object ;
+				if (this._sortOrder != null) {
+					for each (var item:Object in this.parentDocument.sortOrders.dataProvider ){
+						
+						if ((sortorder_name.text == "" ) || ((item.name == sortorder_name.text) && item != this._sortOrder)){
+							
+							sortOrderTempCopy = this._sortOrder;
+							if (sortorder_name.text == "" ){
+								YesNo.handledAlert("You can not choose an empty name!", alertOkHandler);
+							}
+							else if (item.name == sortorder_name.text){
+								YesNo.handledAlert("The name '" + sortorder_name.text +"' is already assigned to another sortorder.\n Please choose a different name for this sortorder or rename the already existing one!", alertOkHandler);
+							}
+							for each (var it:Object in this.parentDocument.sortOrders.dataProvider){
+								if (it.id == sortOrderTempCopy.id) {
+									sortorder_name.text = _sortOrderCopy.name; 
+									this._sortOrder.name = _sortOrderCopy.name;
+									this.parentDocument.sortOrders.selectedItem = it;
+									warnIco.visible = false;
+									
+									return;
+								}
+							}
+						}
+					}
+					
+					if (sortOrderTempCopy == null && _sortOrderCopy != null && sortorder_name.text != _sortOrderCopy.name && this._sortOrder.id == _sortOrderCopy.id)
+						dispatchEvent(new SortOrderChangeEvent('change', this._sortOrder));
+					
+				}
+				
+			}
+		
+			
+			
+			private function handleValidity(eventObj:ValidationResultEvent):void {
+				if(eventObj.type==ValidationResultEvent.VALID)    
+					this.viewNameChangeHandler(eventObj);
+				else
+					warnIco.visible = true;
+			}
+			
+			protected function viewNameChangeHandler(event:Event):void
+			{
+				switch( this.checkNewViewData()){
+					//success
+					case 0:
+						warnIco.visible = false;
+						break;
+					case 001:
+						warnIco.visible = true;
+						break;					
+				}
+			}
+			
+			protected function checkNewViewData():int
+			{
+				var invalid:int = 0;
+				for each (var item:Object in this.parentDocument.sortOrders.dataProvider ){
+					if (item.name == sortorder_name.text && item != this._sortOrder){
+						invalid = 001;
+					}
+				}
+				return invalid;	
+			}
+			private function alertOkHandler(event:Event):void{
+				this.itemEdtEndAlertEmited = false;
+				callLater(sortOrderGrid.addEventListener, [DataGridEvent.ITEM_EDIT_END, onItemEditEnd]);
+				callLater(addBtnEnabled, [this._sortOrder]);
+				
+			}
+
+
+			protected function sortOrderGrid_itemEditBeginHandler(event:DataGridEvent):void
+			{
+				if (event.columnIndex == 0)
+					sortOrderRowOriginal = new String(event.itemRenderer.data.startLetter);
+				else if(event.columnIndex == 1)
+					sortOrderRowOriginal = new String(event.itemRenderer.data.characters);
+
+			}
+
+		]]>
+		
+		
+	</mx:Script>
+	<mx:StringValidator id="reqValid" source="{sortorder_name}" property="text" triggerEvent="change"
+						minLength="1" valid="handleValidity(event)" invalid="handleValidity(event)"/>
+	
+	<mx:VBox width="96%" height="100%">
+		<mx:HBox width="100%">
+			<mx:VBox width="10%" left="10">
+				<mx:Label text="Name:"/>
+				<mx:Label text="Description:"/>
+			</mx:VBox>
+			<mx:VBox width="70%" left="10">
+				<mx:HBox>
+					
+					<mx:TextInput id="sortorder_name" width="100%"  valueCommit="nameUpdate(event)"/>
+					<mx:Image id="warnIco" source="{warnIcon}" visible="false" 
+							  toolTip="The name &quot;{sortorder_name.text}&quot; is already assigned to another sort order. &#xa;Please choose a different name for this sort order or rename the already existing one first!"
+							  height="16" width="16"/>
+				</mx:HBox>
+				
+				<mx:TextArea id="sortorder_description" width="100%" change="dispatchEvent(new SortOrderChangeEvent('change', this._sortOrder))"/>
+			</mx:VBox>
+			<mx:HBox width="20%" height="100%" verticalAlign="bottom" horizontalAlign="right">
+				<mx:Button id="helpButton" label="Help" toggle="true" click="sortOrdersHelp(event)" toolTip="Get help with creating and editing Sort Orders."/>
+			</mx:HBox>
+			
+		</mx:HBox>
+		<mx:HBox width="100%" height="100%">
+			<mx:Panel width="100%" height="100%">
+				<mx:VBox id="mainPanel" width="100%" height="100%" horizontalAlign="left" paddingLeft="10">
+					<mx:HBox id="gridBox" width="100%" height="100%" horizontalAlign="left">
+						<mpi:DoubleClickDataGrid id="sortOrderGrid" width="100%" height="100%" editable="true" dragDrop="dispatchEvent(new SortOrderChangeEvent('change', this._sortOrder))"
+												dataProvider="{this._sortOrder.data}" sortableColumns="false" dragEnabled="true" dropEnabled="true" dragMoveEnabled="true" 
+												change="handleSortOrderChange(this._sortOrder);" itemEditBegin="sortOrderGrid_itemEditBeginHandler(event)">
+							<mpi:columns>
+								<mx:DataGridColumn headerText="Start letter" dataField="startLetter"/>
+								<mx:DataGridColumn headerText="Characters" dataField="characters"/>
+							</mpi:columns>
+						</mpi:DoubleClickDataGrid>
+					</mx:HBox>
+					<mx:ControlBar horizontalAlign="left" width="100%">
+						<mx:Image id="sortOrderRowAdd" click="createNewSortOrderRow()" enabled="{addBtnEnabled(this._sortOrder)}"
+								  toolTip="Add sort rule"/>
+						<mx:Image id="sortOrderRowRemove" click="removeSortOrderRow()" enabled="{removeBtnEnabled(this._sortOrder)}" 
+								  toolTip="Remove sort rule"/>
+						<mx:Spacer width="100%"/>
+						<!-- AAM: Removed after intoduction of the 'help' menu -->
+						<!--							<mx:Image source="{application.infoIcon}" click="info()"
+						toolTip="Info"/>-->
+						<mx:Image id="trash" enabled="{removeBtnEnabled(this._sortOrder)}" source="{application.trashIcon}" click="confirmClearSortOrderRows()"
+								  visible="true" toolTip="Remove all sort rules"/>
+					</mx:ControlBar>
+				</mx:VBox>
+			</mx:Panel>
+			<mx:TextArea id="help" width="100%" height="100%" visible="false" includeInLayout="false" editable="false"/>
+		</mx:HBox>
+	</mx:VBox>
+	
+	<mx:Binding destination="sortorder_name.text" source="this._sortOrder.name"/>
+	<mx:Binding destination="this._sortOrder.name" source="sortorder_name.text"/>
+	<mx:Binding destination="sortorder_description.text" source="this._sortOrder.description"/>
+	<mx:Binding destination="this._sortOrder.description" source="sortorder_description.text"/>
+</mx:Canvas>

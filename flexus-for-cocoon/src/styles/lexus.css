@@ -1,0 +1,53 @@
+/* * {
+	fontFamily: "Arial Unicode MS";
+}
+*/
+Panel {
+   borderAlpha: 0.55;
+   borderThicknessLeft: 6;
+   borderThicknessTop: 0;
+   borderThicknessBottom: 6;
+   borderThicknessRight: 6;
+   roundedBottomCorners: true;
+}
+
+.panelTitle {
+	color: black;
+	font-size: 14pt;
+	font-weight: 900;
+}
+
+
+.panelStatus {
+	color: white;
+	font-size: 14pt;
+	font-family: "Arial Black";
+	font-weight: bolder;
+}
+
+.panelTitleAdministrator {
+	color: red;
+	font-size: 20pt;
+	font-family: "Arial Black";
+	font-weight: bolder;
+}
+
+.aboutLexusName {
+	font-size:20pt;
+	color:red;
+	font-weight:bolder;
+}
+.LexusWSLink {
+	font-size:10pt;
+	color:red;
+}
+.aboutLexusExternalCredits {
+	background-color: #DDDDDD;
+	font-size:8pt;
+	color:gray;
+}
+.aboutLexusCredits {
+	fontSize:12pt;
+	color:black;
+	textAlign:left;
+}

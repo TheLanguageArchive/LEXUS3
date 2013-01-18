@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+    title="New user"
+    showCloseButton="true"
+    creationComplete="init()"
+    close="removeMe();"  width="400" height="400">
+
+
+    <mx:Metadata>
+       
+        [Event(name="newUser", type="flash.event.ValueChangeEvent")]
+
+    </mx:Metadata>
+
+    <mx:Script>
+        <![CDATA[
+			import com.adobe.serialization.json.JSON;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.ValidationResultEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			import nl.mpi.lexus.LexusUtil;
+			import nl.mpi.lexus.YesNo;
+			import nl.mpi.lexus.event.ValueChangeEvent;
+			import nl.mpi.lexus.service.LexusService;
+			
+			[Bindable][Embed(source="../assets/images/iconza_24x24/warning_24x24.png")] private var warnIcon:Class;
+			
+			[Bindable] 
+			public var cbAccessLevel:int;
+                    
+            [Bindable]
+            public var user: Object;
+            			
+			[Bindable]
+			private var _users: ArrayCollection;
+			
+			[Bindable] public var accesslevels:Array = [10, 30]; // ATM everybody has 10, except the Administrator, she has 30.
+
+			
+			// Define public getter.
+			public function get users():ArrayCollection {
+				return _users;
+			}
+			
+			// Define public setter. 
+			public function set users(value:ArrayCollection):void {
+				_users = value;
+			}
+           /**
+           * Initializing, a new user is created
+           * */ 
+           private function init():void{
+           	   user = new Object();
+           	   user_name.setFocus();
+           }
+           /**
+           * Attempts to store the user to the server. The (succesfull) response os forwarded to onSaveResult
+           **/ 
+           private function requestSave():void {
+			   switch( this.checkNewUserData()){
+				   //success -> save
+				   case 0 :
+					   	var lexusService:LexusService = new LexusService();
+					   	user.role = this.cbAccessLevel;
+					   	lexusService.send("LexusWorkspaceEditor/createUser.json", user, "workspace", onSaveResult);
+					   	break;
+				   case 001 :
+					   	YesNo.alert("An account with the name \"" + user_name.text +"\" already exists!\nPlease choose a different account name for the new user.");
+						break;
+					   
+			   }
+
+           }
+           /**
+           * Callback method for the server lexicon save response. A new Event is dispatched to signal creation of a new lexicon.
+           * 
+           **/ 
+           private function onSaveResult(event:ResultEvent):void {
+				LexusUtil.parseJSON(String(event.result),
+					function(data:Object):void {
+						if (data.status.success.toString() == "true"){
+							user = data.result.userProfile;
+							user.saveSuccess = true;	
+						} else
+							user.saveSuccess = false;
+			           	var evnt:ValueChangeEvent = new ValueChangeEvent("newUser", user);
+			            dispatchEvent(evnt); 
+			           	removeMe();
+					}
+				);
+           }
+           
+           private function removeMe():void { 
+	           	PopUpManager.removePopUp(this);
+           }
+           
+           /**
+           * Key event handler for the save button.If enter is pressed the lexicon is propogated to the server
+           **/ 
+            private function onKeyUpSave(event:KeyboardEvent):void{
+            	//Enter pressed
+            	if( event.keyCode == 13)
+            		this.requestSave();
+            		
+            }
+            /**
+            * Key event handler for the cancel button
+            **/ 
+             private function onKeyUpCancel(event:KeyboardEvent):void{
+            	//Enter pressed
+            	if( event.keyCode == 13)
+	                removeMe();
+            }
+            /**
+            *  Event listener for the valid and invalid events.
+            **/ 
+            private function handleValid(eventObj:ValidationResultEvent):void {
+                if(eventObj.type==ValidationResultEvent.VALID)    
+                    // Enable saveBtn button.
+                    saveBtn.enabled = true;
+                else
+                    saveBtn.enabled = false;
+            }
+			
+			
+			/**
+			 * Get String repr. of access level.
+			 **/
+			public function getAccessLevelAsString(data:Object):String {
+				var al:String = "*** UNKNOWN ACCESS LEVEL ***";
+				switch (data) {
+					case  0: al = "USER"; break;
+					case 10: al = "USER"; break;
+					case 20: al = "USER"; break;
+					case 30: al = "ADMINISTRATOR"; break;
+				}
+				return al;
+			}
+
+
+			protected function checkName_ChangeHandler(event:Event):void
+			{
+				switch( this.checkNewUserData()){
+					//success
+					case 0:
+						warnIco.visible = false;
+						break;
+					case 001:
+						warnIco.visible = true;
+						break;					
+				}
+			}
+			
+			protected function checkNewUserData():int
+			{
+				var invalid:int = 0;
+				for each (var item:Object in users){
+					if (item.account.toString() == user_name.text){
+						invalid = 001;
+					}
+				}
+				return invalid;	
+			}
+
+        ]]>
+    </mx:Script>
+	<mx:StringValidator id="reqValid" source="{user_name}" property="text" triggerEvent="change"
+						minLength="1" valid="handleValid(event)" invalid="handleValid(event)"/>
+
+    <mx:Canvas width="100%" height="100%">
+       <mx:Grid width="100%">
+			<mx:GridRow>
+				<mx:GridItem>
+					<mx:Label text="Account:"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:TextInput id="user_name" restrict="a-zA-Z0-9\-_" text="{user.username}" change="checkName_ChangeHandler(event)"/>	
+				</mx:GridItem>
+				<mx:GridItem verticalAlign="middle">
+					<mx:Image id="warnIco" source="{warnIcon}" visible="false" 
+							  toolTip="An account with the name &quot;{user_name.text}&quot; already exists! &#xa;Please choose a different account name for the new user."
+							  height="16" width="16"/>	
+				</mx:GridItem>
+			</mx:GridRow>
+			<mx:GridRow>
+				<mx:GridItem>
+					<mx:Label text="Name:"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:TextInput id="user_displayName" text="{user.displayName}"/>	
+				</mx:GridItem>					
+			</mx:GridRow>
+			<mx:GridRow>
+				<mx:GridItem>
+					<mx:Label text="Password:"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:TextInput id="user_password" text="{user.password}"/>
+				</mx:GridItem>
+			</mx:GridRow>
+		   <mx:GridRow>
+			   <mx:GridItem>
+				   <mx:Label text="Email:"/>
+			   </mx:GridItem>
+			   <mx:GridItem>
+				   <mx:TextInput id="user_email" text="{user.email}"/>
+			   </mx:GridItem>
+		   </mx:GridRow>
+			<mx:GridRow>
+				<mx:GridItem>
+					<mx:Label text="Roles:"/>
+				</mx:GridItem>
+				<mx:GridItem><mx:ComboBox id="user_role" selectedItem="10" labelFunction="getAccessLevelAsString"
+							 updateComplete="cbAccessLevel = user_role.selectedItem.valueOf()"
+							 dataProvider="{accesslevels}" />	
+				</mx:GridItem>	
+			</mx:GridRow>
+			
+		</mx:Grid>
+    </mx:Canvas>
+	
+    <mx:ControlBar horizontalAlign="right" width="100%">
+        <mx:Button id="saveBtn" label="Save" click="requestSave();" keyUp="onKeyUpSave(event)" enabled="false"/>
+        <mx:Button id="cancelBtn" label="Cancel" click="removeMe();"  keyUp="onKeyUpCancel(event)" enabled="true"/>
+    </mx:ControlBar>
+	<mx:Binding source="user_name.text" destination="user.username"/>
+	<mx:Binding source="user_displayName.text" destination="user.displayName"/>
+	<mx:Binding source="user_password.text" destination="user.password"/>
+	<mx:Binding source="user_email.text" destination="user.email"/>
+</mx:TitleWindow>

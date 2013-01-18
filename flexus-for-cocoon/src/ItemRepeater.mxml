@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="400" height="300">
+	<mx:Repeater id="itemRepeater">
+		<mx:HBox>
+			<mx:Label text="{itemRepeater.currentItem.label}" width="100"/>
+			<mx:TextInput text="{itemRepeater.currentItem.value}" width="200"/>
+		</mx:HBox>
+	</mx:Repeater>
+</mx:VBox>
