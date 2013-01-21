@@ -2,6 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    
+    <!-- Override MPI parent POM to use java 1.6 -->
+    <properties>
+        <project.build.sourceLevel>1.6</project.build.sourceLevel>
+        <project.build.targetLevel>1.6</project.build.targetLevel>
+    </properties>
 
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
@@ -114,6 +120,7 @@
             </plugin>
         </plugins>
     </build>
+    
     <distributionManagement>
         <snapshotRepository>
             <id>MPI-Snapshots</id>
@@ -121,12 +128,8 @@
             <url>http://lux15.mpi.nl/nexus/content/repositories/MPI-Snapshots</url>
         </snapshotRepository>
     </distributionManagement>
+    
     <repositories>
-<!--        <repository>
-            <id>otego</id> <!-\- for cocoon -\->
-            <name>otego mirror</name>
-            <url>http://project.otego.com/mirror-maven2</url>
-        </repository>-->
         <repository> <!-- for saxon 9.1.0.8 -->
             <id>JBoss</id>
             <name>JBoss deprecated repository</name>
@@ -134,23 +137,10 @@
         </repository>
     </repositories>
 
-
     <scm>
-        <connection>scm:svn:https://svn.mpi.nl/LAT/lexus/trunk/LexusCocoon/</connection>
+        <connection>scm:svn:https://svn.mpi.nl/LAT/lexus3/trunk/LexusCocoon/</connection>
         <developerConnection>scm:svn:file:///D:/repos1</developerConnection>
-        <url>scm:svn:https://svn.mpi.nl/LAT/lexus/trunk/LexusCocoon/</url>
+        <url>scm:svn:https://svn.mpi.nl/LAT/lexus3/trunk/LexusCocoon/</url>
     </scm>
-
-<!--
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>2.3.1</version>
-            </plugin>
-        </plugins>
-    </reporting>-->
-
 
 </project>

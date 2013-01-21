@@ -24,9 +24,7 @@
     <version>3.0.1-SNAPSHOT</version>
   </parent>
 
-  <groupId>nl.mpi.lexus</groupId>
   <artifactId>flexus</artifactId>
-  <version>3.0.1-SNAPSHOT</version>
   <packaging>swf</packaging>
 
   <name>Lexus Flex interface</name>
@@ -41,19 +39,21 @@
       <artifactId>flex-framework</artifactId>
       <version>4.6.b.23201</version>
       <type>pom</type>
-      <exclusions>
-        <exclusion>
-          <groupId>com.adobe.flex.framework</groupId>
-          <artifactId>playerglobal</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
-      <artifactId>playerglobal</artifactId>
+      <artifactId>halo</artifactId>
       <version>4.6.b.23201</version>
-      <classifier>11.1</classifier>
+      <classifier>theme</classifier>
       <type>swc</type>
+      <scope>theme</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.adobe.flex.framework</groupId>
+      <artifactId>spark</artifactId>
+      <version>4.6.b.23201</version>
+      <type>swc</type>
+      <scope>theme</scope>
     </dependency>
                 <!-- as3corelib.swc -->
     <dependency>
@@ -71,26 +71,85 @@
 </dependencies>
 
   <build>
-  <finalName>${project.artifactId}-${flexus_version}</finalName>
+   <finalName>Lexus</finalName>
     <sourceDirectory>src</sourceDirectory>
+    <directory>bin-debug</directory>
+    <outputDirectory>bin-debug</outputDirectory>
     <plugins>
       <plugin>
         <groupId>org.sonatype.flexmojos</groupId>
         <artifactId>flexmojos-maven-plugin</artifactId>
-        <version>3.9</version>
+        <version>4.2-beta</version>
         <extensions>true</extensions>
         <configuration>
-          <sourceFile>Lexus.mxml</sourceFile>
-          <generateHtmlWrapper>true</generateHtmlWrapper>
-          <targetPlayer>10.0.0</targetPlayer>
-          <definesDeclaration>
-            <property>
-              <name>APPINFO::version</name>
-              <value>"${flexus_version}"</value>
-            </property>
+       <loadConfig>src/config-4.6.b.23201/flex-config.xml</loadConfig>
+                   <locales>
+                       <locale>en_US</locale>
+                   </locales>
+                   <mergeResourceBundle>false</mergeResourceBundle>
+                               <themes>
+                                  <theme>${project.build.directory}/themes/spark.swc</theme>
+                                  <theme>${project.build.directory}/themes/halo-theme.swc</theme>
+                               </themes>
+            <outputDirectory>bin-debug</outputDirectory>
+        	<debug>true</debug>
+          	<sourceFile>Lexus.mxml</sourceFile>
+          	<optimize>true</optimize>
+          	<modules>
+          		<module>
+          			<sourceFile>Workspace.mxml</sourceFile>
+          			<optimize>true</optimize>
+          			<finalName>Workspace</finalName>
+          		</module>
+          		<module>
+          			<sourceFile>LexiconBrowser.mxml</sourceFile>
+          			<optimize>true</optimize>
+          			<finalName>LexiconBrowser</finalName>
+          		</module>
+          		<module>
+          			<sourceFile>SchemaEditor.mxml</sourceFile>
+          			<optimize>true</optimize>
+          			<finalName>SchemaEditor</finalName>
+          		</module>
+          	</modules>
+          	<generateHtmlWrapper>true</generateHtmlWrapper>
+          	<flexBuilderCompatibility>true</flexBuilderCompatibility>
+          	<targetPlayer>11.1.0</targetPlayer>
+          	<definesDeclaration>
+	            <property>
+	              <name>APPINFO::version</name>
+	              <value>"${project.version}"</value>
+	            </property>
           </definesDeclaration>                    
         </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>wrapper</goal>
+            </goals>
+                    <configuration>
+                        <templateURI>folder:html-template</templateURI>
+                        <outputDirectory>bin-debug</outputDirectory>
+                        <templateOutputDirectory>bin-debug</templateOutputDirectory>
+                        <parameters>
+                            <swf>Lexus</swf>
+                            <width>100%</width>
+                            <height>100%</height>
+                            <version_major>11.1</version_major>
+                            <version_minor>11.1</version_minor>
+                            <bgcolor>#FFFFFF</bgcolor>
+                        </parameters>
+                        <htmlName>Lexus</htmlName>
+                        <!-- <targetPlayer>${flash.major}.${flash.minor}.${flash.revision}</targetPlayer> -->
+                    </configuration>
+          </execution>
+        </executions>
         <dependencies>
+          <dependency>
+            <groupId>org.sonatype.flexmojos</groupId>
+            <artifactId>flexmojos-threadlocaltoolkit-wrapper</artifactId>
+            <version>4.2-beta</version>
+          </dependency>
           <dependency>
             <groupId>com.adobe.flex</groupId>
             <artifactId>compiler</artifactId>
@@ -99,6 +158,27 @@
           </dependency>
         </dependencies>
       </plugin>
+      <plugin>
+                          <artifactId>maven-dependency-plugin</artifactId>
+                             <executions>
+                                <execution>
+                                   <id>copy-themes-for-flex4</id>
+                                   <phase>generate-resources</phase>
+                                   <goals>
+                                      <goal>copy-dependencies</goal>
+                                   </goals>
+                                   <configuration>
+                                      <includeTypes>swc</includeTypes>
+                                      <outputDirectory>bin-debug/themes</outputDirectory>
+                                      <overWriteIfNewer>true</overWriteIfNewer>
+                                      <includeGroupIds>com.adobe.flex.framework</includeGroupIds>
+                                      <includeArtifactIds>halo,spark</includeArtifactIds>
+                                      <includeClassifiers>theme</includeClassifiers>
+                                      <stripVersion>true</stripVersion>
+                                   </configuration>
+                              </execution>
+                           </executions>
+                       </plugin>
 </plugins>
 <!--
       <plugin>
@@ -148,10 +228,15 @@
 <!--      </plugin>-->
 <!---->
 <!--    </plugins>-->
-    <outputDirectory>bin-debug</outputDirectory>
     <resources>
       <resource>
-        <directory>html-template</directory>
+        <directory>src/styles</directory>
+        <targetPath>styles/</targetPath>
+        <filtering>false</filtering>
+      </resource>
+      <resource>
+        <directory>src/icons</directory>
+        <targetPath>icons/</targetPath>
         <filtering>false</filtering>
       </resource>
     </resources>
