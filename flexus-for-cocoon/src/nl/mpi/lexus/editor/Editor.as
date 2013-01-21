@@ -21,15 +21,15 @@ package nl.mpi.lexus.editor
 	
 	public class Editor extends EventDispatcher
 	{
-		[Bindable][Embed(source="../assets/images/iconza_24x24/camera_24x24.png")]private var cameraIcon:Class;
+		[Bindable][Embed(source="/../assets/images/iconza_24x24/camera_24x24.png")]private var cameraIcon:Class;
 		
-		[Bindable][Embed(source="../assets/images/iconza_24x24/film_24x24.png")]	private var filmIcon:Class;
+		[Bindable][Embed(source="/../assets/images/iconza_24x24/film_24x24.png")]	private var filmIcon:Class;
 		
-		[Bindable][Embed(source="../assets/images/iconza_24x24/sound_24x24.png")] private var soundIcon:Class;
+		[Bindable][Embed(source="/../assets/images/iconza_24x24/sound_24x24.png")] private var soundIcon:Class;
 		
-		[Bindable][Embed(source="../assets/images/iconza_24x24/globeGray_24x24.png")] private var externalLinkIcon:Class;
+		[Bindable][Embed(source="/../assets/images/iconza_24x24/globeGray_24x24.png")] private var externalLinkIcon:Class;
 		
-		[Bindable][Embed(source="../assets/images/iconza_24x24/link_24x24.png")] private var internalLinkIcon:Class;	
+		[Bindable][Embed(source="/../assets/images/iconza_24x24/link_24x24.png")] private var internalLinkIcon:Class;	
 		private var editorWidgets:Array = new Array();
 		private var initialColorLevel:int = 170;
 		private var instanceDataElements:Array = new Array();
