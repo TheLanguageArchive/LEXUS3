@@ -131,10 +131,12 @@
 			
 			
 			public function executeQuery():void{
-				if( this.queryBuilder.queryBuilderList.queryList.selectedItem.hasOwnProperty("id")) {
+			    //#2135 fix
+				var selectedIndex:int = this.queryBuilder.queryBuilderList.queryList.selectedIndex;
+				if( this.queryBuilder.queryBuilderList.queryList.dataProvider[selectedIndex].hasOwnProperty("id")) {
 					var result:QueryResults = new QueryResults();
-					result.query = this.queryBuilder.queryBuilderList.queryList.selectedItem;
-					var label:String = this.queryBuilder.queryBuilderList.queryList.selectedItem.name;
+					result.query = this.queryBuilder.queryBuilderList.queryList.dataProvider[selectedIndex];
+					var label:String = this.queryBuilder.queryBuilderList.queryList.dataProvider[selectedIndex].name;
 					if ((this.queryBuilder.queryEditor.title.title as String).lastIndexOf("\*") != -1)
 						label += "*";
 					result.label = label;
