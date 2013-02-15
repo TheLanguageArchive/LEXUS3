@@ -235,7 +235,8 @@
 				//refresh the query tree -> call the method since it trigers init() to expand the query children
 				//note:if we read out queryList.queryList.selectedItem, the old item is loaded. aparently it is not updated on time
 				if (selectedIndex != -1)
-					query = queryList.queries.getItemAt(selectedIndex);
+				{   query = queryList.queries.getItemAt(selectedIndex);
+					queryList.queryList.selectedItem = query;}
 				else
 					_query = null;
 				_saveQuery = null;
