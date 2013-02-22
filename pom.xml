@@ -19,7 +19,7 @@
 
 	<groupId>nl.mpi.lexus</groupId>
 	<artifactId>lexus</artifactId>
-	<version>3.0.1-RC</version>
+	<version>3.0.1-RELEASE</version>
 	<name>Lexus</name>
 	<url>http://tla.mpi.nl/tools/tla-tools/lexus</url>
 	<description>
