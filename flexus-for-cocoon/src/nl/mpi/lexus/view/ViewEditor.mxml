@@ -1,0 +1,1430 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" xmlns:lexus="nl.mpi.lexus.*"
+		  initialize="ToolTipManager.enabled = true;">		
+	<mx:Script>
+		<![CDATA[
+			import flexlib.controls.Highlighter;
+			
+			import mx.collections.ArrayCollection;
+			import mx.collections.ArrayList;
+			import mx.collections.ICollectionView;
+			import mx.collections.XMLListCollection;
+			import mx.controls.listClasses.IListItemRenderer;
+			import mx.core.DragSource;
+			import mx.core.FlexGlobals;
+			import mx.core.IFlexDisplayObject;
+			import mx.core.IUIComponent;
+			import mx.core.UIComponent;
+			import mx.events.DragEvent;
+			import mx.events.DropdownEvent;
+			import mx.events.FlexEvent;
+			import mx.events.ListEvent;
+			import mx.events.ListEventReason;
+			import mx.events.ToolTipEvent;
+			import mx.events.TreeEvent;
+			import mx.events.ValidationResultEvent;
+			import mx.managers.DragManager;
+			import mx.managers.PopUpManager;
+			import mx.managers.ToolTipManager;
+			import mx.messaging.messages.HTTPRequestMessage;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.http.HTTPService;
+			import mx.utils.ObjectUtil;
+			import mx.utils.StringUtil;
+			
+			import nl.mpi.lexus.LexusUtil;
+			import nl.mpi.lexus.YesNo;
+			import nl.mpi.lexus.event.ValueChangeEvent;
+			import nl.mpi.lexus.event.ViewChangeEvent;
+			import nl.mpi.lexus.service.LexusService;
+			import nl.mpi.lexus.view.NodeEditor;
+			import nl.mpi.lexus.view.NodeRenderer;
+			
+			[Bindable][Embed(source="../../../../../assets/images/iconza_24x24/warning_24x24.png")] private var warnIcon:Class;
+
+			private const SHOW_STYLE_EDITOR_LABEL:String = "Show style editor";
+			private const SHOW_STRUCTURE_EDITOR_LABEL:String = "Show structure editor";
+			private const SHOW_XML_DATA_LABEL:String = "Show source";
+//			private const EDITORXOFFSET:int = 40;
+//			private const EDITORYOFFSET:int = 120;
+			
+			private var application:Object = FlexGlobals.topLevelApplication;
+						
+			[Bindable] public var lexiconId:String;
+			private var _schemaElementsTree:AutoSizeTree = null;
+			
+			private var _newView:XML =
+				<view description="It's a great view." id="" type="dsl_view">
+					<style type="dsl_style" isBranch="false"/>
+					<structure isBranch="true" type="dsl_structure"/>
+				</view>;
+			[Bindable] private var _viewXML:XML = null;
+			
+			[Bindable] private var _viewStructure:ICollectionView = null;
+
+				
+			[Bindable] private var viewElements:XML = 
+			<elements>
+				<element label="Decorator" type="dsl_show"/>
+				<element label="Multiplier" type="dsl_multiplier"/>
+				<element label="Horizontal line" type="dsl_horizontal_line"/>
+				<element label="Line break" type="dsl_line_break"/>
+				<element label="Text" type="dsl_text"/>
+				<element label="Table" type="dsl_table">
+					<element label="Row" type="dsl_table_row"/>
+					<element label="Column" type="dsl_table_column"/>
+				</element>
+			</elements>;
+			
+			private var _modified:Boolean;
+			private var _isAlerting:Boolean = false;
+			
+			private var dragSourceSelectedItem:XML = null;
+
+			public var dragSourceFromSchemaEditor:Object = null;
+
+			// Remember the previous deny/accept rule,no need to print a rule if it's the same as the previous.
+			private var previousRule:String = "";
+			
+			// Define public getter.
+			public function get viewXML():XML {
+				return _viewXML;
+			}
+			
+			// Define public setter. 
+			public function set viewXML(value:XML):void {
+				var idx:int = this.structureTree.selectedIndex;
+				_viewXML = value;
+				_viewStructure = new XMLListCollection(new XMLList(new XML(_viewXML.structure)));
+				if (value.@id.toString() != "")
+					needsSave = false;
+				structureTree.validateNow();
+				structureTree.expandChildrenOf(_viewStructure[0], true);
+				Vtree.expandChildrenOf(Vtree.dataProvider[5], true);
+				this.structureTree.selectedIndex = idx;
+
+			}
+			
+			
+			// Define public setter. 
+			public function get schemaElementsTree():AutoSizeTree {
+				return _schemaElementsTree;
+			}
+			
+			// Define public setter. 
+			public function set schemaElementsTree(value:AutoSizeTree):void {
+				_schemaElementsTree = value;
+			}
+			
+			// Define public getter.
+			public function newView(_lexiconId:String, _viewName:String):XML {
+				var tmpViewXML:XML = ObjectUtil.copy(_newView) as XML;
+				tmpViewXML.@name = _viewName;
+				_viewXML = tmpViewXML;
+				_viewStructure = new XMLListCollection(new XMLList(new XML(_viewXML.structure)));
+				needsSave = true;
+				this.lexiconId = _lexiconId;
+				structureTree.validateNow();
+				structureTree.expandChildrenOf(_viewStructure[0], true);
+				return _viewXML;
+			}
+			
+			public function get needsSave():Boolean {
+				return this._modified;
+			}
+			
+			public function set needsSave(value:Boolean):void {
+				this._modified = value;
+			}
+			
+			public function get isAlerting():Boolean {
+				return this._isAlerting;
+			}
+			
+			public function set isAlerting(value:Boolean):void {
+				this._isAlerting = value;
+			}
+			
+			private function onKeyUp(event:KeyboardEvent):void
+			{
+				if (event.keyCode == 46)
+				{
+					var item:XML = XML(structureTree.selectedItem);
+					var parent:XML = item.parent();
+					if (parent != _viewXML) {
+						var index:int = item.childIndex();
+						delete (parent.*[index]);
+						needsSave = true;
+						this.parentDocument.unsavedViewIndex = this.parentDocument.viewsList.selectedIndex;
+						//structureTree.dataProvider = _viewXML.structure;
+						//callLater(structureTree.expandChildrenOf, [_viewXML, true]);
+						structureTree.selectedItem = index-1 > -1 ? parent.*[index - 1] : parent;
+						LexusUtil.forceTreeRedraw(structureTree, structureTree.dataProvider);						
+					}
+				}
+			}
+			
+			private function fixedInt(value:int, mask:String):String {
+				return String(mask + value.toString(16)).substr(-mask.length).toUpperCase();
+			}
+			
+			/* Process the data from the NodeEditor after Cancel */
+			public function cancelDataEdit(event:ValueChangeEvent):void {			
+				event.preventDefault();
+			}
+			
+			/* Process the data from the NodeEditor after Ok */
+			public function processEditedData(event:ValueChangeEvent):void {    
+
+				event.preventDefault();
+				
+				var item:XML = structureTree.selectedItem as XML;
+				
+				if (item.@type == 'dsl_text') {
+					var te:TextEditor = TextEditor(event.value);
+					
+					// Get new text before from editor.
+					if (item.@value != te.text_value.text) { 
+						item.@value = te.text_value.text;
+						needsSave = true;
+						this.parentDocument.unsavedViewIndex = this.parentDocument.viewsList.selectedIndex;
+					}
+					if (item.@dsl_class != te.dsl_class_attribute_value.text) { 
+						item.@dsl_class = te.dsl_class_attribute_value.text;
+						needsSave = true;
+						this.parentDocument.unsavedViewIndex = this.parentDocument.viewsList.selectedIndex;
+					}
+				}
+				
+				else if (item.@type == 'dsl_show' || item.@type == 'data category' || item.@type == 'dsl_multiplier') {
+					var ce:DecoratorEditor = DecoratorEditor(event.value);
+					
+					var ff:String = ce.show_fontFamily.selectedItem.fontName;
+					var fs:String = ce.show_fontSize.selectedItem as String;
+					
+					var sColor:int = ce.show_cp.selectedColor;
+					var color:String;
+					if (!ce.clearColor.selected && sColor != -1)		
+						color = "0x" + fixedInt(ce.show_cp.selectedColor, '000000');
+					else
+						color = null;
+
+					
+					var fw:String;
+					if (ce.fontWeight_bold.selected)
+						fw = 'bold';
+					else if (ce.fontWeight_normal.selected)
+						fw = 'normal';
+					else if (ce.fontWeight_disabled.selected)
+						fw = 'disabled';
+	
+										
+					var fst:String;
+					if (ce.fontStyle_italic.selected)
+						fst = 'italic';
+					else if (ce.fontStyle_normal.selected)
+						fst = 'normal';
+					else if (ce.fontStyle_disabled.selected)
+						fst = 'disabled';
+					
+					var td:String;
+					if (ce.textDecoration_underline.selected)
+						td = 'underline';
+					else if (ce.textDecoration_none.selected)
+						td = 'none';
+					else if (ce.textDecoration_disabled.selected)
+						td = 'disabled';
+					
+					var ta:String;
+					if (ce.textAlign_left.selected)
+						ta = 'left';
+					else if (ce.textAlign_right.selected)
+						ta = 'right';
+					else if (ce.textAlign_center.selected)
+						ta = 'center';
+					else if (ce.textAlign_disabled.selected)
+						ta = 'disabled';
+
+					
+					var height:String = ce.dsl_height_value.text;
+					var width:String = ce.dsl_width_value.text;
+					
+					var dc:String = ce.dsl_class_attribute_value.text;
+					var optional:String = ce.optional.selected ? "true" : "false" as String;
+					var block:String = ce.block.selected ? "true" : "false" as String;
+					var localStyle:String = ce.localStyle.selected ? "false" : "true" as String;
+
+					// Get new color from editor.
+					if (item.@color != color ||
+						item.@fontFamily != ff ||
+						item.@fontSize != fs ||
+						item.@fontWeight != fw ||
+						item.@fontStyle != fst ||
+						item.@textDecoration != td ||
+						item.@textAlign != ta ||
+						item.@dsl_class != dc ||
+						item.@height != height ||
+						item.@width != width ||
+						item.@optional != optional ||
+						item.@block != block ||
+						item.@localStyle != localStyle) {
+						needsSave = true;
+						this.parentDocument.unsavedViewIndex = this.parentDocument.viewsList.selectedIndex;
+					}
+					
+					if (color == null)
+						delete item.@color;
+					else
+						item.@color = color;
+
+					
+					if (ff == '<Inherited>')
+						delete item.@fontFamily;
+					else
+						item.@fontFamily = ff;
+					
+					
+					if (fs == 'Inherited')
+						delete item.@fontSize;
+					else
+						item.@fontSize = fs;
+					
+					
+					if (fw == 'disabled')
+						delete item.@fontWeight;
+					else
+						item.@fontWeight = fw;
+					
+					if (fst == 'disabled')
+						delete item.@fontStyle;
+					else
+						item.@fontStyle = fst;					
+					
+					if (td == 'disabled')
+						delete item.@textDecoration;
+					else
+						item.@textDecoration = td;
+					
+					if (ta == 'disabled')
+						delete item.@textAlign;
+					else
+						item.@textAlign = ta;
+					
+					if (height == '')
+						delete item.@height;
+					else
+						item.@height = height;
+
+					if (width == '')
+						delete item.@width;
+					else
+						item.@width = width;					
+					
+					item.@dsl_class = dc;
+					item.@optional = optional;
+					item.@block = block;
+					item.@localStyle = localStyle;
+				}
+				else if (item.@type == 'dsl_table' || item.@type == 'dsl_table_row') {
+					var cloe:ClassOptionalEditor = ClassOptionalEditor(event.value);
+					// Get new dsl_class attribute from editor.
+					if (item.@dsl_class != cloe.dsl_class_attribute_value.text) { 
+						item.@dsl_class = cloe.dsl_class_attribute_value.text;
+						needsSave = true;
+						this.parentDocument.unsavedViewIndex = this.parentDocument.viewsList.selectedIndex;
+					}
+					if (item.@optional != cloe.optional.selected ? "true" : "false") {
+						item.@optional = cloe.optional.selected ? "true" : "false";
+						needsSave = true;
+						this.parentDocument.unsavedViewIndex = this.parentDocument.viewsList.selectedIndex;
+					}
+				}
+				else if (item.@type == 'dsl_horizontal_line') {
+					var hlte:HLineThicknessEditor = HLineThicknessEditor(event.value);
+					// Get new dsl_size_attribute_value attribute from editor.
+					if (item.@size != hlte.dsl_size_attribute_value.text) { 
+						item.@size = hlte.dsl_size_attribute_value.text;
+						needsSave = true;
+						this.parentDocument.unsavedViewIndex = this.parentDocument.viewsList.selectedIndex;
+					}
+				}
+				else if (item.@type == 'dsl_line_break') {
+					//AAM: currently not in use since lbreak as no editable options.
+						needsSave = true;
+						this.parentDocument.unsavedViewIndex = this.parentDocument.viewsList.selectedIndex;
+				}
+
+				else {
+					var cle:ClassEditor = ClassEditor(event.value);
+					// Get new dsl_class attribute from editor.
+					if (item.@dsl_class != cle.dsl_class_attribute_value.text) { 
+						item.@dsl_class = cle.dsl_class_attribute_value.text;
+						needsSave = true;
+						this.parentDocument.unsavedViewIndex = this.parentDocument.viewsList.selectedIndex;
+					}
+				}
+
+				structureTree.validateNow();
+				callLater(structureTree.expandChildrenOf, [item, true]);
+
+			}
+			
+			/**
+			 * Attempts to store the view to the server.
+			 **/
+			public function save():void {
+				this._viewXML.structure = new XML(this._viewStructure);
+				var lexusService:LexusService = new LexusService();
+				lexusService.sendXMLAndParseXML("LexusSchemaEditor/saveView.xml?lexiconId="+this.lexiconId, this._viewXML,
+					function(data:XML):void {
+						var success:String = data.@success;
+						var done:Boolean = success == "true";
+						if (done) {
+							var view:XML = data.view[0];
+							dispatchEvent(new ViewChangeEvent(ViewChangeEvent.SAVED_VIEW, view));
+						}
+					}
+				);
+			}
+			
+			/**
+			 * Discards the view.
+			 **/
+			public function discard():void {
+				this.parentDocument.removeDiscardedView();
+				if(this._newView.@id.toString() != "")
+					needsSave = false;
+				this.validateNow();
+			}
+			
+			/**
+			 * Called when a new view name is commited, i.e. when the user moves away
+			 * from the 'View_name' field, after editing it.
+			 * Verifies if it is possible to update the view name for the one entered by
+			 * the user, and blocks the original action if not.
+			 **/
+			private function nameUpdate(event:FlexEvent):void {
+				
+				//AAM: verify if the name of the view is unique or empty.
+				for each (var item:XML in this.parentDocument.viewsList.dataProvider){
+					if ((item.@name.toString() == View_name.text || View_name.text.length < 1) && item.@id != _viewXML.@id){
+						var viewCopy:XML = new XML(_viewXML);
+						if (item.@name.toString() == View_name.text){
+							YesNo.handledAlert("The name '" + View_name.text +"' is already assigned to another view.\n Please choose a different name for this view or rename the already existing one!", okAlertHandler);
+							this._isAlerting = true;
+						}
+						//name is empty
+						else if(View_name.text.length < 1){
+							YesNo.handledAlert("The view name cannot be empty!\n Please choose a different name for this view.", okAlertHandler);
+							this._isAlerting = true;
+						}
+						
+						//AAM: replace the name by the original one
+						for each (var it:XML in this.parentDocument.viewsList.dataProvider){
+							if(it.@id == viewCopy.@id){
+								this.parentDocument.viewsList.selectedItem = it;
+								View_name.text = viewCopy.@name;
+								warnIco.visible = false;
+								if(viewCopy.@id.toString() != "")
+									needsSave = false;
+								return;
+							}
+						}
+					}
+				}
+				
+				if(_viewXML != null && (_viewXML.@name != View_name.text || _viewXML.@id.toString() == "")){
+					needsSave = true;
+					var idx:int = this.getViewIndex(_viewXML);
+					//this.parentDocument.views[idx].@name += "*";
+					this.parentDocument.unsavedViewIndex = idx;
+					_viewXML.@name = View_name.text;
+				}
+			}
+			
+			private function okAlertHandler(event:Event):void{
+				this._isAlerting = false;
+				
+			}
+			
+			private function getViewIndex(view:XML):int{
+				for (var i:int; i < this.parentDocument.viewsList.dataProvider.length; i++){
+					var it:XML = this.parentDocument.viewsList.dataProvider[i];
+					if(it.@id == view.@id){
+						return i;
+					}
+				}
+				return -1;
+			}
+			
+			private function descriptionUpdate():void {
+				if(_viewXML != null && (_viewXML.@description != View_description.text || _viewXML.@id.toString() == "")){
+					needsSave = true;
+					this.parentDocument.unsavedViewIndex = this.getViewIndex(_viewXML);
+					_viewXML.@description = View_description.text
+				}
+			}
+			
+			
+			private function dragEnterHandler(event:DragEvent):void {
+				// Explicitly handle the dragDrop event.           
+				event.preventDefault();
+				structureTree.hideDropFeedback(event);				
+				DragManager.acceptDragDrop(AutoSizeTree(event.target));
+
+			}
+			
+			/**
+			 * Returns true if node2 is among the descendants of node1, or if both nodes
+			 * are the same. 
+			 * */
+			private function isDescendantOrSelf(node1:XML, node2:XML):Boolean {
+				//is itself
+				if(node1 == node2 && structureTree.getItemIndex(node1) == structureTree.getItemIndex(node2))
+					return true;
+				//imediactly return false if node1 does not have descendants
+				if(node1.descendants().length() == 0)
+					return false;
+				//check for the existence of node2 among the descendants of node1
+				for each(var desc:XML in node1.descendants()){
+					if (desc == node2 && structureTree.getItemIndex(desc) == structureTree.getItemIndex(node2))
+						return true;
+				}	
+				return false;
+				
+			}
+			
+			private function doDragOver(event:DragEvent):void {
+				var dragInitiator:IUIComponent = event.dragInitiator;
+				
+				var dragSource:Object = dragSourceSelectedItem != null ? dragSourceSelectedItem
+					: dragSourceFromSchemaEditor != null ? dragSourceFromSchemaEditor : null;
+				
+				// Explicitly handle the dragDrop event.           
+				event.preventDefault();
+
+				// Get drop target.
+				var dropTarget:AutoSizeTree = AutoSizeTree(event.currentTarget);
+				
+				// Get the drop location.
+				var dropElement:XML;
+				var dropLoc:int = dropTarget.calculateDropIndex(event);	
+				
+				// If it is a COPY operation from the schema or visial elements trees select the drop element
+				if(dragInitiator != structureTree){
+					dropTarget.selectedIndex = dropLoc;
+					dropElement = dropTarget.selectedItem as XML;			
+					
+				} else {
+					dropTarget.showDropFeedback(event);
+					dropElement = structureTree.mx_internal::_dropData != null ? structureTree.mx_internal::_dropData.parent: null;
+					var childrenOffset:int = dragSource.descendants() == null ? 1 : dragSource.descendants().length() + 1;
+					
+					if(!event.ctrlKey){
+						//For MOVE operation -> we deny the drop if: the drop location translates in the same location as the initial,
+						if(structureTree.getItemIndex(dragSource) == dropLoc || 
+							(dragSource.parent() == dropElement  && (structureTree.getItemIndex(dragSource) + childrenOffset) == dropLoc)){
+							denyDrop(dropTarget, event, "0.1.1");
+							return;
+						}
+						//the drop location is a child of the draged item (imposible operation in any tree)
+						if(dragSource != null && dropElement != null && isDescendantOrSelf(dragSource as XML, dropElement)){
+							denyDrop(dropTarget, event, "0.1.2");
+							return;
+						}
+						//the drop location is the root of the tree (droped item would be the new root).	
+						if(dropLoc == 0){
+							denyDrop(dropTarget, event, "0.1.3");
+							return;
+						}
+					}
+					else{
+						//For COPY -> we just deny copying the root node (view),
+						if(dragSource.parent() == null){
+							denyDrop(dropTarget, event, "0.2.1");
+							return;
+						}
+						//and droping some element into the root position 
+						if(dropLoc == 0){
+							denyDrop(dropTarget, event, "0.2.2");
+							return;
+						}
+						
+					} 
+				}
+
+				
+				if (dropElement == null)
+					denyDrop(dropTarget, event, "0.0");
+				// If drag source is an element from the schema..
+				else if (dragInitiator == _schemaElementsTree) {
+					if (isDC(dragSource)) {
+						//  datacategory goes on columns, decorators or the view.
+						if (isTableColumn(dropElement) || isDecorator(dropElement) || isViewStructure(dropElement) || isMultiplier(dropElement)) {
+							acceptDrop(dropTarget, event, "1.1");
+						}
+						else
+							denyDrop(dropTarget, event, "1.2"); 
+					}
+					else
+						denyDrop(dropTarget, event, "1.3");
+				}
+				
+					
+				//Text can be dropped on Columns, Decorators and the View-structure.
+				else if (isText(dragSource)) {
+					if (isTableColumn(dropElement) || isDecorator(dropElement) || isViewStructure(dropElement) || isMultiplier(dropElement)) {
+						acceptDrop(dropTarget, event, "10.1");
+					}
+					else 
+						denyDrop(dropTarget, event, "10.2"); 
+				}
+					
+				//Decorators can be dropped on Columns, Decorators and the View-structure.
+				else if (isDecorator(dragSource)) {
+					if (isViewStructure(dropElement)) {
+						acceptDrop(dropTarget, event, "11.1");
+					}
+					else if (isTableColumn(dropElement) || isDecorator(dropElement) || isMultiplier(dropElement)) {
+						acceptDrop(dropTarget, event, "11.2");
+					}
+					else 
+						denyDrop(dropTarget, event, "11.3"); 
+				}
+				
+				
+				//Columns can be dropped on rows
+				else if (isTableColumn(dragSource)) {
+					if (isTableRow(dropElement)) {
+						acceptDrop(dropTarget, event, "8.1");
+					}
+					else 
+						denyDrop(dropTarget, event, "8.2"); 
+				}
+				
+					
+				//Rows can be dropped on (container/decorator descendants of) table header and table body elements.
+				else if (isTableRow(dragSource)) {
+					if ((isDecendantOfTableHeader(dropElement) || isDecendantOfTableBody(dropElement)) &&
+						(isTableHeader(dropElement) || isTableBody(dropElement) || isContainer(dropElement) || isDecorator(dropElement))) {
+						acceptDrop(dropTarget, event, "9.1");
+					}
+					else 
+						denyDrop(dropTarget, event, "9.2"); 
+				}
+				
+				//Table, Decorator, Multiplier, Line break, Horizontal line, SchemaElement, Text can be dropped on a column
+				else if (isTableColumn(dropElement)) {
+					if (isTable(dragSource) || isDC(dragSource) || isSchemaElement(dragSource) || isText(dragSource) || isMultiplier(dragSource) || isLineBreak(dragSource) || isHorizontalLine(dragSource)){
+						acceptDrop(dropTarget, event, "2.1");
+					}
+				}
+				
+				// Drop only columns on rows.
+				else if (isTableRow(dropElement)) {
+					if (isTableColumn(dragSource)) {
+						acceptDrop(dropTarget, event, "3.1");
+					}
+					else
+						denyDrop(dropTarget, event, "3.2"); 
+				}
+				
+				// If drop target an element from the schema view.
+				else if (isSchemaElement(dropElement)) {
+					// Don't drop anything on a datacategory except a new decorator
+					if (isDC(dropElement)) {
+/* 						if (isDecorator(dragSource) && dragInitiator == Vtree) {
+							acceptDrop(dropTarget, event, "4.1");
+						} 
+						else */
+							denyDrop(dropTarget, event, "4.2"); 
+					}
+					else if (isContainer(dropElement)) {
+						acceptDrop(dropTarget, event, "4.3");
+					}	
+				}
+					
+				
+				// Body and Head can take rows and Containers.
+				else if (isTableHeader(dropElement) || isTableBody(dropElement)) {
+					if (isTableRow(dragSource) || isContainer(dropElement)) {
+						acceptDrop(dropTarget, event, "5.1");
+					}
+					else
+						denyDrop(dropTarget, event, "5.2");
+				}
+				
+				
+				// Tables cannot be dropped on.
+				else if (isTable(dropElement)) {
+					denyDrop(dropTarget, event, "6.1"); 
+				}
+			
+			
+				else if (dropElement.@isBranch == 'true') {
+					acceptDrop(dropTarget, event, "7.1");
+				}
+				else {	
+					denyDrop(dropTarget, event, "7.2"); 
+				}
+			}
+			
+			/**
+			 * Return COPY or MOVE depending on the Ctrl key.
+			 * */
+			private function copyOrMove(event:DragEvent):String {
+				if (event.dragInitiator == _schemaElementsTree){
+					return DragManager.COPY;
+				}
+				if (event.ctrlKey) {
+					return DragManager.COPY;
+				} else {
+					return DragManager.MOVE;
+				}
+			}
+			
+			
+			/**
+			 * Accept a drop.
+			 * */
+			private function acceptDrop(dropTarget:Tree, event:DragEvent, rule:String):void {
+				if (previousRule != rule) {
+					trace("Accept drop, rule: #"+rule);
+					previousRule = rule;
+				}
+				DragManager.acceptDragDrop(dropTarget);
+				DragManager.showFeedback(copyOrMove(event));
+			}
+
+			/**
+			 * Deny a drop.
+			 * */
+			private function denyDrop(dropTarget:Tree, event:DragEvent, rule:String):void {
+				if (previousRule != rule) {
+					trace("Deny drop, rule: #"+rule);
+					previousRule = rule;
+				}
+				dropTarget.hideDropFeedback(event);
+				DragManager.showFeedback(DragManager.NONE);
+			}
+
+			/**
+			 * True if it is the structure element.
+			 * */
+			private function isViewStructure(element:XML):Boolean {
+				if(element != null)
+					return (isElementFromView(element) && element.@type == 'dsl_structure') || element.localName() == 'structure';
+				else
+					return false;
+			}
+			
+			/**
+			 * True if it is a table element.
+			 * */
+			private function isTable(element:Object):Boolean {
+				if(element != null)
+					return isElementFromView(element) && element.@type == 'dsl_table';
+				else
+					return false;
+			}
+			
+			/**
+			 * True if it is a table header element.
+			 * */
+			private function isTableHeader(element:Object):Boolean {
+				if(element != null)
+					return isElementFromView(element) && element.@type == 'dsl_table_heading';
+				else
+					return false;
+			}
+			
+			/**
+			 * True if it is a table body element.
+			 * */
+			private function isTableBody(element:Object):Boolean {
+				if(element != null)
+					return isElementFromView(element) && element.@type == 'dsl_table_body';
+				else
+					return false;
+			}
+			
+			
+			/**
+			 * True if the element or one of it's parents is a table header element.
+			 * */
+			private function isDecendantOfTableHeader(element:XML):Boolean {
+				if (isTableHeader(element))
+					return true;
+				else
+					if (element.parent() == null)
+						return false;
+					else
+						return isDecendantOfTableHeader(element.parent());
+			}
+			
+			/**
+			 * True if the element or one of it's parents is a table body element.
+			 * */
+			private function isDecendantOfTableBody(element:XML):Boolean {
+				if (isTableBody(element))
+					return true;
+				else
+					if (element.parent() == null)
+						return false;
+					else
+						return isDecendantOfTableBody(element.parent());
+			}
+			
+			/**
+			 * True if it is a table row element.
+			 * */
+			private function isTableRow(element:Object):Boolean {
+				if(element != null)
+					return isElementFromView(element) && element.@type == 'dsl_table_row';
+				else
+					return false;
+			}
+			
+			/**
+			 * True if it is a table column element.
+			 * */
+			private function isTableColumn(element:Object):Boolean {
+				if(element != null)
+					return isElementFromView(element) && element.@type == 'dsl_table_column';
+				else
+					return false;
+			}
+			
+			/**
+			 * True if it is a Decorator element.
+			 * */
+			private function isDecorator(element:Object):Boolean {
+				if(element != null)
+					return isElementFromView(element) && element.@type == 'dsl_show';
+				else
+					return false;
+			}
+			
+			/**
+			 * True if it is a Text element.
+			 * */
+			private function isText(element:Object):Boolean {
+				if(element != null)
+					return isElementFromView(element) && element.@type == 'dsl_text';
+				else
+					return false;
+			}
+			
+			/**
+			 * True if it is an element from the lexicon schema.
+			 * */
+			private function isSchemaElement(element:Object):Boolean {
+				if(element != null){
+					if(element.hasOwnProperty("type"))
+						return true;
+					else if (element.@type == 'data category' || (element.type == 'container' || element.type == 'component'))
+						return true;
+				}
+				return false;
+			}
+			
+			
+			/**
+			 * True if it is an element from the view itself.
+			 * */
+			private function isElementFromView(element:Object):Boolean {
+				if(element != null)
+					return element.hasOwnProperty("@type");
+				else
+					return false;
+			}
+			/**
+			 * True if it is a container element.
+			 * */
+			private function isContainer(element:Object):Boolean {
+				var type:Object = null;
+				if (element is XML)
+					type = element.@type;
+				else
+					type = element.type;
+				
+				if ((isSchemaElement(element) && (type == 'container' || type == 'component'))
+					|| element.@type == 'container') {
+						return true;
+					}
+				return false;
+			}
+			
+			/**
+			 * True if it is a data category element.
+			 * */
+			private function isDC(element:Object):Boolean {
+				var type:Object = null;
+				if (element is XML)
+					type = element.@type;
+				else
+					type = element.type;
+				
+				if (isSchemaElement(element) && type == 'data category') {
+						return true;
+				}
+				return false;
+			}
+			
+			/**
+			 * True if it is a multiplier element.
+			 * */
+			private function isMultiplier(element:Object):Boolean {
+				if (element != null){
+					return isElementFromView(element) && element.@type == 'dsl_multiplier';
+				}
+				return false;
+			}
+			
+			/**
+			 * True if it is a line break element.
+			 * */
+			private function isLineBreak(element:Object):Boolean {
+				if (element != null){
+					return isElementFromView(element) && element.@type == 'dsl_line_break';
+				}
+				return false;
+			}
+			
+			/**
+			 * True if it is a horizontal line element.
+			 * */
+			private function isHorizontalLine(element:Object):Boolean {
+				if (element != null){
+					return isElementFromView(element) && element.@type == 'dsl_horizontal_line';
+				}
+				return false;
+			}
+			
+			private function doDragExit(event:DragEvent):void
+			{
+				structureTree.showDataTips = tipsCheckBox.selected;
+			}
+			
+			private function doDragComplete(event:DragEvent):void
+			{
+				dragSourceSelectedItem = null;
+				dragSourceFromSchemaEditor = null;
+				structureTree.showDataTips = tipsCheckBox.selected;
+
+			}
+
+			private function dragDropHandler(event:DragEvent):void {				
+				var dragInitiator:IUIComponent = event.dragInitiator;
+				/*
+				* Drag and drop within the tree is handled by flex default handlers.
+				*/
+				if(dragInitiator == structureTree){
+					dragSourceSelectedItem = null;
+					dragSourceFromSchemaEditor = null;
+					needsSave = true;
+					this.parentDocument.unsavedViewIndex = this.parentDocument.viewsList.selectedIndex;
+					return;
+				}
+				var dragSource:DragSource = event.dragSource;
+				// Get drop target.
+				var dropTarget:AutoSizeTree = event.currentTarget as AutoSizeTree;
+				// Get the drop location in the destination.
+				var dropLoc:int = dropTarget.calculateDropIndex(event);				
+				structureTree.selectedIndex = dropLoc; 
+				var dropElement:XML = structureTree.selectedItem as XML;
+				// Get the dragged item from the drag initiator.
+				// The List control always writes an Array 
+				// to the dragSource object,
+				// even if there is only one item being dragged.
+				var itemsArray:Array = event.dragSource.dataForFormat("treeItems") as Array;
+				var item:Object = itemsArray[0];
+				// Explicitly handle the dragDrop event.           
+				event.preventDefault();
+
+				
+				if (item.hasOwnProperty("@type")) {
+					if (item.@type == 'dsl_show') {
+						var show:XML = <show/>;
+						show.@type = item.@type;
+						show.@name = 'Decorator';
+						
+						//AAM: top element can/should not be inherited, so we automatically set localStyle values
+						//for it.
+						if (determineParentStylingElement(dropElement).@type == "dsl_structure") {
+							this.setTopLevelStyling(show);
+						}
+						show.@isBranch = true;
+						addDraggedObject(dropElement, show);
+					}
+					
+					if (item.@type == 'dsl_multiplier') {
+						var multiplier:XML = <multiplier/>;
+						multiplier.@type = item.@type;
+						multiplier.@name = 'Multiplier';
+						
+						//AAM: top element can/should not be inherited, so we automatically set localStyle values
+						//for it.
+						if (determineParentStylingElement(dropElement).@type == "dsl_structure") {
+							this.setTopLevelStyling(multiplier);
+						}
+						multiplier.@isBranch = true;
+						addDraggedObject(dropElement, multiplier);
+					}
+					
+					else if (item.@type == 'dsl_text') {
+						var text:XML = <text name="Text" value="" isBranch="false"/>;
+						text.@type = item.@type;
+						addDraggedObject(dropElement, text);
+					}
+					
+					else if (item.@type == 'dsl_line_break') {
+						var lbreak:XML = <lbreak name="Line break" value="" isBranch="false"/>;
+						lbreak.@type = item.@type;
+						addDraggedObject(dropElement, lbreak);
+					}
+					
+					else if (item.@type == 'dsl_horizontal_line') {
+						var hline:XML = <hline name="Horizontal line" value="" isBranch="false"/>;
+						hline.@type = item.@type;
+						addDraggedObject(dropElement, hline);
+					}	
+					
+					else if (item.@type == 'dsl_table') {
+						var table:XML = <table type="dsl_table" name="Table" isBranch="true">
+											<thead name="Header" type="dsl_table_heading" isBranch="true">
+												<row type="dsl_table_row" isBranch="true" name="Row">
+													<col type="dsl_table_column" name="Column" isBranch="true"/>
+												</row>
+											</thead>
+											<tbody name="Body" type="dsl_table_body" isBranch="true">
+												<row type="dsl_table_row" name="Row" isBranch="true">
+													<col type="dsl_table_column" name="Column" isBranch="true"/>
+												</row>
+											</tbody>
+										</table>;
+						addDraggedObject(dropElement, table);
+					}
+					
+					else if (item.@type == 'dsl_table_row') {
+						var row:XML = <row type="dsl_table_row" name="Row" isBranch="true"/>;
+						addDraggedObject(dropElement, row);
+					}
+					
+					else if (item.@type == 'dsl_table_column') {
+						var col:XML = <col type="dsl_table_column" name="Column" isBranch="true"/>;
+						addDraggedObject(dropElement, col);
+					}					
+				}
+				else {
+					if (item.hasOwnProperty("type")) {
+						if(item.id == null){
+							YesNo.alert("The data category '" + item.name +"' was not saved yet. Please save your schema first " +
+								" to add this data category to your views");
+							return;
+						}
+						
+						if (item.type == 'data category') {
+							var data:XML = <data isBranch="false"/>;
+							data.@id = item.id;
+							data.@name = "Data Category";
+							data.@type = item.type;
+							//AAM: top element can/should not be inherited, so we automatically set localStyle values
+							//for it.
+							if (determineParentStylingElement(dropElement).@type == "dsl_structure") {
+								this.setTopLevelStyling(data);
+							}
+							addDraggedObject(dropElement, data);
+						}
+					}
+				}
+				dragSourceSelectedItem = null;
+				dragSourceFromSchemaEditor = null;
+			}
+
+			/**
+			 * This is used to insert explicit style definitions for the top level visual elements,
+			 * so they don't get their style properties 'inherited' from their styling parent, since
+			 * they have no styling parent.
+			 * */
+			private function determineParentStylingElement(element:XML):XML
+			{
+				while (element != null){
+					if (element.@type == 'dsl_show' || element.@type == 'dsl_multiplier')
+						return element;
+					else if(element.parent() != null){
+						element = element.parent();
+					} else
+						return element;
+				}
+				return element;
+			}
+			
+			private function setTopLevelStyling(element:XML):XML{
+				element.@color = '#000000';
+				element.@fontSize = '12';
+				element.@fontFamily = 'Georgia';
+				element.@fontWeight = "normal";
+				element.@fontStyle = "normal";
+				element.@textDecoration = "none";
+				element.@textAlign = "left";
+				return element;
+			}
+			
+			/*
+			* If dropElement.@isBranch == true then add draggedElement at end of dropElement's children.
+			*/
+			private function addDraggedObject(dropElement:XML, draggedElement:XML):void {
+				if (dropElement.@isBranch == 'true') {
+					dropElement.appendChild(draggedElement);
+					needsSave = true;
+					this.parentDocument.unsavedViewIndex = this.parentDocument.viewsList.selectedIndex;
+					structureTree.expandChildrenOf(draggedElement, true);
+					LexusUtil.forceTreeRedraw(structureTree, structureTree.dataProvider);						
+				}
+			}		
+
+
+			private function changeHandler(event:MouseEvent):void {
+				var popup:Object;
+				var item:XML = event.currentTarget.selectedItem as XML;
+				if (item.@type == 'dsl_show' || item.@type == 'data category' || item.@type == 'dsl_multiplier') {
+					if(item.@type == 'data category' &&
+						this.application.modules.schema_editor.extractDataCategory(item.@id, this.application.modules.schema_editor.tree.dataProvider[0]) == null){
+						YesNo.alert("This data category seems to have been deleted and cannot be styled. Please fix your view first.");
+						return;
+					}
+					else
+						popup = DecoratorEditor(PopUpManager.createPopUp(UIComponent(FlexGlobals.topLevelApplication), DecoratorEditor, true));
+				}
+				else if (item.@type == 'dsl_text') { 
+					popup = TextEditor(PopUpManager.createPopUp(UIComponent(FlexGlobals.topLevelApplication), TextEditor, true));
+				}
+				else if (item.@type == 'dsl_table' || item.@type == 'dsl_table_row') { 
+					popup = ClassOptionalEditor(PopUpManager.createPopUp(UIComponent(FlexGlobals.topLevelApplication), ClassOptionalEditor, true));
+				}
+				else if (item.@type == 'dsl_view') { 
+					YesNo.handledAlert("There are no edition options for " + item.@name +" elements.", this.okAlertHandler);
+					this._isAlerting = true;
+					return;
+				}
+				else if (item.@type == 'dsl_horizontal_line') { 
+					popup = HLineThicknessEditor(PopUpManager.createPopUp(UIComponent(FlexGlobals.topLevelApplication), HLineThicknessEditor, true));
+					
+				}
+				else if (item.@type == 'dsl_line_break') { 
+					YesNo.handledAlert("There are no edition options for " + item.@name +" elements.", this.okAlertHandler);
+					this._isAlerting = true;
+					return;
+				}
+				else { 
+					popup = ClassEditor(PopUpManager.createPopUp(UIComponent(FlexGlobals.topLevelApplication), ClassEditor, true));
+				}
+				popup.addEventListener(NodeEditor.NODE_EDITOR_FINISHED, this.processEditedData);
+				popup.addEventListener(NodeEditor.NODE_EDITOR_CANCELLED, this.cancelDataEdit);
+				popup.data = item;
+				PopUpManager.centerPopUp(popup as IFlexDisplayObject);
+			}
+			
+			
+			private function dataTips(data:XML):String {
+				var drag:String = "Drag from the '" + StructEltsPanel.title + "' list. Drag elements from the lexicon."
+				if (data.@type == 'dsl_show' || data.@type == 'data category' || data.@type == 'dsl_multiplier') {
+					return "Double click to choose font, color, etc. " + drag;
+				}
+				if (data.@type == 'dsl_text') {
+					return "Double click to edit the text.";
+				}
+				if (data.@type == 'data category') {
+					return "This is a data field from the lexicon. Use a Decorator element to decorate it, surround it with text, etc.";
+				}
+				if (data.@type == 'container') {
+					return "This is a container field from the lexicon. " + drag;
+				}
+				return "Define your view using decorators, tables, text and data catagory and container elements from your lexicon.";
+			}
+			
+			private function showStyleHelp(showIt:Boolean):void {
+				styleHelp.visible = showIt;
+				styleHelp.includeInLayout = showIt;
+			}
+			private function showHelp(showIt:Boolean):void {
+				help.visible = showIt;
+				help.includeInLayout = showIt;
+			}
+			private function initializeStyleEditor(event:MouseEvent):void {
+					var style:String = styleEditor.text;
+					if (style == "") {
+						style = "\nbody {\n\tfont-family: sans-serif;\n\tfont-size: 12pt;\n\tbackground-color: #EEEEEE;\n\tcolor: black;\n}\n";
+						style += getExistingClassesAsCSS(_viewXML.structure);
+						styleEditor.text = style;
+						updateStyleInViewXML();
+					}
+			}
+			
+			private function updateStyleInViewXML():void {
+				if(_viewXML.style != styleEditor.text){
+					_viewXML.style = styleEditor.text;
+					needsSave = true;
+					this.parentDocument.unsavedViewIndex = this.getViewIndex(_viewXML);;
+
+				}
+			}
+			
+			private function addStylesForClasses(event:MouseEvent):void {
+				var style:String = styleEditor.text;
+				var currentStyle:String = StringUtil.trimArrayElements(style, "");
+				style += getExistingClassesAsCSS(new XML(_viewXML.structure), currentStyle);
+				styleEditor.text = style;
+				updateStyleInViewXML()
+				structureTree.validateNow();
+			}
+			/*
+			 * Go through the XML and add CSS declarations for classes that do not
+			 * have a CSS declaration yet.
+			 * To check if a class already has a declaration in the style a 
+			 * regular expression ".<class>"is used.
+			 */
+			private function getExistingClassesAsCSS(node:XML, currentStyle:String = ""):String {
+				var child:XML;
+				var css:String = "";
+				if (node.hasOwnProperty("@dsl_class") && node.@dsl_class != "") {
+					var pattern:RegExp = new RegExp("."+node.@dsl_class, "i");
+					if (currentStyle.search(pattern) < 0) { // class does not have CSS selector yet.
+						css = css + "\n." + node.@dsl_class + " {\n\n}\n";
+					}
+				}
+				for each(child in node.children())  {
+					css = css + getExistingClassesAsCSS(child, currentStyle);
+				}
+				return css;
+			}
+			
+			private function stylesHelp(event:MouseEvent):void {
+				var httpService:LexusService = new LexusService();
+				httpService.send("help/viewEditorStylingHelp.html", null, null, function(evt:ResultEvent):void {
+					styleHelp.htmlText =  new String(evt.result);
+				});
+
+				if (styleHelp.visible) {
+					showStyleHelp(false);
+				}
+				else {
+					showStyleHelp(true);
+				}
+			}
+			
+			
+			private function viewEditorHelp(event:MouseEvent):void {
+				var httpService:LexusService = new LexusService();
+				httpService.send("help/viewEditorHelp.html", null, null, function(evt:ResultEvent):void {
+					help.htmlText =  new String(evt.result);
+				});
+				if (help.visible) {
+					showHelp(false);
+				}
+				else {
+					showHelp(true);
+				}				
+			}
+
+			
+			private function viewTree_iconFunc(item:XML):Class {
+				var type:String = item.@type;
+				switch (type) {
+					case 'dsl_show': return FlexGlobals.topLevelApplication.decoratorIcon;
+					case 'dsl_multiplier': return FlexGlobals.topLevelApplication.multiplierIcon;
+					case 'dsl_line_break': return FlexGlobals.topLevelApplication.lineBreakIcon;
+					case 'dsl_horizontal_line': return FlexGlobals.topLevelApplication.horizontalLineIcon;
+					case 'dsl_text': return FlexGlobals.topLevelApplication.documentIcon;
+					case 'data category': return FlexGlobals.topLevelApplication.dataCategoryIcon;
+					case 'dsl_table': return FlexGlobals.topLevelApplication.tableIcon;						
+					case 'dsl_table_heading': return FlexGlobals.topLevelApplication.tableHeadIcon;						
+					case 'dsl_table_body': return FlexGlobals.topLevelApplication.tableBodyIcon;						
+					case 'dsl_table_row': return FlexGlobals.topLevelApplication.tableRowIcon;						
+					case 'dsl_table_column': return FlexGlobals.topLevelApplication.tableColumnIcon;						
+				}
+				return structureTree.getStyle('defaultLeafIcon');
+			}
+			
+			private function viewList_iconFunc(item:XML):Class {
+				var type:String = item.@type;
+				switch (type) {
+					case 'dsl_show': return FlexGlobals.topLevelApplication.decoratorIcon;
+					case 'dsl_multiplier': return FlexGlobals.topLevelApplication.multiplierIcon;
+					case 'dsl_line_break': return FlexGlobals.topLevelApplication.lineBreakIcon;
+					case 'dsl_horizontal_line': return FlexGlobals.topLevelApplication.horizontalLineIcon;
+					case 'dsl_text': return FlexGlobals.topLevelApplication.documentIcon;
+					case 'data category': return FlexGlobals.topLevelApplication.dataCategoryIcon;
+					case 'dsl_table': return FlexGlobals.topLevelApplication.tableIcon;						
+					case 'dsl_table_heading': return FlexGlobals.topLevelApplication.tableHeadIcon;						
+					case 'dsl_table_body': return FlexGlobals.topLevelApplication.tableBodyIcon;						
+					case 'dsl_table_row': return FlexGlobals.topLevelApplication.tableRowIcon;						
+					case 'dsl_table_column': return FlexGlobals.topLevelApplication.tableColumnIcon;						
+				}
+				return structureTree.getStyle('defaultLeafIcon');
+			}
+			
+			private function nodeLabel(item:XML):String {
+				if (item.hasOwnProperty("@id")) {
+					var element:Object = this.application.modules.schema_editor.extractDataCategory(item.@id, this.application.modules.schema_editor.tree.dataProvider[0]);
+					if (element == null){
+						element = new Object();
+						element.name = "deleted datacategory!";
+					}
+					return element.name;
+				}
+				else return item.localName();
+			}
+			
+			
+			private function mouseDownStructuralElements(event:MouseEvent):void {
+				dragSourceSelectedItem = Vtree.selectedItem as XML;
+			}
+			
+			private function doStructuralElementsDragComplete(event:DragEvent):void
+			{
+				dragSourceSelectedItem = null;
+				dragSourceFromSchemaEditor = null;
+				structureTree.showDataTips = tipsCheckBox.selected;
+			}
+			
+			private function mouseDownStructureTree(event:MouseEvent):void {
+				structureTree.showDataTips = false;
+				dragSourceSelectedItem = structureTree.selectedItem as XML;
+			}
+			
+			private function mouseUpStructuralElements(event:MouseEvent):void {
+				dragSourceSelectedItem = null;
+			}
+			
+			
+			private function mouseUpStructureTree(event:MouseEvent):void {
+				structureTree.showDataTips = tipsCheckBox.selected;
+				dragSourceSelectedItem = null;
+			}
+			
+			private function toggleDataTips(event:MouseEvent):void {
+				var b:Boolean = !structureTree.showDataTips;
+				structureTree.showDataTips = b;
+				ToolTipManager.enabled = !ToolTipManager.enabled;
+			}
+
+			/**
+			 *  Event listener for the valid and invalid events.
+			 *  Controls the display of the warning icon.
+			 **/ 
+			private function handleValidity(eventObj:ValidationResultEvent):void {
+				if(eventObj.type==ValidationResultEvent.VALID)    
+					this.viewNameChangeHandler(eventObj);
+				else
+					warnIco.visible = true;
+			}
+			
+			protected function viewNameChangeHandler(event:Event):void
+			{
+				switch( this.checkNewViewData()){
+					//success
+					case 0:
+						warnIco.visible = false;
+						break;
+					case 001:
+						warnIco.visible = true;
+						break;					
+				}
+			}
+			
+			protected function checkNewViewData():int
+			{
+				var invalid:int = 0;
+				for each (var item:Object in this.parentDocument.viewsList.dataProvider){
+					if (item.@name.toString() == View_name.text && item.@id != this._viewXML.@id){
+						invalid = 001;
+					}
+				}
+				return invalid;	
+			}
+			
+		]]>     
+	</mx:Script>
+	
+	<mx:StringValidator id="reqValid" source="{View_name}" property="text" triggerEvent="change"
+						minLength="1" valid="handleValidity(event)" invalid="handleValidity(event)"/>
+
+	<mx:VBox width="100%" height="100%">
+		<mx:HBox width="100%">
+			<mx:Grid width="80%">
+				<mx:GridRow>
+					<mx:GridItem>
+						<mx:Label text="Name:"/>
+					</mx:GridItem>
+					<mx:GridItem>
+						<mx:TextInput id="View_name" text="{_viewXML.@name}" valueCommit="nameUpdate(event)"/>	
+					</mx:GridItem>	
+					<mx:GridItem verticalAlign="middle">
+						<mx:Image id="warnIco" source="{warnIcon}" visible="false" 
+								  toolTip="The name &quot;{View_name.text}&quot; is already assigned to another view. &#xa;Please choose a different name for this view or rename the already existing one!"
+								  height="16" width="16"/>
+					</mx:GridItem>
+				</mx:GridRow>
+				<mx:GridRow width="100%">
+					<mx:GridItem>
+						<mx:Label text="Description:"/>
+					</mx:GridItem>
+					<mx:GridItem width="100%">
+						<mx:TextArea id="View_description" text="{_viewXML.@description}" focusOut="descriptionUpdate()" width="100%"/>	
+					</mx:GridItem>	
+				</mx:GridRow>
+			</mx:Grid>
+		</mx:HBox>
+		<mx:TabNavigator width="100%" height="100%" creationPolicy="all" >
+			<mx:VBox id="viewEditorBox" width="100%" height="100%" label="Structure editor">
+				<mx:HBox width="100%">
+					<mx:Spacer width="100%"/>
+					<mx:Button id="viewEditorHelpButton" label="Help" toggle="true" click="viewEditorHelp(event)" toolTip="Get help on creating a view."/>
+					<mx:CheckBox id="tipsCheckBox" label="Tips" click="toggleDataTips(event)" toolTip="Toggle tips." selected="true"/>
+				</mx:HBox>
+				<mx:HBox width="100%" height="100%">						
+					<mx:HBox width="100%" height="100%">
+					<lexus:AutoSizeTree id="structureTree" dataProvider="{_viewStructure}"
+											width="100%" height="100%" 
+											editable="false" rowHeight="24"
+											showRoot="true" labelFunction="nodeLabel"
+											mouseDown="mouseDownStructureTree(event)" mouseUp="mouseUpStructureTree(event)"
+											dragEnabled="true" dropEnabled="true" dragMoveEnabled="true"
+											dragOver="doDragOver(event)"
+											dragEnter="dragEnterHandler(event);"
+											dragDrop="dragDropHandler(event);"
+											dragComplete="doDragComplete(event)" dragExit="doDragExit(event)"
+											doubleClickEnabled="true" doubleClick="changeHandler(event)"
+											itemRenderer="nl.mpi.lexus.view.NodeRenderer"
+											keyUp="onKeyUp(event);"
+											showDataTips="true"
+											dataTipFunction="dataTips"
+											iconFunction="viewTree_iconFunc"
+											/>
+					</mx:HBox>
+					<mx:Panel width="20%" height="100%" id="StructEltsPanel" title="Structural elements">
+						<mx:Tree id="Vtree" dataProvider="{new XMLListCollection(viewElements.*)}"
+								 dragEnabled="true" dragMoveEnabled="false" dragComplete="doStructuralElementsDragComplete(event)"
+								 mouseDown="mouseDownStructuralElements(event)" mouseUp="mouseUpStructuralElements(event)"
+								 width="100%" height="96%" labelField="@label"
+								 iconFunction="viewList_iconFunc"/>
+					</mx:Panel>
+					<mx:TextArea id="help" width="100%" height="100%" visible="false" includeInLayout="false" editable="false"/>
+				</mx:HBox>
+			</mx:VBox>
+			<mx:VBox id="styleEditorBox" width="100%" height="100%" label="Style editor" click="initializeStyleEditor(event)">
+				<mx:HBox width="100%">
+					<mx:Spacer width="100%"/>
+					<mx:Button id="addStylesButton" label="Add styles for classes" click="addStylesForClasses(event)" toolTip="Add style definitions for classes you have used in your view."/>
+					<mx:Button id="stylesHelpButton" label="Help with styles" toggle="true" click="stylesHelp(event)" toolTip="Get more info on styling your lexical entries using CSS."/>
+				</mx:HBox>
+				<mx:HBox width="100%" height="100%">					
+					<mx:TextArea id="styleEditor" width="100%" height="100%" toolTip="Click '{stylesHelpButton.label}' for help on styling." text="{_viewXML.style}" change="updateStyleInViewXML();"/>
+					<mx:TextArea id="styleHelp" width="100%" height="100%" visible="false" includeInLayout="false" editable="false"/>
+				</mx:HBox>
+			</mx:VBox>
+		</mx:TabNavigator>
+	</mx:VBox>
+</mx:Panel>

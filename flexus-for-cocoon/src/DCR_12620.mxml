@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+    title="ISOCat 12620 Data category registry"
+    showCloseButton="true"
+    creationComplete="init()"
+    close="PopUpManager.removePopUp(this);"  width="800" height="800">
+
+	<mx:Metadata>
+       
+        [Event(name="change", type="flash.event.Event")]
+
+    </mx:Metadata>
+    
+
+    <mx:Script>
+        <![CDATA[
+			import com.adobe.serialization.json.JSON;
+			
+			import mx.collections.ArrayCollection;
+			import mx.core.FlexGlobals;
+			import mx.events.ValidationResultEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.http.HTTPService;
+			
+			import nl.mpi.lexus.LexusUtil;
+			import nl.mpi.lexus.YesNo;
+			import nl.mpi.lexus.service.LexusService;
+			
+			[Bindable]
+			private var application:Object = FlexGlobals.topLevelApplication;
+
+            [Bindable] public var schemaElement:Object;
+            
+            private var dcifNS:Namespace = new Namespace("http://www.isocat.org/ns/dcif");
+            
+            private var lexusService:LexusService = new LexusService();
+            
+            [Bindable]
+            public var regStatus:ArrayCollection = new ArrayCollection(
+                [ {label:"<Any>"}, 
+                  {label:"candidate"}, 
+                  {label:"qualified"},
+                   {label:"standard"},
+                   {label:"superceded"},
+                   {label:"retired"},]);
+
+            
+            private function init():void{
+           		
+            }
+            private function onKeyDown( event:KeyboardEvent):void{
+            	//Enter pressed
+            	if( event.keyCode == 13)
+					doSearch();            	
+            }
+            private function onKeyUpCancel(event:KeyboardEvent):void{
+            	//Enter pressed
+            	if( event.keyCode == 13)
+	              PopUpManager.removePopUp(this);
+            }
+            private function onKeyUpOk(event:KeyboardEvent):void{
+            	//Enter pressed
+            	if( event.keyCode == 13)
+	              insert12620DataCategory();
+            }
+            
+            private function insert12620DataCategory():void{
+           	if( dc_list.selectedItem != null){
+	            	this.schemaElement.DCR = "12620";
+	            	var dc:XML = new XML(this.dc_list.selectedItem);
+	           		this.schemaElement.DCRReference = dc.attribute('pid').toXMLString();
+	            	this.schemaElement.description = dc.attribute('definition').toXMLString();
+	            	this.schemaElement.name = dc.attribute('name').toXMLString(); // HHV
+	            	var values:XMLList = this.dc_list.selectedItem.dcifNS::conceptualDomain.dcifNS::value;
+	            	var item:XML;
+	            	var valueDomain:ArrayCollection = new ArrayCollection();
+            		var count:int = 0;
+            		for each(item in values){                		
+	            		var valueObj:Object = new Object();
+	            		valueObj.DCR = "12620";
+	            		valueObj.value = item.attribute("name").toXMLString();
+	            		valueObj.DCRReference = item.attribute("pid").toXMLString();
+	            		valueDomain.addItem(valueObj);
+	            		
+	            	}
+	            	this.schemaElement.valuedomain = valueDomain.toArray();
+	            	//Construct valueDomain here
+	            	 var event:Event = new Event("change");
+                	dispatchEvent( event);
+	           }
+	          
+	           PopUpManager.removePopUp(this);
+            }
+            
+            private function doSearch():void{
+            	
+            	var param:Object = this.getRequestParams();
+            	this.lexusService.send("ISOCAT/search.json", param, this.name, this.onResult);
+            	
+            	
+            	this.currentState = "search";
+            	this.okBtn.enabled = false;
+            	this.dc_detail.enabled = false;
+            	
+
+            }
+            private function getRequestParams():Object{
+            	var variables:Object = new Object();
+            	
+            	variables.keywords = this.search.text;
+
+				var fields:String = "";
+				if(this.dcName.selected)
+					fields+=" name";
+				if( this.dcIdentifier.selected)
+					fields+=" identifier";
+				if(this.dc_deName.selected)
+					fields+=" element";
+				if( this.dcDefinition.selected)
+					fields+=" definition";
+				if( this.dcExample.selected)
+					fields += " example";
+				if( this.dcNote.selected)
+					fields+=" note";
+				variables.fields = fields;
+				
+				return variables;
+            }
+            
+            private function onResult(event:ResultEvent):void {
+            	this.currentState="result";
+				LexusUtil.parseJSON(String(event.result),
+					function (data:Object):void {
+						var serverData:Object = data;
+            			var xmlResult:XML = new XML(serverData.result.isocat as String);				
+						dc_list.dataProvider = xmlResult.dcifNS::dataCategory.(attribute('type')=='complex');
+						RA.text = xmlResult.dcifNS::globalInformation;
+					}
+				);
+            }
+            /**
+			 * Fault Handler for the HTTP request
+			 **/
+			public function httpFault(event:FaultEvent):void {
+	            var faultstring:String = event.fault.faultString;
+	            YesNo.alert(faultstring + ":\n" + event.fault.rootCause + "\n" + event.fault.faultDetail + "\n" + event.message);
+	            
+	        }
+            private function composeSearchRequest():URLRequest{
+            	
+            	
+            	var searchReq:URLRequest = new URLRequest("http://www.isocat.org/rest/search");
+            	searchReq.method = URLRequestMethod.GET;
+            	var rhArray:Array = new Array(new URLRequestHeader("Accept", "application/dcif+xml"));
+            	searchReq.requestHeaders = rhArray;
+            	
+				var variables:URLVariables = new URLVariables();
+				variables.keywords = this.search.text;
+				variables.mode="domains";				
+				variables.scope="public";
+				variables.match = "like";
+
+				var fields:String = "";
+				if(this.dcName.selected)
+					fields+=" name";
+				if( this.dcIdentifier.selected)
+					fields+=" identifier";
+				if(this.dc_deName.selected)
+					fields+=" element";
+				if( this.dcDefinition.selected)
+					fields+=" definition";
+				if( this.dcExample.selected)
+					fields += " example";
+				if( this.dcNote.selected)
+					fields+=" note";
+				searchReq.data = variables; 
+				
+				return searchReq;
+            }
+            private function configureListeners(dispatcher:IEventDispatcher):void {
+            dispatcher.addEventListener(Event.COMPLETE, completeHandler);
+            dispatcher.addEventListener(Event.OPEN, openHandler);
+            dispatcher.addEventListener(ProgressEvent.PROGRESS, progressHandler);
+            dispatcher.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
+            dispatcher.addEventListener(HTTPStatusEvent.HTTP_STATUS, httpStatusHandler);
+            dispatcher.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
+        }
+
+        private function completeHandler(event:Event):void {
+            var loader:URLLoader = URLLoader(event.target);
+
+            YesNo.info(String(loader.data));
+            trace("completeHandler: " + loader.data);
+        }
+
+        private function openHandler(event:Event):void {
+        	YesNo.info("OpenHandler");
+            trace("openHandler: " + event);
+        }
+
+        private function progressHandler(event:ProgressEvent):void {
+            trace("progressHandler loaded:" + event.bytesLoaded + " total: " + event.bytesTotal);
+        }
+
+        private function securityErrorHandler(event:SecurityErrorEvent):void {
+            trace("securityErrorHandler: " + event);
+        }
+
+        private function httpStatusHandler(event:HTTPStatusEvent):void {
+        	YesNo.info("HTTPStatus: " +event.status);
+            trace("httpStatusHandler: " + event);
+        }
+
+        private function ioErrorHandler(event:IOErrorEvent):void {
+        	YesNo.info("IOError!!");
+            trace("ioErrorHandler: " + event);
+        }
+        private function onDCClick(event:MouseEvent):void{
+        	if( this.dc_list.selectedItem != null){
+	        	this.okBtn.enabled = true;
+    			this.dc_detail.enabled = true;
+        	}
+        }
+    	private function openDCREntry():void{
+    		
+    		var pid:String = this.dc_list.selectedItem.attribute('pid');
+    		ExternalInterface.call("window.open", pid);
+    	}
+            
+
+        ]]>
+    </mx:Script>
+ 
+<mx:states>
+   
+        <mx:State name="search" basedOn="">
+
+
+            <mx:AddChild 
+                relativeTo="{main}" 
+                position="lastChild" 
+                creationPolicy="all"
+            >
+            	<mx:SWFLoader x="0" y="0" id="swfl" verticalCenter="0" horizontalCenter="0" width="40" height="40" source="wait.swf" autoLoad="true" scaleContent="false" visible="true"/>
+				
+            </mx:AddChild>
+            
+            
+        </mx:State>
+         <mx:State name="result" basedOn="">
+
+
+            <mx:AddChild 
+                relativeTo="{main}" 
+                position="lastChild" 
+                creationPolicy="all"
+            >
+            <mx:Panel title="Data categories found" width="100%" height="100%">
+            	
+            
+			        <mx:HBox>
+						<mx:Label text="Registration authority: "/>
+						<mx:Text id="RA" />	
+					</mx:HBox>		
+				<mx:HBox width="100%" height="100%" verticalAlign="middle">
+					
+				
+					<mx:DataGrid id="dc_list" width="100%" height="100%" variableRowHeight="true" click="onDCClick(event)">
+									<mx:columns>
+										<mx:DataGridColumn headerText="Name" width="150">
+											<mx:itemRenderer>
+												<mx:Component>
+												
+													<mx:Label text="{data.attribute('name')}" />
+												
+												</mx:Component>
+												
+											</mx:itemRenderer>
+										</mx:DataGridColumn>
+										
+										<mx:DataGridColumn headerText="Description" width="300" wordWrap="true">
+											<mx:itemRenderer>
+												<mx:Component>
+												
+													<mx:Label text="{data.attribute('definition')}" />
+												
+												</mx:Component>
+												
+											</mx:itemRenderer>
+										</mx:DataGridColumn>
+										<mx:DataGridColumn headerText="Version" width="50" wordWrap="true">
+											<mx:itemRenderer>
+												<mx:Component>
+												
+													<mx:Label text="{data.attribute('version')}" />
+												
+												</mx:Component>
+												
+											</mx:itemRenderer>
+										</mx:DataGridColumn>
+										<mx:DataGridColumn headerText="Owner" width="100" wordWrap="true">
+											<mx:itemRenderer>
+												<mx:Component>
+												
+													<mx:Label text="{data.attribute('owner')}" />
+												
+												</mx:Component>
+												
+											</mx:itemRenderer>
+										</mx:DataGridColumn>	
+									</mx:columns>
+								</mx:DataGrid>
+						<mx:ControlBar horizontalAlign="center" verticalAlign="middle" width="50">
+							<mx:Button id="dc_detail" icon="{application.zoomIconClass}" click="openDCREntry()" enabled="false"/>
+						</mx:ControlBar>	
+					</mx:HBox>	
+				</mx:Panel>
+            </mx:AddChild>
+            
+            
+        </mx:State>
+</mx:states>		
+<mx:VBox id="main" width="100%" height="100%">		
+    <mx:Text text="ISO 12620 provides a framework for defining data categories compliant with the ISO/IEC 11179 family of standards. According to this model, each data category is assigned a unique administrative identifier, together with information on the status or decision-making process associated with the data category. In addition, data category specifications in the DCR contain linguistic descriptions, such as data category definitions, statements of associated value domains, and examples. Data category specifications can be associated with a variety of data element names and with language-specific versions of definitions, names, value domains and other attributes."
+    	width="700"
+    	/> 
+    
+    	  					
+		
+			<mx:Canvas id="searchTab" label="Search" width="100%" height="100">
+				<mx:VBox horizontalAlign="center">
+					<mx:HBox horizontalAlign="center">
+						<mx:TextInput id="search" keyDown="onKeyDown(event)"/>
+						<mx:Button label="Search" click="doSearch()"/>
+					</mx:HBox>
+					<mx:HBox horizontalAlign="center">
+						<mx:CheckBox id="dcIdentifier" label="identifier"  selected="false"/>
+						<mx:CheckBox id="dcName" label="name"  selected="true"/>
+						<mx:CheckBox id="dc_deName" label="data element name"  selected="false"/>
+						<mx:CheckBox id="dcDefinition" label="definition"  selected="false"/>
+						<mx:CheckBox id="dcExplanation" label="explanation"  selected="false"/>
+						<mx:CheckBox id="dcExample" label="example"  selected="false"/>
+						<mx:CheckBox id="dcNote" label="note"  selected="false"/>
+					</mx:HBox>
+					<mx:HBox horizontalAlign="center" width="100%">
+						<mx:Button id="okBtn" label="Ok" click="insert12620DataCategory()"  keyUp="onKeyUpOk(event)" enabled="false"/>
+						<mx:Button id="cancelBtn" label="Cancel" click="PopUpManager.removePopUp(this);"  keyUp="onKeyUpCancel(event)" enabled="true"/>
+					</mx:HBox>
+				</mx:VBox>		
+			</mx:Canvas>
+</mx:VBox>	
+</mx:TitleWindow>

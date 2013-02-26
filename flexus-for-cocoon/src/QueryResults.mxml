@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" 
+		   creationComplete="init()" xmlns:local="*"
+		   label="Search results">
+	<mx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.DataGrid;
+			import mx.core.FlexGlobals;
+			import mx.core.UIComponent;
+			import mx.events.IndexChangedEvent;
+			import mx.events.ListEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			import nl.mpi.lexus.LexusUtil;
+			import nl.mpi.lexus.YesNo;
+			import nl.mpi.lexus.service.LexusService;
+			
+			[Bindable]
+			private var application:Object = FlexGlobals.topLevelApplication;
+			
+			[Bindable] public var _query:Object;
+			[Bindable] public var _searchQueries:ArrayCollection;
+			[Bindable] private var _lexica:Object;
+			[Bindable] private var searchResults:ArrayCollection;
+			[Bindable] private var activateFirstButtonMode:Boolean; 
+			
+			
+			private const PAGESIZE:int = 100;
+			private var labelConstructed:Boolean = false;
+			
+			[Embed(source="../assets/images/iconza_24x24/stop_24x24.png")] private var stopIcon:Class;
+			
+			private var lexusService:LexusService = new LexusService();
+			
+			
+			public function set query(query:Object):void {
+				_query = query;
+				doSearch();
+			}
+			
+			
+			/**
+			 * Event Handler for the onLoad event. This will load the JSON object and perform initial initialization
+			 * */
+			
+			private function onJSONLoadSearchResults(event:ResultEvent):void
+			{
+				LexusUtil.parseJSON(String(event.result),
+					function(data:Object):void {  
+						preprocessData(data);
+						if(lexiconSearchTabs.selectedIndex == -1)
+							lexiconSearchTabs.selectedIndex = 0;
+						if(searchResults == null)
+							searchResults = new ArrayCollection(data.result.searchResult);
+						else if (searchResults[lexiconSearchTabs.selectedIndex].lexicalEntries == null){
+							var idx:int = lexiconSearchTabs.selectedIndex;
+							searchResults[lexiconSearchTabs.selectedIndex].lexicalEntries = data.result.searchResult[lexiconSearchTabs.selectedIndex].lexicalEntries;
+							searchResults[lexiconSearchTabs.selectedIndex].startPage = data.result.searchResult[lexiconSearchTabs.selectedIndex].startPage;
+							lexiconSearchRepeater.dataProvider = searchResults;
+							lexiconSearchTabs.selectedIndex = idx;
+						}
+						if(data.result.searchResult[0].total != null && data.result.searchResult[0].total != "" && labelConstructed == false) {
+							label += "   ("+ data.result.searchResult[0].total +")";
+							labelConstructed = true;
+						}
+						
+						if (data.result.searchResult[0].total == 0) {
+							YesNo.ok("No results found" , "", stopIcon);
+						} else
+							initializePageNavigation();
+						
+						
+						LexusUtil.removeWait();
+						FlexGlobals.topLevelApplication.enabled = true;
+					}
+				);   			
+			} 
+			
+			
+			private function preprocessData(jsonData:Object):void{
+				var result:ArrayCollection = new ArrayCollection(jsonData.result.searchResult);
+				for( var i:int = 0; i < result.length; i++){
+					var entries:ArrayCollection = new ArrayCollection((result.getItemAt(i).lexicalEntries as Array));
+					for( var j:int = 0; j < entries.length; j++){
+						var listView:Object = entries.getItemAt(j).listView;
+						listView.value = this.transformListView(listView.value);
+					}
+				}
+			}
+			
+			private function transformListView(listViewHTML:String):String{
+				var txt:String = listViewHTML;
+				
+				var ltPattern:RegExp = /&lt;/g;
+				txt = txt.replace(ltPattern, "<");
+				var gtPattern:RegExp = /&gt;/g;
+				txt = txt.replace(gtPattern, ">");
+				var qtPattern:RegExp = /&quot;/g;
+				txt = txt.replace(qtPattern, "'");
+				var ampPattern:RegExp = /&amp;amp;/g;
+				txt = txt.replace(ampPattern, "&");
+				return txt;
+			}
+			
+			private function doSearch(position:Number = 0):void {
+				FlexGlobals.topLevelApplication.enabled = false;
+				if (searchResults != null && searchResults[this.lexiconSearchTabs.selectedIndex].lexicalEntries != null){
+					searchResults[this.lexiconSearchTabs.selectedIndex].lexicalEntries = null;
+					searchResults[this.lexiconSearchTabs.selectedIndex].startPage = -1;
+				}
+				LexusUtil.showWait(this, "Searching");
+				
+				var refiner:Object = new Object();
+				refiner.position = position;
+				refiner.startLetter = new String("");
+				refiner.pageSize = PAGESIZE;
+				
+				var param:Object = new Object();
+				param.query = _query;
+				param.refiner = refiner;
+				
+				this.lexusService.send("QueryBuilder/search.json", param, this.name, this.onJSONLoadSearchResults);
+			}
+			
+			
+			
+			/**
+			 * Configures and launches the popUp with the entry details.
+			 * Called when the user clicks a entry in the grid.
+			 **/
+			private function showDetails(event:MouseEvent):void{
+				var grid:DataGrid = (event.currentTarget as DataGrid);
+				var entry:Object = grid.selectedItem;
+				//AAM: avoid the popup case the user presses grid elements which are not items (like headers,...)
+				if (grid.selectedItem != null){ 
+					//The window is opened in modal mode since the frame is included. At this moment no multiple windows can be opened
+					var popUp:LexicalEntryDetail = LexicalEntryDetail(PopUpManager.createPopUp((FlexGlobals.topLevelApplication as UIComponent),LexicalEntryDetail,true));
+					popUp.width = 0.9 * this.parentApplication.width;
+					popUp.height = 0.9 * this.parentApplication.height;
+					popUp.setStyle("borderAlpha", 1.0);
+					popUp.entryId = entry.id;
+					popUp.parentGrid = grid;
+					popUp.x = this.parentApplication.width * 0.05;
+					popUp.y = this.parentApplication.height * 0.05;
+					//grid.selectedItem = null;
+				}
+			}
+			
+			
+			/*
+			* AAM: The next methods are reponsible for the page nagigation pane of the search results.
+			* At this moment the page numbers and navigators are the same for all the lexicon results.
+			* i.e. when doing a filter search targeted to two diferent lexicons the search results 
+			* for each lexicon are paged in just one set of pages.
+			*/
+			
+			
+			/**
+			 * Enabling and disabling the buttons is not working due to databinding targted to a repeater component!?!?
+			 * */
+			
+			private function initializePageNavigation():void{
+				var startPage:int;
+				if (this.lexiconSearchTabs.selectedIndex != -1)
+					startPage = searchResults[this.lexiconSearchTabs.selectedIndex].startPage;
+				else
+					startPage = searchResults[0].startPage;
+				
+				if(searchResults[this.lexiconSearchTabs.selectedIndex].pageList == null ){
+					initializePageList(startPage);
+					//AAM: We will need to reload the repeater dataprovider, to allow the page navigation data to be updated.
+					this.lexiconSearchRepeater.dataProvider = searchResults; 
+				}
+				var idx:int = this.lexiconSearchTabs.selectedIndex == -1 ? 0 : this.lexiconSearchTabs.selectedIndex;
+				if (startPage == 0 && startPage == (searchResults[idx].pageList.length -1)){
+					this.navigationBox.visible = false;
+				} else
+					this.navigationBox.visible = true;
+				
+				if (startPage == 0) {
+					this.navPrevPage.enabled = false;
+					this.navPrevPage.source = application.leftIconGrayed;
+					this.navPrevPage.toolTip = "There are o pages preceding the current one"
+					this.navFirstPage.enabled = false;
+					this.navFirstPage.source = application.firstIconGrayed;
+					this.navFirstPage.toolTip = this.navPrevPage.toolTip;
+				}
+				else {
+					this.navPrevPage.enabled = true;
+					this.navPrevPage.source = application.leftIcon;
+					this.navPrevPage.toolTip = "Go to previous page"
+					this.navFirstPage.enabled = true;
+					this.navFirstPage.source = application.firstIcon;
+					this.navFirstPage.toolTip = "Go to first page";
+				}
+				
+				if (startPage == (searchResults[idx].pageList.length -1)) {
+					this.navNextPage.enabled = false;
+					this.navNextPage.source = application.rightIconGrayed;
+					this.navNextPage.toolTip = "There are no pages succeeding the current one";
+					this.navLastPage.enabled = false;
+					this.navLastPage.source = application.lastIconGrayed;
+					this.navLastPage.toolTip = this.navNextPage.toolTip;
+				}
+				else {
+					this.navNextPage.enabled = true;
+					this.navNextPage.source = application.rightIcon;
+					this.navNextPage.toolTip = "Go to next page";
+					this.navLastPage.enabled = true;
+					this.navLastPage.source = application.lastIcon;
+					this.navLastPage.toolTip = "Go to last page";
+				}
+
+			}
+			
+			
+			private function initializePageList(startPage:int):void {
+				//AAM: the page navigation information used is inside the results of the first lexicon result set.
+				//Since this information is the same in all the lexicon result sets. This is send like this by the server!
+				for (var i:int = 0; i < searchResults.length; i++) {
+					
+					var totalPages:int = Math.ceil(searchResults[i].group/searchResults[i].pageSize);
+					var pageList:ArrayCollection= new ArrayCollection();
+					for (var l:int = 0; l < totalPages; l++){
+						var page:Object = new Object();
+						page.label = "" + (l+1);
+						page.value = l;
+						pageList.addItem( page);
+					}
+					//here we add the page navigation data
+					searchResults[i].pageList = pageList;
+				}
+			}
+			
+			
+			private function navigateToFirstPage( evt:MouseEvent):void{
+				navigateTo(0);
+			}
+			
+			
+			private function navigateToLastPage( evt:MouseEvent):void{
+				navigateTo(searchResults[this.lexiconSearchTabs.selectedIndex].pageList.length -1);
+			}
+			
+			
+			private function navigateToPreviousPage( evt:MouseEvent):void{
+				navigateTo(searchResults[this.lexiconSearchTabs.selectedIndex].startPage - 1);
+				
+			}
+			
+			
+			private function navigateToNextPage( evt:MouseEvent):void {
+				navigateTo(searchResults[this.lexiconSearchTabs.selectedIndex].startPage + 1);
+			}
+			
+			
+			
+			private function navigateTo(startPage:Number):void {
+				FlexGlobals.topLevelApplication.enabled  = false;
+				LexusUtil.showWait(this, "Loading entries");
+				doSearch(startPage);
+			}
+			
+			private function changePage( evt: ListEvent):void{
+				FlexGlobals.topLevelApplication.enabled  = false;
+				LexusUtil.showWait(this, "Loading entries");
+				doSearch(evt.currentTarget.selectedIndex);
+			}
+			
+			
+
+			protected function lexiconTabChangedHandler(event:IndexChangedEvent):void
+			{
+				this.initializePageNavigation();
+				lexiconSearchTabs.selectedIndex = event.newIndex;
+
+			}
+
+		]]>
+	</mx:Script>
+	<mx:Canvas id="results" label="Results" width="100%" height="100%">
+		<mx:VBox width="100%" height="100%">			
+			<mx:TabNavigator id="lexiconSearchTabs" width="100%" height="100%" creationPolicy="all" change="lexiconTabChangedHandler(event)" paddingBottom="20" paddingLeft="10" paddingTop="10" paddingRight="10">
+				<mx:Repeater id="lexiconSearchRepeater" dataProvider="{this.searchResults}">
+					<mx:Canvas label="{lexiconSearchRepeater.currentItem.lexicon.name +'  ('+ lexiconSearchRepeater.currentItem.group + ')'}"
+							   width="100%" height="100%">
+						<mx:VBox width="100%" height="100%" horizontalAlign="center">
+							<mx:HBox>
+								<mx:Text text="Showing: {PAGESIZE * lexiconSearchRepeater.currentItem.startPage} to {(PAGESIZE * lexiconSearchRepeater.currentItem.startPage) + lexiconSearchRepeater.currentItem.lexicalEntries.length} of {lexiconSearchRepeater.currentItem.group} entries"/>
+							</mx:HBox>
+							<mx:DataGrid id="searchResultList" variableRowHeight="true" includeInLayout="true" 
+										 top="50" width="100%" height="100%" dragMoveEnabled="false" sortableColumns="false"
+										 dataProvider="{lexiconSearchRepeater.currentItem.lexicalEntries}"
+										 click="showDetails(event)">
+								<mx:columns>
+									<mx:DataGridColumn headerText="">
+										<mx:itemRenderer>
+											<mx:Component>
+												<mx:Text htmlText="{data.listView.value}" cachePolicy="off" condenseWhite="true" />
+											</mx:Component>
+										</mx:itemRenderer>
+									</mx:DataGridColumn>
+								</mx:columns>
+							</mx:DataGrid>
+						</mx:VBox>
+					</mx:Canvas>
+				</mx:Repeater>
+			</mx:TabNavigator>			
+			<mx:HBox id="navigationBox" width="96%" horizontalAlign="right">
+				<mx:Image id="navFirstPage" buttonMode="{activateFirstButtonMode}"
+						  source="{application.firstIcon}"
+						  click="navigateToFirstPage(event)"
+						  toolTip="Go to first page"/>
+				<mx:Image id="navPrevPage"
+						  source="{application.leftIcon}"
+						  click="navigateToPreviousPage(event)"
+						  toolTip="Go to previous page"/>
+				<mx:Label text="Page"/>
+				<mx:ComboBox id="pageListBox" width="70" labelField="label"
+							 change="changePage(event)" dataProvider="{searchResults.getItemAt(this.lexiconSearchTabs.selectedIndex).pageList}" 
+							 selectedIndex="{searchResults.getItemAt(this.lexiconSearchTabs.selectedIndex).startPage}" />
+				<mx:Image id="navNextPage"
+						  source="{application.rightIcon}"
+						  click="navigateToNextPage(event)" toolTip="Go to next page"/>
+				<mx:Image id="navLastPage"
+						  source="{application.lastIcon}"
+						  click="navigateToLastPage(event)" toolTip="Go to last page"/>
+			</mx:HBox>
+		</mx:VBox>
+	</mx:Canvas>
+</mx:Canvas>

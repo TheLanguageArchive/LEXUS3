@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<stx:transform xmlns:stx="http://stx.sourceforge.net/2002/ns" xmlns:lexus="http://www.mpi.nl/lexus"
+    xmlns:util="java:java.util.UUID" strip-space="yes" version="1.0">
+
+    <stx:variable name="lexiconId" select="concat('uuid:',util:toString(util:randomUUID()))"/>
+
+    <stx:template match="data">
+        <stx:copy attributes="@*">
+            <stx:attribute name="new-lexicon-id" select="$lexiconId"/>
+            <stx:process-children/>
+        </stx:copy>
+    </stx:template>
+
+    <!-- Copy everything -->
+
+    <stx:template match="@* | node()">
+        <stx:copy attributes="@*">
+            <stx:process-children/>
+        </stx:copy>
+    </stx:template>
+
+</stx:transform>

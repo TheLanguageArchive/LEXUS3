@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lexus:error id="LEX010" xmlns:lexus="http://www.mpi.nl/lat/lexus">
+    <lexus:message lang="en">Resource not found</lexus:message>
+</lexus:error>

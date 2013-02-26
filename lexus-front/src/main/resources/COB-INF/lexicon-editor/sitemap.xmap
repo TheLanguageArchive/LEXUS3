@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<map:sitemap xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://apache.org/cocoon/sitemap/1.0 http://cocoon.apache.org/schema/sitemap/cocoon-sitemap-1.0.xsd"
+    xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+
+    <map:pipelines>
+
+
+        <map:pipeline id="lexicon" type="caching">
+           <map:parameter name="outputBufferSize" value="0"/>
+
+            <!-- 
+          Get the Lexical Entry View.
+        -->
+            <map:match pattern="entryLayout.htm">
+                <map:act type="request">
+                    <map:parameter name="parameters" value="true"/>
+                    <map:aggregate element="data">
+                        <map:part src="cocoon://request"/>
+                        <map:part src="cocoon://user"/>
+                    </map:aggregate>
+                    <map:transform type="${tee}"
+                        src="{naming:java:comp/env/tee-folder}debug-info/front-htmlview-1.xml"/>
+                    <map:transform type="saxon"
+                        src="prepareGetLexicalEntryDataFromRequestParameters.xslt"/>
+                    <map:transform type="${tee}"
+                        src="{naming:java:comp/env/tee-folder}debug-info/front-htmlview-2.xml"/>
+                    <map:transform type="servletService">
+                        <map:parameter name="service"
+                            value="servlet:lexus-db:/lexicon/getLexicalEntryData.xml"/>
+                    </map:transform>
+                    <map:transform type="${tee}"
+                        src="{naming:java:comp/env/tee-folder}debug-info/front-htmlview-3.xml"/>
+                    <map:transform type="saxon"
+                        src="views/prepareDisplayGeneratorForLexicalEntry.xslt">
+                        <map:parameter name="view" value="le-view"/>
+                    </map:transform>
+                    <map:transform type="${tee}"
+                        src="{naming:java:comp/env/tee-folder}debug-info/front-htmlview-4.xml"/>
+                    <map:transform type="servletService">
+                        <map:parameter name="service" value="servlet:lexus-display:/htmlview.xml"/>
+                    </map:transform>
+                    <map:transform type="${tee}"
+                        src="{naming:java:comp/env/tee-folder}debug-info/front-htmlview-5.xml"/>
+                    <map:transform type="saxon" src="views/add-lexiconId-to-resources.xslt"/>
+                    <map:transform type="resource-resolver">
+                        <map:parameter name="resources-uri"
+                            value="{naming:java:comp/env/LEXUS/resourceContextPath}"/>
+                    </map:transform>
+                    <map:transform type="${tee}"
+                        src="{naming:java:comp/env/tee-folder}debug-info/front-htmlview-6.xml"/>
+                    <map:transform type="saxon" src="views/move-resource-url-to-src-attribute.xslt"/>
+                    <map:transform type="${tee}"
+                        src="{naming:java:comp/env/tee-folder}debug-info/front-htmlview-7.xml"/>
+                    <map:transform type="saxon" src="views/extractHTMLView.xslt"/>
+                    <map:transform type="${tee}"
+                        src="{naming:java:comp/env/tee-folder}debug-info/front-htmlview-8.xml"/>
+                    <!-- resolve archive IDs to URIs -->
+
+                    <map:serialize type="html"/>
+                </map:act>
+            </map:match>
+
+
+            <!-- 
+          Create a new lexical entry.
+          -->
+            <map:match pattern="createLexicalEntry.json">
+                <map:act type="json-field">
+                    <map:parameter name="json-field" value="lexicon"/>
+                    <map:generate src="cocoon://LexusSchemaEditor/getSchema.xml"/>
+                    <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-cle-1.xml"/>
+                    <map:transform type="saxon" src="addIdsToNewLexicalEntry.xslt"/>
+                    <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-cle-2.xml"/>
+                    <map:transform type="servletService">
+                        <map:parameter name="service"
+                            value="servlet:lexus-db:/lexicon/saveLexicalEntry.xml"/>
+                    </map:transform>
+                    <map:transform type="servletService">
+                        <map:parameter name="service"
+                            value="servlet:lexus-db:/lexicon/getLexicalEntryData.xml"/>
+                    </map:transform>
+                    <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-cle-3.xml"/>
+                    <map:transform type="saxon"
+                        src="views/prepareDisplayGeneratorForLexicalEntry.xslt"/>
+                    <map:transform type="servletService">
+                        <map:parameter name="service" value="servlet:lexus-display:/flexhtmlview.xml"/>
+                    </map:transform>
+                    <map:transform type="saxon" src="getLexicalEntryData-2-JSON.xslt"/>
+                    <map:serialize type="json"/>
+                </map:act>
+            </map:match>
+
+
+            <!-- 
+          Delete a lexical entry.
+          
+      -->
+            <map:match pattern="deleteLexicalEntry.json">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://json"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="saxon" src="prepareDeleteLexicalEntry.xslt"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:lexus-db:/lexicon/deleteLexicalEntry.xml"
+                    />
+                </map:transform>
+                <map:transform type="saxon" src="deleteLexicalEntryData-2-JSON.xslt"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+
+            <!-- 
+        Get list of lexical entries
+      -->
+            <map:match pattern="startLetterSearch.json">
+                <map:generate src="cocoon:/startLetterSearch"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-sls-5.xml"/>
+                <map:transform type="saxon" src="startLetterSearchResult-2-JSON.xslt">
+                    <map:parameter name="sessionId" value="{session:id}"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-sls-6.xml"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+
+            <!-- 
+        In spite of the name, this only uses a query to filter lexical entries.
+      -->
+            <map:match pattern="startLetterQuerySearch.json">
+                <map:generate src="cocoon:/startLetterSearch"/>
+                <map:transform type="saxon" src="startLetterSearchResult-2-JSON.xslt">
+                    <map:parameter name="sessionId" value="{session:id}"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-slqs-1.xml"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+            <!--
+        The workhorse for querying the db.
+        -->
+            <map:match pattern="startLetterSearch">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://json"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-sls-1.xml"/>
+                <map:transform type="saxon" src="prepareStartLetterSearch.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-sls-2.xml"/>
+                <map:transform type="saxon" src="normalizeStartLetterSearch.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-sls-3.xml"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:lexus-db:/lexicon/startLetterSearch.xml"
+                    />
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-sls-4.xml"/>
+                <map:transform type="saxon" src="views/prepareDisplayGenerator.xslt"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:lexus-display:/flexhtmlview.xml"/>
+                </map:transform>
+                <map:serialize type="xml"/>
+            </map:match>
+
+            <!-- 
+        Get data for lexical entry
+      -->
+            <map:match pattern="getLexicalEntryData.json">
+                <map:generate src="cocoon:/getLexicalEntryData"/>
+                <map:transform type="saxon" src="views/prepareDisplayGeneratorForLexicalEntry.xslt"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:lexus-display:/flexhtmlview.xml"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-gled-3.xml"/>
+                <map:transform type="saxon" src="getLexicalEntryData-2-JSON.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-gled-4.xml"/>
+                <!-- resolve archive IDs to URIs -->
+                <map:transform type="resource-resolver">
+                    <map:parameter name="resources-uri"
+                        value="{naming:java:comp/env/LEXUS/resourceContextPath}"/>
+                </map:transform>
+                <map:transform type="saxon" src="../util/extract-remote-resource.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-gled-5.xml"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+            <!-- Load lexical entry data including lexical-entry-view.
+        -->
+            <map:match pattern="loadLexicalEntry.json">
+                <map:generate src="cocoon:/getLexicalEntryData"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-lle-0.xml"/>
+                <map:transform type="saxon" src="views/prepareDisplayGeneratorForLexicalEntry.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-lle-1.xml"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:lexus-display:/flexhtmlview.xml"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-lle-2.xml"/>
+                <map:transform type="saxon" src="getLexicalEntryData-2-JSON.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-lle-3.xml"/>
+                <!-- resolve archive IDs to URIs -->
+                <map:transform type="resource-resolver">
+                    <map:parameter name="resources-uri"
+                        value="{naming:java:comp/env/LEXUS/resourceContextPath}"/>
+                </map:transform>
+                <map:transform type="saxon" src="../util/extract-remote-resource.xslt"/>
+
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-lle-4.xml"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+            <map:match pattern="getLexicalEntryData">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://json"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="saxon" src="prepareGetLexicalEntryData.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-gled-1.xml"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service"
+                        value="servlet:lexus-db:/lexicon/getLexicalEntryData.xml"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-gled-2.xml"/>
+                <map:serialize type="xml"/>
+            </map:match>
+
+
+
+            <!-- 
+        Save lexical entry
+      -->
+            <map:match pattern="saveLexicalEntry.json">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://json"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-le-1.xml"/>
+                <map:transform type="saxon" src="prepareProcessUploads.xslt"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-le-2.xml"/>
+                <map:transform type="process-upload">
+                    <map:parameter name="user-resources-folder"
+                        value="{naming:java:comp/env/LEXUS/resourceDirectory}"/>
+                </map:transform>
+                <map:transform type="imdi-archive">
+                    <map:parameter name="EAF-handler" value="{naming:java:comp/env/LEXUS/EAF_Handler}"/>
+                    <map:parameter name="IMDI-handler" value="{naming:java:comp/env/LEXUS/IMDI_Handler}"/>
+                </map:transform>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-le-3.xml"/>
+                <map:transform type="saxon" src="archive/process-archive-uploads.xslt"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-le-4.xml"/>
+                <map:transform type="saxon" src="prepareSaveLexicalEntry.xslt"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:lexus-db:/lexicon/saveLexicalEntry.xml"/>
+                </map:transform>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-le-5.xml"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service"
+                        value="servlet:lexus-db:/lexicon/updateSortorderKeysInLexicalEntry.xml"/>
+                </map:transform>
+                <map:transform type="servletService">
+                    <map:parameter name="service"
+                        value="servlet:lexus-db:/lexicon/getLexicalEntryData.xml"/>
+                </map:transform>
+                <map:transform type="saxon" src="views/prepareDisplayGeneratorForLexicalEntry.xslt"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:lexus-display:/flexhtmlview.xml"/>
+                </map:transform>
+                <map:transform type="saxon" src="getLexicalEntryData-2-JSON.xslt"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-le-6.xml"/>
+                <!-- resolve archive IDs to URIs -->
+                <map:transform type="resource-resolver">
+                    <map:parameter name="resources-uri"
+                        value="{naming:java:comp/env/LEXUS/resourceContextPath}"/>
+                </map:transform>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-le-7.xml"/>
+                <map:transform type="saxon" src="../util/extract-remote-resource.xslt"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+        </map:pipeline>
+
+        <map:pipeline>
+
+            <!-- 
+        Get a zip with the lexicon in one document and the schema we use internally.
+      -->
+            <map:match pattern="XMLexport.zip">
+                <map:aggregate element="data">
+                    <map:part src="export/baseZip.xml"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="saxon" src="export/prepareGetDocumentAndSchema.xslt">
+                    <map:parameter name="id" value="{request-param:id}"/>
+                </map:transform>
+                <map:transform type="servletService">
+                    <map:parameter name="service"
+                        value="servlet:lexus-db:/lexicon/getDocumentAndSchema.xml"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-xe-1.xml"/>
+                <!--        <map:transform type="saxon" src="export/createLexiconAndSchemaZipEntries.xslt"/>-->
+                <map:transform type="saxon" src="export/createRELISHExportZip.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-xe-2.xml"/>
+                <map:transform src="export/prepareZipForSerialisation.xslt"/>
+                <map:serialize type="zip"/>
+            </map:match>
+
+
+
+            <map:match pattern="PDFexport.pdf">
+                <map:aggregate element="data">
+                    <map:part src="export/basePDF.xml"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-1.xml"/>
+
+                <map:transform type="saxon" src="export/fillInLexiconIDForPDFExport.xslt">
+                    <map:parameter name="id" value="{request-param:id}"/>
+                </map:transform>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-2.xml"/>
+                <map:transform type="saxon" src="prepareStartLetterSearch.xslt"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-3.xml"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:lexus-db:/lexicon/startLetterSearch.xml"/>
+                </map:transform>
+
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-4.xml"/>
+
+                <map:transform type="saxon" src="views/prepareDisplayGeneratorForPDF.xslt">
+                    <map:parameter name="view" value="{request-param:view}"/>
+                </map:transform>
+
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-5.xml"/>
+
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:lexus-display:/xsl-fo-view.xml"/>
+                </map:transform>
+
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-6.xml"/>
+
+                <map:transform type="resource-resolver">
+                    <map:parameter name="resources-uri"
+                        value="{naming:java:comp/env/LEXUS/resourceContextPath}"/>
+                    <map:parameter name="local-resources-folder"
+                        value="{naming:java:comp/env/LEXUS/resourceDirectory}"/>
+                </map:transform>
+
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-7.xml"/>
+
+                <map:transform type="saxon"
+                    src="views/move-resource-url-to-src-attribute-in-xsl-fo.xslt"/>
+
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-8.xml"/>
+
+                <map:transform type="saxon" src="views/xsl-fo-document.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-9.xml"/>
+                <map:serialize type="fo2pdf"/>
+            </map:match>
+
+
+            <!-- 
+                Get an object description from the MPI archive.
+            -->
+            
+            <map:match pattern="Archive/getImdiArchiveObject.json">
+                
+                <map:aggregate element="data">
+                    <map:part src="cocoon://json"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-archive-1.xml"/>
+                <map:transform type="saxon" src="archive/prepare-get-object.xslt"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-archive-2.xml"/>
+                <map:transform type="imdi-archive">
+                    <map:parameter name="EAF-handler" value="{naming:java:comp/env/LEXUS/EAF_Handler}"/>
+                    <map:parameter name="IMDI-handler" value="{naming:java:comp/env/LEXUS/IMDI_Handler}"/>
+                </map:transform>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-archive-3.xml"/>
+                <map:transform type="saxon" src="archive/getImdiArchiveObject-2-JSON.xslt"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-archive-4.xml"/>
+                <map:serialize type="json"/>
+            </map:match>
+        </map:pipeline>
+
+    </map:pipelines>
+
+</map:sitemap>

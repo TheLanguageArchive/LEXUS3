@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+<!-- $Id: pom.xml 642118 2008-03-28 08:04:16Z reinhard $ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>war</packaging>
+
+    <parent>
+        <groupId>nl.mpi.lexus</groupId>
+        <artifactId>lexus</artifactId>
+        <version>3.0.1-RELEASE</version>
+    </parent>
+
+    <artifactId>lexus-webapp</artifactId>
+    <name>lexus-webapp</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>nl.mpi.lexus</groupId>
+            <artifactId>lexus-front</artifactId>
+            <version>3.0.1-RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.mpi.lexus</groupId>
+            <artifactId>lexus-display</artifactId>
+            <version>3.0.1-RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>nl.mpi.lexus</groupId>
+            <artifactId>lexus-db</artifactId>
+            <version>3.0.1-RELEASE</version>
+        </dependency>
+    </dependencies>
+    <build>
+	    <finalName>${project.artifactId}-${project.version}-r${buildNumber}</finalName>
+	    <plugins>
+	    	<plugin>
+	        	<artifactId>maven-clean-plugin</artifactId>
+	            <version>2.4.1</version>
+	            <configuration>
+	            	<filesets>
+	                    <fileset>
+	                    	<directory>../lexus-front/debug-info</directory>
+	                    	<excludes>
+	                        	<exclude>.svn</exclude>
+	                        	<exclude>.svn/*</exclude>
+	                        </excludes>
+	                        <followSymlinks>false</followSymlinks>
+	                    </fileset>
+	                    <fileset>
+	                    	<directory>${basedir}/src/main/webapp/WEB-INF/lib</directory>
+	                    	<excludes>
+	                        	<exclude>.svn</exclude>
+	                        	<exclude>.svn/*</exclude>
+	                        </excludes>
+	                        <followSymlinks>false</followSymlinks>
+	                    </fileset>
+	                </filesets>
+	            </configuration>
+			</plugin>
+	        <plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat6-maven-plugin</artifactId>
+				<version>2.0</version>
+				<configuration>
+					<path>/lex/lexus</path>
+					<warDirectory>${project.build.directory}/${project.build.finalName}</warDirectory>
+					<configurationDir>${project.build.directory}/tomcat</configurationDir>
+					<contextFile>${project.build.directory}/${project.build.finalName}/META-INF/context.xml</contextFile>
+				</configuration>
+			</plugin>
+			<plugin>
+		        <artifactId>maven-assembly-plugin</artifactId>
+		        <version>2.4</version>
+		        <configuration>
+					<descriptors>
+						<descriptor>${basedir}/src/main/resources/assembly/LEXUS3-deploy.xml</descriptor>
+					</descriptors>
+				</configuration>
+		        <executions>
+                	<execution>
+	                    <id>make-assembly</id>
+	                    <phase>package</phase>
+	                    <goals>
+	                        <goal>single</goal>
+	                    </goals>
+			        </execution>
+				</executions>
+        	</plugin>
+	    </plugins>
+	    <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <targetPath>${basedir}/src/main/webapp</targetPath>
+                <excludes>
+                	<exclude>legal/</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/resources/legal</directory>
+                <filtering>false</filtering>
+                <targetPath>${basedir}/src/main/webapp/WEB-INF/lib/legal</targetPath>
+            </resource>
+        </resources>
+    </build>
+    <properties>
+        <netbeans.hint.deploy.server>Tomcat55</netbeans.hint.deploy.server>
+    </properties>
+
+</project>

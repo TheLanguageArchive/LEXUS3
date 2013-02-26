@@ -1,0 +1,1278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module xmlns:mx="http://www.adobe.com/2006/mxml"
+		   xmlns:mpi="nl.mpi.lexus.*"
+		   xmlns:flexiframe="http://code.google.com/p/flex-iframe/"
+		   layout="absolute" width="100%" height="100%"
+		   creationComplete="init();" xmlns:local="*">
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.collections.ICollectionView;
+			import mx.collections.IViewCursor;
+			import mx.controls.Alert;
+			import mx.controls.TabBar;
+			import mx.core.FlexGlobals;
+			import mx.core.IUIComponent;
+			import mx.events.CloseEvent;
+			import mx.events.DragEvent;
+			import mx.events.IndexChangedEvent;
+			import mx.events.ListEvent;
+			import mx.events.MenuEvent;
+			import mx.events.SandboxMouseEvent;
+			import mx.managers.DragManager;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			import mx.utils.ObjectProxy;
+			import mx.utils.ObjectUtil;
+			
+			import nl.mpi.lexus.LexusMenu;
+			import nl.mpi.lexus.LexusUtil;
+			import nl.mpi.lexus.YesNo;
+			import nl.mpi.lexus.event.NewLexiconEvent;
+			import nl.mpi.lexus.event.QueryEvent;
+			import nl.mpi.lexus.event.SortOrderChangeEvent;
+			import nl.mpi.lexus.service.LexusService;
+			
+			[Bindable]
+			private var application:Object = FlexGlobals.topLevelApplication;
+			
+			[Bindable]
+			private var serverData:ObjectProxy;
+			
+			[Bindable]
+			private var userData:Object = null;
+			
+			[Bindable]
+			private var users:Array = null;
+			
+			[Bindable]
+			private var templates:Array = null;
+			
+			
+			[Bindable]
+			private var searchResults:Object;
+		
+			[Bindable][Embed(source="../assets/images/icon_sharedLexicon.gif")] private var sharedLexiconIconClass:Class;
+			[Bindable][Embed(source="../assets/images/icon_new.jpg")] private var newLexiconIcon:Class;
+			[Bindable][Embed(source="../assets/images/icon_sort.gif")] private var sortOrderIconClass:Class;			
+			[Bindable][Embed(source="../assets/images/icon_user.jpg")] private var userIcon:Class;
+			
+			private const IMPORTING_LEXICON_STRING:String = "This lexicon is currently being imported and cannot be openned!";
+			
+			/**
+			 * Internal indicator used to indicate the latest lexicon to save
+			 **/ 
+			private var saveLexiconTarget:Object;
+			
+			/**
+			 * Internal indicator for identifiying the latest sortOrder to save
+			 **/ 
+			private var saveSortOrderTarget:Object;
+			
+			/**
+			 * A place to save an event. In case we need to save some data
+			 *  while processing an event we park the event here.
+			 **/
+			private var originalEvent:Event;
+			
+			/**
+			 * A place to store the originally selected Item so that it can
+			 * be reselected when reloading a lexicon.
+			 **/
+			private var originallySelectedIndex:Number;
+			
+			/**
+			 * Refers to the actionscript component responsible for assembling the service
+			 **/ 
+			private var lexusService:LexusService = new LexusService();
+			
+			
+			private function init():void {
+				this.tabberd.selectedChild = this.lexiconTab;
+				LexusUtil.showWait(this, "Loading workspace");				
+				lexiconDetailsTab.enabled = true;
+				originalEvent = null;
+				originallySelectedIndex = -1;
+				//added by shakila
+				this.lexusService.send("LexusWorkspaceEditor/listTemplates.json", null, this.name, onJSONLoadTemplates);
+				sortOrderComponent.addEventListener("change", this.onSortOrderChange);
+				lexusService.send( "LexusWorkspaceEditor/getPage.json", null, this.name, onJSONLoad)
+				searchComponent.queryBuilder.addEventListener(QueryEvent.ADD, this.handleQueryUpdate);
+				searchComponent.queryBuilder.addEventListener(QueryEvent.SAVE, this.handleQueryUpdate);
+				searchComponent.queryBuilder.addEventListener(QueryEvent.DELETE, this.handleQueryUpdate);
+				searchComponent.queryBuilder.addEventListener(QueryEvent.REFRESH, this.handleQueryUpdate);
+			}
+			
+			private function handleQueryUpdate(event:QueryEvent):void {
+				process_original_event();
+			}
+
+			/**
+			 * Event Handler for the onLoad event. This will parse the JSON object and perform initialization
+			 * */
+			private function onJSONLoad(event:ResultEvent):void {
+				LexusUtil.parseJSON(String(event.result),
+					function(data:Object):void {
+						serverData = new ObjectProxy(data);
+						/**
+						 * Store info about the user in a global object,
+						 * so we can refer to it from other modules.
+						 **/
+						if (serverData.result.user) {
+							FlexGlobals.topLevelApplication.lexusUser = serverData.result.user;
+							if (FlexGlobals.topLevelApplication.lexusUser.administrator) {
+								tabberd.addChild(new Administrator());
+							}
+						}
+						if (serverData.result.myLexica != null) {
+							var ml:Object = serverData.result.myLexica;
+							ml.sortOn(["name", "description"], Array.CASEINSENSITIVE);
+							lexicaList.validateNow();
+							var l:int = ml.length;
+							lexicaList.selectedIndex = l > 0 ? 0 : -1;
+							showLexicon();
+							
+							//HHV: Store the lexica on the Application level, no need to constantly load it
+							// in different formats! QueryBuilder uses this when called from LexiconBrowser.
+							
+							//AAM: Store the data as a copy so that later we can refer to the original data,
+							// when changes to the working data (serverData.result.myLexica) are canceled.
+							// No need to reload the lexicon data upon change cancelation!
+							FlexGlobals.topLevelApplication.lexica = ObjectUtil.copy(serverData.result.myLexica);
+							searchComponent.queryBuilder.availableLexica = serverData.result.myLexica;
+
+							
+							if (l <= 0) {
+								newLexicon(null);
+							}
+						}
+						
+						/**
+						 * Store info about Lexus global object,
+						 * so we can refer to it from other modules.
+						 **/
+						if (serverData.result.lexus){
+							FlexGlobals.topLevelApplication.aboutLexus = serverData.result.lexus;
+						}						
+						/**
+						 * Store info about VICOS,
+						 * so we can refer to it in Lexus.
+						 **/
+						if (serverData.result.VICOS) {
+							FlexGlobals.topLevelApplication.VICOS = serverData.result.VICOS;
+						}
+						LexusUtil.removeWait();
+					}
+				);
+				FlexGlobals.topLevelApplication.moduleInitialised("workspace");
+			}
+			
+			/**
+			 * Event Handler for the onLoad event. This will parse the userdata object and perform initialization
+			 * */
+			private function onJSONLoadUsers(event:ResultEvent):void
+			{
+				LexusUtil.parseJSON(String(event.result),
+					function(data:Object):void {
+						users = data.result.profiles;
+						users.sortOn(["administrator", "name"], Array.CASEINSENSITIVE);
+						
+						activeUsers1.dataProvider = users;
+						activeUsers2.dataProvider = users; 
+						
+					}
+				);   
+			}
+			
+			/**
+			 * Event handler for loading the tempaltes of Lexica
+			 * */
+			
+			
+			private function onJSONLoadTemplates(event:ResultEvent):void
+			{
+				LexusUtil.parseJSON(String(event.result),
+					function(data:Object):void {
+						templates = data.templates;
+					}
+				);   
+			}
+			
+			/**
+			 * Event handler for the Menu control's click event.
+			 **/
+			public function onMenuSelect(event:MenuEvent):Boolean {
+				var handled:Boolean = true;
+				this.originalEvent = null;
+				this.originallySelectedIndex = -1;
+				var evtName:String = event.item.@eventName;
+				//YesNo.alert("handling event in workspace, event=" + event + ", event.item=" + event.item + ", eventName=" + evtName);
+				
+				/**
+				 * Handle "Save event" first, if it's not a save event check for need to save.
+				 * This is done so the user doesn't need to confirm after selecting save!
+				 **/
+				if (evtName == "save") {
+					this.originallySelectedIndex = this.lexicaList.selectedIndex;
+					save();
+					return true;
+				}
+				
+				/** Request Save actions for other menu items, if necessary.
+				 *  If something needs saving, store the original event so that it can
+				 *  be dispatched again after the save.
+				 **/
+				if (this.saveNeeded()) {
+					this.originalEvent = event;
+					this.originallySelectedIndex = this.lexicaList.selectedIndex;
+					this.requestSave();
+					return true;
+				}
+				
+				switch (evtName) {
+					case "import_xml":
+						// var popXMLImport:XMLImport = XMLImport(PopUpManager.createPopUp(this,XMLImport,true));
+						var popXMLImport:ImportLexusXML = ImportLexusXML(PopUpManager.createPopUp(application as DisplayObject,ImportLexusXML,true));
+						popXMLImport.sessionId = serverData.result.sessionId;
+						popXMLImport.addEventListener("new", handleLexiconImport);
+						popXMLImport.addEventListener("finish", handleLexiconImportFinished);
+						PopUpManager.centerPopUp(popXMLImport);
+						break;
+					case "import_shbx":
+						var popShbxImport:ShbxImport = ShbxImport(PopUpManager.createPopUp(application as DisplayObject,ShbxImport,true));
+						popShbxImport.existingLexicon = false;
+						popShbxImport.sessionId = serverData.result.sessionId;
+						popShbxImport.addEventListener("new", handleLexiconImport);
+						PopUpManager.centerPopUp(popShbxImport);
+						popShbxImport.y = 20;
+						break;					
+					case "convert_toolbox":
+						var popToolboxConverter:ToolboxConverter = ToolboxConverter(PopUpManager.createPopUp(application as DisplayObject,ToolboxConverter,true));
+						popToolboxConverter.sessionId = serverData.result.sessionId;
+						//						popToolboxConverter.addEventListener("new", handleLexiconImport);
+						PopUpManager.centerPopUp(popToolboxConverter);
+						popToolboxConverter.y = 20;
+						break;
+					case "schema_editor":
+						if (this.lexicaList.selectedItem == null) {
+							YesNo.alert("Please select a lexicon first");
+							return true;
+						}
+						if(this.lexicaList.selectedItem.importingName != null && this.lexicaList.selectedItem.importingName == "Importing lexicon..." ){
+							YesNo.alert(IMPORTING_LEXICON_STRING);
+							return true;
+						}
+						FlexGlobals.topLevelApplication.lexiconId = this.lexicaList.selectedItem.id;
+						handled = false;
+						break;
+					case "lexicon_browser":
+						if (this.lexicaList.selectedItem == null) {
+							YesNo.alert("Please select a lexicon first");
+							return true;
+						}
+						if(this.lexicaList.selectedItem.importingName != null && this.lexicaList.selectedItem.importingName == "Importing lexicon..." ){
+							YesNo.alert(IMPORTING_LEXICON_STRING);
+							return true;
+						}	
+						FlexGlobals.topLevelApplication.lexiconId = this.lexicaList.selectedItem.id;
+						handled = false;
+						break;
+					case "export_all_xml":
+						var url:String = lexusService.getAbsoluteURL("ExportAllXML.json");
+						lexusService.send("ExportAllXML.json", null, this.name, function(data:Object):void {});
+						break;
+					case "VICOS":
+						ExternalInterface.call("window.open", FlexGlobals.topLevelApplication.VICOS, "VICOS", "", false);
+						break;
+					case "refresh":
+						init();
+						break;
+					default:
+						handled = false;
+						break;
+				}
+				return handled;
+			}
+			
+			/* Save unsaved data, called from menu event handler or keyboard handler */
+			public function save():void {
+				if (this.saveLexiconTarget != null) {
+					FlexGlobals.topLevelApplication.enabled = false;
+					LexusUtil.showWait(this, "Saving lexicon");					
+					this.lexusService.send("LexusWorkspaceEditor/saveLexicon.json", this.saveLexiconTarget, this.name, onLexiconReload);
+					this.saveLexiconTarget = null;
+				}
+				if (this.saveSortOrderTarget != null) {
+					FlexGlobals.topLevelApplication.enabled = false;
+					if(sortOrderComponent.validateRows(this.saveSortOrderTarget)){
+						LexusUtil.showWait(this, "Saving sortorder");
+						this.lexusService.send("LexusWorkspaceEditor/saveSortOrder.json", this.saveSortOrderTarget, this.name,
+							function():void {
+								//AAM:weird bugfix: this avoid that after having answered 'yes' to a save sort order request,
+								//the request is not presneted again after further name changes.
+								sortOrders.selectedIndex = sortOrders.selectedIndex;
+								LexusUtil.removeWait();
+								if(originalEvent != null)
+									process_original_event();
+								else
+									FlexGlobals.topLevelApplication.enabled = true;
+							}
+						);
+						this.saveSortOrderTarget = null;
+					} else{
+						if(!this.sortOrderComponent.itemEdtEndAlertEmited)
+							YesNo.confirmDiscard("The sort order '" + this.saveSortOrderTarget.name + "' is not complete yet.\nDo you wish to discard the changes?", confirmDiscardHandler);
+						else
+							FlexGlobals.topLevelApplication.enabled = true;
+					}
+				}
+				if (searchComponent.saveNeeded()) {
+					searchComponent.save();
+				}
+			}
+			
+			public function confirmDiscardHandler(event:CloseEvent):void{
+				if (event.detail == Alert.YES) {
+					FlexGlobals.topLevelApplication.enabled = true;
+					LexusUtil.showWait(this, "Reloading sortorder");
+					//AAM: no need to call the service! Same aproach used for the confirmSaveHandler in relation to a lexicon, can be used 
+					//here in relation to a sort order.
+					this.lexusService.send("LexusWorkspaceEditor/loadSortOrder.json", this.saveSortOrderTarget, this.name, onSortOrderReload);
+					this.saveSortOrderTarget = null;
+					requestSave();
+				} else if (event.detail == Alert.NO) {
+					FlexGlobals.topLevelApplication.enabled = true;
+				}
+			}
+			
+			private function saveNeeded():Boolean {
+				if (this.saveLexiconTarget != null || this.saveSortOrderTarget != null || this.searchComponent.saveNeeded())
+					return true;
+				else 
+					return false;
+			}
+			
+			//Request Save actions for other menu items, if necessary.
+			private function requestSave():Boolean {
+				if (this.saveLexiconTarget != null) {
+					this.requestLexiconSave();
+					return true;
+				}
+				if (this.saveSortOrderTarget != null){
+					
+					if (sortOrderComponent.validateRows(this.saveSortOrderTarget) && !sortOrderComponent.itemEdtEndAlertEmited){
+						this.requestSortOrderSave();
+						return true;
+					}
+					else{
+						var incompleteRowIndex:int=0
+						for each (var item:Object in (sortOrders.dataProvider as ArrayCollection))
+							{
+								if (item.id==this.saveSortOrderTarget.id)
+								{	
+									sortOrders.selectedIndex = incompleteRowIndex;
+									sortOrders.scrollToIndex(incompleteRowIndex);
+									//YesNo.alert("You have to complete the '" +item.name+ "' sort order or remove it before you can proceed.");
+									if(!sortOrderComponent.itemEdtEndAlertEmited)
+										sortOrderComponent.handleSortOrderChange(this.sortOrders.selectedItem);
+									sortOrderComponent.itemEdtEndAlertEmited = false;
+									sortOrderComponent.sortOrderRowAdd.enabled = false;
+									sortOrderComponent.sortOrderRowAdd.toolTip = "You have to complete the '" +item.name+ "' sort order or remove it before you can proceed.";
+									sortOrderComponent.sortOrderRowAdd.source = application.addIconGrayed;
+									return true;
+								}
+								
+								incompleteRowIndex++;
+							}		
+					}
+				}
+				
+				
+				if (this.searchComponent.requestSave()) {
+					return true;
+				}
+				return false;
+			}
+			
+			
+			
+			
+		
+			private function handleLexiconImport(event:NewLexiconEvent):void {
+				(this.lexicaList.dataProvider as ArrayCollection).addItem(event.lexicon);
+			}
+			
+			private function handleLexiconImportFinished(event:NewLexiconEvent):void {
+				init();
+			}
+			
+			private function onWorkspaceSortOrdersLoad(event:ResultEvent):void {
+				this.sortOrdersTab.enabled = false;
+				LexusUtil.parseJSON(String(event.result),
+					function(data:Object):void {
+						serverData.result.sortOrders = data.result.sortOrders;
+						sortOrders.dataProvider = serverData.result.sortOrders;
+						if(serverData.result.sortOrders.length >0)
+							sortOrders.selectedIndex = 0;
+						
+						//LexusUtil.removeWait();
+					}
+				);
+				this.sortOrdersTab.enabled = true;
+		
+				
+				
+			}
+			
+			/**
+			 * Event handler for left tab changes.
+			 **/ 
+			private function leftTabChanged(event:MouseEvent):void{
+				if (event.target.parent is TabBar && !(event.localX > 0 && event.localY > 0) && event.target.parent.automationParent.id == "tabberd")
+					callLater(_leftTabChanged, [event]);
+			}
+			
+	
+			
+			/**
+			 * Event handler for left tab changes.
+			 **/ 
+			private function _leftTabChanged(event:MouseEvent):void{
+				var selectedIndex:uint= TabBar(event.target.parent).getChildIndex(event.target as DisplayObject)
+				
+				//AAM: we can't use 'requestSave' here since we don't want to throw the pop up again, when the user
+				//returns to a tab with unsaved data. The question was already asked when the user left that tab.
+				if (selectedIndex != 0 && this.saveLexiconTarget != null) {
+					this.requestLexiconSave();
+				}
+				if (selectedIndex != 1 && this.saveSortOrderTarget != null){
+					//Ssha give warning that there is an incomplete sort order in the list , once changing the tab.
+					if (sortOrderComponent.validateRows(this.saveSortOrderTarget) && !sortOrderComponent.itemEdtEndAlertEmited){
+						this.requestSortOrderSave();
+					}
+					else
+					{
+						if(!sortOrderComponent.itemEdtEndAlertEmited)
+							//YesNo.alert("You have left the '" + this.saveSortOrderTarget.name +"' sort order incomplete, better to fix it now before changing tabs. ");
+							sortOrderComponent.handleSortOrderChange(this.sortOrders.selectedItem);
+						event.stopImmediatePropagation();
+						event.preventDefault();
+						sortOrderComponent.sortOrderRowAdd.enabled = false;
+						sortOrderComponent.sortOrderRowAdd.toolTip = "You have to complete the current row or remove it before you can add more.";
+						sortOrderComponent.sortOrderRowAdd.source = application.addIconGrayed;
+					}
+					
+				}
+				if (selectedIndex != 2) {
+					this.searchComponent.requestSave();
+				}
+				
+				
+				switch (selectedIndex){
+					case 0:
+						lexiconDetailsTab.enabled = true;
+						break;
+					case 1:
+						if( !serverData.result.hasOwnProperty("sortOrders")){
+							//LexusUtil.showWait(this, "Loading sortorder");					
+							this.lexusService.send("LexusWorkspaceEditor/loadWSSortOrders.json", null, this.name, onWorkspaceSortOrdersLoad);
+							
+						}
+						break;
+					case 2:
+						searchComponent.activated();
+						break;
+				}
+			}
+			
+			/**
+			 * Marks the lexicon to save.
+			 **/
+			private function markLexiconSavePoint():void{
+				this.saveLexiconTarget = lexicaList.selectedItem;
+			}
+			/**
+			 * Marks the sortOrder to save.
+			 **/
+			private function markSortOrderSavePoint(sortOrder:Object):void{
+				this.saveSortOrderTarget = sortOrder;
+		
+			}
+			/**
+			 * Handles the click events in the left tree. 
+			 **/
+			private function lexiconClicked(evt:ListEvent):void{
+				if( this.saveLexiconTarget != null)
+					requestLexiconSave();
+				showLexicon();		
+			}
+			
+			private function requestLexiconSave():void {
+				YesNo.confirmSave("Do you want to save your changes?", confirmSaveHandler);
+			}
+			
+			private function confirmSaveHandler(event:CloseEvent):void {
+				if (event.detail == Alert.YES) {
+					FlexGlobals.topLevelApplication.enabled = false;
+					LexusUtil.showWait(this, "Saving");					
+					//this.lexusService.send("LexusWorkspaceEditor/saveLexicon.json", this.saveLexiconTarget, this.name, onLexiconReload);
+					this.originallySelectedIndex = this.lexicaList.selectedIndex;
+					this.save();
+				}
+				else {
+					//AAM: let's make it simple: no need to reload the lexicon from the server when changes are canceled.
+					//We have stored a copy of the original lexica data in FlexGlobals.topLevelApplication.lexica, so
+					//we just copy the data from there, back to our working data (serverData.result.myLexica)!
+					//Thus, no need to implement "LexusWorkspaceEditor/loadLexicon.json" in the back end :)
+					this.saveLexiconTarget = null;
+					serverData.result.myLexica = ObjectUtil.copy(FlexGlobals.topLevelApplication.lexica);
+					lexicaList.selectedIndex = this.originallySelectedIndex;
+					lexicaList.selectedItem = serverData.result.myLexica[this.originallySelectedIndex];
+					showLexicon();
+					this.process_original_event();
+				}
+				this.saveLexiconTarget = null;
+				requestSave();
+			}
+			/**
+			 * Callback method for the lexicon modification response and for the reload lexicon response. These share that 
+			 * when a lexicon is updated or reloaded that the lexicalist is to be updated as well to reflect the current
+			 * state of the lexicon on the server. 
+			 **/ 
+			private function onLexiconReload(event:ResultEvent):void {
+				LexusUtil.parseJSON(String(event.result),
+					function(data:Object):void {
+						var coll:ICollectionView = (lexicaList.dataProvider as ICollectionView);
+						var cursor:IViewCursor = coll.createCursor();
+						while (!cursor.afterLast){
+							if (cursor.current.id == data.result.lexicon.id){
+								cursor.remove();
+								cursor.insert(data.result.lexicon);
+								break;
+							}
+							cursor.moveNext();
+						}
+						
+						//AAM: refresh the copy of the original data with the currently reloaded data from the server.
+						FlexGlobals.topLevelApplication.lexica = ObjectUtil.copy(serverData.result.myLexica);
+						searchComponent.queryBuilder.availableLexica = serverData.result.myLexica;
+						LexusUtil.forceTreeRedraw(searchComponent.queryBuilder.queryEditor.queryTree, searchComponent.queryBuilder.queryEditor.queryTree.dataProvider);
+						
+						LexusUtil.removeWait();
+						lexicaList.selectedIndex = originallySelectedIndex;
+						
+						if(originalEvent != null)
+							process_original_event();
+						else
+							FlexGlobals.topLevelApplication.enabled = true;
+					}
+				);
+			}
+			
+			/**
+			 * Process original event (if any).
+			 */
+			private function process_original_event():void {
+				if (this.originalEvent != null) {
+					if(this.originalEvent.currentTarget is nl.mpi.lexus.LexusMenu)
+						FlexGlobals.topLevelApplication.menuBar.dispatchEvent(this.originalEvent);
+					else
+						this.lexicaList.dispatchEvent(this.originalEvent);
+					this.originalEvent = null;
+				}
+			}
+			
+			private function showLexicon():void {
+				this.originallySelectedIndex = this.lexicaList.selectedIndex;
+				var lexicon:Object = lexicaList.selectedItem;
+				if (lexicon != null) {
+					if (lexicon.importingName != ""){
+						lexicon_name.text = lexicon.importingName;
+						lexicon_owner.text = FlexGlobals.topLevelApplication.lexusUser.name;
+					} else {
+						lexicon_name.text = lexicon.name;
+						lexicon_owner.text = lexicon.owner.name;
+					}
+					lexicon_description.text = lexicon.description;
+					lexicon_notes.text = lexicon.note;
+					//lexicon_id.text = lexicon.id;
+					if( lexicon.administrator || !lexicon.shared){
+						readerList.dataProvider = lexicon.readers;
+						writerList.dataProvider = lexicon.writers;
+						this.lexusUsers1.enabled = true;
+						this.lexusUsers1.toolTip = "";
+						this.lexusUsers2.enabled = true;
+						this.lexusUsers2.toolTip = "";
+						this.remove_reader.enabled = false;//AAM: these are activated upon list selection
+						this.remove_writer.enabled = false;
+						this.remove_reader.toolTip = "No user selected";
+						this.remove_writer.toolTip = "No user selected";
+						this.remove_lexicon.enabled = true;
+						this.remove_lexicon.toolTip = "Remove lexicon";
+						this.lexicon_name.editable = true;
+						this.lexicon_description.editable = true;
+						this.lexicon_notes.editable = true;
+						this.readerList.selectable = true;
+						this.writerList.selectable = true;
+					}
+					else{
+						readerList.dataProvider = new ArrayCollection();
+						var user:Object;
+						for each (user in lexicon.readers){
+							if(user.id == serverData.result.user.id){
+								readerList.dataProvider.addItem(serverData.result.user);
+							}
+						}						
+						writerList.dataProvider = new ArrayCollection();
+						for each (user in lexicon.writers){
+							if(user.id == serverData.result.user.id){
+								writerList.dataProvider.addItem(serverData.result.user);
+							}
+						}
+						this.readerList.selectable = false;
+						this.writerList.selectable = false;
+						this.lexusUsers1.enabled = false;
+						this.lexusUsers1.toolTip = "You can't edit the sharing options of a shared lexicon";
+						this.lexusUsers2.enabled = false;
+						this.lexusUsers1.toolTip = this.lexusUsers1.toolTip;
+						this.remove_reader.enabled = false;
+						this.remove_reader.toolTip = this.lexusUsers1.toolTip;
+						this.remove_writer.enabled = false;
+						this.remove_writer.toolTip = this.lexusUsers1.toolTip;
+						this.remove_lexicon.toolTip = "remove shared lexicon from my workspace";
+						this.remove_lexicon.enabled = true;
+						this.lexicon_name.editable = false;
+						this.lexicon_description.editable = false;
+						this.lexicon_notes.editable = false;
+					}
+				}
+			}
+			private function newLexicon( event:MouseEvent):void{
+				
+				
+				var pop2:LexiconDetail = LexiconDetail(PopUpManager.createPopUp(application as DisplayObject,LexiconDetail,true));
+				pop2.lexica = new ArrayCollection(this.lexicaList.dataProvider.toArray());
+				pop2.templates = new ArrayCollection(templates);
+				pop2.addEventListener("updateLexicon", this.handleNewLexiconUpdate);
+				PopUpManager.centerPopUp(pop2);
+			}
+			private function handleNewLexiconUpdate(event:Event):void {
+				var ld:LexiconDetail = event.currentTarget as LexiconDetail;
+				(this.lexicaList.dataProvider as ArrayCollection).addItem(ld.lexicon);
+				FlexGlobals.topLevelApplication.switchToSchemaEditor(ld.lexicon.id);
+			}
+			private function removeLexicon(event:MouseEvent):void {
+				YesNo.confirmDelete("Are you sure you want to remove this lexicon?", confirmDeleteLexiconHandler);
+			}
+			private function confirmDeleteLexiconHandler( event:CloseEvent):void{
+				if (event.detail == Alert.YES) {
+					FlexGlobals.topLevelApplication.enabled = false;
+					LexusUtil.showWait(this, "Deleting lexicon");
+					this.lexusService.send("LexusWorkspaceEditor/deleteLexicon.json", lexicaList.selectedItem, this.name, onDeleteLexiconResult);	
+				} 
+			}
+			
+			private function onDeleteLexiconResult( event:ResultEvent):void{
+				var idx:int = lexicaList.selectedIndex;
+				(lexicaList.dataProvider as ArrayCollection).removeItemAt(idx);
+				lexicaList.validateNow();
+				lexicaList.selectedIndex = lexicaList.dataProvider.length - 1 > idx ? idx : lexicaList.dataProvider.length - 1;
+				if (lexicaList.dataProvider.length == 0) {
+					cleanLexiconData();	
+				}
+				FlexGlobals.topLevelApplication.lexica = ObjectUtil.copy(lexicaList.dataProvider as ArrayCollection);
+				searchComponent.queryBuilder.availableLexica = (lexicaList.dataProvider as ArrayCollection);
+				searchComponent.lexica = serverData.result.myLexica; 
+				showLexicon();
+				FlexGlobals.topLevelApplication.enabled = true;
+				LexusUtil.removeWait();
+			}
+			private function cleanLexiconData():void {
+				lexicon_name.text = '';
+				lexicon_description.text = '';
+				lexicon_notes.text = '';
+				lexicon_owner.text = '';
+			}
+			/**
+			 * This method is called when changes to the lexicon are made that sould be propagated to the server at the appropriate cut point.
+			 * Cut points are points in the execution process where changes are propagated to the server.
+			 **/ 
+			private function onChange( event:Event):void{
+				
+				this.markLexiconSavePoint();
+				if(event.currentTarget == this.lexicon_name)
+					this.refreshLexicaList();
+				
+			}
+			/**
+			 * Forces the lexica list to refresh. This method is called by the onChange of the lexicon_name edit field
+			 **/ 
+			private function refreshLexicaList():void{
+				this.lexicaList.invalidateDisplayList();
+			}
+			private function getLexiconLabel(item:Object):String{
+				var admin:Boolean = false;
+				if (FlexGlobals.topLevelApplication.lexusUser) {
+					admin = FlexGlobals.topLevelApplication.lexusUser.administrator;
+				}
+				var owner:String = item.owner == null ? '' : item.owner.name;
+				
+				var returnString:String
+				if(item.importingName != null && item.importingName == "Importing lexicon..." ){
+					returnString = item.importingName + " ["+ item.size + " entries inserted]" +
+						(admin ? ' (' + owner + ')' : '');
+				} else {
+					returnString = item.name + " ["+ item.size + "]" +
+						(admin ? ' (' + owner + ')' : '');
+				}
+				
+				return returnString;
+			}
+			private function getLexiconIcon( item:Object):Class{
+				if(item.importingName != null && item.importingName == "Importing lexicon..."){
+					return this.newLexiconIcon;	
+				}
+				else if(item.shared)
+					return this.sharedLexiconIconClass;
+				else
+					return FlexGlobals.topLevelApplication.lexiconIconClass;
+			}
+			
+			
+			
+			private function getUserIcon( item:Object):Class{
+				return this.userIcon;
+			}
+			/**
+			 * Handles the drag enter event for users
+			 **/
+			private function onUserDragEnter(evt:DragEvent):void{
+				var dropTarget:AutoSizeList = AutoSizeList(evt.currentTarget);
+				var uiComp:IUIComponent = evt.dragInitiator;
+				
+				if( (uiComp == activeUsers1 || uiComp == activeUsers2 )&& evt.dragSource.hasFormat( "items")){
+					DragManager.showFeedback(DragManager.MOVE);
+					DragManager.acceptDragDrop(dropTarget);
+				}
+					
+				else {
+					DragManager.showFeedback(DragManager.NONE);
+					return;     	
+				}
+			}
+			/**
+			 * Handles the drag over event on the tree
+			 **/
+			private function onUserDragOver( evt:DragEvent):void{
+				evt.preventDefault();
+				evt.currentTarget.showDropFeedback(evt);
+				
+				var dropTarget:AutoSizeList= AutoSizeList(evt.target);
+				var r:int = dropTarget.calculateDropIndex(evt);
+				
+				var items:ArrayCollection = (dropTarget.dataProvider as ArrayCollection);
+				
+				var dropEnabled:Boolean = true;
+				for( var i:int = 0; i < items.length; i++){
+					if( items[i].id == (evt.dragInitiator as AutoSizeList).selectedItem.id){
+						dropEnabled = false;
+						break;
+					}
+					
+				}
+				
+				if( dropEnabled){
+					DragManager.showFeedback(DragManager.MOVE);
+					DragManager.acceptDragDrop(dropTarget);
+				}
+				else{
+					DragManager.showFeedback(DragManager.NONE);
+					return;
+				}
+				
+			}
+			/**
+			 * Handles the drag drop event on the tree
+			 **/
+			private function onUserDragDrop( evt: DragEvent):void{
+				evt.preventDefault();
+				evt.currentTarget.hideDropFeedback(evt);
+				var dropTarget:AutoSizeList=AutoSizeList(evt.currentTarget);   
+				var items:ArrayCollection = (dropTarget.dataProvider as ArrayCollection);
+				items.addItem( (evt.dragInitiator as AutoSizeList).selectedItem); 
+				//We'll mark the current lexicon to be saved
+				this.markLexiconSavePoint();               
+				
+			}
+			private function removeUser( event:MouseEvent):void{
+				var activeList:AutoSizeList = null;
+				var removeOwnerErrMsg:String = "";
+				if( event.currentTarget == remove_reader){
+					activeList = readerList;
+					removeOwnerErrMsg = "The owner of the lexicon cannot be removed from the readers list!";
+				}
+				else if( event.currentTarget == remove_writer){
+					activeList = writerList;
+					removeOwnerErrMsg = "The owner of the lexicon cannot be removed from the writers list!";
+				}
+				else
+					return;
+				
+				var items:ArrayCollection = (activeList.dataProvider as ArrayCollection);
+				var idx:int = activeList.selectedIndex;
+				if( idx <0)
+					return;
+				else if( idx >= activeList.dataProvider.length)
+					return;
+				
+				if (items[idx].id != this.lexicaList.selectedItem.owner.id){
+					items.removeItemAt( idx);
+				} else {
+					
+					YesNo.alert(removeOwnerErrMsg);
+					return;
+				}
+				
+				activeList.selectedIndex = idx;
+				this.markLexiconSavePoint();
+				
+				
+			}
+			/**
+			 * Requests the list of users form lexus
+			 **/ 
+			private function loadLexusUsers():void{
+				if( userData==null)
+					
+					this.lexusService.send("LexusWorkspaceEditor/getProfiles.json", null, this.name, onJSONLoadUsers);
+				
+				this.loadUsers1.enabled=false;
+				//this.loadUsers1.visible=false;
+				this.loadUsers2.enabled=false;
+				//this.loadUsers2.visible=false;
+				
+			}
+			
+			
+			/**
+			 * Returns the icon identifying a sort order
+			 **/ 
+			private function getSortOrderIcon( item:Object):Class{
+				return this.sortOrderIconClass;
+			}
+			private function onSortOrderListChange(evt:Event):void{	
+				var incompleteRowIndex:int =0;
+				if(this.saveSortOrderTarget != null && this.sortOrders.selectedItem != this.saveSortOrderTarget)
+				{
+					if (sortOrderComponent.validateRows(this.saveSortOrderTarget) && !sortOrderComponent.itemEdtEndAlertEmited){
+						this.requestSortOrderSave();	
+					} //block the sortOrder list on the incomplete sort order before allowing any other action on the list, changing tabs or menue items is allowed but will follow up in getting warning.
+					else{
+						evt.preventDefault();
+						for each (var item:Object in (sortOrders.dataProvider as ArrayCollection))
+						{
+							if (item.id==this.saveSortOrderTarget.id)
+							{	
+								sortOrders.selectedItem = (sortOrders.dataProvider as ArrayCollection).getItemAt(incompleteRowIndex);
+								sortOrders.scrollToIndex(incompleteRowIndex);
+								if(!sortOrderComponent.itemEdtEndAlertEmited)
+									sortOrderComponent.handleSortOrderChange(this.sortOrders.selectedItem);
+								sortOrderComponent.itemEdtEndAlertEmited = false;
+							 	//YesNo.alert("You have to complete the '" +item.name+ "' sort order or remove it before you can proceed.\n" + sortOrderComponent.alrt);
+								sortOrderComponent.sortOrderRowAdd.enabled = false;
+								sortOrderComponent.sortOrderRowAdd.toolTip = "You have to complete the '" +item.name+ "' sort order or remove it before you can proceed.";
+								sortOrderComponent.sortOrderRowAdd.source = application.addIconGrayed;
+								
+								return;
+							}
+						
+							incompleteRowIndex++;
+						}	
+						
+						
+						
+					}
+				}
+			}
+			
+			private function requestSortOrderSave():void {
+				if( this.saveSortOrderTarget != null) {
+					YesNo.confirmSave("Do you want to save sort order '"+this.saveSortOrderTarget.name+"'?", confirmSaveSortOrderHandler);
+				}
+			}
+
+			private function confirmSaveSortOrderHandler(event:CloseEvent):void{
+				if( event.detail == Alert.YES){					 
+					this.save();
+					
+					//this.lexusService.send("LexusWorkspaceEditor/loadSortOrder.json", this.saveSortOrderTarget, this.name, onSortOrderReload)
+					this.saveSortOrderTarget = null;
+				}
+				else if(event.detail == Alert.NO){
+					FlexGlobals.topLevelApplication.enabled = false; 
+					LexusUtil.showWait(this, "Reloading sortorder");
+					//AAM: TODO: no need to call the service! Same aproach used for the confirmSaveHandler in relation to a lexicon, can be used 
+					//here in relation to a sort order.
+					this.lexusService.send("LexusWorkspaceEditor/loadSortOrder.json", this.saveSortOrderTarget, this.name, onSortOrderReload);
+					this.saveSortOrderTarget = null;
+				}
+				requestSave();
+			}
+			
+			private function onSortOrderReload(event:ResultEvent):void {
+				LexusUtil.parseJSON(String(event.result),
+					function(data:Object):void {
+						//save the current selected index of the sortOrders List since we are going to make modification on its dataprovider.
+						var idx:Number = sortOrders.selectedIndex;
+						if (data.result.sortOrder !== undefined && null != data.result.sortOrder) { 
+							var coll:ICollectionView = (sortOrders.dataProvider as ICollectionView);
+							var cursor:IViewCursor = coll.createCursor();
+							while( !cursor.afterLast){
+								if( cursor.current.id == data.result.sortOrder.id){
+									cursor.remove();
+									cursor.insert(data.result.sortOrder);
+									break;
+								}
+								cursor.moveNext();
+							}
+						}
+						//restore the seleted index
+						sortOrders.selectedIndex = idx;
+						process_original_event();
+						FlexGlobals.topLevelApplication.enabled = true;
+						LexusUtil.removeWait();						
+					}
+				);
+			}
+			private function onSortOrderChange( event:SortOrderChangeEvent):void{
+				this.markSortOrderSavePoint( event.sortOrder);
+				//this.saveSortOrderTarget = event.sortOrder;
+				this.refreshSortOrderList();
+				this.onSortOrderListChange(null);
+			}
+			
+			/**
+			 * Forces the sort orders list to refresh.
+			 **/ 
+			private function refreshSortOrderList():void{
+				this.sortOrders.invalidateDisplayList();
+			}
+			
+			
+			
+			private function removeSortOrder( event:MouseEvent):void{
+				YesNo.confirmDelete("Are you sure you want to remove this sort order?", confirmDeleteSortOrderHandler);
+			}
+			private function confirmDeleteSortOrderHandler( event:CloseEvent):void{
+				if (event.detail == Alert.YES) {
+					FlexGlobals.topLevelApplication.enabled = false;
+					LexusUtil.showWait(this, "Removing sortorder");
+					this.lexusService.send("LexusWorkspaceEditor/deleteSortOrder.json", sortOrders.selectedItem, this.name, onDeleteSortOrderResult);
+					//added by Ssha to fix #1520: asking for saving a sort order once a sort order has been modfied and then removed.
+					this.saveSortOrderTarget = null;
+				} 
+			}
+			private function onDeleteSortOrderResult( event:ResultEvent):void{
+				var idx:int = sortOrders.selectedIndex;
+				(sortOrders.dataProvider as ArrayCollection).removeItemAt(idx);
+				var length:int = (sortOrders.dataProvider as ArrayCollection).length;
+				if (idx > length - 1) {
+					idx = length - 1;					
+				}
+				sortOrders.validateNow();
+				sortOrders.selectedIndex = idx;
+				FlexGlobals.topLevelApplication.enabled = true;
+				LexusUtil.removeWait();				
+			}
+			private function newSortOrder( event: MouseEvent):void{
+				var pop2:AddSortOrder = AddSortOrder(PopUpManager.createPopUp(application as DisplayObject,AddSortOrder,true));
+				pop2.addEventListener("newSortOrder", this.handleNewSortOrderUpdate);
+				pop2.sortOrders = (this.sortOrders.dataProvider as ArrayCollection);
+				PopUpManager.centerPopUp(pop2);
+			}
+			private function handleNewSortOrderUpdate(event:Event):void{
+				(this.sortOrders.dataProvider as ArrayCollection).addItem( ((event.currentTarget as AddSortOrder).sortOrder));
+				var idx:int = (this.sortOrders.dataProvider as ArrayCollection).getItemIndex((event.currentTarget as AddSortOrder).sortOrder);
+				this.sortOrders.selectedIndex = idx;
+			}
+			
+			private function openLexicon():void {
+				FlexGlobals.topLevelApplication._openLexiconBrowser(this.lexicaList.selectedItem.id);
+			}
+			
+			private function goToLexicon(event:MouseEvent):void {
+				if(!(this.lexicaList.selectedItem.importingName != null && this.lexicaList.selectedItem.importingName == "Importing lexicon..." )){
+					if (this.saveNeeded()) {
+						this.originalEvent = event;
+						this.originallySelectedIndex = this.lexicaList.selectedIndex;
+						this.requestSave();
+						return;
+					}
+					if (event.shiftKey) {
+						FlexGlobals.topLevelApplication._openSchemaEditor(this.lexicaList.selectedItem.id);
+					}
+					else {
+						openLexicon();
+					}
+				}else {
+					YesNo.alert(IMPORTING_LEXICON_STRING);
+				}
+			}			
+			
+			private function checkForLexiconPresent(): Boolean {
+				if (lexicaList == null)
+					return false;
+				var index:int = lexicaList.selectedIndex;
+				var present:Boolean = index > -1;
+				return present;
+			}
+			
+			/**
+			 * Used to add an event listener in the capture phase of the MouseEvent.CLICK events on 
+			 * the TabNavigator.
+			 * NOTE: assigning listeners in the MXML elements always targets the event's bubbling phase.
+			 **/
+			public function tabberdCreated():void {
+				tabberd.addEventListener(MouseEvent.CLICK, leftTabChanged, true);
+			}
+
+			protected function updateRemoveBtnStatus(event:ListEvent):void
+			{
+				var activeList:AutoSizeList = null;
+				var activeBtn:Button = null;
+				var removeOwnerErrMsg:String = "";
+				if( event.currentTarget == readerList){
+					activeList = readerList;
+					activeBtn = remove_reader;
+					removeOwnerErrMsg = "The owner of the lexicon cannot be removed from the readers list!";
+				}
+				else if( event.currentTarget == writerList){
+					activeList = writerList;
+					activeBtn = remove_writer;
+					removeOwnerErrMsg = "The owner of the lexicon cannot be removed from the writers list!";
+				}
+				else
+					return;
+				
+				var items:ArrayCollection = (activeList.dataProvider as ArrayCollection);
+				var idx:int = activeList.selectedIndex;
+				if( idx <0){
+					activeBtn.enabled = false;
+					activeBtn.toolTip = "No user selected";
+					return;
+				}
+				else if( idx >= activeList.dataProvider.length){
+					activeBtn.enabled = false;
+					activeBtn.toolTip = "No user selected";
+					return;
+				}				
+				if (items[idx].id != this.lexicaList.selectedItem.owner.id && !lexicaList.selectedItem.shared){
+					activeBtn.toolTip = null;
+					activeBtn.enabled = true;
+				} else {
+					activeBtn.enabled = false;
+					activeBtn.toolTip = removeOwnerErrMsg;
+					return;
+				}		
+				
+			}
+
+		]]>
+	</mx:Script>
+	<mx:VBox id="main" width="100%" height="100%" verticalGap="0" 
+			 focusIn="FlexGlobals.topLevelApplication.overlayUnicodeInput(event)">
+		<mx:Panel width="100%" height="100%"
+				  status="Workspace"
+				  statusStyleName="panelStatus"
+				  title="{application.lexusUser.administrator == true ? 'Administrator' : ''}"
+				  titleStyleName="{application.lexusUser.administrator == true ? 'panelTitleAdministrator' : ''}"
+				  backgroundAlpha="0.0" borderAlpha="0.0">
+			<mx:Canvas width="100%" height="100%" backgroundColor="#F5F7D5">
+				<mx:TabNavigator width="100%" height="100%" creationPolicy="all"
+								 creationComplete="tabberdCreated()" id="tabberd">
+					<mx:Canvas id="lexiconTab" label="Lexica" width="100%" height="100%">
+						<mx:HBox width="100%" height="100%" paddingLeft="4" paddingRight="4" paddingBottom="4">
+							<mx:Panel width="25%" height="100%" title="Available lexica">
+								<mpi:AutoSizeList id="lexicaList" width="100%" height="100%" left="10"
+												  right="10" dataProvider="{serverData.result.myLexica}"
+												  doubleClickEnabled="true" doubleClick="goToLexicon(event)"
+												  change="lexiconClicked(event)" labelFunction="getLexiconLabel"
+												  iconFunction="getLexiconIcon" toolTip="Double click to go to the lexicon. Shift-double click to go the schema editor."/>
+								<mx:ControlBar horizontalAlign="left" width="100%">
+									<mx:Image
+										source="{application.addIcon}"
+										click="newLexicon(event)" toolTip="Add lexicon"/>
+									<mx:Image id="remove_lexicon" enabled="{checkForLexiconPresent()}"
+											  source="{application.removeIcon}"
+											  click="removeLexicon(event)" toolTip="Remove lexicon"/>
+								</mx:ControlBar>
+							</mx:Panel>
+							<mx:VBox width="75%" height="100%" right="50" left="50" enabled="{lexicaList.selectedIndex > -1}">
+								<mx:TabNavigator width="100%" height="75%" creationPolicy="all">
+									<mx:Canvas id="lexiconDetailsTab" label="Lexicon" width="100%"
+											   height="100%">
+										
+										<mx:Grid width="100%" height="100%">
+											<mx:GridRow width="80%" height="10%">
+												<mx:GridItem width="80">
+													<mx:Label text="Name:"/>
+												</mx:GridItem>
+												<mx:GridItem width="100%">
+													<mx:TextInput id="lexicon_name" width="80%" 
+																  height="100%" change="onChange(event)"/>
+												</mx:GridItem>
+											</mx:GridRow>
+											<mx:GridRow width="80%" height="70%" autoLayout="true">
+												<mx:GridItem width="80">
+													<mx:Label text="Description:"/>
+												</mx:GridItem>
+												<mx:GridItem width="100%">
+													<mx:TextArea id="lexicon_description" width="80%"
+																 height="100%"  change="onChange(event)"/>
+												</mx:GridItem>
+												
+											</mx:GridRow>
+											
+											<mx:GridRow width="80%" height="10%" autoLayout="true">
+												<mx:GridItem width="80">
+													<mx:Label text="Owner:"/>
+												</mx:GridItem>
+												<mx:GridItem width="100%">
+													<mx:TextArea id="lexicon_owner" width="80%" editable="false"
+																 height="100%"/>
+												</mx:GridItem>
+												
+											</mx:GridRow>
+<!--											<mx:GridRow width="80%" height="10%" autoLayout="true">
+												<mx:GridItem width="80">
+													<mx:Label text="Internal id:"/>
+												</mx:GridItem>
+												<mx:GridItem width="100%">
+													<mx:TextArea id="lexicon_id" width="80%" editable="false" 
+																 height="100%"/>
+												</mx:GridItem>
+												
+											</mx:GridRow>-->
+										</mx:Grid>
+									</mx:Canvas>
+									<mx:Canvas id="readersTab" label="Readers" width="100%"
+											   height="100%">
+										<mx:HBox width="80%" height="60%" horizontalAlign="center"
+												 paddingTop="10" paddingLeft="10" paddingRight="10"
+												 paddingBottom="10">
+											<mx:Panel title="Readers" id="readers" width="40%" height="100%" horizontalAlign="left">
+												<mpi:AutoSizeList id="readerList" width="100%" maxHeight="500"
+																  labelField="name" iconFunction="getUserIcon"
+																  dropEnabled="true" change="updateRemoveBtnStatus(event)"
+																  dragEnter="onUserDragEnter(event)"
+																  dragOver="onUserDragOver( event)"
+																  dragDrop="onUserDragDrop(event)"/>
+												<mx:ControlBar horizontalAlign="center" width="100%">
+													<mx:Button id="remove_reader" label="Remove"
+															   click="removeUser(event)" enabled="false" toolTip = "No user selected"/>
+												</mx:ControlBar>
+											</mx:Panel>
+											<mx:Spacer width="20%" height="100%"/>
+											<mx:Panel id="lexusUsers1" title="Lexus users"
+													  width="40%" height="100%" horizontalAlign="right">
+												
+												
+												<mpi:AutoSizeList id="activeUsers1" width="100%"
+																  maxHeight="500"
+																  labelField="name" iconFunction="getUserIcon"
+																  dragEnabled="true"/>
+												<mx:ControlBar horizontalAlign="center"
+															   width="100%">
+													<mx:Button id="loadUsers1" label="Load users"
+															   click="this.loadLexusUsers()"/>
+												</mx:ControlBar>
+											</mx:Panel>
+										</mx:HBox>
+									</mx:Canvas>
+									<mx:Canvas id="writersTab" label="Writers" width="100%"
+											   height="100%">
+										<mx:HBox width="80%" height="60%" horizontalAlign="center"
+												 paddingTop="10" paddingLeft="10" paddingRight="10"
+												 paddingBottom="10">
+											<mx:Panel title="Writers" id="writers" width="40%" height="100%" horizontalAlign="left">
+												<mpi:AutoSizeList id="writerList" width="100%" maxHeight="500"
+																  labelField="name" iconFunction="getUserIcon"
+																  dropEnabled="true" change="updateRemoveBtnStatus(event)"
+																  dragEnter="onUserDragEnter(event)"
+																  dragOver="onUserDragOver( event)"
+																  dragDrop="onUserDragDrop(event)"/>
+												<mx:ControlBar horizontalAlign="center" width="100%">
+													<mx:Button id="remove_writer" label="Remove"
+															   click="removeUser(event)" enabled="false" toolTip = "No user selected"/>
+												</mx:ControlBar>
+											</mx:Panel>
+											<mx:Spacer width="20%" height="100%"/>
+											<mx:Panel id="lexusUsers2" title="Lexus users"
+													  width="40%" height="100%" horizontalAlign="right">
+												<mpi:AutoSizeList id="activeUsers2" width="100%"
+																  maxHeight="500"
+																  labelField="name" iconFunction="getUserIcon"
+																  dragEnabled="true"/>
+												<mx:ControlBar horizontalAlign="center"
+															   width="100%">
+													<mx:Button id="loadUsers2" label="Load users"
+															   click="this.loadLexusUsers()"/>
+												</mx:ControlBar>
+											</mx:Panel>
+										</mx:HBox>
+									</mx:Canvas>
+								</mx:TabNavigator>
+								<mx:TabNavigator width="100%" height="35%" creationPolicy="all">
+									<mx:Panel id="notesTab" label="Notes" width="100%" height="100%"
+											  icon="{application.noteIcon}" verticalAlign="middle"
+											  horizontalAlign="center">
+										<mx:TextArea id="lexicon_notes" width="100%" height="100%"
+													 change="onChange(event)" alpha="0.7"
+													 paddingBottom="10" paddingLeft="10" paddingRight="10" paddingTop="10"/>
+									</mx:Panel>
+								</mx:TabNavigator>
+							</mx:VBox>
+						</mx:HBox>
+					</mx:Canvas>
+					<mx:Canvas id="sortOrdersTab" label="Sort orders" width="100%" height="100%">
+						<mx:HBox width="100%" height="100%" paddingLeft="4" paddingRight="4" paddingBottom="4">
+							<mx:Panel width="25%" height="100%" title="Available sort orders">
+								<mpi:AutoSizeList id="sortOrders" width="100%" height="100%"
+												  change="onSortOrderListChange(event)" labelField="name"
+												  iconFunction="getSortOrderIcon"/>
+								<mx:ControlBar horizontalAlign="left" width="100%">
+									<mx:Image
+										source="{application.addIcon}"
+										click="newSortOrder(event)" toolTip="Add sort order"/>
+									<mx:Image
+										source="{application.removeIcon}"
+										click="removeSortOrder(event)" toolTip="Remove sort order"/>
+								</mx:ControlBar>
+							</mx:Panel>
+							<mx:Canvas id="sortOrderEditorTab" label="Sort order editor"
+									   width="75%" height="100%">
+								<local:SortOrderComponent id="sortOrderComponent" width="100%"
+														  height="100%" sortOrder="{sortOrders.selectedItem}"/>
+							</mx:Canvas>
+						</mx:HBox>
+					</mx:Canvas>
+					<mx:Canvas label="Search" id="searchTab">
+						<mx:HBox width="100%" height="100%" paddingLeft="4" paddingRight="4" paddingBottom="4" paddingTop="0" verticalGap="0">
+							<mx:Canvas label="Search" width="100%" height="100%">
+								<local:SearchComponent id="searchComponent" width="100%"
+													   height="100%"
+													   lexica="{serverData.result.myLexica}"/>
+							</mx:Canvas>
+						</mx:HBox>
+					</mx:Canvas>
+				</mx:TabNavigator>
+			</mx:Canvas>
+		</mx:Panel>
+	</mx:VBox>
+	
+	<mx:Binding source="this.lexicon_name.text" destination="this.lexicaList.selectedItem.name"/>
+	<mx:Binding source="this.lexicon_description.text"
+				destination="this.lexicaList.selectedItem.description"/>
+	<mx:Binding source="this.lexicon_notes.text" destination="this.lexicaList.selectedItem.note"/>
+</mx:Module>

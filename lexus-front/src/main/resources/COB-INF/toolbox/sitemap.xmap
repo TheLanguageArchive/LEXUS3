@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<map:sitemap xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://apache.org/cocoon/sitemap/1.0 http://cocoon.apache.org/schema/sitemap/cocoon-sitemap-1.0.xsd"
+    xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+
+    <map:pipelines>
+        <map:pipeline>
+            <map:match pattern="">
+                <map:redirect-to uri="convert/toolbox_demo"/>
+            </map:match>
+
+
+            <map:match pattern="convert/*/*/ConvertedToolbox.zip">
+                <map:generate src="cocoon:/convert/{1}/{2}/{naming:java:comp/env/LEXUS/tempDir}"/>
+                <map:serialize type="zip"/>
+            </map:match>
+
+            <map:match pattern="convert/*.zip">
+                <map:generate
+                    src="cocoon:/convert/{1}.typ/{1}.lx/{naming:java:comp/env/LEXUS/ToolboxFiles}"/>
+                <map:serialize type="zip"/>
+            </map:match>
+
+            <map:match pattern="convert/*">
+                <map:generate
+                    src="cocoon:/convert/{1}.typ/{1}.lx/{naming:java:comp/env/LEXUS/ToolboxFiles}"/>
+                <map:serialize type="xml"/>
+            </map:match>
+
+            <map:match pattern="convert/*/*/**">
+                <map:aggregate element="toolbox-import">
+                    <map:part src="cocoon:/toolbox.typ.xml/{3}/{1}"/>
+                    <map:part src="cocoon:/toolbox.data.xml/{3}/{2}"/>
+                </map:aggregate>
+
+                <!-- Some markers are not defined (really!), remove them -->
+                <map:transform type="saxon" src="toolbox_import/remove-undefined-markers.xslt"/>
+                <!-- Empty markers that are not parents sometimes prevent data-category elements from ending up in the right parent element -->
+                <map:transform type="saxon" src="toolbox_import/remove-empty-markers.xslt"/>
+
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>
+
+                <!-- Parents may be missing, add them (Just one 'layer' of parent element is added!) -->
+                <map:transform type="saxon" src="toolbox_import/add-missing-parents.xslt"/>
+
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>
+
+                <!-- Create schema -->
+                <map:transform type="saxon" src="toolbox_import/create-schema.xslt"/>
+
+                <!-- Create lexical entries -->
+                <map:transform type="saxon" src="toolbox_import/create-lexicon.xslt">
+                    <map:parameter name="name" value="{1}"/>
+                </map:transform>
+
+                <!-- Clean up DCs that were added as parents -->
+                <map:transform type="saxon" src="toolbox_import/remove-added-dcs.xslt"/>
+
+                <!-- Components that have no data-category elements with a value beneath them are removed -->
+                <map:transform type="saxon" src="toolbox_import/remove-empty-components.xslt"/>
+
+                <!-- Remove markers from groups in the schema that were added by create-schema.xslt.
+             Add ISOCat DCR references based on the MDF markers, or add dcr references to MDF markers.
+        -->
+                <map:transform type="saxon" src="toolbox_import/finalize-schema.xslt"/>
+
+                <!-- Generate a RelaxNG schema based on our typ-generated-schema.xml.
+        -->
+                <map:transform type="saxon" src="toolbox_import/createRelaxNGForLexicon.xslt"/>
+
+                <!-- Create a zip file from the content of the pipeline (schema and lexicon) -->
+                <map:transform type="saxon" src="toolbox_import/create-zipfile.xslt"/>
+
+                <map:serialize type="xml"/>
+            </map:match>
+
+            <!--
+        {naming:java:comp/env/toolbox_files}
+      -->
+            <map:match pattern="toolbox.typ.xml/**">
+                <map:generate type="text" src="{1}">
+                    <map:parameter name="encoding" value="UTF-8"/>
+                </map:generate>
+                <map:call resource="typ"/>
+            </map:match>
+
+            <!--
+                Called from schema-editor for generating XML from ShbxMDF.typ
+                -->
+            <map:match pattern="toolbox.typ.xml">
+                <map:generate src="service-consumer:"/>
+                <map:call resource="typ"/>
+            </map:match>
+            
+            <map:match pattern="toolbox.data.xml/**">
+                <map:generate type="text" src="{1}">
+                    <map:parameter name="encoding" value="UTF-8"/>
+                </map:generate>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-data-toolbox-1.xml"/>
+                <map:transform type="lexer" src="toolbox_data/toolbox.lex"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-data-toolbox-2.xml"/>
+                <map:transform type="saxon" src="toolbox_data/post-lexer.xslt"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-data-toolbox-3.xml"/>
+                <map:transform type="parser" src="toolbox_data/toolbox.grm"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-data-toolbox-4.xml"/>
+                <map:transform type="stx" src="toolbox_data/deSequence.stx"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-data-toolbox-5.xml"/>
+                <map:transform type="saxon" src="toolbox_data/post-parser.xslt"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-data-toolbox-6.xml"/>
+                <map:serialize type="xml"/>
+            </map:match>
+        </map:pipeline>
+
+    </map:pipelines>
+
+    <map:resources>
+        <map:resource name="typ">
+            <map:transform type="lexer" src="toolbox_typ/toolbox.lex"/>
+            <map:transform type="saxon" src="toolbox_typ/post-lexer.xslt"/>
+            <map:transform type="parser" src="toolbox_typ/toolbox.grm"/>
+            <map:transform type="saxon" src="toolbox_typ/post-parser.xslt"/>
+            <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pre.xml"/>-->
+            <map:transform type="saxon" src="toolbox_typ/create-lexicalEntry-schema.xslt"/>
+            <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-post.xml"/>  -->
+            <map:serialize type="xml"/>
+        </map:resource>
+    </map:resources>
+</map:sitemap>

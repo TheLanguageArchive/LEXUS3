@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<map:sitemap xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://apache.org/cocoon/sitemap/1.0 http://cocoon.apache.org/schema/sitemap/cocoon-sitemap-1.0.xsd"
+    xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+
+
+    <map:pipelines>
+
+
+        <map:pipeline id="schema-editor">
+
+
+            <!-- 
+            Get MDF data
+        -->
+            <map:match pattern="getMDF.json">
+                <map:generate type="text" src="../resource/internal/ShbxMDF.typ"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-mdf-1.xml"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service"
+                        value="servlet:nl.mpi.lexus.front.service+:/toolbox/toolbox.typ.xml"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-mdf-2.xml"/>
+                <map:transform src="MDF-2-JSON.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-mdf-3.xml"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+
+
+            <!-- 
+            Search ISOCAT repository.
+        -->
+            <map:match pattern="ISOCAT/search.json">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://json"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-isocat-1.xml"/>
+                <map:transform type="saxon" src="prepare-ISOCAT-query.xslt">
+                    <map:parameter name="endpoint" value="http://www.isocat.org/rest/search"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-isocat-2.xml"/>
+                <map:transform type="rest"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-isocat-3.xml"/>
+                <map:transform type="saxon" src="ISOCAT-2-JSON.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-isocat-4.xml"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+
+            <!-- 
+          Get schema data
+          -->
+            <map:match pattern="getSchema.json">
+                <map:generate src="cocoon:/getSchema.xml"/>
+                <map:transform type="saxon" src="getSchema/schema-2-JSON.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-getSchema-4.xml"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+            <map:match pattern="getSchema.xml">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://json"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-getSchema-1.xml"/>
+                <map:transform type="saxon" src="getSchema/prepareGetSchema.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-getSchema-2.xml"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:lexus-db:/schema-editor/getSchema.xml"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-getSchema-3.xml"/>
+                <map:serialize type="xml"/>
+            </map:match>
+
+
+
+            <!-- 
+        Save schema data
+      -->
+            <map:match pattern="saveSchema.json">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://json"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/save-schema-1.xml"/>
+                <map:transform type="saxon" src="saveSchema/prepareSaveSchema.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/save-schema-2.xml"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:lexus-db:/schema-editor/getSchema.xml"/>
+                </map:transform>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:lexus-db:/schema-editor/saveSchema.xml"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/save-schema-3.xml"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service"
+                        value="servlet:lexus-db:/schema-editor/updateLexiconForUpdatedSchema.xml"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/save-schema-4.xml"/>
+                <map:transform type="saxon" src="saveSchema/savedSchema-2-JSON.xslt"/>
+                <map:serialize type="json"/>
+            </map:match>
+
+
+            <!-- 
+        Create View
+      -->
+            <map:match pattern="saveView.xml">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://stream"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-view-pre.xml"/>
+                <map:transform type="saxon" src="views/prepareSaveView.xslt">
+                    <map:parameter name="lexiconId" value="{request-param:lexiconId}"/>
+                </map:transform>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-view-post.xml"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:lexus-db:/schema-editor/saveView.xml"/>
+                </map:transform>
+                <map:transform type="saxon" src="views/savedView.xslt"/>
+                <map:serialize type="xml"/>
+            </map:match>
+
+
+            <map:match pattern="getViews.xml">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://stream"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-get-views-pre.xml"/>-->
+                <map:transform type="saxon" src="views/prepareGetViews.xslt">
+                    <map:parameter name="lexiconId" value="{request-param:lexiconId}"/>
+                </map:transform>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:lexus-db:/schema-editor/getViews.xml"/>
+                </map:transform>
+                <map:transform type="saxon" src="views/gotViews.xslt"/>
+                <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-get-views-post.xml"/>-->
+                <map:serialize type="xml"/>
+            </map:match>
+
+            <!-- 
+        Get view by @id in <view id="..."/>
+        -->
+            <map:match pattern="getView.xml">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://stream"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="saxon" src="views/prepareGetView.xslt"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:lexus-db:/schema-editor/getView.xml"/>
+                </map:transform>
+                <map:transform type="saxon" src="views/gotView.xslt"/>
+                <map:serialize type="xml"/>
+            </map:match>
+
+
+            <!-- 
+        Delete view by @id in <view id="..."/>
+      -->
+            <map:match pattern="deleteView.xml">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://stream"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-deleteView-1.xml"/>
+                <map:transform type="saxon" src="views/prepareDeleteView.xslt"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-deleteView-2.xml"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:lexus-db:/schema-editor/deleteView.xml"/>
+                </map:transform>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-deleteView-3.xml"/>
+                
+                <map:transform type="saxon" src="views/deletedView.xslt"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-deleteView-4.xml"/>
+                <map:serialize type="xml"/>
+            </map:match>
+
+
+            <map:match pattern="saveStandardView.xml">
+                <map:aggregate element="data">
+                    <map:part src="cocoon://stream"/>
+                    <map:part src="cocoon://user"/>
+                </map:aggregate>
+                <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-standard-view-pre.xml"/>-->
+                <map:transform type="saxon" src="views/prepareSaveStandardView.xslt">
+                    <map:parameter name="lexiconId" value="{request-param:lexiconId}"/>
+                </map:transform>
+                <map:transform type="servletService">
+                    <map:parameter name="service"
+                        value="servlet:lexus-db:/schema-editor/saveStandardView.xml"/>
+                </map:transform>
+                <map:transform type="saxon" src="views/savedStandardView.xslt"/>
+                <!--        <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/save-standard-view-post.xml"/>-->
+                <map:serialize type="xml"/>
+            </map:match>
+
+
+        </map:pipeline>
+
+    </map:pipelines>
+
+</map:sitemap>

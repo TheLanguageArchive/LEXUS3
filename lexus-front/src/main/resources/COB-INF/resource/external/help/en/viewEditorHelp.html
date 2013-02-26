@@ -1,0 +1,21 @@
+<textformat indent="0" leftmargin="10" rightmargin="10">
+<font size='20' color='#7722EE' face='Helvetica'>View editor help</font>
+<br/>
+<font size='16' color='#7722EE' face='Helvetica'>Basic use</font>
+The view editor divides the task of styling your lexical entries into two subtasks: creating the structural elements of the view and styling the structural elements using CSS. Just like your webbrowser does with HTML.
+
+For example: you want a heading for the lexeme and a table listing the Part of speech, a definition and a gloss. That defines the structure of your view. To add color to the heading and the table, you use CSS. CSS is a W3C standard capable of creating very elaborate styles and designs, both for styling your lexical entry for the web and print (PDF).
+
+Lexus lets you add a "class" name to every structural element in your view. You use this class name to attach styling to the structural element.
+
+<br/>
+<font size='16' color='#7722EE' face='Helvetica'>Repeating elements</font>
+If you have more than one occurrence of the same type of element, for instance a <b>Gloss</b> inside a <b>Sense number group</b> you should take some care of you want to display them in a certain order.
+
+The view generator will just bunch all values for the <b>Gloss</b> element together if you drag the <b>Gloss</b> element from the <b>Lexicon structure</b> panel to a table column or a decorator element. You don't want that.
+
+What you should do is first drag the <b>Sense number group</b> element for the <b>Gloss</b> element out to the structure, <i>then</i> add a decorator or a table row and column and <i>then</i> add the <b>Gloss</b> element.
+
+The view generator will create a list of all the <b>container</b> elements (<b>Sense number group</b>) and process them one by one, creating a separate decorator element for each <b>Gloss</b>. That's what you want.
+
+</textformat>

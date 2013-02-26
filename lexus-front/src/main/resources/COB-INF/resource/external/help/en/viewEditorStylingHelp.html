@@ -1,0 +1,77 @@
+<textformat indent="0" leftmargin="10" rightmargin="10">
+<font size='20' color='#7722EE' face='Helvetica'>Styling lexical entries with CSS</font>
+<br/>
+<font size='16' color='#7722EE' face='Helvetica'>Basic use</font>
+Use the class selector and add some styles. You can find an excellent tutorial here: <u><a href="http://www.w3schools.com/css/" target="w3schools_css">http://www.w3schools.com/css/</a></u>
+<textformat indent="0" leftmargin="20" rightmargin="10">
+<font size='12' color='#7722EE' face='Helvetica'>Example</font>
+Say you have added a decorator to your view. To that decorator you added your 'lexeme' data category by dragging it there from the <b>Lexicon structure</b> panel.
+In the class field for the decorator you entered 'lexeme'. To make your 'lexeme' class use a 20pt Times Roman red font, do this:
+
+.lexeme {
+		font-family: Lucida Sans Unicode;
+		font-size: 20pt;
+		color: red;
+}
+
+Your lexeme will look like this
+<font size='20' color='#FF0000' face='Lucida Sans Unicode'>ઓે્િસલકત</font>
+</textformat>
+
+Note that a <i>class selector</i> is a dot '.' followed by the class name followed by '{' and '}'. You add your styles between the '{' and '}' characters.
+<br/>
+<font size='16' color='#7722EE' face='Helvetica'>Style the entire lexical entry</font>
+If you want to modify the style for the whole lexical entry modify the <b>body</b> selector. For example to add a purple background use this:
+
+body {
+	background-color:#7722EE;
+}
+
+(Note there is no dot '.' in front of the <b>body</b> selector.)
+<br/>
+<font size='16' color='#7722EE' face='Helvetica'>Font</font>
+	font-family: Lucida Sans Unicode;
+	font-size: 20pt;
+<br/>
+<font size='16' color='#7722EE' face='Helvetica'>Background color</font>
+	background-color:#b0c4de;
+<br/>
+<font size='16' color='#7722EE' face='Helvetica'>Text</font>
+	color:#b0c4de;
+	color: red;
+	text-align:center;
+	text-decoration:underline;
+	text-transform:uppercase;
+	text-transform:capitalize;
+	text-indent:5pt;
+<br/>
+<font size='16' color='#7722EE' face='Helvetica'>Tables</font>
+	border: 1px solid black;
+	border-collapse:collapse;
+	width:100%;
+	height:50px;
+	text-align:right;
+	vertical-align:bottom;
+<br/>
+<font size='16' color='#7722EE' face='Helvetica'>Margins &amp; Padding</font>
+	margin-top:100px;
+	margin-bottom:100px;
+	margin-right:50px;
+	margin-left:50px;
+	
+	padding-top:25px;
+	padding-bottom:25px;
+	padding-right:50px;
+	padding-left:50px;
+<br/>
+<font size='16' color='#7722EE' face='Helvetica'>Block vs inline</font>
+CSS is based on the box model, i.e. everything is in a box. By default every box repels other boxes, e.g. everything is 'on a line by itself'. You can change this by using the CSS feature <b>display</b>.
+	display: block;
+	display: inline;
+<br/>
+<font size='16' color='#7722EE' face='Helvetica'>Powerful</font>
+CSS is very powerful, allowing you to do very exact styling. It is impossible to provide a complete reference here, but the styles above are used most often.
+
+See <u><a href="http://www.w3schools.com/css/" target="w3schools_css">http://www.w3schools.com/css/</a></u> for a friendly and complete reference on CSS.
+
+</textformat>

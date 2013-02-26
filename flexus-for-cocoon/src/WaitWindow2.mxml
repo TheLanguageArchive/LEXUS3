@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" creationComplete="init()"
+    title="{this.infoMessage}"
+    showCloseButton="false"
+    height="36" width="100%" titleIcon="{application.lexusIconSmall}">
+    <mx:Script>	
+        <![CDATA[
+        	import mx.effects.AnimateProperty;
+        	import mx.effects.Sequence;
+        	import mx.effects.Glow;
+        	import mx.effects.Move;
+			import mx.core.FlexGlobals;
+
+            [Bindable]
+            public var infoMessage: String; 
+			
+			[Bindable]
+			private var application:Object = FlexGlobals.topLevelApplication;
+
+            private function init():void {
+            	this.x = application.width - this.width - 4;
+            	var seq:Sequence = new Sequence(this);
+            	var glow:Glow = new Glow(this);
+            	glow.duration = 1000;
+            	glow.color = 0xff0000;
+            	seq.addChild(glow);
+            	var glow2:Glow = new Glow(this);
+            	glow2.duration = 1000;
+            	glow2.color = 0x0fffff;
+            	seq.addChild(glow2);
+            	glow = new Glow(this);
+            	glow.duration = 3000;
+            	glow.color = 0x00ff00;
+            	glow.repeatCount = 0;
+            	glow.repeatDelay = 2000;
+            	glow.reverse();
+            	glow.play();
+            }           
+          
+        ]]>
+    </mx:Script>
+</mx:TitleWindow>

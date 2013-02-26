@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns="http://chaperon.sourceforge.net/schema/grammar/1.0">
+    <associativity symbol="text" type="right"/>
+    <associativity symbol="attribute" type="right"/>
+
+
+    <!-- Lexical entry marker -->
+    <production symbol="lexical-entry-marker">
+        <terminal symbol="lexical-entry-marker"/>
+        <nonterminal symbol="textSequence"/>
+    </production>
+    
+    <!-- Attribute -->
+    <production symbol="attribute">
+        <terminal symbol="attribute"/>
+        <nonterminal symbol="textSequence"/>
+    </production>
+    <production symbol="last-attribute">
+        <terminal symbol="attribute"/>
+        <nonterminal symbol="textSequence"/>
+    </production>
+    <production symbol="last-attribute">
+        <terminal symbol="attribute"/>
+    </production>
+    
+    <!-- textSequence -->
+    <production symbol="textSequence"/>
+    <production symbol="textSequence">
+        <terminal symbol="text"/>
+    </production>
+    <production symbol="textSequence">
+        <nonterminal symbol="textSequence"/>
+    </production>
+    <production symbol="textSequence">
+        <nonterminal symbol="textSequence"/>
+        <terminal symbol="text"/>
+    </production>
+
+    <!-- attributeSequence -->
+    <production symbol="attributeSequence">
+        <nonterminal symbol="attribute"/>
+    </production>
+    <production symbol="attributeSequence">
+        <nonterminal symbol="attributeSequence"/>
+        <nonterminal symbol="attribute"/>
+    </production>
+
+    <production symbol="lexical-entry">        
+        <nonterminal symbol="lexical-entry-marker"/>
+        <nonterminal symbol="attributeSequence"/>
+    </production>
+    <production symbol="last-lexical-entry">
+        <nonterminal symbol="lexical-entry-marker"/>
+        <nonterminal symbol="attributeSequence"/>
+        <nonterminal symbol="last-attribute"/>
+    </production>
+    <production symbol="last-lexical-entry">
+    </production>
+    
+    <production symbol="lexicalEntrySequence">
+        <nonterminal symbol="lexical-entry"/>
+    </production>
+    <production symbol="lexicalEntrySequence">
+        <nonterminal symbol="lexicalEntrySequence"/>
+        <nonterminal symbol="lexical-entry"/>
+    </production>
+    
+    <!--
+        All the uninteresting stuff at the beginning of the file.
+        -->
+    <production symbol="prologue">
+        <nonterminal symbol="attributeSequence"/>
+    </production>
+    
+    <production symbol="lexicon">
+        <nonterminal symbol="prologue"/>
+        <nonterminal symbol="lexicalEntrySequence"/>
+        <nonterminal symbol="last-lexical-entry"/>
+    </production>
+    
+    <start symbol="lexicon"/>
+</grammar>

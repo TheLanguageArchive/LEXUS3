@@ -1,0 +1,150 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
+
+<Configure class="org.mortbay.jetty.webapp.WebAppContext">
+    
+    <!-- 
+        Upload folder.
+        -->
+    <New id="lexus_tempdir"  class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>LEXUS/tempDir</Arg>
+        <Arg type="java.lang.String">/tmp/</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    
+    <!-- 
+        Path to Vicos.
+    -->
+    <New id="vicos"  class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>VICOS/contextPath</Arg>
+        <Arg type="java.lang.String">/lex/vicos</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    
+    <!--
+        Where the users' local resources are permanently stored.
+        -->
+    <New id="lexus_user-resources-folder"  class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>LEXUS/resourceDirectory</Arg>
+        <Arg type="java.lang.String">/lexus/user-resources/</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    
+    <!--
+        How the users retrieve local resources.
+    -->
+    <New id="lexus_user-resources-url"  class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>LEXUS/resourceContextPath</Arg>
+        <Arg type="java.lang.String">resources/</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    
+    <!--
+        Config for LAMUS resolver.
+    -->
+    <New id="lexus_eaf_handler"  class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>LEXUS/EAF_Handler</Arg>
+        <Arg type="java.lang.String">http://corpus1.mpi.nl/ds/annex/protected/interface.jsp</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    
+    
+    <!--
+        Config for IMDI Handler.
+    -->
+    <New id="lexus_imdi_handler"  class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>LEXUS/IMDI_Handler</Arg>
+        <Arg type="java.lang.String">http://corpus1.mpi.nl/ds/imdi_browser</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    
+    
+    <!--
+        Config for CSDB handler.
+    -->
+    <New id="CSDB" class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>jdbc/CSDB</Arg>
+        <Arg type="java.lang.String">jdbc:postgresql://lux08.mpi.nl:5432/corpusstructure</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    
+    
+    
+    <!--
+        Where toolbox files are stored.
+        -->
+    <New id="toolbox_files"  class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>LEXUS/ToolboxFiles</Arg>
+        <Arg type="java.lang.String">file:///toolbox2XML-base/toolbox_files</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+
+
+    <!--
+        Where tee files are stored (tee transformers stors content of pipeline in a file.
+        -->
+    <New id="tee-folder"  class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>tee-folder</Arg>
+        <Arg type="java.lang.String"></Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    
+    <!-- 
+        Database configuration.
+    -->
+    <New id="db-rest-endpoint"  class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>LEXUS/db-rest-endpoint</Arg>
+        <Arg type="java.lang.String">http://localhost:8984/rest/</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    <New id="db-username"  class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>LEXUS/db-username</Arg>
+        <Arg type="java.lang.String">admin</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>    
+    <New id="db-password"  class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>LEXUS/db-password</Arg>
+        <Arg type="java.lang.String">admin</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    <New id="db-users-collection"  class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>LEXUS/db-users-collection</Arg>
+        <Arg type="java.lang.String">lexus</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    <New id="db-lexica-collection"  class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>LEXUS/db-lexica-collection</Arg>
+        <Arg type="java.lang.String">lexus</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    
+    <!--
+        Vicos
+    -->    
+    <New id="vicos-dbURL" class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>VICOS/dbURL</Arg>
+        <Arg type="java.lang.String">jdbc:postgresql://localhost:5432/vicos</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    <New id="vicos-dbUser" class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>VICOS/dbUser</Arg>
+        <Arg type="java.lang.String">postgres</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    <New id="vicos-dbPass" class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>VICOS/dbPass</Arg>
+        <Arg type="java.lang.String">b03-BOE</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    <New id="vicos-dbType" class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>VICOS/dbType</Arg>
+        <Arg type="java.lang.String">PostgreSQL</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    <New id="vicos-dbDriver" class="org.mortbay.jetty.plus.naming.EnvEntry">
+        <Arg>VICOS/dbDriver</Arg>
+        <Arg type="java.lang.String">org.postgresql.Driver</Arg>
+        <Arg type="boolean">false</Arg>
+    </New>
+    
+</Configure>

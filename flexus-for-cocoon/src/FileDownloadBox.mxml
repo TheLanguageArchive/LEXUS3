@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:mpi="nl.mpi.lexus.*"
+	title="Download File" width="400" height="200" showCloseButton="true" close="close();">
+	<mx:Script>
+		<![CDATA[
+        	import mx.managers.PopUpManager;
+        	
+			[Bindable] public var theUrl:String;
+			[Bindable] public var filename:String;
+			public var parentModule:Object;
+			
+			
+			public function start():void {
+				fileDownload.initWithDelegate(this, theUrl);
+				fileDownload.addEventListener(ProgressEvent.PROGRESS, progressHandler);				
+				fileDownload.startDownload(filename);
+			}
+			
+			
+			/**
+			 * While the file is downloading, update the progress bar's status.
+			 */
+			public function progressHandler(event:ProgressEvent):void
+			{
+				downloadProgress.setProgress(event.bytesLoaded, event.bytesTotal);
+			}
+			
+			/*
+			 * Download has started.
+			 */
+			public function openHandler(event:Event):void {
+				downloadProgress.label = "DOWNLOADING %3%%";
+				cancelDownload.enabled = true;
+			}
+			
+			/**
+			 * When the file is done, update the button's label.
+			 */
+			public function completeHandler(event:Event):void
+			{
+				downloadProgress.label = "DOWNLOAD COMPLETE";
+				downloadProgress.setProgress(1, 1);
+				switchButtonToOk();
+			}
+			
+			private function switchButtonToOk():void {
+				cancelDownload.enabled = true;
+				cancelDownload.label = "Ok";
+				cancelDownload.removeEventListener(MouseEvent.CLICK, cancelDownloadHandler);
+				cancelDownload.addEventListener(MouseEvent.CLICK, okHandler);
+			}
+			
+			/**
+			 * When the file is done, update the button's label.
+			 */
+			private function cancelDownloadHandler(event:MouseEvent):void
+			{
+				fileDownload.cancelDownload();
+				downloadProgress.label = "DOWNLOAD CANCELLED";
+				close();
+			}
+			
+			private function okHandler(event:MouseEvent):void {
+				close();
+			}
+			
+			private function close():void {
+				PopUpManager.removePopUp(this);
+				if(this.parentModule != null && this.parentModule.rightTabNav.selectedChild != this.parentModule.lexicalEntryEditor)
+					this.parentModule.iFrame.visible = true;
+			}
+		]]>
+	</mx:Script>
+
+
+	<mpi:FileDownload id="fileDownload"/><!-- creationComplete="init()" --> 
+
+	<mx:Panel width="100%" height="100%" paddingTop="20">
+		<mx:ProgressBar id="downloadProgress" label="" mode="manual" width="100%" minimum="10"/>
+		<mx:ControlBar horizontalAlign="center" width="100%">
+			<mx:Button id="cancelDownload" label="Cancel" click="cancelDownloadHandler(event);" enabled="true" />
+		</mx:ControlBar>
+	</mx:Panel>
+</mx:TitleWindow>

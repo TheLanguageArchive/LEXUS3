@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+<stx:transform xmlns:stx="http://stx.sourceforge.net/2002/ns" xmlns:lexus="http://www.mpi.nl/lexus"
+    xmlns:fragments="http://org.apache.cocoon.transformation/fragments/1.0"
+    xmlns:cinclude="http://apache.org/cocoon/include/1.0" xmlns:util="java:java.util.UUID"
+    version="1.0">
+
+    <stx:variable name="lexiconId" select="''"/>
+
+    <stx:variable name="le-per-batch" select="100"/>
+    <stx:variable name="le-counter" select="0"/>
+    <stx:buffer name="user"/>
+
+    <stx:template match="data">
+        <stx:assign name="lexiconId" select="@new-lexicon-id"/>
+        <stx:copy attributes="@*">
+            <stx:process-children/>
+        </stx:copy>
+    </stx:template>
+
+
+    <stx:template match="lexus:user">
+        <stx:process-self group="user-to-buffer"/>
+    </stx:template>
+
+    <stx:template match="lexus">
+        <fragments:transform fragment-name="create-lexicon"
+            fragment-namespace="http://www.mpi.nl/lexus">
+            <lexus:create-lexicon>
+                <lexus id="{$lexiconId}">
+                    <stx:process-children/>
+                </lexus>
+            </lexus:create-lexicon>
+        </fragments:transform>
+    </stx:template>
+
+
+    <!-- 
+        Process a lexical-entry.
+        -->
+    <stx:template match="lexus:lexical-entry">
+        <fragments:transform fragment-name="save-lexical-entry"
+            fragment-namespace="http://www.mpi.nl/lexus">
+            <lexus:save-lexical-entry lexicon="{$lexiconId}">
+                <lexical-entry>
+                    <!--                <stx:attribute name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>-->
+                    <stx:process-attributes/>
+                    <stx:process-children/>
+                </lexical-entry>
+            </lexus:save-lexical-entry>
+        </fragments:transform>
+    </stx:template>
+
+    <!-- 
+        Process a container.
+    -->
+    <stx:template match="lexus:data">
+        <data>
+            <stx:process-attributes/>
+            <stx:process-children/>
+        </data>
+    </stx:template>
+
+    <!-- 
+        Process the schema element.
+    -->
+    <stx:template match="lexus:schema">
+        <schema>
+            <stx:process-attributes/>
+            <stx:process-children/>
+        </schema>
+    </stx:template>
+
+    <!-- 
+        Process a container.
+    -->
+    <stx:template match="lexus:container">
+        <container>
+            <!--                <stx:attribute name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>-->
+            <stx:process-attributes/>
+            <stx:process-children/>
+        </container>
+    </stx:template>
+
+    <stx:template match="@*">
+        <stx:copy/>
+    </stx:template>
+
+    <stx:template match="node()">
+        <stx:copy attributes="@*">
+            <stx:process-children/>
+        </stx:copy>
+    </stx:template>
+
+
+    <!--
+        Copy the user element inside the data element.
+        -->
+    <stx:group name="user-buffer-to-data">
+        <stx:template match="lexus:user">
+            <stx:copy attributes="@*">
+                <stx:process-children/>
+            </stx:copy>
+        </stx:template>
+    </stx:group>
+    <stx:group name="user-to-buffer">
+        <stx:template match="@* | node()">
+            <stx:result-buffer name="user">
+                <stx:copy attributes="@*">
+                    <stx:process-children group="user-to-buffer"/>
+                </stx:copy>
+            </stx:result-buffer>
+        </stx:template>
+    </stx:group>
+</stx:transform>

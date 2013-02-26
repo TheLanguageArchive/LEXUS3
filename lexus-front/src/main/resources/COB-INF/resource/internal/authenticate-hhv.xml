@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<authentication>
+    <ID>hhv</ID>
+    <data>
+        <account>hhv</account>
+        <name>Huib Verweij</name>
+        <administrator>true</administrator>
+        <workspace/>
+    </data>
+</authentication>

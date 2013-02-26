@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns="http://chaperon.sourceforge.net/schema/grammar/1.0">
+    
+    <!-- Fortune -->
+    <production symbol="fortune">
+        <terminal symbol="fortune-start"/>
+        <nonterminal symbol="textSequence"/>
+    </production>
+    
+    <production symbol="fortuneSequence">
+        <nonterminal symbol="fortuneSequence"/>        
+        <nonterminal symbol="fortune"/>
+    </production>
+    
+    <production symbol="fortuneSequence">
+        <nonterminal symbol="fortune"/>
+    </production>
+    
+    <!-- textSequence -->
+    <production symbol="textSequence">
+        <terminal symbol="text"/>
+    </production>
+    <production symbol="textSequence">
+        <nonterminal symbol="textSequence"/>
+        <terminal symbol="text"/>
+    </production>
+
+    <production symbol="doc">
+        <nonterminal symbol="textSequence"/>
+        <nonterminal symbol="fortuneSequence"/>
+    </production>
+    
+    <start symbol="doc"/>
+</grammar>

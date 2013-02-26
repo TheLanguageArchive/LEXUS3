@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:flexiframe="com.google.code.flexiframe.*"
+	xmlns:mpi="nl.mpi.lexus.*"
+	xmlns="*"
+	xmlns:local="*"
+	title="Lexical entry details"
+	showCloseButton="true"    
+	close="this.finalize();" paddingTop="20" paddingRight="20"
+	move="onMove(event)">
+	
+	
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.containers.Panel;
+			import mx.controls.Alert;
+			import mx.controls.DataGrid;
+			import mx.core.FlexGlobals;
+			import mx.events.CloseEvent;
+			import mx.events.IndexChangedEvent;
+			import mx.events.MoveEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			import nl.mpi.lexus.LexusUtil;
+			import nl.mpi.lexus.YesNo;
+			import nl.mpi.lexus.editor.Editor;
+			import nl.mpi.lexus.event.LexicalEntryChangeEvent;
+			import nl.mpi.lexus.service.LexusService;
+			
+			[Bindable]
+			private var serverData:Object;
+			private var moveEnabled:Boolean = false
+			
+			private var lexusService:LexusService = new LexusService();
+			private var editor:Editor = new Editor();
+			private var _parentGrid:DataGrid;
+			
+			
+			public function get parentGrid():DataGrid
+			{
+				return _parentGrid;
+			}
+			
+			public function set parentGrid(value:DataGrid):void
+			{
+				_parentGrid = value;
+			}
+			
+			public function set entryId(a_entryId:String):void{
+				var param:Object = new Object();
+				param.id = a_entryId;
+				this.lexusService.send("LexusLexicalEntryEditor/loadLexicalEntry.json", param, this.name, this.onJSONLoad);
+			}
+			
+			/**
+			 * Event Handler for the onLoad event. This will load the JSON object and perform initial initialization
+			 * */
+			private function onJSONLoad(event:ResultEvent):void	{	
+				LexusUtil.parseJSON(String(event.result),
+					function(data:Object):void {
+						//AAM: since this module can be called either from Lexus or from the EntryViewer
+						//applications (used by ViCoS to display single lexical entries). We don't update
+						//the parent grid when called from the EntryViewer (no grid exists there!).
+						if(_parentGrid != null) {
+							var listViewString:String = _parentGrid.selectedItem.listView.value;
+							if(listViewString.indexOf("(Modified!)  ") < 1 && listViewString.indexOf("(Modified!)  ") != -1) 
+								data.result.lexicalEntry.listView.value = "(Modified!)  " + data.result.lexicalEntry.listView.value;
+						}
+						data.result.lexicalEntry.listView.value = transformListView(data.result.lexicalEntry.listView.value);
+						saveBtn.enabled = false;
+						if(_parentGrid != null){
+							_parentGrid.selectedItem.listView.value = data.result.lexicalEntry.listView.value;
+							_parentGrid.invalidateList();
+						}
+						serverData = data;
+						if(tabNav.selectedChild == null)
+							tabNav.selectedChild = entryTab;
+						iFrame.source = serverData.result.lexicalEntry.entryView;
+						if(tabNav.selectedChild == entryTab)
+							iFrame.visible=true;
+						moveEnabled = true;
+						tree.validateNow();
+						tree.selectedIndex = 0;
+						tree.expandChildrenOf( tree.selectedItem, true);
+						editor.initializeEditor( serverData.result.lexicalEntry, detailPanel, serverData.result.isEditable, 170);
+						editor.addEventListener("change", onLexicalEntryChange);
+						LexusUtil.removeWait();
+					}
+				);
+				this.enabled = true;
+			}   
+			private function onLexicalEntryChange( event:LexicalEntryChangeEvent):void{
+				tree.invalidateDisplayList();
+				tree.invalidateList();
+				this.saveBtn.enabled = true;
+			}
+			
+			private function transformListView(listViewHTML:String):String{
+				
+				var txt:String = listViewHTML;
+				
+				var ltPattern:RegExp = /&lt;/g;
+				txt = txt.replace(ltPattern, "<");
+				var gtPattern:RegExp = /&gt;/g;
+				txt  =txt.replace(gtPattern, ">");
+				var qtPattern:RegExp = /&quot;/g;
+				txt  =txt.replace(qtPattern, "'");
+				var ampPattern:RegExp = /&amp;amp;/g;
+				txt  =txt.replace(ampPattern, "&");
+				//txt = "<![CDATA[" + txt + "]]" + ">";
+				
+				//AAM:change name after save
+				if(this.saveBtn.enabled == true && !(listViewHTML.indexOf("(Modified!)  ") < 1 && listViewHTML.indexOf("(Modified!)  ") != -1))
+						
+					txt = "(Modified!)  "+ txt;
+				
+				return txt;
+			}
+			
+			
+			private function tabChanged(event:IndexChangedEvent):void{
+				if( tabNav.selectedChild == entryTab)
+					iFrame.visible = true;
+				else if( tabNav.selectedChild == treeTab){
+					
+					iFrame.visible = false;
+					editor.initializeEditor( this.serverData.result.lexicalEntry, this.detailPanel, this.serverData.result.isEditable, 170);
+				}
+			}
+			
+			private function finalize():void{
+				if( this.saveBtn.enabled) 
+					YesNo.confirmSave("There are unsaved modifications to the selected lexical entry! " +
+						"Do you want to save them?", saveEntryOnClose);
+				iFrame.visible= false;   	
+				PopUpManager.removePopUp(this);
+			}
+			
+			private function onMove(event:MoveEvent):void{
+				
+				if( this.moveEnabled){
+					var dx:int = this.x - event.oldX;
+					var dy:int = this.y - event.oldY;
+					iFrame.move( dx, dy);
+				}	
+				
+				
+			}
+			private function generateTreeLabel( item:Object):String{
+				var label:String = item.label;
+				if( item.children == null)
+					label+= ": " + item.value;
+				if( label.length > 50)
+					label = label.substr(0, 50) + "...";
+				return label;
+			}
+			
+			private function showValue():void{
+				this.editor.setFocus( this.tree.selectedItem.id);
+				return;
+				
+			}
+			
+			/**
+			 * Returns the icon class for the specified schemaElement. This method is used by the List 
+			 * of currently active schema elements to determine the icons associated with the schema elements
+			 **/
+			private function getIcon( schemaElement:Object):Class{
+				if( schemaElement.type == "data category" || schemaElement.children == null)
+					return FlexGlobals.topLevelApplication.dataCategoryIcon;
+				else
+					return FlexGlobals.topLevelApplication.containerIcon;
+				
+				return null;
+			}
+			
+			
+			private function onSave(event:MouseEvent):void{
+				if( this.saveBtn.enabled){
+					this.enabled = false;
+					LexusUtil.showWait(this, "Saving entry");
+					var param:Object = new Object();
+					param.lexicalEntry  = this.serverData.result.lexicalEntry;
+					param.schema = this.serverData.result.mySchema;	
+					param.lexicon = this.serverData.result.lexiconId;	
+					this.lexusService.send("LexusLexicalEntryEditor/saveLexicalEntry.json", param, this.name, onJSONLoad);
+				}
+			} 
+			
+			
+			private function saveEntryOnClose(event:CloseEvent):void{
+				if (event.detail == Alert.YES) {
+					LexusUtil.showWait(this, "Saving entry");
+					FlexGlobals.topLevelApplication.enabled = false;
+					var param:Object = new Object();
+					param.lexicalEntry  = this.serverData.result.lexicalEntry;
+					param.schema = this.serverData.result.mySchema;	
+					this.lexusService.send("LexusLexicalEntryEditor/saveLexicalEntry.json", param, this.name, 
+						function():void {
+							LexusUtil.removeWait();
+							FlexGlobals.topLevelApplication.enabled = true;
+						}
+					);
+				}
+				
+			}
+			
+			//AAM: use the "modules" property available in Lexus.mxml to detect
+			//if the module was loaded by the Lexus web app (Lexus.mxml) or
+			//by the entry viewer web app called by ViCoS (EntryViewer.mxml).
+			private function focusIn(event:Event):void{
+				if (FlexGlobals.topLevelApplication.hasOwnProperty("modules"))
+					FlexGlobals.topLevelApplication.overlayUnicodeInput(event);
+			}
+		]]>
+	</mx:Script>
+	
+	
+	
+	<mx:Canvas width="100%" height="100%"
+			   focusIn="{this.focusIn(event)}">
+		<mx:VBox width="100%" height="100%">
+			<mx:HBox width="100%" horizontalAlign="center">
+				<mx:HBox width="90%" horizontalAlign="center">
+					<mx:Text htmlText="{this.serverData.result.lexicalEntry.listView.value}" condenseWhite="true" />
+				</mx:HBox>
+				<mx:HBox width="10%" horizontalAlign="right">
+					<mx:Button id="saveBtn" label="Save" click="onSave(event)" enabled="false" paddingRight="10"/>
+				</mx:HBox>
+			</mx:HBox>		
+			<mx:TabNavigator id="tabNav" width="100%" height="100%" creationPolicy="all" change="tabChanged(event)" paddingLeft="20">
+				<mx:Canvas label="Entry" id="entryTab" width="100%" height="100%">
+					<flexiframe:IFrame id="iFrame" source="" x="10" y="10" width="90%" height="100%" visible="false"/>
+				</mx:Canvas>
+				<mx:Canvas label="Details" id="treeTab" width="100%" height="100%">
+					<mx:HDividedBox width="100%" height="100%">
+						<mx:Panel width="25%" height="100%">
+							<mpi:AutoSizeTree id="tree" width="100%" height="100%" dataProvider="{this.serverData.result.lexicalEntry}" labelFunction="generateTreeLabel" iconFunction="getIcon" click="showValue()"/>	
+						</mx:Panel>
+						<mx:Panel id="detailPanel" width="75%" height="100%">
+							<mx:Panel id="editorPanel" width="100%" height="100%"/>
+						</mx:Panel>	   					
+					</mx:HDividedBox>	   				
+				</mx:Canvas>	   				
+			</mx:TabNavigator>	   	
+		</mx:VBox>     	
+	</mx:Canvas>
+</mx:TitleWindow>

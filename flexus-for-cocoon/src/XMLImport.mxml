@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+    title="Import XML file"
+    showCloseButton="true"
+    creationComplete="init()"
+    close="PopUpManager.removePopUp(this);"  width="600" height="100%">
+
+	
+    <mx:Metadata>
+        [Event(name="new", type="nl.mpi.lexus.event.NewLexiconEvent")]
+    </mx:Metadata>
+
+    <mx:Script>
+        <![CDATA[
+        	import nl.mpi.lexus.event.NewLexiconEvent;
+        	import nl.mpi.lexus.LexusUtil;
+        	import nl.mpi.lexus.service.LexusService;
+        	import mx.events.ListEvent;
+        	import mx.collections.ArrayCollection;
+        	import mx.managers.DragManager;
+        	import mx.core.IUIComponent;
+        	import mx.events.DragEvent;
+        	import com.adobe.serialization.json.JSON;
+        	import mx.rpc.events.ResultEvent;
+        	import nl.mpi.lexus.YesNo;
+        	import mx.managers.PopUpManager;
+        	private var typeFilefilter:Array;
+        	private var schemaFileRef:FileReference = new FileReference();
+        	private var dataFilefilter:Array;
+        	private var dataFileRef:FileReference = new FileReference();
+            private var maxFileSize:int = 0; //maxFileSize of 0 indicates unlimited file size is allowed
+            private var lexusService:LexusService = new LexusService();
+            
+            private var schemaFileStagingID:String;
+            private var dataFileStagingID:String;
+            
+            public var sessionId:String;
+
+            [Bindable]
+            private var elementsObj:Object;
+            
+            [Bindable]
+            private var xmlSchema:Object;
+            
+            [Embed(source="../assets/images/icon_xml_attribute.gif")]
+            public var xmlAttributeIconClass:Class;
+            [Embed(source="../assets/images/icon_xml_element.gif")]
+            public var xmlElementIconClass:Class;
+             [Embed(source="../assets/images/icon_xml_element_leaf.gif")]
+            public var xmlElementLeafIconClass:Class;
+             [Embed(source="../assets/images/icon_component.jpg")]
+            public var containerIconClass:Class;
+             
+            private function onJSONXMLSchemaLoad(event:ResultEvent):void
+			{
+				LexusUtil.parseJSON(String(event.result),
+					function(data:Object):void {  
+						xmlSchema = data.result.schema;
+					}
+				);
+			}
+           
+           
+			
+            private function init():void{
+            	
+            	this.schemaFileRef.addEventListener( Event.SELECT, handleTypeFileSelect);
+            	this.dataFileRef.addEventListener( Event.SELECT, handleDataFileSelect);
+            	var xmlFilter:FileFilter = new FileFilter("XML Documents", "*.xml");
+            	this.dataFilefilter = [xmlFilter];
+            	var xsdFilter:FileFilter = new FileFilter("XML Schema Files", "*.xsd");
+            	this.typeFilefilter = [xsdFilter];
+            	currentState= "0";
+            }
+             //Browse for type file
+        	private function browseSchemaFile(event:Event):void{        
+                
+                this.schemaFileRef.browse(this.typeFilefilter);
+               
+            }
+             //Browse for data file
+        	private function browseDataFile(event:Event):void{        
+                
+                this.dataFileRef.browse(this.dataFilefilter);
+               
+            }
+            /**
+            *   called after user selected files form the browse dialouge box.
+            **/
+            private function handleTypeFileSelect( event:Event):void{
+            
+	            if( !this.checkFileSize( this.schemaFileRef.size))
+	            	 YesNo.alert(schemaFileRef.name + " is too large. Maximum file size is: " + Math.round(this.maxFileSize / 1024) + " kb");    
+	            else{
+	            	this.schemaFileName_1.text = this.schemaFileRef.name;
+	            	this.schemaFileSize_1.text = "" + this.schemaFileRef.size;
+	            	//this.browseTypeBTN.visible = false;
+	            	this.nextBTN.enabled = true;
+	            	//this.goToNext();
+					var uploadURL:URLRequest = new URLRequest("LexusWorkspaceEditor/analyzeXMLSchema.json;jsessionid=" + this.sessionId);
+					this.schemaFileRef.addEventListener(Event.COMPLETE, completeHandler);
+					this.schemaFileRef.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA,schemaUploadCompleteDataHandler);
+					//this.schemaFileRef.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA,getDefaulLMFSchemaCompleteDataHandler);
+					this.schemaFileRef.addEventListener(HTTPStatusEvent.HTTP_STATUS, httpStatusHandler);
+					this.schemaFileRef.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
+					this.schemaFileRef.addEventListener(ProgressEvent.PROGRESS, progressHandler);
+					this.schemaFileRef.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
+					var params:URLVariables = new URLVariables();
+					params.dataStagingFileID = this.dataFileStagingID;
+					uploadURL.method = URLRequestMethod.POST;
+					uploadURL.data = params;
+					
+					this.schemaFileRef.upload( uploadURL, "schema");
+	            }
+	            	                 
+	           
+            }
+             /**
+             *    called after user selected files form the browse dialouge box.
+            **/
+            private function handleDataFileSelect( event:Event):void{
+            
+	            if( !this.checkFileSize( this.dataFileRef.size))
+	            	 YesNo.alert(schemaFileRef.name + " is too large. Maximum file size is: " + Math.round(this.maxFileSize / 1024) + " kb");    
+	            else{
+	            	this.dataFileName.text = this.dataFileRef.name;
+	            	this.dataFileSize.text = "" + this.dataFileRef.size;
+	            	this.nextBTN.enabled = true;
+	            	//this.goToNext();
+					var uploadURL1:URLRequest = new URLRequest("StagingFileHandler/uploadFile.json;jsessionid=" + this.sessionId);
+					this.dataFileRef.addEventListener(Event.COMPLETE, completeHandler);
+					this.dataFileRef.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA,dataUploadCompleteDataHandler);
+					this.dataFileRef.addEventListener(HTTPStatusEvent.HTTP_STATUS, httpStatusHandler);
+					this.dataFileRef.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
+					this.dataFileRef.addEventListener(ProgressEvent.PROGRESS, progressHandler);
+					this.dataFileRef.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
+					
+					this.dataFileRef.upload(uploadURL1, "data");
+	            	
+	            }
+	            	                 
+	           
+            }
+            // Checks the files do not exceed maxFileSize | if maxFileSize == 0 No File Limit Set
+	        private function checkFileSize(filesize:Number):Boolean{
+	      
+	        	var r:Boolean = false;
+	        		//if  filesize greater then _maxFileSize
+			        if (filesize > this.maxFileSize)
+			        	r = false;
+			        else if (filesize <= this.maxFileSize)
+			        	r = true;
+		        	
+		        	if (this.maxFileSize == 0)
+		        		r = true;		        	
+		   	
+	        	return r;
+	        }
+	        private function goToPrevious():void{
+	        	var intState:int = parseInt( currentState);
+	        	intState--;
+	        	if( intState <= 0)
+	        		prevBTN.enabled = false;
+	        	currentState = "" + intState;
+				
+	        }
+	        private function goToNext():void{
+	        	var intState:int = parseInt(this.currentState);
+	        	
+	        	intState++; 
+	        	if (intState > 0)
+	        		prevBTN.enabled = true;
+	        	if (intState == 3) {
+	        		doSubmit();
+	        		return;
+	        	}
+	        	this.prepareState( intState);
+	        	currentState = "" + intState;
+	        	
+	        }
+	        
+	        
+	        private function prepareState( state:int):void{
+	        	
+	        	switch (state){
+	        		case 1:
+	        			//nextBTN.enabled = true;
+	        			
+	        			/*var uploadURL1:URLRequest = new URLRequest("StagingFileHandler/uploadFile.json;jsessionid=" + this.sessionId);
+						this.dataFileRef.addEventListener(Event.COMPLETE, completeHandler);
+						this.dataFileRef.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA,dataUploadCompleteDataHandler);
+			            this.dataFileRef.addEventListener(HTTPStatusEvent.HTTP_STATUS, httpStatusHandler);
+			            this.dataFileRef.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
+			            this.dataFileRef.addEventListener(ProgressEvent.PROGRESS, progressHandler);
+			            this.dataFileRef.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
+						
+	        			this.dataFileRef.upload(uploadURL1, "data");*/
+	        			break;
+	        		case 2:
+	        			//nextBTN.enabled = false;
+	        			/*var uploadURL:URLRequest = new URLRequest("LexusWorkspaceEditor/analyzeXMLSchema.json;jsessionid=" + this.sessionId);
+						this.schemaFileRef.addEventListener(Event.COMPLETE, completeHandler);
+						this.schemaFileRef.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA,schemaUploadCompleteDataHandler);
+			            //this.schemaFileRef.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA,getDefaulLMFSchemaCompleteDataHandler);
+			            this.schemaFileRef.addEventListener(HTTPStatusEvent.HTTP_STATUS, httpStatusHandler);
+			            this.schemaFileRef.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
+			            this.schemaFileRef.addEventListener(ProgressEvent.PROGRESS, progressHandler);
+			            this.schemaFileRef.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
+						var params:URLVariables = new URLVariables();
+						params.dataStagingFileID = this.dataFileStagingID;
+						uploadURL.method = URLRequestMethod.POST;
+						uploadURL.data = params;
+					
+	        			this.schemaFileRef.upload( uploadURL, "schema");*/
+	        			
+	        			break;
+	        		
+	        		
+	        		default:
+	        			YesNo.alert("Unknown state encountered. Your action will be ignored" );
+	        			break; 
+	        			
+	        	}
+	        }
+	        //private function getDefaulLMFSchemaCompleteDataHandler(event:ResultEvent):void {
+	        //LexusUtil.parseJSON(String(event.result),
+	        private function getDefaulLMFSchemaCompleteDataHandler(event:DataEvent):void {	
+	        	LexusUtil.parseJSON(String(event.data),
+					function(data:Object):void {  
+						xmlSchema = data.result.schema;
+			        	tree.validateNow();
+			        	tree.expandChildrenOf(tree.root, true);
+			        	nextBTN.enabled = true;
+					}
+				);
+	        }
+	        
+	        
+	        /*private function schemaUploadCompleteDataHandler(event:DataEvent):void {
+            	trace("schema upload complete: " + event);
+            	var rawData:String = String(event.data);
+            	var result:Object = (JSON.decode(rawData) as Object).result;
+            	this.schemaFileStagingID =  result.schema; //schema is the field specified in the dataFileREf.upload request
+            	this.elementsObj = result;
+            	
+       		}*/
+       		private function schemaUploadCompleteDataHandler(event:DataEvent):void {
+				this.goToNext();
+            	LexusUtil.parseJSON(String(event.data),
+					function(data:Object):void {  
+						xmlSchema = data.result.schema;
+			        	//tree.validateNow();
+			        	//tree.expandChildrenOf(tree.root, true);
+			        	tree.invalidateList();
+                		tree.invalidateDisplayList();
+                		callLater(expandTree);
+			        	nextBTN.enabled = true;
+					}
+				);
+            	
+       		}
+       		private function expandTree():void{
+				tree.expandChildrenOf(xmlSchema, true);
+			}
+	        private function dataUploadCompleteDataHandler(event:DataEvent):void {
+            	trace("data upload complete: " + event);
+            	var rawData:String = String(event.data);
+            	this.dataFileStagingID = (JSON.decode(rawData) as Object).result.data; //data is the field specified in the dataFileREf.upload request
+            	this.goToNext();
+       		}
+       		
+	        /**
+	        * Event handler for upload complete event
+	        **/
+	        private function completeHandler(event:Event):void {
+            	trace("completeHandler: " + event);
+            }
+            /**
+            * Event handler for upload HTTPStatus Event
+            **/
+            private function httpStatusHandler(event:HTTPStatusEvent):void {
+            	trace("httpStatusHandler: " + event);
+            }
+        	/**
+        	 * Event handler for upload IOError Event
+        	 **/
+        	private function ioErrorHandler(event:IOErrorEvent):void {
+            	trace("ioErrorHandler: " + event);
+        	}
+        	/**
+        	 * Event handler for upload progress event
+        	 **/
+			private function progressHandler(event:ProgressEvent):void {
+            	var file:FileReference = FileReference(event.target);
+            	trace("progressHandler name=" + file.name + " bytesLoaded=" + event.bytesLoaded + " bytesTotal=" + event.bytesTotal);
+        	}
+
+        	private function securityErrorHandler(event:SecurityErrorEvent):void {
+         	   trace("securityErrorHandler: " + event);
+        	 }
+            
+            
+            
+	        
+	        
+	        private function getElementIcon( item:Object):Class{
+	        	
+	        	switch( item.type){
+	        		case "element":
+	        			return this.xmlElementIconClass;
+	        			break;
+	        		case "attribute":
+	        			return xmlAttributeIconClass;
+	        			break;
+	        		case "element_dc":
+	        			return xmlElementLeafIconClass;
+	        			break;
+	        		default:
+	        			return FlexGlobals.topLevelApplication.containerIcon;
+	        			break;
+	        	}
+	        	
+	        	return null; 
+	        }
+	        /**
+			 * Handles the drag enter event for the tree
+			 **/
+			private function onTreeDragEnter(evt:DragEvent):void{
+				var dropTarget:Tree = Tree(evt.currentTarget);
+				var initiator:IUIComponent = evt.dragInitiator;
+				evt.preventDefault();
+				
+				if( initiator == tree && dropTarget == tree){
+					if( !tree.selectedItem.hasOwnProperty("path")){
+						 //We are using the path attribute as a distinguishing feature for identifying LMF classes here
+
+						 DragManager.showFeedback(DragManager.NONE); 
+					}
+					else{
+						DragManager.showFeedback(DragManager.MOVE);
+						DragManager.acceptDragDrop(dropTarget);
+					}
+				}
+				else {
+                  DragManager.showFeedback(DragManager.NONE);                 
+                 
+                  return;     	
+                }
+                
+                
+			}
+			/**
+			 * Handles the drag over event on the tree
+			 **/
+			private function onTreeDragOver( evt:DragEvent):void{
+				evt.preventDefault();
+                evt.currentTarget.showDropFeedback(evt);
+				
+                var dropTarget:Tree = Tree(evt.currentTarget);
+                var r:int = dropTarget.calculateDropIndex(evt);
+                var dropItem:Object = tree.selectedItem;
+                var initiator:IUIComponent = evt.dragInitiator;
+                var dropEnabled:Boolean = false;
+                if( initiator == tree && dropTarget == tree){
+                	tree.selectedIndex = r;
+                	
+                	var candidate:Object = tree.selectedItem;
+                	trace( dropItem.path + "-->"+ candidate.path);
+                	if (!candidate.hasOwnProperty("path")) //We are using the path attribute as a distinguishing feature for identifying LMF classes here
+                			dropEnabled = true;
+                	else if (candidate.type== "element"){
+                		
+                		if ((dropItem.path as String).indexOf(candidate.path) != -1)
+                				dropEnabled = true;
+                		/*else{
+                			var parent:Object = tree.getParentItem(candidate);
+                			if( (dropItem.path as String).indexOf( parent.path) != -1)
+                				dropEnabled = true;
+                		}*/	
+                	
+                	}
+                	
+                			
+          
+                }
+                tree.selectedItem = dropItem;
+                
+               
+                if (dropEnabled) {
+                	DragManager.showFeedback(DragManager.MOVE);
+					DragManager.acceptDragDrop(dropTarget);
+                }
+                else {
+                	DragManager.showFeedback(DragManager.NONE);
+                     return;
+                }
+                tree.selectedItem = dropItem;
+                
+			}
+			
+			
+			private function onKeyDown( event: KeyboardEvent):void{
+				event.preventDefault();
+
+				if( event.keyCode == 46){ //Delete pressed
+					this.removeSchemaElement();
+				}
+			}
+			private function removeSchemaElement():void{
+				var item:Object = this.tree.selectedItem;
+				if( item.hasOwnProperty("path")){
+					
+					var parent:Object = tree.getParentItem( item);
+		            var children:Array = parent.children;
+		            children.splice( children.indexOf( item),1);
+		            this.tree.invalidateList();
+		            this.tree.invalidateDisplayList();
+	   			}
+				
+			}
+			private function doSubmit():void{
+				var param:Object = new Object();
+				param.schemaFile = this.schemaFileStagingID;
+				param.dataFile = this.dataFileStagingID;
+				param.lexicon = this.xmlSchema;
+				param.lexiconName = this.dataFileName.text;
+				this.lexusService.send("LexusWorkspaceEditor/importXMLLexicon.json", param, this.name, onImportComplete);
+				
+			}
+			private function onImportComplete( event:ResultEvent):void{
+				LexusUtil.parseJSON(String(event.result),
+					function(data:Object):void {  
+						var lexicon:Object = data.result.lexicon;
+						var evt:Event = new NewLexiconEvent("new", lexicon);
+		                dispatchEvent( evt);		               
+						removeMe();
+					}
+				);
+			}
+			/* Remove this popup */
+			private function removeMe():void {
+				PopUpManager.removePopUp(this);
+			}
+
+        ]]>
+    </mx:Script>
+ <mx:states>
+ 	<mx:State name="0">
+
+
+            <mx:AddChild 
+                relativeTo="{panel}" 
+                position="firstChild" 
+                creationPolicy="all"
+            >
+	            
+	            	<mx:VBox width="100%" height="100%" paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10">
+		            	<mx:Text width="100%">
+	            			<mx:text>
+		            			The XML data file contains the information for the lexical entries.
+		            		</mx:text>
+	            		</mx:Text>
+		            	
+		            	 <mx:HBox width=" 100%" height=" 100%">
+		            	 	<mx:Label text="Name: "/><mx:Label id="dataFileName"/>
+		                	<mx:Label text="Size: "/><mx:Label id="dataFileSize"/>
+		                	<mx:Button label="Browse For data Files" click="this.browseDataFile(event)"/>
+		            	 </mx:HBox>
+		            	 
+	            	</mx:VBox>
+	            	
+				
+            </mx:AddChild>
+            
+            <mx:SetProperty target="{panel}" name="title" value="Step 1. Select XML data file."/>
+            
+        </mx:State>
+    	 <mx:State name="1">
+
+
+            <mx:AddChild 
+                relativeTo="{panel}" 
+                position="firstChild" 
+                creationPolicy="all"
+            >
+	            
+	            	<mx:VBox width="100%" height="100%" paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10">
+	            		<mx:Text width="100%">
+	            			<mx:text>
+		            			Each XML data file is associated with a schema file. This file describes the structure of the lexicon. This structural information will be taken into account in the import process.
+	            			</mx:text>
+	            		</mx:Text> 
+		            	<mx:HBox width=" 100%" height=" 100%">
+		            	 	 <mx:Label text="Name: "/><mx:Label id="schemaFileName_1"/>
+		                	<mx:Label text="Size: "/><mx:Label id="schemaFileSize_1"/>
+		                	<mx:Button label="Browse For schema Files" click="this.browseSchemaFile(event)"/>
+		            	</mx:HBox>
+		            	 
+		            	
+	            	</mx:VBox>
+	           	
+				
+            </mx:AddChild>
+            
+            <mx:SetProperty target="{panel}" name="title" value="Step 2. Select XML schema file."/>
+            
+        </mx:State>
+        
+      
+         <mx:State name="2">
+
+
+            <mx:AddChild 
+                relativeTo="{panel}" 
+                position="firstChild" 
+                creationPolicy="all"
+            >
+            	<mx:VBox width="100%" height="100%">
+            		<mx:Text 
+		            		htmlText="By dragging and dropping the markers into the appropriate LMF classes your lexicon&lt;br&gt; can be made LMF compliant"
+		            />
+		            <mx:HDividedBox width="120%" height="120%">
+		            	<mx:Tree  id="tree" width="200" height="300" dataProvider="{this.xmlSchema}"
+		            				alternatingItemColors="[#FFFFFF,#EEEEEE]"
+		            				verticalScrollPolicy="auto"
+									labelField="name" 
+									iconFunction="getElementIcon"
+									 showScrollTips="false"
+							            dragEnabled="true"
+							            dropEnabled="true"
+							            dragEnter="onTreeDragEnter(event)" 
+							            dragOver="onTreeDragOver(event)"
+							            dragMoveEnabled="true"
+							            keyDown="onKeyDown(event)"
+									 allowDragSelection="true" 
+									 cachePolicy="off"  
+									   menuSelectionMode="true"  />
+						
+						
+		            </mx:HDividedBox>	
+				</mx:VBox>
+            </mx:AddChild>
+            
+            <mx:SetProperty target="{panel}" name="title" value="Step 3. Select LMF class for markers."/>
+            <mx:SetProperty target="{nextBTN}" name="label" value="Finish"/>            
+            <mx:SetProperty target="{nextBTN}" name="enabled" value="false"/>
+            
+        </mx:State>
+</mx:states>
+
+
+<mx:HTTPService id="getElementSchemaService"
+		resultFormat="text"
+		url="../assets/getXMLSchema.json"
+		result="onJSONXMLSchemaLoad(event)" />
+
+<mx:Panel id="panel" title="" width="100%" height="100%">
+	<mx:ControlBar>   	 
+	                <mx:Button label="Previous" id="prevBTN" enabled="false" click="goToPrevious()"/>
+	                <mx:Button label="Next" id="nextBTN" enabled="false" click="goToNext()"/>	                
+	                <mx:Button label="Cancel" id="cancelTypeBTN" click="PopUpManager.removePopUp(this);"/>
+        </mx:ControlBar>
+</mx:Panel>
+</mx:TitleWindow>
