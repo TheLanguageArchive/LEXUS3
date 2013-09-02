@@ -39,6 +39,7 @@
 			import nl.mpi.lexus.LexusUtil;
 			import nl.mpi.lexus.YesNo;
 			import nl.mpi.lexus.event.NewSchemaElementEvent;
+			import nl.mpi.lexus.event.NewSchemaRestrictionEvent;
 			import nl.mpi.lexus.event.ViewChangeEvent;
 			import nl.mpi.lexus.service.LexusService;
 			import nl.mpi.lexus.view.ViewsEditor;
@@ -75,12 +76,37 @@
 			 **/
 			[Bindable]
 			private var editable:Boolean = false;
+			private var restrictionFound:Boolean = false;
 
 			/**
 			 * A place to save an event. In case we need to save some data
 			 *  while processing an event we park the original event here.
 			 **/
 			private var originalEvent:Event;
+		
+			[Bindable]
+			private var _restrictions:Array;
+			private var _invalidExports:Array;
+
+			public function get invalidExports():Array
+			{
+				return _invalidExports;
+			}
+
+			public function set invalidExports(value:Array):void
+			{
+				_invalidExports = value;
+			}
+
+			public function get restrictions():Array
+			{
+				return _restrictions;
+			}
+
+			public function set restrictions(value:Array):void
+			{
+				_restrictions = value;
+			}
 
 			public function openLexicon(a_lexiconId:String):void {
 				this.lexiconId = a_lexiconId;
@@ -88,7 +114,7 @@
 				LexusUtil.showWait(this, "Loading structure");
 				param.id = a_lexiconId;
 				lexusService.send("LexusSchemaEditor/getSchema.json", param, this.name, onJSONLoad);
-			}
+				}
 
 
 			/**
@@ -100,6 +126,7 @@
 					tree.dataProvider = serverData.result.schema;
 					tree.selectedItem = (tree.dataProvider as ArrayCollection).getItemAt(0);
 					editable = serverData.result.lexicon.writable;
+//					exports = serverData.result.exports;
 					schemaElementViewer.init(serverData.result.schema, editable);
 					schemaElementViewer.addEventListener("change", onChange);
 					toggleButtonBar();
@@ -238,6 +265,7 @@
 					LexusUtil.showWait(this, "Saving structure");
 					var param:Object = new Object();
 					param.schema = this.serverData.result.schema;
+					param.template = this.serverData.result.lexicon.template;
 					param.listView = this.dcOrder.toArray();
 					param.viewId = serverData.result.lexicon.id
 					this.lexusService.send("LexusSchemaEditor/saveSchema.json", param, this.name, function():void {
@@ -362,26 +390,133 @@
 				var idx:int = tree.selectedIndex;
 				var item:Object = tree.selectedItem;
 				this.schemaIsModified = true;
+			//	YesNo.alert("You tried to change somthing in the schema tree");
 				LexusUtil.forceTreeRedraw(tree, tree.dataProvider);
 			}
 
 			private function addSchemaElement():void {
 				var item:Object = tree.selectedItem;
 				//AAM: do  nothing if selected item is a datacategory.
- 				if (item.type == "data category") {
+				if (item.type == "data category") {
 					//YesNo.alert("It is not possible to add anything to a data category.");
 					return;
 				} else if (item.type == "Lexicon") {
 					YesNo.alert("It is not possible to add anything to the 'lexicon' element.");
 					return;
 				}
-				var popAdd:AddSchemaElement = AddSchemaElement(PopUpManager.createPopUp(this, AddSchemaElement, true));
-				popAdd.futureSibblings = new ArrayCollection(tree.selectedItem.children);
-				popAdd.addEventListener("new", this.handleNewSchemaElement);
-				PopUpManager.centerPopUp(popAdd);
-       		
+				
+				if (schemaRestrictionsCheck("create", tree.selectedItem))
+				{
+					var popAdd:AddSchemaElement = AddSchemaElement(PopUpManager.createPopUp(this, AddSchemaElement, true));
+					popAdd.futureSibblings = new ArrayCollection(tree.selectedItem.children);
+					popAdd.addEventListener("new", this.handleNewSchemaElement);
+					PopUpManager.centerPopUp(popAdd);
+				}else
+				{
+					var pop:RestrictionAlert = RestrictionAlert(PopUpManager.createPopUp(application as DisplayObject,RestrictionAlert,true));
+					
+					pop.restrictions = new ArrayCollection(restrictions);
+					pop.addEventListener("proceed",confirmCreateHandler);
+					PopUpManager.centerPopUp(pop);
+				
+				
+				}
 			}
-
+			
+			private function fetchValidExports():Array{
+			
+				var valexp:Array = new Array;
+			if (this.serverData.result.lexicon.template.export != null)
+			{	for each (var exp in this.serverData.result.lexicon.template.export)
+					{if (exp.valid)
+								valexp.push(exp.id);
+					} 
+			}
+			return valexp;
+			}
+			
+			
+			public function schemaRestrictionsCheck(action:String, node:Object):Boolean{
+				
+				restrictionFound = false;
+				
+				var restriction:Object;
+				var validExports:Array= fetchValidExports(); 
+				var status:String;
+				restrictions = new Array();
+				invalidExports = new Array();
+				if (node.src == "template")
+				for each (var item in validExports)
+				{	if (node.editor != null){
+						for each (var rest in node.editor.restriction)
+						{ if (item == rest.exports && rest.scope=="self" )
+							for each (var act in rest.action) 
+							{ if (act.type == action && act.cause != null)
+							{		restriction = act;
+									restrictionFound = true;
+									status="restricted";
+									restrictions.push(act);
+									if (act.cause.toUpperCase() == "WARNING")
+										invalidExports.push(item);
+									break;
+							}
+						}
+						}
+						
+						}
+						
+						if (restriction == null)
+							{ //nearest ancestor should be checked. 
+						
+							var ancestor:Object = tree.getParentItem(node);
+							    restrictionFound = false;	
+								
+								while (!restrictionFound && ancestor !=null)
+								{						
+								 if (ancestor.editor != null){
+									for each (var rest in ancestor.editor.restriction)
+									{ if (item == rest.exports && rest.scope == node.type)
+										for each (var act in rest.action) 
+									{ 		if (act.type == action && act.cause != null)
+											{	
+												restriction = act;
+												restrictionFound = true;
+												status="restricted";
+												restrictions.push(act);
+												if (act.cause.toUpperCase() == "WARNING")
+													invalidExports.push(item);
+												break;
+									}
+									}
+									}}
+								 ancestor = tree.getParentItem(ancestor)
+								}
+						
+							}
+						else if (restriction.cause == null || restriction == null)
+								{ //action is explicitally allowd to override an ancestor 
+								
+								status = "allowed";
+								}
+				}	
+			if (restrictions.length >0)	
+				return false;
+			else
+				return true
+			}
+			
+			private function confirmCreateHandler(event:NewSchemaRestrictionEvent):void {
+				if (event.response == "yes") {
+					var popAdd:AddSchemaElement = AddSchemaElement(PopUpManager.createPopUp(this, AddSchemaElement, true));
+					popAdd.futureSibblings = new ArrayCollection(tree.selectedItem.children);
+					popAdd.addEventListener("new", this.handleNewSchemaElement);
+					PopUpManager.centerPopUp(popAdd);
+					invalidateExport();
+				
+				}
+			}
+			
+			
 
 			private function handleNewSchemaElement(event:NewSchemaElementEvent):void {
 				var item:Object = tree.selectedItem;
@@ -432,10 +567,40 @@
 			}
 
 			private function removeSchemaElement():void {
+				if (! schemaRestrictionsCheck("delete",tree.selectedItem)){
+					var mess:String=new String("Lexical entry information for this " + tree.selectedItem.type + " will be permanently lost!!\n\n Would You Still like to proceed?");
+					var pop:RestrictionAlert = RestrictionAlert(PopUpManager.createPopUp(application as DisplayObject,RestrictionAlert,true));
+					
+					pop.restrictions = new ArrayCollection(restrictions);
+					pop.addEventListener("proceed",confirmProceedWithDeleteHandler);
+					PopUpManager.centerPopUp(pop);
+					
+					
+				}
+				else
 				YesNo.confirmDelete("Are you sure you want to\nremove this schema element?\nLexical entry information for this " + tree.selectedItem.type + " will be permanently lost!!", confirmDeleteHandler);
 
 			}
-
+	
+			private function confirmProceedWithDeleteHandler(event:NewSchemaRestrictionEvent):void {
+				if (event.response == "yes") {
+					var selItem:Object = tree.selectedItem;
+					var parentElement:Object = tree.getParentItem(selItem);
+					var children:ArrayCollection = new ArrayCollection(parentElement.children);
+					children.removeItemAt(children.getItemIndex(selItem));
+					schemaIsModified = true;
+					
+					tree.selectedItem = parentElement;
+					LexusUtil.forceTreeRedraw(tree, tree.dataProvider);
+					schemaElementViewer.init(tree.selectedItem, editable);
+					this.toggleButtonBar();
+					invalidateExport();
+				
+				}
+				
+				
+			}
+			
 			private function confirmDeleteHandler(event:CloseEvent):void {
 				if (event.detail == Alert.YES) {
 					var selItem:Object = tree.selectedItem;
@@ -450,7 +615,16 @@
 					this.toggleButtonBar();
 				}
 			}
-
+	
+			public function invalidateExport():void{
+				
+				for each (var invexp in invalidExports)
+					{	for each (var exp in this.serverData.result.lexicon.template.export)
+							if (invexp == exp.id)
+								 exp.valid = "false";
+							
+					}
+			}
 			/**
 			 * Returns the icon class for the specified schemaElement. This method is used by the List
 			 * of currently active schema elements to determine the icons associated with the schema elements
