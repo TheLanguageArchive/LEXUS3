@@ -12,7 +12,7 @@ package nl.mpi.lexus.event
 		}
 		
 		override public function clone():Event {
-            return new NewSchemaElementEvent("new", this.schemaElement);
+            return new NewSchemaElementEvent("proceed", this.schemaElement);
         }
 
 
