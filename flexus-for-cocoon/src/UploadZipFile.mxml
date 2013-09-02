@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+				initialize="init()" width="100%" height="100%">
+<mx:Script>
+	<![CDATA[
+		import com.adobe.net.URI;
+		import com.adobe.serialization.json.JSON;
+		
+		import mx.collections.ArrayCollection;
+		import mx.managers.PopUpManager;
+		import mx.utils.ArrayUtil;
+		
+		import nl.mpi.lexus.LexusUtil;
+		import nl.mpi.lexus.YesNo;
+		import nl.mpi.lexus.service.LexusService;
+
+		private var _delegate:Object;
+		[Bindable] private var file_Reference:FileReference;
+		[Bindable] private var file_title:String;
+		[Bindable] private var file_browse_title:String;
+		
+		
+		
+		public function get delegate():Object {
+			return _delegate;
+		}
+		
+		public function set delegate(delegate:Object):void {
+			_delegate=delegate;
+
+			file_title = _delegate.getTitle(this, 1);
+			file_browse_title = _delegate.getBrowseTitle(this, 1);
+			browse1.enabled = true;
+			}
+				
+		private function init():void {
+			file_Reference = new FileReference();
+			file_Reference.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA, uploadFile1Complete);
+			file_Reference.addEventListener(Event.SELECT, file_Selected);
+			file_Reference.addEventListener(ProgressEvent.PROGRESS, progressHandler);
+
+			
+		}
+		
+		private function browseFile(event:MouseEvent):void
+		{
+			var filter:FileFilter = _delegate.getFilter1(this);
+			file_Reference.browse([filter]);
+		}
+		public function file_Selected(event:Event):void
+		{
+			file_Reference_name.text = file_Reference.name;
+			file_Reference_size.text = file_Reference.size.toString(10);
+		}
+		
+		/**
+		 * While the file is downloading, update the progress bar's status.
+		 */
+		private function progressHandler(event:ProgressEvent):void
+		{
+			var file:FileReference = FileReference(event.target);
+			if (file == file_1_Reference) 
+				file_1_UploadProgress.setProgress(event.bytesLoaded, event.bytesTotal);
+			else if (file == file_2_Reference)
+				file_2_UploadProgress.setProgress(event.bytesLoaded, event.bytesTotal);
+		}
+		
+		private function upload(event:MouseEvent):void
+		{
+			if (_delegate.uploadCanStart(this, file_1_Reference, file_2_Reference)) {
+				uploadButton.enabled = false;
+				browse1.enabled = false;
+				browse2.enabled = false;
+				LexusUtil.show(file_1_UploadProgress);
+				var urlRequest:URLRequest = _delegate.getURLRequest(this, 1, file_1_Reference);
+				setTimeout( function():void{file_1_Reference.upload(urlRequest);}, 1);
+				//uploadButton.enabled = true;
+			}
+		}
+		private function uploadFile1Complete(event:DataEvent):void {
+			file_1_UploadProgress.setProgress(1, 1);
+			_delegate.uploadFile1Completed(this, new XML(event.data));
+			_delegate.finished(this);
+		}
+
+	]]>
+</mx:Script>
+	<mx:VBox width="100%" height="100%">
+		
+		<mx:Panel title="{file_1_title}" width="100%"
+				  paddingLeft="10" paddingRight="10" paddingBottom="10" paddingTop="10">
+	<mx:VBox  width="100%"><mx:HBox width="100%">
+				<mx:Button id="browse1" label="{file_browse_title}" click="browseFile(event)" width="200" enabled="false"/>
+				<mx:HBox width="100%" height="100%">
+					<mx:VBox>
+						<mx:Label text="Size: "/>
+						<mx:Label text="Name: "/>
+					</mx:VBox>
+					<mx:VBox width="100%">
+						<mx:Label id="file_Reference_size" width="50"/>					
+						<mx:Label id="file_Reference_name"/>
+					</mx:VBox>
+				</mx:HBox>
+			   <mx:ProgressBar id="file_UploadProgress" label="" mode="manual" width="100%" visible="false" includeInLayout="false"/>
+			</mx:HBox>
+			</mx:VBox>
+		</mx:Panel>
+		<mx:ControlBar horizontalAlign="center" width="100%">
+			<mx:Button id="uploadButton" label="Upload" click="upload(event)"/>
+		</mx:ControlBar>
+	</mx:VBox>
+	
+</mx:Canvas>

@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+				title="Specify export details"
+				showCloseButton="true"
+				creationComplete="init()"
+				close="PopUpManager.removePopUp(this);" width="462" height="340">
+	
+	
+	<mx:Metadata>
+		
+		[Event(name="updateLexicon", type="flash.event.Event")]
+		
+	</mx:Metadata>
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.events.ValidationResultEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			import mx.core.FlexGlobals;
+			
+			import nl.mpi.lexus.LexusUtil;
+			import nl.mpi.lexus.YesNo;
+			import nl.mpi.lexus.service.LexusService;
+			
+			[Bindable][Embed(source="../assets/images/iconza_24x24/warning_24x24.png")] private var warnIcon:Class;
+
+			[Bindable]
+			private var application:Object = FlexGlobals.topLevelApplication;
+			
+			[Bindable]
+			private var _exports:ArrayCollection;
+			private var _lexiconId:String;
+			private var _lexiconName:String;
+			
+			
+			
+			// Define public setter. 
+
+			public function get lexiconName():String
+			{
+				return _lexiconName;
+			}
+
+			public function set lexiconName(value:String):void
+			{
+				_lexiconName = value;
+			}
+
+			public function get lexiconId():String
+			{
+				return _lexiconId;
+			}
+
+			public function set lexiconId(value:String):void
+			{
+				_lexiconId = value;
+			}
+
+			public function get exports():ArrayCollection {
+				return _exports;
+			}
+			
+			// Define public setter. 
+			public function set exports(value:ArrayCollection):void {
+				
+				_exports = value;
+				export_formats.selectedItem=_exports[0];
+				updatExportFormatDescription();
+				//init();				
+				
+			}
+			
+			
+			/**
+			 * Initializing, a new lexicon is created
+			 * */ 
+			private function init():void{
+			/*	this.lexicon = new Object();
+				this.lexicon.size = 0;
+				this.lexicon_name.setFocus();
+				this.lexicon.template = tmplates == null ? "" : tmplates.selectedItem.name;
+			*/	
+			}
+			/**
+			 * Attempts to store the lexicon to the server. The (succesfull) response is forwarded to onSaveResult
+			 **/ 
+			private function export():void {
+						
+					
+						if (export_formats.selectedItem != null){
+							if (export_formats.selectedItem.file != null){
+								
+								var lexusService:LexusService = new LexusService();
+								var url:String;
+								var popExport:FileDownloadBox;
+							//	lexusService.send("LexusWorkspaceEditor/transformExport.json",export_formats.selectedItem.file, "workspace", onSaveResult);
+								url = lexusService.getAbsoluteURL("XMLexport.zip?id="+lexiconId+"&format="+export_formats.selectedItem.format);
+								popExport = FileDownloadBox(PopUpManager.createPopUp(application as DisplayObject, FileDownloadBox, false));
+								popExport.theUrl = url;
+								popExport.filename = lexiconName + ".zip";
+								PopUpManager.centerPopUp(popExport);
+								PopUpManager.removePopUp(this);
+								popExport.start();
+								
+								
+							}			
+					
+					
+				}}
+				
+				
+				
+			/**
+			 * Callback method for the server lexicon save response. A new Event is dispatched to signal creation of a new lexicon.
+			 * 
+			 **/ 
+			private function onSaveResult(event:ResultEvent):void {
+			/*	LexusUtil.parseJSON(String(event.result),
+					function(data:Object):void {  
+						lexicon = data.result.lexicon;
+						var evnt:Event = new Event("updateLexicon");
+						dispatchEvent(evnt); 
+						removeMe();
+					}
+				);*/
+			}
+			
+			private function removeMe():void {
+				PopUpManager.removePopUp(this);
+			}
+			
+			/**
+			 * Key event handler for the save button.If enter is pressed the lexicon is propogated to the server
+			 **/ 
+			private function onKeyUpSave(event:KeyboardEvent):void{
+				//Enter pressed
+				if( event.keyCode == 13)
+					this.export();
+				
+			}
+			/**
+			 * Key event handler for the cancel button
+			 **/ 
+			private function onKeyUpCancel(event:KeyboardEvent):void{
+				//Enter pressed
+				if( event.keyCode == 13)
+					PopUpManager.removePopUp(this);
+			}
+			/**
+			 *  Event listener for the valid and invalid events.
+			 **/ 
+			private function handleValid(eventObj:ValidationResultEvent):void {
+				if(eventObj.type==ValidationResultEvent.VALID)    
+					// Enable saveBtn button.
+					exportBtn.enabled = true;
+				else
+					exportBtn.enabled = false;
+			}
+			
+			private function updatExportFormatDescription():void
+			{
+				if (exports != null)
+					export_format_description.text =  export_formats.selectedItem.description;
+				   	description_label.visible = true;
+					exportBtn.enabled = true;
+					
+			}
+			
+			
+		]]>
+	</mx:Script>
+	<mx:Canvas width="100%">
+		<mx:Grid width="100%" height="100%">
+			<mx:GridRow width="100%">
+				<mx:GridItem>
+					<mx:Label text="Export Formats: "/>
+				</mx:GridItem>
+				<mx:GridItem width="100%">
+					<mx:ComboBox id="export_formats" dataProvider="{_exports}" width="100%"
+								 labelField="name" change="updatExportFormatDescription()" />
+				</mx:GridItem>
+				
+			</mx:GridRow>
+			<mx:GridRow width="100%">
+				<mx:GridItem>
+					<mx:Label id="description_label" text="Description: " visible="false" />
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:Label id="export_format_description" text=""/>
+				</mx:GridItem>
+				
+			</mx:GridRow>
+			
+			
+		</mx:Grid>
+		
+		
+		
+	</mx:Canvas>
+	
+	<mx:ControlBar horizontalAlign="right" width="100%">
+		<mx:Button id="exportBtn" label="Export" click="export();" keyUp="onKeyUpSave(event)" enabled="false"/>
+		<mx:Button id="cancelBtn" label="Cancel" click="PopUpManager.removePopUp(this);"  keyUp="onKeyUpCancel(event)" enabled="true"/>
+	</mx:ControlBar>
+</mx:TitleWindow>
