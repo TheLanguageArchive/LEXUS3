@@ -49,10 +49,12 @@
 			[Bindable]
 			private var templates:Array = null;
 			
+			private var imports:Array;
+			
 			
 			[Bindable]
 			private var searchResults:Object;
-		
+			
 			[Bindable][Embed(source="../assets/images/icon_sharedLexicon.gif")] private var sharedLexiconIconClass:Class;
 			[Bindable][Embed(source="../assets/images/icon_new.jpg")] private var newLexiconIcon:Class;
 			[Bindable][Embed(source="../assets/images/icon_sort.gif")] private var sortOrderIconClass:Class;			
@@ -94,8 +96,13 @@
 				lexiconDetailsTab.enabled = true;
 				originalEvent = null;
 				originallySelectedIndex = -1;
-				//added by shakila
+				//added by shakila for template, import and export paramter setting
 				this.lexusService.send("LexusWorkspaceEditor/listTemplates.json", null, this.name, onJSONLoadTemplates);
+				this.lexusService.send("LexusWorkspaceEditor/listImportFormats.json", null , this.name, onJSONLoadImportFormats);
+				
+				
+				//up to here
+				
 				sortOrderComponent.addEventListener("change", this.onSortOrderChange);
 				lexusService.send( "LexusWorkspaceEditor/getPage.json", null, this.name, onJSONLoad)
 				searchComponent.queryBuilder.addEventListener(QueryEvent.ADD, this.handleQueryUpdate);
@@ -107,7 +114,7 @@
 			private function handleQueryUpdate(event:QueryEvent):void {
 				process_original_event();
 			}
-
+			
 			/**
 			 * Event Handler for the onLoad event. This will parse the JSON object and perform initialization
 			 * */
@@ -141,7 +148,7 @@
 							// No need to reload the lexicon data upon change cancelation!
 							FlexGlobals.topLevelApplication.lexica = ObjectUtil.copy(serverData.result.myLexica);
 							searchComponent.queryBuilder.availableLexica = serverData.result.myLexica;
-
+							
 							
 							if (l <= 0) {
 								newLexicon(null);
@@ -231,13 +238,28 @@
 				}
 				
 				switch (evtName) {
-					case "import_xml":
+					case "import_xmlx":
 						// var popXMLImport:XMLImport = XMLImport(PopUpManager.createPopUp(this,XMLImport,true));
 						var popXMLImport:ImportLexusXML = ImportLexusXML(PopUpManager.createPopUp(application as DisplayObject,ImportLexusXML,true));
 						popXMLImport.sessionId = serverData.result.sessionId;
 						popXMLImport.addEventListener("new", handleLexiconImport);
 						popXMLImport.addEventListener("finish", handleLexiconImportFinished);
 						PopUpManager.centerPopUp(popXMLImport);
+						break;
+					case "import_xml":
+						
+						
+						if( imports.length == 0)
+						{	
+							// var popXMLImport:XMLImport = XMLImport(PopUpManager.createPopUp(this,XMLImport,true));
+							var popZIPImport:ImportLexusXMLZips = ImportLexusXMLZips(PopUpManager.createPopUp(application as DisplayObject,ImportLexusXMLZips,true));
+							popZIPImport.sessionId = serverData.result.sessionId;
+							popZIPImport.addEventListener("new", handleLexiconImport);
+							popZIPImport.addEventListener("finish", handleLexiconImportFinished);
+							PopUpManager.centerPopUp(popZIPImport);}
+						else {
+							prepareFormattedImport();
+						}
 						break;
 					case "import_shbx":
 						var popShbxImport:ShbxImport = ShbxImport(PopUpManager.createPopUp(application as DisplayObject,ShbxImport,true));
@@ -294,6 +316,35 @@
 				}
 				return handled;
 			}
+			
+			private function prepareFormattedImport():void{
+				
+				var pop:ImportDetail = ImportDetail(PopUpManager.createPopUp(application as DisplayObject,ImportDetail,true));
+				
+				//	pop.lexica = new ArrayCollection(this.lexicaList.dataProvider.toArray());
+				pop.imports = new ArrayCollection(imports);
+				pop.sessionId=serverData.result.sessionId;
+				//pop.addEventListener("export",);
+				PopUpManager.centerPopUp(pop);
+			}
+			
+			
+			private function onJSONLoadImportFormats(event:ResultEvent):void
+			{
+				if (event.result != "") 
+				{LexusUtil.parseJSON(String(event.result),
+					function(data:Object):void {
+						if (data !=null)
+							if (data.imports != null)
+								imports = data.imports;
+					}
+				);   
+				}}
+			
+			
+			
+			
+			
 			
 			/* Save unsaved data, called from menu event handler or keyboard handler */
 			public function save():void {
@@ -368,23 +419,23 @@
 					else{
 						var incompleteRowIndex:int=0
 						for each (var item:Object in (sortOrders.dataProvider as ArrayCollection))
-							{
-								if (item.id==this.saveSortOrderTarget.id)
-								{	
-									sortOrders.selectedIndex = incompleteRowIndex;
-									sortOrders.scrollToIndex(incompleteRowIndex);
-									//YesNo.alert("You have to complete the '" +item.name+ "' sort order or remove it before you can proceed.");
-									if(!sortOrderComponent.itemEdtEndAlertEmited)
-										sortOrderComponent.handleSortOrderChange(this.sortOrders.selectedItem);
-									sortOrderComponent.itemEdtEndAlertEmited = false;
-									sortOrderComponent.sortOrderRowAdd.enabled = false;
-									sortOrderComponent.sortOrderRowAdd.toolTip = "You have to complete the '" +item.name+ "' sort order or remove it before you can proceed.";
-									sortOrderComponent.sortOrderRowAdd.source = application.addIconGrayed;
-									return true;
-								}
-								
-								incompleteRowIndex++;
-							}		
+						{
+							if (item.id==this.saveSortOrderTarget.id)
+							{	
+								sortOrders.selectedIndex = incompleteRowIndex;
+								sortOrders.scrollToIndex(incompleteRowIndex);
+								//YesNo.alert("You have to complete the '" +item.name+ "' sort order or remove it before you can proceed.");
+								if(!sortOrderComponent.itemEdtEndAlertEmited)
+									sortOrderComponent.handleSortOrderChange(this.sortOrders.selectedItem);
+								sortOrderComponent.itemEdtEndAlertEmited = false;
+								sortOrderComponent.sortOrderRowAdd.enabled = false;
+								sortOrderComponent.sortOrderRowAdd.toolTip = "You have to complete the '" +item.name+ "' sort order or remove it before you can proceed.";
+								sortOrderComponent.sortOrderRowAdd.source = application.addIconGrayed;
+								return true;
+							}
+							
+							incompleteRowIndex++;
+						}		
 					}
 				}
 				
@@ -398,12 +449,12 @@
 			
 			
 			
-		
-			private function handleLexiconImport(event:NewLexiconEvent):void {
+			
+			public function handleLexiconImport(event:NewLexiconEvent):void {
 				(this.lexicaList.dataProvider as ArrayCollection).addItem(event.lexicon);
 			}
 			
-			private function handleLexiconImportFinished(event:NewLexiconEvent):void {
+			public function handleLexiconImportFinished(event:NewLexiconEvent):void {
 				init();
 			}
 			
@@ -420,7 +471,7 @@
 					}
 				);
 				this.sortOrdersTab.enabled = true;
-		
+				
 				
 				
 			}
@@ -433,7 +484,7 @@
 					callLater(_leftTabChanged, [event]);
 			}
 			
-	
+			
 			
 			/**
 			 * Event handler for left tab changes.
@@ -497,7 +548,7 @@
 			 **/
 			private function markSortOrderSavePoint(sortOrder:Object):void{
 				this.saveSortOrderTarget = sortOrder;
-		
+				
 			}
 			/**
 			 * Handles the click events in the left tree. 
@@ -594,8 +645,22 @@
 						lexicon_name.text = lexicon.name;
 						lexicon_owner.text = lexicon.owner.name;
 					}
+					
 					lexicon_description.text = lexicon.description;
 					lexicon_notes.text = lexicon.note;
+					if (checkTheExportData()){
+						this.exportLabel.visible = true;
+						this.exportData.visible= true;
+						this.exportData.dataProvider = getTheValidExportData();
+						this.exportInfo.includeInLayout= true;
+					}
+					else 
+					{	this.exportLabel.visible = false;
+						this.exportData.visible= false;
+						this.exportData.dataProvider = null;
+						this.exportInfo.includeInLayout= false;
+							
+					}	
 					//lexicon_id.text = lexicon.id;
 					if( lexicon.administrator || !lexicon.shared){
 						readerList.dataProvider = lexicon.readers;
@@ -879,14 +944,14 @@
 								if(!sortOrderComponent.itemEdtEndAlertEmited)
 									sortOrderComponent.handleSortOrderChange(this.sortOrders.selectedItem);
 								sortOrderComponent.itemEdtEndAlertEmited = false;
-							 	//YesNo.alert("You have to complete the '" +item.name+ "' sort order or remove it before you can proceed.\n" + sortOrderComponent.alrt);
+								//YesNo.alert("You have to complete the '" +item.name+ "' sort order or remove it before you can proceed.\n" + sortOrderComponent.alrt);
 								sortOrderComponent.sortOrderRowAdd.enabled = false;
 								sortOrderComponent.sortOrderRowAdd.toolTip = "You have to complete the '" +item.name+ "' sort order or remove it before you can proceed.";
 								sortOrderComponent.sortOrderRowAdd.source = application.addIconGrayed;
 								
 								return;
 							}
-						
+							
 							incompleteRowIndex++;
 						}	
 						
@@ -901,7 +966,7 @@
 					YesNo.confirmSave("Do you want to save sort order '"+this.saveSortOrderTarget.name+"'?", confirmSaveSortOrderHandler);
 				}
 			}
-
+			
 			private function confirmSaveSortOrderHandler(event:CloseEvent):void{
 				if( event.detail == Alert.YES){					 
 					this.save();
@@ -1028,6 +1093,23 @@
 				return present;
 			}
 			
+			private function checkTheExportData(): Boolean{
+				if (lexicaList != null && lexicaList.selectedIndex > -1)
+					if (lexicaList.dataProvider[lexicaList.selectedIndex].hasOwnProperty("template"))
+						if(lexicaList.selectedItem.template.export != null)
+							return true;
+				return false;
+			}
+			
+			private function getTheValidExportData(): ArrayCollection{
+				var data : ArrayCollection = new ArrayCollection();
+					for each (var item in lexicaList.dataProvider[lexicaList.selectedIndex].template.export)
+						if (item.valid)
+							data.addItem(item);
+					return data;
+			 
+			}
+			
 			/**
 			 * Used to add an event listener in the capture phase of the MouseEvent.CLICK events on 
 			 * the TabNavigator.
@@ -1036,7 +1118,7 @@
 			public function tabberdCreated():void {
 				tabberd.addEventListener(MouseEvent.CLICK, leftTabChanged, true);
 			}
-
+			
 			protected function updateRemoveBtnStatus(event:ListEvent):void
 			{
 				var activeList:AutoSizeList = null;
@@ -1077,7 +1159,7 @@
 				}		
 				
 			}
-
+			
 		]]>
 	</mx:Script>
 	<mx:VBox id="main" width="100%" height="100%" verticalGap="0" 
@@ -1112,49 +1194,63 @@
 								<mx:TabNavigator width="100%" height="75%" creationPolicy="all">
 									<mx:Canvas id="lexiconDetailsTab" label="Lexicon" width="100%"
 											   height="100%">
-										
-										<mx:Grid width="100%" height="100%">
-											<mx:GridRow width="80%" height="10%">
-												<mx:GridItem width="80">
-													<mx:Label text="Name:"/>
-												</mx:GridItem>
-												<mx:GridItem width="100%">
-													<mx:TextInput id="lexicon_name" width="80%" 
-																  height="100%" change="onChange(event)"/>
-												</mx:GridItem>
-											</mx:GridRow>
-											<mx:GridRow width="80%" height="70%" autoLayout="true">
-												<mx:GridItem width="80">
-													<mx:Label text="Description:"/>
-												</mx:GridItem>
-												<mx:GridItem width="100%">
-													<mx:TextArea id="lexicon_description" width="80%"
-																 height="100%"  change="onChange(event)"/>
-												</mx:GridItem>
+											<mx:Grid width="100%" height="80%">
+												<mx:GridRow width="80%" height="10%">
+													<mx:GridItem width="90">
+														<mx:Label text="Name:"/>
+													</mx:GridItem>
+													<mx:GridItem width="100%">
+														<mx:TextInput id="lexicon_name" width="80%" 
+																	  height="100%" change="onChange(event)"/>
+													</mx:GridItem>
+												</mx:GridRow>
+												<mx:GridRow width="80%" height="70%" autoLayout="true">
+													<mx:GridItem width="90">
+														<mx:Label text="Description:"/>
+													</mx:GridItem>
+													<mx:GridItem width="100%">
+														<mx:TextArea id="lexicon_description" width="80%"
+																	 height="100%"  change="onChange(event)"/>
+													</mx:GridItem>
+													
+												</mx:GridRow>
+												<mx:GridRow id="exportInfo" width="80%"  autoLayout="true" >
+													<mx:GridItem id="exportLabel" width="90" visible="false">
+														<mx:Label text="Export Foramts:"/>
+													</mx:GridItem>
+													<mx:GridItem width="100%" >
+														<mx:DataGrid id="exportData" visible="false" dataProvider="{getTheValidExportData()}"  width="80%" height="100">
+															<mx:columns>
+																<mx:DataGridColumn headerText="Name" dataField="name"/>
+																<mx:DataGridColumn headerText="Description" dataField="description"/>
+															</mx:columns>
+														</mx:DataGrid>
+													</mx:GridItem>
+												</mx:GridRow>
 												
-											</mx:GridRow>
+												<mx:GridRow width="80%" height="10%" autoLayout="true">
+													<mx:GridItem width="90">
+														<mx:Label text="Owner:"/>
+													</mx:GridItem>
+													<mx:GridItem width="100%">
+														<mx:TextArea id="lexicon_owner" width="80%" editable="false"
+																	 height="100%"/>
+													</mx:GridItem>
+													
+												</mx:GridRow>
+												<mx:GridRow width="80%" height="10%" autoLayout="true">
+													<mx:GridItem width="90">
+														<mx:Label text="Internal id:"/>
+													</mx:GridItem>
+													<mx:GridItem width="100%">
+														<mx:TextArea id="lexicon_id" width="80%" editable="false" 
+																	 height="100%"/>
+													</mx:GridItem>
+												</mx:GridRow>
 											
-											<mx:GridRow width="80%" height="10%" autoLayout="true">
-												<mx:GridItem width="80">
-													<mx:Label text="Owner:"/>
-												</mx:GridItem>
-												<mx:GridItem width="100%">
-													<mx:TextArea id="lexicon_owner" width="80%" editable="false"
-																 height="100%"/>
-												</mx:GridItem>
 												
-											</mx:GridRow>
-<!--											<mx:GridRow width="80%" height="10%" autoLayout="true">
-												<mx:GridItem width="80">
-													<mx:Label text="Internal id:"/>
-												</mx:GridItem>
-												<mx:GridItem width="100%">
-													<mx:TextArea id="lexicon_id" width="80%" editable="false" 
-																 height="100%"/>
-												</mx:GridItem>
-												
-											</mx:GridRow>-->
-										</mx:Grid>
+											</mx:Grid>
+											<!--	-->
 									</mx:Canvas>
 									<mx:Canvas id="readersTab" label="Readers" width="100%"
 											   height="100%">
