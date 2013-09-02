@@ -159,6 +159,9 @@
             <string key="value">
                 <xsl:value-of select="@value"/>
             </string>
+            <string key="id">
+                <xsl:value-of select="@id"/>
+            </string>
             <string key="type">
                 <xsl:value-of select="@type"/>
             </string>
