@@ -36,6 +36,7 @@
                     <true key="shared"/>
                 </xsl:otherwise>
             </xsl:choose>
+            <xsl:apply-templates select="meta/template" mode="template"/>
             <number key="size">
                 <xsl:value-of select="size"/>
             </number>
@@ -59,6 +60,41 @@
         </object>
 
     </xsl:template>
+
+<xsl:template match="meta/template" mode="template">
+	<object key="template">
+		<string key="name">
+			<xsl:value-of select="@name"/>
+		</string>
+		<array key="export">
+                    <xsl:apply-templates select="export" mode="#current"/>
+        </array>
+        
+	</object>
+	</xsl:template>
+	<xsl:template match="export" mode="template">	
+	<object>	
+		<string key="id">
+			<xsl:value-of select="@id"/>
+		</string>
+		<string key="name">
+			<xsl:value-of select="@name"/>
+		</string>
+		<string key="description">
+			<xsl:value-of select="@description"/>
+		</string>
+		<xsl:choose>
+             <xsl:when test="@valid eq 'true'">
+                    <true key="valid"/>
+             </xsl:when>
+             <xsl:otherwise>
+                    <false key="valid"/>
+             </xsl:otherwise>
+        </xsl:choose>
+		
+		
+	</object>
+	</xsl:template>
 
     <xsl:template match="user[@ref]">
         <xsl:variable name="id" select="@ref"/>
