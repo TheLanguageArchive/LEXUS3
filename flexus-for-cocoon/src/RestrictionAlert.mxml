@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+				title="Problems with updating the schema"
+				showCloseButton="true"
+				creationComplete="init()"
+			close="PopUpManager.removePopUp(this);" width="540" height="340"  >
+	
+	
+	<mx:Metadata>
+		[Event(name="updateLexicon", type="flash.event.Event")]
+	</mx:Metadata>
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.collections.Grouping;
+			import mx.collections.GroupingCollection2;
+			import mx.collections.GroupingField;
+			import mx.core.FlexGlobals;
+			import mx.events.ResizeEvent;
+			import mx.events.ValidationResultEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			import nl.mpi.lexus.LexusUtil;
+			import nl.mpi.lexus.YesNo;
+			import nl.mpi.lexus.event.NewSchemaRestrictionEvent;
+			import nl.mpi.lexus.service.LexusService;
+			
+			
+			[Bindable][Embed(source="../assets/images/iconza_24x24/warning_24x24.png")] private var warnIcon:Class;
+
+			[Bindable]
+			private var application:Object = FlexGlobals.topLevelApplication;
+			
+			[Bindable]
+			private var problems: GroupingCollection2;
+		
+			[Bindable]
+			private var _restrictions:ArrayCollection;	
+			
+			public function get restrictions():ArrayCollection
+			{
+				return _restrictions;
+			}
+
+			public function set restrictions(value:ArrayCollection):void
+			{
+				_restrictions = value;
+			}
+
+			private function init():void{
+			//var tempArray: ArrayCollection = new ArrayCollection();
+			problems = new GroupingCollection2();
+			problems.source = restrictions;
+			//problems.source.addItem({cause: "warning",type: "delete",message: "test description part" ,label:"Creating a container will disable the RELISH-LL-LMF export for this lexicon."});
+			//problems.source.addItem({cause: "error",type: "delete",message: "test description part again", label:"Creating a container will disable the RELISH-LL-LMF export for this lexicon."});
+			var grouping:Grouping = new Grouping();
+			grouping.fields = [new GroupingField("cause")];
+			problems.grouping = grouping;	
+			problems.refresh();
+			}
+		
+			
+				
+			private function onKeyUpSave(event:KeyboardEvent):void{
+				//Enter pressed
+				if( event.keyCode == 13)
+					this.proceed();
+				
+			}
+			
+			private function proceed():void
+			{	var event:Event = new NewSchemaRestrictionEvent("proceed", "yes");
+				dispatchEvent(event);	
+				PopUpManager.removePopUp(this);
+			}
+			/**
+			 * Key event handler for the cancel button
+			 **/ 
+			private function onKeyUpCancel(event:KeyboardEvent):void{
+				//Enter pressed
+				if( event.keyCode == 13)
+					PopUpManager.removePopUp(this);
+			}
+			
+			
+
+			protected function titlewindow1_resizeHandler(event:ResizeEvent):void
+			{
+				// TODO Auto-generated method stub
+			}
+
+		]]>
+	</mx:Script>
+	<mx:Canvas width="100%">
+		<mx:Grid width="100%" height="100%">
+			<mx:GridRow width="100%">
+				<mx:GridItem >
+					<mx:Label text="Following are the problems:" />
+				</mx:GridItem>
+			</mx:GridRow>
+			<mx:GridRow width="100%">
+				<mx:GridItem width="100%">
+					<mx:AdvancedDataGrid width="100%" height="100%"
+						 dataProvider="{problems}">
+						<mx:columns>
+							<mx:AdvancedDataGridColumn dataField="type" headerText="Problem" sortable="false"  width="100"/>
+							<mx:AdvancedDataGridColumn dataField="message" dataTipField="message" headerText="Description" showDataTips="true" sortable="false"/>
+							
+						</mx:columns>
+					</mx:AdvancedDataGrid>	
+				</mx:GridItem>
+			</mx:GridRow>
+			<mx:GridRow width="100%">
+				<mx:GridItem horizontalAlign="center" >
+					<mx:Label text="Would you still like to proceed?" />
+				</mx:GridItem>
+					
+			</mx:GridRow>	
+		</mx:Grid>
+		
+		
+		
+	</mx:Canvas>
+	
+	<mx:ControlBar horizontalAlign="center" width="100%">
+		
+		<mx:Button id="Yes" label="Yes" click="proceed()" keyUp="onKeyUpSave(event)" enabled="true"/>
+		<mx:Button id="No" label="No" click="PopUpManager.removePopUp(this);"  keyUp="onKeyUpCancel(event)" enabled="true"/>
+	</mx:ControlBar>
+</mx:TitleWindow>
