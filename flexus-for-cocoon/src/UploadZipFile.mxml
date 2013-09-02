@@ -28,8 +28,8 @@
 		public function set delegate(delegate:Object):void {
 			_delegate=delegate;
 
-			file_title = _delegate.getTitle(this, 1);
-			file_browse_title = _delegate.getBrowseTitle(this, 1);
+			file_title = _delegate.getTitle(this);
+			file_browse_title = _delegate.getBrowseTitle(this);
 			browse1.enabled = true;
 			}
 				
@@ -44,7 +44,7 @@
 		
 		private function browseFile(event:MouseEvent):void
 		{
-			var filter:FileFilter = _delegate.getFilter1(this);
+			var filter:FileFilter = _delegate.getFilter(this);
 			file_Reference.browse([filter]);
 		}
 		public function file_Selected(event:Event):void
@@ -59,27 +59,26 @@
 		private function progressHandler(event:ProgressEvent):void
 		{
 			var file:FileReference = FileReference(event.target);
-			if (file == file_1_Reference) 
-				file_1_UploadProgress.setProgress(event.bytesLoaded, event.bytesTotal);
-			else if (file == file_2_Reference)
-				file_2_UploadProgress.setProgress(event.bytesLoaded, event.bytesTotal);
+			if (file == file_Reference) 
+				file_UploadProgress.setProgress(event.bytesLoaded, event.bytesTotal);
+			
 		}
 		
 		private function upload(event:MouseEvent):void
 		{
-			if (_delegate.uploadCanStart(this, file_1_Reference, file_2_Reference)) {
+			if (_delegate.uploadCanStart(this, file_Reference)) {
 				uploadButton.enabled = false;
 				browse1.enabled = false;
-				browse2.enabled = false;
-				LexusUtil.show(file_1_UploadProgress);
-				var urlRequest:URLRequest = _delegate.getURLRequest(this, 1, file_1_Reference);
-				setTimeout( function():void{file_1_Reference.upload(urlRequest);}, 1);
+				
+				LexusUtil.show(file_UploadProgress);
+				var urlRequest:URLRequest = _delegate.getURLRequest(this, 1, file_Reference);
+				setTimeout( function():void{file_Reference.upload(urlRequest);}, 1);
 				//uploadButton.enabled = true;
 			}
 		}
 		private function uploadFile1Complete(event:DataEvent):void {
-			file_1_UploadProgress.setProgress(1, 1);
-			_delegate.uploadFile1Completed(this, new XML(event.data));
+			file_UploadProgress.setProgress(1, 1);
+			_delegate.uploadFileCompleted(this, new XML(event.data));
 			_delegate.finished(this);
 		}
 
@@ -87,9 +86,10 @@
 </mx:Script>
 	<mx:VBox width="100%" height="100%">
 		
-		<mx:Panel title="{file_1_title}" width="100%"
+		<mx:Panel title="{file_title}" width="100%"
 				  paddingLeft="10" paddingRight="10" paddingBottom="10" paddingTop="10">
-	<mx:VBox  width="100%"><mx:HBox width="100%">
+	<mx:VBox  width="100%">
+		<mx:HBox width="100%">
 				<mx:Button id="browse1" label="{file_browse_title}" click="browseFile(event)" width="200" enabled="false"/>
 				<mx:HBox width="100%" height="100%">
 					<mx:VBox>
