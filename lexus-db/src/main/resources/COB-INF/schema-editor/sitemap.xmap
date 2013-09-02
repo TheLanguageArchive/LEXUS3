@@ -123,6 +123,30 @@
                 <map:serialize type="xml"/>
             </map:match>
 
+     <!-- 
+        Save template
+      -->
+            <map:match pattern="saveTemplate.xml">
+                <map:generate src="service-consumer:"/>
+                <map:transform type="saxon" src="saveTemplate.xslt">
+                    <map:parameter name="lexica-collection" value="{naming:java:comp/env/LEXUS/db-lexica-collection}"/>
+                    <map:parameter name="users-collection" value="{naming:java:comp/env/LEXUS/db-users-collection}"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-save-template-1.xml"/>
+                <map:call resource="rest"/>                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-save-template-2.xml"/>
+                <map:serialize type="xml"/>
+            </map:match>
+
+       
+         
+       
+       
+       
+       
+       
             <!-- 
         Calculate sort order keys when schema has changed.
       -->
