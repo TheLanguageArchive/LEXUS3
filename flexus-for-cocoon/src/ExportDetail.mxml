@@ -15,10 +15,10 @@
 	<mx:Script>
 		<![CDATA[
 			import mx.collections.ArrayCollection;
+			import mx.core.FlexGlobals;
 			import mx.events.ValidationResultEvent;
 			import mx.managers.PopUpManager;
 			import mx.rpc.events.ResultEvent;
-			import mx.core.FlexGlobals;
 			
 			import nl.mpi.lexus.LexusUtil;
 			import nl.mpi.lexus.YesNo;
@@ -66,23 +66,17 @@
 			public function set exports(value:ArrayCollection):void {
 				
 				_exports = value;
+				var dfault:Object = new Object();
+				dfault.name = "Lexus XML";
+				dfault.description = "The default XML export format for Lexus";
+				dfault.id ="Lexus3XML";
+				_exports.addItemAt(dfault,0);
 				export_formats.selectedItem=_exports[0];
 				updatExportFormatDescription();
-				//init();				
-				
 			}
 			
 			
-			/**
-			 * Initializing, a new lexicon is created
-			 * */ 
-			private function init():void{
-			/*	this.lexicon = new Object();
-				this.lexicon.size = 0;
-				this.lexicon_name.setFocus();
-				this.lexicon.template = tmplates == null ? "" : tmplates.selectedItem.name;
-			*/	
-			}
+			
 			/**
 			 * Attempts to store the lexicon to the server. The (succesfull) response is forwarded to onSaveResult
 			 **/ 
@@ -90,13 +84,13 @@
 						
 					
 						if (export_formats.selectedItem != null){
-							if (export_formats.selectedItem.file != null){
+							if (export_formats.selectedItem.id != null){
 								
 								var lexusService:LexusService = new LexusService();
 								var url:String;
 								var popExport:FileDownloadBox;
-							//	lexusService.send("LexusWorkspaceEditor/transformExport.json",export_formats.selectedItem.file, "workspace", onSaveResult);
-								url = lexusService.getAbsoluteURL("XMLexport.zip?id="+lexiconId+"&format="+export_formats.selectedItem.format);
+							   // a call to LexusWorkspaceEditor/transformexport.json was replaced by a call to new transformer to apply different export formats.	
+								url = lexusService.getAbsoluteURL("XMLexport.zip?id="+lexiconId+"&format="+export_formats.selectedItem.id);
 								popExport = FileDownloadBox(PopUpManager.createPopUp(application as DisplayObject, FileDownloadBox, false));
 								popExport.theUrl = url;
 								popExport.filename = lexiconName + ".zip";
