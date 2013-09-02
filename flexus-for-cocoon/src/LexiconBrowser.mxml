@@ -56,6 +56,7 @@
 			import nl.mpi.lexus.event.ImportCompleteEvent;
 			import nl.mpi.lexus.event.NewLexiconEvent;
 			import nl.mpi.lexus.event.QueryEvent;
+			import nl.mpi.lexus.event.ReferenceAttachCompleteEvent;
 			import nl.mpi.lexus.service.LexusService;
 			
 			[Bindable]
@@ -114,6 +115,8 @@
 			private var listTreeVisibility:String = "list";
 			
 			private var dragSourceSelectedItem:Object = null;
+			
+			private var exports:Array = null;
 			
 			/**
 			 * The title of the panel, suitably shortened if necessary.
@@ -428,6 +431,7 @@
 						lx.name = lx.name + " (RELOAD)";
 					lx.name = LexusUtil.cutOffString(lx.name, 40);
 				}
+				
 			}
 			private function initializeQueryList(qs:ArrayCollection):void {
 				
@@ -753,8 +757,8 @@
 				var selectedNode:Object = tree.selectedItem;
 				var schemaElement:Object = this.getSchemaNodeById(selectedNode.schemaElementId);
 				if (schemaElement.type != "data category"){
-					this.multimediaTab.enabled = false;
-					if (propertyTabs.selectedChild == multimediaTab)
+					this.attachmentTab.enabled = false;
+					if (propertyTabs.selectedChild == attachmentTab)
 						propertyTabs.selectedIndex = 1;
 					this.displayDataCategory(schemaElement);
 					//AAM: note currently are not allowed for datacontainers
@@ -1506,6 +1510,9 @@
 							case "url":
 								icon.source = internalLinkIcon;
 								break;
+							case "entry-link":
+								icon.source = internalLinkIcon;
+								break;
 							default:
 								trace("Cannot find multimedia icon. Unknown data type!");
 								break;
@@ -1622,7 +1629,7 @@
 				*/
 			}
 			private function displayMultiMedia(multiMedia:Object, label:String, editable:Boolean):void{
-				multimediaTab.enabled = true;
+				attachmentTab.enabled = true;
 				mediaPanel.visible = false;
 				this.importMM_button1.enabled = editable;
 				this.importMM_button2.enabled = editable;
@@ -1708,6 +1715,12 @@
 						urlPanel.visible = true;
 					case "externalURL":
 						urlPanel.visible = true;
+						break;
+					case "entry-link":
+						this.mediaLabel = "Cross Reference Link";
+						mediaPanel.visible = true;
+						videoPanel.visible = true;
+						
 						break;
 					default:
 						importPanel.visible = true;
@@ -1841,15 +1854,7 @@
 						PopUpManager.centerPopUp(popAbout);
 						break;
 					case "export_xml":
-						if(this.rightTabNav.selectedChild != lexicalEntryEditor)
-							this.iFrame.visible = false;
-						url = lexusService.getAbsoluteURL("XMLexport.zip?id="+operatingData.result.myResult.lexicon.id);
-						popExport = FileDownloadBox(PopUpManager.createPopUp(application as DisplayObject, FileDownloadBox, false));
-						popExport.parentModule = this;
-						popExport.theUrl = url;
-						popExport.filename = operatingData.result.myResult.lexicon.name + ".zip";
-						PopUpManager.centerPopUp(popExport);
-						popExport.start();
+						prepareExportXML();
 						break; 
 					case "export_pdf":
 						if(this.rightTabNav.selectedChild != lexicalEntryEditor)
@@ -1878,6 +1883,44 @@
 				}
 				return handled;
 			}
+			
+			
+			private function fetchValidExports():Array{
+				
+				var valexp:Array = new Array();
+				if (this.operatingData.result.myResult.lexicon.template.export != null)
+				{	for each (var exp in operatingData.result.myResult.lexicon.template.export)
+					{if (exp.valid)
+						valexp.push(exp);
+					} 
+				}
+				return valexp;
+			}
+			
+			private function prepareExportXML():void{
+					var validExports = fetchValidExports();
+					var pop:ExportDetail = ExportDetail(PopUpManager.createPopUp(application as DisplayObject,ExportDetail,true));
+						
+						pop.exports = new ArrayCollection(validExports);
+						pop.lexiconId = operatingData.result.myResult.lexicon.id;
+						pop.lexiconName = operatingData.result.myResult.lexicon.name;
+						//pop.addEventListener("export",);
+						PopUpManager.centerPopUp(pop);
+				}
+		
+
+			private function onJSONLoadExportFormats(event:ResultEvent):void
+			{
+				if (event.result != "") 
+				{LexusUtil.parseJSON(String(event.result),
+					function(data:Object):void {
+						if (data !=null)
+							if (data.exports != null)
+								  exports = data.exports;
+					}
+				);   
+			}}
+			
 			
 			
 			/* Save unsaved data, called from menu event handler or keyboard handler */
@@ -1967,16 +2010,45 @@
 							case "externalURL":
 								ExternalInterface.call( "window.open", dataElement.multimedia.url);
 								break;
+							case "entry-link":
+								showReferenceDetails(evt, dataElement);		
+								break;
 						}
 					}
 				}
 			} 
 			
+			private function showReferenceDetails(event:MouseEvent, dataElm:Object):void{
+				//The window is opened in modal mode since the frame is included. At this moment no multiple windows can be opened
+				var popUp:LexicalEntryDetail = LexicalEntryDetail(PopUpManager.createPopUp((FlexGlobals.topLevelApplication as UIComponent),LexicalEntryDetail,true));
+				popUp.width = 0.9 * this.parentApplication.width;
+				popUp.height = 0.9 * this.parentApplication.height;
+				popUp.setStyle("borderAlpha", 1.0);
+				popUp.crossRefElementID = dataElm.multimedia.value;
+				popUp.entryId = dataElm.multimedia.id;
+				popUp.parentGrid = this.dgList;
+				popUp.addEventListener( "complete", this.attachComplete);
+				popUp.x = this.parentApplication.width * 0.05;
+				popUp.y = this.parentApplication.height * 0.05;
+				
+			}
+			
+			private function attachComplete( event:ReferenceAttachCompleteEvent):void{
+				
+				LexusUtil.showWait(this, "Loading lexical entry data");					
+				var param:Object = new Object();
+				param.id = event.referenceId;
+				param.lexicon = operatingData.result.myResult.lexicon.id;
+				this.lexusService.send("LexusLexicalEntryEditor/getLexicalEntryData.json", param, this.name, onLexicalEntryReload);
+				dgList.setFocus();
+			}
+			
 			private function importResource():void{
 				var popImport:ImportResourceWindow = ImportResourceWindow(PopUpManager.createPopUp(application as DisplayObject, ImportResourceWindow,true));
 				popImport.sessionId = this.operatingData.result.sessionID;
 				popImport.source = this.currentSelectedWidget.id;
-				popImport.addEventListener( "complete", this.importResourceComplete);
+				popImport.operatingData = operatingData;
+				popImport.schemaIndex = schemaIndex;popImport.addEventListener( "complete", this.importResourceComplete);
 				PopUpManager.centerPopUp(popImport);
 				return;		
 			}
@@ -1985,11 +2057,17 @@
 			private function importResourceComplete( event:ImportCompleteEvent):void{
 				
 				var multiMedia:Object = new Object();
-				multiMedia.type="upload";
+				if (event.archive == "lexicon")
+					multiMedia.type="entry-link";
+				else
+				{   multiMedia.type="upload";
+					multiMedia.url = event.url;}
+				
 				multiMedia.archive = event.archive;
 				multiMedia.value = event.resourceId;
+				multiMedia.referenceId = event.referenceId;
 				multiMedia.fragmentIdentifier = event.fragmentIdentifier;
-				multiMedia.url = event.url;
+				//multiMedia.url = event.url;
 				this.instanceDataElements[event.source].multimedia = multiMedia;
 				this.displayMultiMedia( this.instanceDataElements[event.source].multimedia, this.instanceDataElements[event.source].value, this.operatingData.result.myResult.lexicon.writable);
 				this.markLexicalEntrySavePoint();
@@ -2518,7 +2596,8 @@
 											</mx:Panel>
 											<mx:Image id="removeElementButton" verticalAlign="bottom" bottom="2"
 													  source="{application.removeIcon}"
-													  click="removeLIU(event)"/>
+													  click="removeLIU(event)"
+													  toolTip="Remove element"/>
 										</mx:HBox>
 									</mx:Panel>
 								</mx:ViewStack>
@@ -2553,7 +2632,7 @@
 										<mx:Canvas id="editor" width="100%" height="80%"
 												   verticalScrollPolicy="auto"/>
 										<mx:TabNavigator id="propertyTabs" width="100%" height="20%" creationPolicy="all">
-											<mx:Canvas id="multimediaTab" label="Multimedia"
+											<mx:Canvas id="attachmentTab" label="Attachment"
 													   width="100%" height="100%">
 												<mx:Panel id="mediaPanel" title="{mediaLabel}" height="75%"
 														  width="75%" horizontalAlign="center" paddingTop="10"
@@ -2610,7 +2689,7 @@
 																   click="importResource()"/>
 													</mx:HBox>
 												</mx:Panel>
-												<mx:Panel id="uploadPanel" title="File upload"
+												<mx:Panel id="uploadPanel" title="Attach multimedia or reference link"
 														  height="75%" width="75%" horizontalAlign="center"
 														  paddingTop="10" paddingLeft="10" paddingRight="10"
 														  paddingBottom="10" visible="false">
@@ -2623,11 +2702,11 @@
 																   />
 													</mx:VBox>
 												</mx:Panel>
-												<mx:Panel id="importPanel" title="File upload"
+												<mx:Panel id="importPanel" title="Attach multimedia or reference link"
 														  height="75%" width="75%" horizontalAlign="center"
 														  paddingTop="10" paddingLeft="10" paddingRight="10"
 														  paddingBottom="10" visible="false">
-													<mx:Button id="importMM_button4" label="Import"
+													<mx:Button id="importMM_button4" label="Set"
 															   click="importResource()"/>
 												</mx:Panel>
 												<mx:HBox id="urlPanel" height="75%" width="75%"
