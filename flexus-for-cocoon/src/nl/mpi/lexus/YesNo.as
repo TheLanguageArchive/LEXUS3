@@ -1,7 +1,7 @@
 package nl.mpi.lexus
 {
 	import mx.controls.Alert;
-
+	import mx.utils.StringUtil;
     public class YesNo 
     {
     	
@@ -112,5 +112,24 @@ package nl.mpi.lexus
         public static function stop(message:String):void {
         	YesNo.ok(message, "Stop", stopIcon);
         }
+		
+		/**
+		 * Alert with Confirmation box
+		 **/
+		public static function confirmProceed(message:String, closeHandler:Function, restrictions:Array):void {
+			
+			var combinedMessage:String="";
+			for each (var item in restrictions)
+			combinedMessage = combinedMessage.concat( item.cause.toUpperCase(), item.message); 
+			
+				 combinedMessage = combinedMessage.concat(message);	 
+			YesNo.yesno(combinedMessage, "Confirm", closeHandler, stopIcon);		 
+				/*if (type =="error") 
+				YesNo.yesno(message, "Proceed", closeHandler, stopIcon);
+			else
+				YesNo.yesno(message, "Proceed", closeHandler, warningIcon);		
+		*/
+				}
+		
     }
 }
