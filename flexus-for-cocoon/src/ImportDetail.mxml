@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+				title="Specify import details"
+				showCloseButton="true"
+				creationComplete="init()"
+				close="PopUpManager.removePopUp(this);" width="462" height="340">
+	
+	
+	<mx:Metadata>
+		
+		[Event(name="updateLexicon", type="flash.event.Event")]
+		
+	</mx:Metadata>
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.core.FlexGlobals;
+			import mx.events.ValidationResultEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			import nl.mpi.lexus.LexusUtil;
+			import nl.mpi.lexus.YesNo;
+			import nl.mpi.lexus.service.LexusService;
+			
+			[Bindable][Embed(source="../assets/images/iconza_24x24/warning_24x24.png")] private var warnIcon:Class;
+
+			[Bindable]
+			private var application:Object = FlexGlobals.topLevelApplication;
+			
+			[Bindable]
+			private var _imports:ArrayCollection;
+		
+			private var _sessionId:String;
+			
+			// Define public setter. 
+
+			
+			public function get sessionId():String
+			{
+				return _sessionId;
+			}
+
+			public function set sessionId(value:String):void
+			{
+				_sessionId = value;
+			}
+
+			public function get imports():ArrayCollection {
+				return _imports;
+			}
+			
+			// Define public setter. 
+			public function set imports(value:ArrayCollection):void {
+				
+				_imports = value;
+				var dfault:Object = new Object();
+				dfault.name = "Lexus XML";
+				dfault.description = "The default XML import format for Lexus";
+				dfault.format ="Lexus3XML";
+				if (_imports[0].name != dfault.name)
+					_imports.addItemAt(dfault,0);
+				import_formats.selectedItem=_imports[0];
+				updatImportFormatDescription();
+					
+				
+			}
+			
+			
+			/**
+			 * Attempts to store the lexicon to the server. The (succesfull) response is forwarded to onSaveResult
+			 **/ 
+			private function imprt():void {
+						
+					
+						if (import_formats.selectedItem != null){
+							if (import_formats.selectedItem.format != null){
+								
+								var lexusService:LexusService = new LexusService();
+							//	lexusService.send("LexusWorkspaceEditor/transformImport.json",import_formats.selectedItem.id, "workspace", onSaveResult);
+							//	url = lexusService.getAbsoluteURL("XMLexport.zip?id="+lexiconId+"&format="+export_formats.selectedItem.format);
+								var popZIPImport:ImportLexusXMLZips = ImportLexusXMLZips(PopUpManager.createPopUp(application as DisplayObject,ImportLexusXMLZips,true));
+								popZIPImport.sessionId = sessionId;
+								popZIPImport.importFormat = import_formats.selectedItem.format;
+								popZIPImport.addEventListener("new", this.parentDocument.modules.workspace.handleLexiconImport);
+								popZIPImport.addEventListener("finish", this.parentDocument.modules.workspace.handleLexiconImportFinished);
+								PopUpManager.removePopUp(this);
+								PopUpManager.centerPopUp(popZIPImport);
+								
+								//popZIPImport.start();
+								
+							}			
+					
+					
+				}}
+				
+				
+				
+			/**
+			 * Callback method for the server lexicon save response. A new Event is dispatched to signal creation of a new lexicon.
+			 * 
+			 **/ 
+			private function onSaveResult(event:ResultEvent):void {
+			/*	LexusUtil.parseJSON(String(event.result),
+					function(data:Object):void {  
+						lexicon = data.result.lexicon;
+						var evnt:Event = new Event("updateLexicon");
+						dispatchEvent(evnt); 
+						removeMe();
+					}
+				);*/
+			}
+			
+			private function removeMe():void {
+				PopUpManager.removePopUp(this);
+			}
+			
+			/**
+			 * Key event handler for the save button.If enter is pressed the lexicon is propogated to the server
+			 **/ 
+			private function onKeyUpSave(event:KeyboardEvent):void{
+				//Enter pressed
+				if( event.keyCode == 13)
+					this.imprt();
+				
+			}
+			/**
+			 * Key event handler for the cancel button
+			 **/ 
+			private function onKeyUpCancel(event:KeyboardEvent):void{
+				//Enter pressed
+				if( event.keyCode == 13)
+					PopUpManager.removePopUp(this);
+			}
+			/**
+			 *  Event listener for the valid and invalid events.
+			 **/ 
+			private function handleValid(eventObj:ValidationResultEvent):void {
+				if(eventObj.type==ValidationResultEvent.VALID)    
+					// Enable saveBtn button.
+					importBtn.enabled = true;
+				else
+					importBtn.enabled = false;
+			}
+			
+			private function updatImportFormatDescription():void
+			{
+				if (imports != null)
+					import_format_description.text =  import_formats.selectedItem.description;
+				   	description_label.visible = true;
+					importBtn.enabled = true;
+					
+			}
+			
+			
+		]]>
+	</mx:Script>
+	<mx:Canvas width="100%">
+		<mx:Grid width="100%" height="100%">
+			<mx:GridRow width="100%">
+				<mx:GridItem>
+					<mx:Label text="Import Formats: "/>
+				</mx:GridItem>
+				<mx:GridItem width="100%">
+					<mx:ComboBox id="import_formats" dataProvider="{_imports}" width="100%"
+								 labelField="name" change="updatImportFormatDescription()" />
+				</mx:GridItem>
+				
+			</mx:GridRow>
+			<mx:GridRow width="100%">
+				<mx:GridItem>
+					<mx:Label id="description_label" text="Description: " visible="false" />
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:Label id="import_format_description" text=""/>
+				</mx:GridItem>
+				
+			</mx:GridRow>
+			
+			
+		</mx:Grid>
+		
+		
+		
+	</mx:Canvas>
+	
+	<mx:ControlBar horizontalAlign="right" width="100%">
+		<mx:Button id="importBtn" label="Import" click="imprt();" keyUp="onKeyUpSave(event)" enabled="false"/>
+		<mx:Button id="cancelBtn" label="Cancel" click="PopUpManager.removePopUp(this);"  keyUp="onKeyUpCancel(event)" enabled="true"/>
+	</mx:ControlBar>
+</mx:TitleWindow>
