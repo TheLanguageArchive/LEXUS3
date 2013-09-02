@@ -47,17 +47,60 @@
 
     <xsl:template match="json">
         <lexus:get-schema>
-            <id><xsl:value-of select="parameters/viewId"/></id>
+            <id>
+                <xsl:value-of select="parameters/viewId"/>
+            </id>
         </lexus:get-schema>
         <lexus:save-schema id="{parameters/viewId}">
             <xsl:apply-templates select="parameters/schema"/>
         </lexus:save-schema>
+        <lexus:save-template id="{parameters/viewId}">
+            <xsl:apply-templates select="parameters/template" mode="template"/>
+        </lexus:save-template>
+
         <lexus:delete-lexical-entries-deleted-from-schema lexicon="{parameters/viewId}">
             <xsl:apply-templates select="parameters/schema"/>
         </lexus:delete-lexical-entries-deleted-from-schema>
-        <lexus:update-lexicon-for-updated-schema lexicon="{parameters/viewId}" user-id="{/data/user/@id}">
+        <lexus:update-lexicon-for-updated-schema lexicon="{parameters/viewId}"
+            user-id="{/data/user/@id}">
             <xsl:apply-templates select="parameters/schema"/>
         </lexus:update-lexicon-for-updated-schema>
+    </xsl:template>
+
+
+
+   <xsl:template match="text()" mode="template"/>
+
+    <xsl:template match="@*|*" mode="template">
+	<xsl:copy>
+		<xsl:apply-templates select="@*|node()" mode="#current"/>
+	</xsl:copy>
+    </xsl:template>
+    
+
+    <xsl:template match="template" mode="template">
+	<xsl:copy>
+		<xsl:apply-templates select="@*" mode="#current"/>
+		<xsl:apply-templates select="* except export" mode="#current"/>
+		<xsl:apply-templates select="export" mode="#current"/>
+	</xsl:copy>
+    </xsl:template>
+
+    <xsl:template match="template/*" mode="template" >
+	<xsl:attribute name="{name()}">
+		<xsl:value-of select="."/>
+	</xsl:attribute>
+    </xsl:template>
+    
+
+    <xsl:template match="export[exists(export)]" mode="template" priority="1">
+	<xsl:apply-templates select="@*|node()" mode="#current"/>
+    </xsl:template>
+
+    <xsl:template match="*[exists(parent::export)][empty(self::export)]" mode="template">
+	<xsl:attribute name="{name()}">
+		<xsl:value-of select="."/>
+	</xsl:attribute>
     </xsl:template>
 
     <xsl:template match="schema">
@@ -81,9 +124,11 @@
             <container id="{id}" description="{description}" name="{name}" type="{$type}"
                 mandatory="{if (number(min) gt 0) then 'true' else 'false'}"
                 multiple="{if (number(max) eq 1) then 'false' else 'true'}" note="{note}"
+                src="{src}"
                 admin-info="{adminInfo}">
                 <xsl:apply-templates select="sortOrder"/>
                 <xsl:apply-templates select="children/children"/>
+                <xsl:apply-templates select="editor" mode="editor"/>
             </container>
         </schema>
     </xsl:template>
@@ -107,11 +152,13 @@
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
-        <container id="{$id}" description="{description}" name="{name}" type="{$type}" 
+        <container id="{$id}" description="{description}" name="{name}" type="{$type}"
             mandatory="{if (number(min) gt 0) then 'true' else 'false'}"
             multiple="{if (number(max) eq 1) then 'false' else 'true'}" note="{note}"
+            src="{src}"
             admin-info="{adminInfo}">
             <xsl:apply-templates select="sortOrder"/>
+            <xsl:apply-templates select="editor" mode="editor"/>
             <xsl:choose>
                 <xsl:when test="children/children">
                     <xsl:apply-templates select="children/children"/>
@@ -140,9 +187,34 @@
     <xsl:template match="sortOrder[not(id)]"/>
     <xsl:template match="sortOrder[data(id) eq 'null']"/>
     <xsl:template match="sortOrder[starts-with(id, 'uuid')]">
-        <xsl:attribute name="sort-order" select="id"/>    
+        <xsl:attribute name="sort-order" select="id"/>
     </xsl:template>
-    
+
+    <xsl:template match="text()" mode="editor"/>
+    <xsl:template match="@*|*" mode="editor">
+        <xsl:copy>
+            <xsl:apply-templates select="@*|node()" mode="#current"/>
+        </xsl:copy>
+    </xsl:template>
+    <xsl:template match="restriction[exists(restriction)]" mode="editor">
+        <xsl:apply-templates select="@*|node()" mode="#current"/>
+    </xsl:template>
+    <xsl:template match="exports|scope" mode="editor">
+        <xsl:attribute name="{name()}">
+            <xsl:value-of select="."/>
+        </xsl:attribute>
+    </xsl:template>
+    <xsl:template match="action[exists(action)]" mode="editor">
+        <xsl:apply-templates select="@*|node()" mode="#current"/>
+    </xsl:template>
+    <xsl:template match="action/action" mode="editor">
+        <xsl:element name="{type}">
+            <xsl:element name="{cause}">
+                <xsl:value-of select="message"/>
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
     <xsl:template match="valuedomain/valuedomain" priority="1">
         <domainvalue>
             <xsl:if test="value/text() ne 'null'">
