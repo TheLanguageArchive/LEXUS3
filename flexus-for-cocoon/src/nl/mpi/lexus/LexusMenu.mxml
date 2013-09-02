@@ -77,7 +77,7 @@
 	        	<menuitem id="menuSave" label="Save" eventName="save"/>
 				<!-- <menuitem id="import_shbx" label="Import Toolbox" enabled="true" eventName="import_shbx"/> -->
 				<menuitem id="convert_toolbox" label="Convert Toolbox files to Lexus" enabled="true" eventName="convert_toolbox"/>
-				<menuitem id="import_xml" label="Import Lexus XML" enabled="true" eventName="import_xml"/>
+				<menuitem id="import_xml" label="Import To Lexus" enabled="true" eventName="import_xml"/>
 				<menuitem id="export_pdf" label="Export to PDF (alpha)" enabled="true" eventName="export_pdf"/>
 				<menuitem id="export_xml" label="Export to XML" enabled="true" eventName="export_xml"/>
 				<menuitem id="export_all_xml" label="Export everything as XML" enabled="true" eventName="export_all_xml"/>
