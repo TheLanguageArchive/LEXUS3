@@ -14,6 +14,20 @@
 		</string>
 		<string key="description"><xsl:value-of select="@description"/> 
 		</string>
+		<xsl:if test="lexus:export">
+			<array key="export">
+				<xsl:apply-templates select="lexus:export" mode="template"/>
+    		</array>
+    	</xsl:if>    
      </object>
      </xsl:template>
+     <xsl:template match="lexus:export" mode="template">	
+	 <object>	
+		<string key="id"><xsl:value-of select="@id"/></string>
+		<string key="name"><xsl:value-of select="@name"/></string>
+		<string key="description"><xsl:value-of select="@description"/></string>
+	</object>
+	</xsl:template>
+     
+     
 </xsl:stylesheet>

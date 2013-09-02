@@ -156,8 +156,12 @@
                         <name>
                             <xsl:value-of select="json/parameters/name"/>
                         </name>
-                        <template>
-                        	<xsl:value-of select="$template/@id"></xsl:value-of>
+                        <template name="{$template/@id}">
+                        	<xsl:for-each select="$template/lexus:export">
+    							<export name="{@name}" id ="{@id}"  description="{@description}" valid="true">
+    							</export>                    	
+                        	</xsl:for-each>
+                        		
                         </template>
                         <description>
                             <xsl:value-of select="json/parameters/description"/>
