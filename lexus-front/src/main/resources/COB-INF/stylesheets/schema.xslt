@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="xs" version="2.0">
-
-
     <!-- 
             Transform this:
             <schema>
@@ -30,17 +28,107 @@
             "DCR": "user defined",
             "name": "Example free trans. (E)",
             "note": null
+            "src": "tamplate"
             },
-        -->
+    
+    and this: <editor>
+        <restriction exports="relish-ll-lmf-1_0-relish-lmf" type="container">
+            <update>
+                <warning>Updating this container will make it a lexicon specific extension of the
+                    LMF model.</warning>
+            </update>
+        </restriction>
+        <restriction exports="relish-ll-lmf-1_0-relish-ll-lmf" type="container">
+            <create>
+                <warning>Creating a container will disable the RELISH-LL-LMF export for this
+                    lexicon.</warning>
+            </create>
+            <update>
+                <warning>Updating this container will disable the RELISH-LL-LMF export for this
+                    lexicon.</warning>
+            </update>
+            <delete>
+                <warning>Deleting this container will disable the RELISH-LL-LMF export for this
+                    lexicon.</warning>
+            </delete>
+        </restriction>
+        <restriction exports="relish-ll-lmf-1_0-relish-ll-lmf" type="data">
+            <update>
+                <warning>Updating this data category will disable the RELISH-LL-LMF export for this
+                    lexicon.</warning>
+            </update>
+            <delete>
+                <warning>Deleting this data category will disable the RELISH-LL-LMF export for this
+                    lexicon.</warning>
+            </delete>
+        </restriction>
+    </editor> 
+    
+    to this :
+    
+    {
+    "editor": {
+    "restriction": [
+    {
+    "-exports": "relish-ll-lmf-1_0-relish-lmf",
+    "-scope": "container",
+    "action":[
+    {"update": {
+    "warning": "Updating this container will make it a lexicon specific extension
+    of the LMF model."
+    }}]
+    },
+    {
+    "-exports": "relish-ll-lmf-1_0-relish-ll-lmf",
+    "-scope": "container",
+    "action":[
+    {
+    "create": {
+    "warning": "Creating a container will disable the RELISH-LL-LMF export for this
+    lexicon."
+    },
+    "update": {
+    "warning": "Updating this container will disable the RELISH-LL-LMF export for
+    this lexicon."
+    },
+    "delete": {
+    "warning": "Deleting this container will disable the RELISH-LL-LMF export for
+    this lexicon."
+    }}]
+    },
+    {
+    "-exports": "relish-ll-lmf-1_0-relish-ll-lmf",
+    "-scope": "data",
+    "action":[
+    {
+    "update": {
+    "warning": "Updating this data category will disable the RELISH-LL-LMF export for
+    this lexicon."
+    },
+    "delete": {
+    "warning": "Deleting this data category will disable the RELISH-LL-LMF export for
+    this lexicon."
+    }}]
+    }
+    ]
+    }
+    }
+    -->
+
     <xsl:template match="schema">
         <xsl:param name="tree" select="'true'"/>
         <xsl:choose>
             <xsl:when test="$tree eq 'true'">
                 <!-- Generate the tree schema with the name 'schema' -->
                 <object key="schema">
-                    <xsl:apply-templates select="container">
-                        <xsl:with-param name="tree" select="$tree"/>
-                    </xsl:apply-templates>
+                    <xsl:if test="container">
+                        <xsl:apply-templates select="container">
+                            <xsl:with-param name="tree" select="$tree"/>
+                        </xsl:apply-templates>
+                    </xsl:if>
+                    
+              
+                    
                 </object>
             </xsl:when>
             <xsl:otherwise>
@@ -53,7 +141,6 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
-
     <!-- 
             {
             "min": 1,
@@ -64,7 +151,8 @@
             "name": "lexicon",
             "parent": null,
             "type": "Lexicon",
-            "note": null
+            "note": null,
+            "src": template
             }
         -->
     <xsl:template match="container[@type='lexicon']" priority="10">
@@ -89,24 +177,33 @@
         <string key="id">
             <xsl:value-of select="@id"/>
         </string>
+        <xsl:if test="editor">
+            <object key="editor">
+                <array key="restriction">
+                    <xsl:apply-templates select="editor/restriction">
+                        <xsl:with-param name="tree" select="$tree"/>
+                    </xsl:apply-templates>
+                </array>
+            </object>
+        </xsl:if>    
         <number key="min">
-        	<xsl:choose>
-            	<xsl:when test="@mandatory eq 'true'">
-                	<xsl:text>1</xsl:text>
+            <xsl:choose>
+                <xsl:when test="@mandatory eq 'true'">
+                    <xsl:text>1</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
-                	<xsl:text>0</xsl:text>
+                    <xsl:text>0</xsl:text>
                 </xsl:otherwise>
             </xsl:choose>
         </number>
         <xsl:choose>
-        	<xsl:when test="@multiple eq 'false'">
-            	<number key="max">
-                	<xsl:text>1</xsl:text>
+            <xsl:when test="@multiple eq 'false'">
+                <number key="max">
+                    <xsl:text>1</xsl:text>
                 </number>
             </xsl:when>
-         	<xsl:otherwise>
-            	<null key="max"/>
+            <xsl:otherwise>
+                <null key="max"/>
             </xsl:otherwise>
         </xsl:choose>
         <string key="adminInfo">
@@ -119,18 +216,19 @@
         <string key="name">lexicon</string>
         <null key="parent"/>
         <string key="note">
-                <xsl:value-of select="@note"/>
+            <xsl:value-of select="@note"/>
         </string>
+        <string key="src">template</string>
+        
         <xsl:if test="container and $tree eq 'true'">
             <array key="children">
                 <xsl:apply-templates select="container">
                     <xsl:with-param name="tree" select="$tree"/>
                 </xsl:apply-templates>
             </array>
+            
         </xsl:if>
-
     </xsl:template>
-
     <!-- 
             {
             "min": 1,
@@ -141,7 +239,8 @@
             "name": "lexiconInformation",
             "parent": "MmM5MDkwYzEwOWZkM2U0ZDAxMDlmZDNmNDc2ZDAwMDY=",
             "type": "component",
-            "note": null
+            "note": null,
+            "src":"template"
             }
         -->
     <!--<xsl:template match="container[@type='lexicon-information']" priority="10">
@@ -170,7 +269,6 @@
             </xsl:if>
         </object>
     </xsl:template>-->
-
     <!-- 
             {
             "min": 0,
@@ -181,34 +279,44 @@
             "name": "lexicalEntry",
             "parent": "MmM5MDkwYzEwOWZkM2U0ZDAxMDlmZDNmNDc2ZDAwMDY=",
             "type": "LexicalEntry",
-            "note": null
+            "note": null,
+            "src":"template"
             }-->
     <xsl:template match="container[@type='lexical-entry']" priority="10">
         <xsl:param name="tree"/>
         <object>
+            <xsl:if test="editor">
+                <object key="editor">
+                    <array key="restriction">
+                        <xsl:apply-templates select="editor/restriction">
+                            <xsl:with-param name="tree" select="$tree"/>
+                        </xsl:apply-templates>
+                    </array>
+                </object>
+            </xsl:if>
             <string key="id">
                 <xsl:value-of select="@id"/>
             </string>
-	        <number key="min">
-	        	<xsl:choose>
-	            	<xsl:when test="@mandatory eq 'true'">
-	                	<xsl:text>1</xsl:text>
-	                </xsl:when>
-	                <xsl:otherwise>
-	                	<xsl:text>0</xsl:text>
-	                </xsl:otherwise>
-	            </xsl:choose>
-	        </number>
-	        <xsl:choose>
-	        	<xsl:when test="@multiple eq 'false'">
-	            	<number key="max">
-	                	<xsl:text>1</xsl:text>
-	                </number>
-	            </xsl:when>
-	         	<xsl:otherwise>
-	            	<null key="max"/>
-	            </xsl:otherwise>
-	        </xsl:choose>
+            <number key="min">
+                <xsl:choose>
+                    <xsl:when test="@mandatory eq 'true'">
+                        <xsl:text>1</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>0</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </number>
+            <xsl:choose>
+                <xsl:when test="@multiple eq 'false'">
+                    <number key="max">
+                        <xsl:text>1</xsl:text>
+                    </number>
+                </xsl:when>
+                <xsl:otherwise>
+                    <null key="max"/>
+                </xsl:otherwise>
+            </xsl:choose>
             <string key="adminInfo">
                 <xsl:value-of select="@admin-info"/>
             </string>
@@ -223,6 +331,8 @@
             <string key="note">
                 <xsl:value-of select="@note"/>
             </string>
+            <string key="src">template</string>
+            
             <xsl:if test="container and $tree eq 'true'">
                 <array key="children">
                     <xsl:apply-templates select="container">
@@ -232,7 +342,106 @@
             </xsl:if>
         </object>
     </xsl:template>
+    <xsl:template match="editor/restriction" priority="10">
+        <xsl:param name="tree"/>
+        <object>
+         	<string key="exports">
+                <xsl:value-of select="@exports"/>
+            </string>
+            <string key="scope">
+                <xsl:value-of select="@scope"/>
 
+            </string>
+            <array key="action">
+           
+	            <xsl:apply-templates select="update"/>
+	            <xsl:apply-templates select="create"/>
+	            <xsl:apply-templates select="delete"/>
+          
+            </array>
+        </object>
+    </xsl:template>
+	<xsl:template match="update">
+		<xsl:element name="object">
+			<xsl:element name="string">
+				<xsl:attribute name="key" select="'type'" />
+				<xsl:text>update</xsl:text>
+			</xsl:element>
+			<xsl:if test="warning">
+				<xsl:element name="string">
+					<xsl:attribute name="key" select="'cause'" />
+					<xsl:text>warning</xsl:text>
+				</xsl:element>
+				<xsl:element name="string">
+					<xsl:attribute name="key" select="'message'" />
+					<xsl:value-of select="warning" />
+				</xsl:element>
+
+			</xsl:if>
+			<xsl:if test="info">
+				<xsl:element name="string">
+					<xsl:attribute name="key" select="'cause'" />
+					<xsl:text>info</xsl:text>
+				</xsl:element>
+				<xsl:element name="string">
+					<xsl:attribute name="key" select="'message'" />
+					<xsl:value-of select="info" />
+				</xsl:element>
+
+			</xsl:if>
+
+
+			<!-- <object > -->
+			<!-- <string key="type">update</string> -->
+			<!-- <xsl:if test="warning"> -->
+			<!-- <string key="cause">warning</string> -->
+			<!-- <xsl:element name="string" > -->
+			<!-- <xsl:attribute name="key" value="message"/> -->
+			<!-- <xsl:value-of select="."/> -->
+			<!-- </xsl:element> -->
+
+			<!-- </xsl:if> -->
+			<!-- <xsl:if test="info"> -->
+			<!-- <string key="cause">info</string> -->
+			<!-- <string key="message"> -->
+			<!-- <xsl:value-of select="."/> -->
+			<!-- </string> -->
+			<!-- </xsl:if> -->
+
+		</xsl:element>
+	</xsl:template>
+    <xsl:template match="create">
+       
+        <object >
+           <string key="type">create</string>
+         <xsl:if test="warning">
+                <string key="cause">warning</string>
+                <string key="message"><xsl:value-of select="warning"/></string>
+                
+            </xsl:if>
+            <xsl:if test="info">
+             <string key="cause">info</string>
+                <string key="message"><xsl:value-of select="info"/></string>
+            </xsl:if>
+
+        </object>
+    </xsl:template>
+    <xsl:template match="delete">
+        
+        <object >
+	       <string key="type">delete</string>
+          <xsl:if test="warning">
+                <string key="cause">warning</string>
+                <string key="message"><xsl:value-of select="warning"/></string>
+                
+            </xsl:if>
+            <xsl:if test="info">
+             <string key="cause">info</string>
+                <string key="message"><xsl:value-of select="info"/></string>
+            </xsl:if>
+
+        </object>
+    </xsl:template>
     <!-- 
             {
             "min": 0,
@@ -240,19 +449,29 @@
             "sortOrder": null,
             "parent": "MmM5MDk5ODQyNzFlMDBkYjAxMjcxZTAxN2VjNDAwNDA=",
             "DCRReference": "xe",
-            "type": "data category",
+            "scope": "data category",
             "id": "MmM5MDk5ODQyNzFlMDBkYjAxMjcxZTAxN2VjNDAwNDI=",
             "adminInfo": null,
             "valuedomain": [],
             "description": "This provides the English translation of the example sentence given in the \\xv field.",
             "DCR": "user defined",
             "name": "Example free trans. (E)",
-            "note": null
+            "note": null,
+            "src":"template"
             }
         -->
     <xsl:template match="container[@type eq 'data']" priority="10">
         <xsl:param name="tree"/>
         <object>
+            <xsl:if test="editor">
+                <object key="editor">
+                    <array key="restriction">
+                        <xsl:apply-templates select="editor/restriction">
+                            <xsl:with-param name="tree" select="$tree"/>
+                        </xsl:apply-templates>
+                    </array>
+                </object>
+            </xsl:if>
             <string key="id">
                 <xsl:value-of select="@id"/>
             </string>
@@ -324,12 +543,12 @@
             <string key="note">
                 <xsl:value-of select="@note"/>
             </string>
+            <string key="src">template</string>
             <array key="valuedomain">
                 <xsl:apply-templates select="valuedomain/domainvalue"/>
             </array>
         </object>
     </xsl:template>
-
     <xsl:template match="domainvalue">
         <object>
             <string key="value">
@@ -337,10 +556,18 @@
             </string>
         </object>
     </xsl:template>
-
     <xsl:template match="container" priority="1">
         <xsl:param name="tree"/>
         <object>
+            <xsl:if test="editor">
+                <object key="editor">
+                    <array key="restriction">
+                        <xsl:apply-templates select="editor/restriction">
+                            <xsl:with-param name="tree" select="$tree"/>
+                        </xsl:apply-templates>
+                    </array>
+                </object>
+            </xsl:if>
             <string key="id">
                 <xsl:value-of select="@id"/>
             </string>
@@ -409,9 +636,11 @@
             <string key="adminInfo">
                 <xsl:value-of select="@admin-info"/>
             </string>
-			<string key="note">
+            <string key="note">
                 <xsl:value-of select="@note"/>
             </string>
+            <string key="src">template</string>
+            
             <array key="children">
                 <xsl:if test="$tree eq 'true' and container">
                     <xsl:apply-templates select="container">
@@ -421,6 +650,4 @@
             </array>
         </object>
     </xsl:template>
-
-
 </xsl:stylesheet>
