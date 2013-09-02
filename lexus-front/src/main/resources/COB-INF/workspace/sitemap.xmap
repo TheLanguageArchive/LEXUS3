@@ -250,9 +250,44 @@
             <map:match pattern="listTemplates">
             
                 <map:generate src="lexicon/templates.xml"/>
+            <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/listTemplates-load-2.xml"/>              
                    <map:transform type="saxon" src="lexicon/listTemplates.xslt"/>
                 <map:serialize type="xml"/>
             </map:match>
+   <!-- List ExportFormats 
+-->
+			<map:match pattern="listExportFormats.json">
+			    <map:aggregate element="data">
+				    <map:part src="lexicon/templates.xml"/>
+			    	<map:part src="cocoon://json"/> 
+                </map:aggregate>
+             <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/listExportFormats-load-1.xml"/>
+               <map:transform type="saxon" src="lexicon/listExportFormats.xslt"/>
+             <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/listExportFormats-load-2.xml"/>
+              
+                <map:serialize type="json"/>
+            </map:match>
+            
+     
+<!-- List ImportFormats 
+-->
+			<map:match pattern="listImportFormats.json">
+			    <map:aggregate element="data">
+				    <map:part src="lexicon/templates.xml"/>
+			    </map:aggregate>
+             <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/listImportFormats-load-1.xml"/>
+               <map:transform type="saxon" src="lexicon/listImportFormats.xslt"/>
+             <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/listImportFormats-load-2.xml"/>
+              
+                <map:serialize type="json"/>
+            </map:match>
+            
+            
 
 <!-- create lexicon with template processing
 -->
@@ -262,6 +297,8 @@
                     <map:part src="cocoon://json"/>
                     <map:part src="cocoon://user"/>
                 </map:aggregate>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-create-lexicon-0.xml"/>
                 <map:transform type="saxon" src="lexicon/prepareCreateLexicon.xslt">
                		 <map:parameter name="templateCatalog" value="templates.xml"/>
                 </map:transform>
@@ -379,11 +416,115 @@
             </map:handle-errors>
         </map:pipeline>
 
-
-        <map:pipeline type="noncaching">
+<map:pipeline type="noncaching">
 			<map:parameter name="expires" value="access plus 1 minutes"/>
 			<map:parameter name="outputBufferSize" value="0"/>
-
+			<map:match pattern="ImportLexusZip.xml">
+			   <map:aggregate element="data">
+	  			    <map:part src="cocoon://user"/>
+					<map:part src="cocoon://json"/> 
+                </map:aggregate>
+   
+			<map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/import-zip-pre.xml"/>             
+			<map:transform type="saxon" src="import/prepareImport.xslt">
+				<map:parameter name="format" value="{request-param:format}"/>
+				
+		   </map:transform>
+        <!--  <map:transform type="${tee}"
+                   src="{naming:java:comp/env/tee-folder}debug-info/import-0.xml"/> -->
+            <map:transform type="stx" src="import/add-lexicon-id.stx"/>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-1.xml"/>   
+                    
+                <map:transform type="stx" src="import/add-meta-and-ids.stx"/>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-2.xml"/>
+                <map:transform type="stx" src="import/add-fragment-create-lexicon.stx"/>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-3.xml"/>
+                 <map:transform type="servletServiceFragments">
+                    <map:parameter name="service" value="servlet:lexus-db:/workspace/createLexicon.xml"/>
+                </map:transform>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-4.xml"/>
+                <map:transform type="stx" src="import/add-fragments-save-lexical-entries.stx"/>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-5.xml"/>
+                
+                <map:transform type="servletServiceFragments">
+                    <map:parameter name="service" value="servlet:lexus-db:/lexicon/insertLexicalEntries.xml"/>
+                </map:transform>
+              
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-6.xml"/>
+                
+                <map:transform type="stx" src="import/add-fragment-add-standard-views.stx"/>
+                
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-7.xml"/>
+                
+                <map:transform type="servletServiceFragments">
+                    <map:parameter name="service" value="servlet:lexus-db:/lexicon/addStandardViews.xml"/>
+                </map:transform>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-8.xml"/>
+                    
+                <map:transform type="saxon" src="import/add-fragment-save-sort-order.xslt"/>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-9.xml"/>
+                                       
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:lexus-db:/workspace/saveSortOrder.xml"/>
+                </map:transform>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-10.xml"/>
+                <!-- Alternative XSLT to the STX 'add-fragment-replace-lexicon-information.stx'. 
+                     At this point of the import pipeline we want to search for the presence of the element 'lexicon-information' 
+                in the import document and act accordingly if it is not there. This is impossible according to my current STX 
+                understanding (descendant axis is not available in STXPath). Thus we use XSLT.
+				     This does not have any major performance impact since at this point of the pipeline the XML documents are 
+				already very small because the entries were already inserted in the DB. -->
+                
+                <map:transform type="saxon" src="import/add-fragment-replace-lexicon-information.xslt"/>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-11.xml"/>
+                
+                <map:transform type="servletServiceFragments">
+                    <map:parameter name="service" value="servlet:lexus-db:/lexicon/replaceLexiconInformation.xml"/>
+                </map:transform>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-12.xml"/>
+				
+                <map:transform type="saxon" src="import/STXreportOnZipImport.xslt">
+                    <map:parameter name="format" value="{request-param:fileId}"/>
+                </map:transform>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-13.xml"/>
+                    
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:lexus-db:/workspace/deleteLexicon.xml"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-14.xml"/>    
+           <map:serialize type="xml"/>
+           </map:match>
+  </map:pipeline>   
+  
+       	<map:pipeline type="noncaching">
+			<map:parameter name="expires" value="access plus 1 minutes"/>
+			<map:parameter name="outputBufferSize" value="0"/>
             <!--
                 Import a BIG Lexus XML lexicon.
                 -->
