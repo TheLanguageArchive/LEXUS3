@@ -198,7 +198,11 @@
             </xsl:apply-templates>
         </object>
     </xsl:template>
-
+	<xsl:template match="template">
+        <string key="template">
+            <xsl:value-of select="."/>
+        </string>
+    </xsl:template>
     <xsl:template match="startLetter">
         <string key="startLetter">
             <xsl:value-of select="."/>
