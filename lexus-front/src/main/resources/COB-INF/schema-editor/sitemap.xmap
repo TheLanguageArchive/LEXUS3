@@ -104,7 +104,7 @@
 
 
             <!-- 
-        Save schema data
+        Save schema and template data
       -->
             <map:match pattern="saveSchema.json">
                 <map:aggregate element="data">
@@ -122,6 +122,13 @@
                 <map:transform type="servletService">
                     <map:parameter name="service" value="servlet:lexus-db:/schema-editor/saveSchema.xml"/>
                 </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/save-schema-bf-template.xml"/>
+                
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:lexus-db:/schema-editor/saveTemplate.xml"/>
+                </map:transform>
+                
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/save-schema-3.xml"/>
                 <map:transform type="servletService">
