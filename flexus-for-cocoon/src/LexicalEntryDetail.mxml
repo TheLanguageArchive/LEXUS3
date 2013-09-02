@@ -14,6 +14,7 @@
 	
 	<mx:Script>
 		<![CDATA[
+			import mx.collections.ArrayCollection;
 			import mx.containers.Panel;
 			import mx.controls.Alert;
 			import mx.controls.DataGrid;
@@ -28,6 +29,7 @@
 			import nl.mpi.lexus.YesNo;
 			import nl.mpi.lexus.editor.Editor;
 			import nl.mpi.lexus.event.LexicalEntryChangeEvent;
+			import nl.mpi.lexus.event.ReferenceAttachCompleteEvent;
 			import nl.mpi.lexus.service.LexusService;
 			
 			[Bindable]
@@ -37,6 +39,19 @@
 			private var lexusService:LexusService = new LexusService();
 			private var editor:Editor = new Editor();
 			private var _parentGrid:DataGrid;
+			private var initiator:String;
+			
+			private var _crossRefElementID:String
+			
+			public function get crossRefElementID():String
+			{
+				return _crossRefElementID;
+			}
+			
+			public function set crossRefElementID(value:String):void
+			{
+				_crossRefElementID = value;
+			}
 			
 			
 			public function get parentGrid():DataGrid
@@ -52,7 +67,10 @@
 			public function set entryId(a_entryId:String):void{
 				var param:Object = new Object();
 				param.id = a_entryId;
+				initiator = this.parentDocument.modules.current ;
+				editor.crossRefElementID = crossRefElementID;
 				this.lexusService.send("LexusLexicalEntryEditor/loadLexicalEntry.json", param, this.name, this.onJSONLoad);
+				this.tabNav.selectedIndex = 1;
 			}
 			
 			/**
@@ -71,11 +89,16 @@
 						}
 						data.result.lexicalEntry.listView.value = transformListView(data.result.lexicalEntry.listView.value);
 						saveBtn.enabled = false;
-						if(_parentGrid != null){
-							_parentGrid.selectedItem.listView.value = data.result.lexicalEntry.listView.value;
-							_parentGrid.invalidateList();
-						}
+						
 						serverData = data;
+						
+						if (initiator != "lexicon_browser")
+						{		
+							if(_parentGrid != null){
+								_parentGrid.selectedItem.listView.value = data.result.lexicalEntry.listView.value;
+								_parentGrid.invalidateList();
+							}}
+					
 						if(tabNav.selectedChild == null)
 							tabNav.selectedChild = entryTab;
 						iFrame.source = serverData.result.lexicalEntry.entryView;
@@ -113,21 +136,26 @@
 				//txt = "<![CDATA[" + txt + "]]" + ">";
 				
 				//AAM:change name after save
-				if(this.saveBtn.enabled == true && !(listViewHTML.indexOf("(Modified!)  ") < 1 && listViewHTML.indexOf("(Modified!)  ") != -1))
+				if(this.saveBtn.enabled == true && !(listViewHTML.indexOf("(Modified!)  ") < 1 && listViewHTML.indexOf("(Modified!)  ") != -1) && (initiator != "lexicon_browser"))
 						
 					txt = "(Modified!)  "+ txt;
 				
 				return txt;
 			}
 			
+			public function markRef(schElmId:String):void{
+				this.editor.setRefStyle(schElmId);
+				}
 			
 			private function tabChanged(event:IndexChangedEvent):void{
+			
 				if( tabNav.selectedChild == entryTab)
 					iFrame.visible = true;
 				else if( tabNav.selectedChild == treeTab){
 					
 					iFrame.visible = false;
-					editor.initializeEditor( this.serverData.result.lexicalEntry, this.detailPanel, this.serverData.result.isEditable, 170);
+					if (this.serverData != null)
+						editor.initializeEditor( this.serverData.result.lexicalEntry, this.detailPanel, this.serverData.result.isEditable, 170);
 				}
 			}
 			
@@ -135,8 +163,13 @@
 				if( this.saveBtn.enabled) 
 					YesNo.confirmSave("There are unsaved modifications to the selected lexical entry! " +
 						"Do you want to save them?", saveEntryOnClose);
-				iFrame.visible= false;   	
+				iFrame.visible= false;   
+				_parentGrid.invalidateList();
+				if (initiator == "lexicon_browser" && this.tree.selectedItem != null)
+					{	var event:ReferenceAttachCompleteEvent = new ReferenceAttachCompleteEvent("complete",this.tree.selectedItem.id);
+						dispatchEvent(event);}
 				PopUpManager.removePopUp(this);
+			
 			}
 			
 			private function onMove(event:MoveEvent):void{
@@ -238,7 +271,7 @@
 				<mx:Canvas label="Details" id="treeTab" width="100%" height="100%">
 					<mx:HDividedBox width="100%" height="100%">
 						<mx:Panel width="25%" height="100%">
-							<mpi:AutoSizeTree id="tree" width="100%" height="100%" dataProvider="{this.serverData.result.lexicalEntry}" labelFunction="generateTreeLabel" iconFunction="getIcon" click="showValue()"/>	
+							<mpi:AutoSizeTree id="tree" width="100%" height="100%" dataProvider="{this.serverData.result.lexicalEntry}"  labelField="label" iconFunction="getIcon" click="showValue()"/>	
 						</mx:Panel>
 						<mx:Panel id="detailPanel" width="75%" height="100%">
 							<mx:Panel id="editorPanel" width="100%" height="100%"/>
