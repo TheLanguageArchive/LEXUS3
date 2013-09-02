@@ -131,7 +131,22 @@
             </map:handle-errors>
 
         </map:pipeline>
+       <map:pipeline>
+            <!-- 
+          Pipeline for authenticating a user
+          -->
+            <map:match pattern="lexus-testZip">
+                <map:generate type="request"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/testZip-pre.xml"/>
+                <map:transform type="saxon" src="testZip/main.xslt"/>
+                
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/testZip-post.xml"/>
+               <map:serialize type="xml"/>
+            </map:match>
 
+        </map:pipeline>
         <map:pipeline>
 
             <!-- 
@@ -479,8 +494,8 @@
 
             <map:match pattern="StagingFileHandler/uploadFile.json">
                 <map:generate src="cocoon:/StagingFileHandler/uploadFile.xml"/>
-                <!--<map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/front-upload-json-1.xml"/>-->
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-upload-json-1.xml"/>
                 <map:transform type="saxon" src="upload/upload-2-JSON.xslt"/>
                 <!--<map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-upload-json-2.xml"/>-->
