@@ -36,10 +36,22 @@ package nl.mpi.lexus.editor
 		private var editor:Container;
 		[Bindable]
 		private var entry:Object;
+		private var _crossRefElementID:String
 		
 		public function Editor()
 		{
 		}
+
+		public function get crossRefElementID():String
+		{
+			return _crossRefElementID;
+		}
+
+		public function set crossRefElementID(value:String):void
+		{
+			_crossRefElementID = value;
+		}
+
 		public function initializeEditor( object:Object, parentContainer:Container, isEditable:Boolean, colorLevel:int):void{
 			this.editor = parentContainer;
 			this.editor.removeAllChildren();
@@ -93,8 +105,14 @@ package nl.mpi.lexus.editor
             		var gridItem1:GridItem = new GridItem();
             		gridItem1.percentWidth=100;
             		var label:Label = new Label();
-            		label.text = object.label;
-            		gridItem1.addChild( label);
+            		label.text =  object.label ;
+            		if (object.id == this._crossRefElementID)
+					{		label.setStyle("color","#B40404");
+							label.setStyle("fontSize","15");
+							label.setStyle("fontWeight","bold")
+					}
+					
+					gridItem1.addChild( label);
 					/**
 					 *AAM: Icon handeling. 
 					 * Displays an icon at the end of the datacategory name, indicating the multimedia type
@@ -199,6 +217,11 @@ package nl.mpi.lexus.editor
 				this.dispatchEvent( new LexicalEntryChangeEvent("change", (valueObj as String)));
             }
             
+            public function setRefStyle(a_id:String):void{
+				var widget:UIComponent = this.editorWidgets[a_id];
+				if( editor.verticalScrollBar!=null && editor.verticalScrollBar.visible){
+					widget.setStyle("color", "#FF3324");
+				}}
             
             
             
