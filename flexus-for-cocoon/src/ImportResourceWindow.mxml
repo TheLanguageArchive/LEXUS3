@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
-    title="Import resource"
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" xmlns:mpi="nl.mpi.lexus.*"
+    title="Set resource"
     showCloseButton="true"
-    close="PopUpManager.removePopUp(this);"  width="600" height="360">
+    close="PopUpManager.removePopUp(this);"  width="1000" height="700">
 
 	<mx:Metadata>
        [Event(name="complete", type="nl.mpi.lexus.event.ImportCompleteEvent")]
@@ -11,34 +11,72 @@
 
     <mx:Script>
         <![CDATA[
-        	import com.adobe.serialization.json.JSON;
-        	
-        	import mx.events.ValidationResultEvent;
-        	import mx.managers.PopUpManager;
-        	import mx.rpc.events.ResultEvent;
-        	import mx.utils.StringUtil;
-        	
-        	import nl.mpi.lexus.LexusUtil;
-        	import nl.mpi.lexus.YesNo;
-        	import nl.mpi.lexus.event.ImportCompleteEvent;
-        	import nl.mpi.lexus.service.LexusService;          
-                    
-            
+			import com.adobe.serialization.json.JSON;
+			
+			import mx.collections.ArrayCollection;
+			import mx.collections.ICollectionView;
+			import mx.collections.IViewCursor;
+			import mx.core.FlexGlobals;
+			import mx.core.UIComponent;
+			import mx.events.IndexChangedEvent;
+			import mx.events.ListEvent;
+			import mx.events.ValidationResultEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			import mx.utils.ObjectProxy;
+			import mx.utils.StringUtil;
+			
+			import nl.mpi.lexus.LexiconTreeItemRenderer;
+			import nl.mpi.lexus.LexusUtil;
+			import nl.mpi.lexus.YesNo;
+			import nl.mpi.lexus.event.ImportCompleteEvent;
+			import nl.mpi.lexus.service.LexusService;
+			
+			private var lexusService:LexusService = new LexusService();
+			
+			private const LEXICAL_ENTRIES_PER_PAGE:Number = 100;
+			  
             public var source: String;
             
             [Bindable]
             private var archiveData:Object;
-            
-            public var sessionId:String;
+			[Bindable]
+			private var application:Object = FlexGlobals.topLevelApplication;
+			[Bindable] 
+			private var _operatingData:ObjectProxy;
+			
+		    public var sessionId:String;
             private var resourceFileStagingID:String;
             
             private var nodeId:String;
-            
+			private var _schemaIndex:Object;
+			private var refTabState:String ;
+			
             private var resourceReference:FileReference = null;
-            
-            private var lexusService:LexusService = new LexusService();
-          
-            private function onKeyUpOk(event:KeyboardEvent):void{
+
+			public function get schemaIndex():Object
+			{
+				return _schemaIndex;
+			}
+
+			public function set schemaIndex(value:Object):void
+			{
+				_schemaIndex = value;
+			}
+
+     		public function get operatingData():ObjectProxy
+			{
+				return _operatingData;
+			}
+
+			public function set operatingData(value:ObjectProxy):void
+			{
+				_operatingData = new ObjectProxy(value);
+				initializePageList();
+				initializePageNavigation();
+			}
+
+			private function onKeyUpOk(event:KeyboardEvent):void{
             	//Enter pressed
             	if( event.keyCode == 13)
 	               PopUpManager.removePopUp(this);
@@ -49,7 +87,401 @@
             	if( event.keyCode == 13)
 	               PopUpManager.removePopUp(this);
             }
-            
+			
+			public function keyHandler(event:KeyboardEvent):void
+			{
+				switch( event.keyCode){
+					case 38: doSwitchEntry();
+						break;
+					case 40: doSwitchEntry();
+						break;
+				}
+			}
+			
+			
+			/**
+			 * Handles the change event in the list
+			 **/
+			public function switchEntry(evt: MouseEvent): void {
+				doSwitchEntry(evt);
+			}
+			
+			
+			/**
+			 * Performs all updates related to changes in the currently selected entry from the list
+			 **/
+			private function doSwitchEntry(event:MouseEvent = null):void {
+					desgrid.visible=false;
+					showSelectedEntry();	
+					dgList.setFocus();
+						
+			}
+			
+			private function showSelectedEntry():void{
+				/*if( dgList.selectedItem == null){
+					initializeEditor();
+					FlexGlobals.topLevelApplication.enabled = true;
+					return;
+				} */
+				if( !dgList.selectedItem.hasOwnProperty("children")){
+				    LexusUtil.showWait(this, "Loading lexical entry data");					
+					var param:Object = new Object();
+					param.id = dgList.selectedItem.id;
+					param.lexicon = _operatingData.result.myResult.lexicon.id;
+					this.lexusService.send("LexusLexicalEntryEditor/getLexicalEntryData.json", param, this.name, onLexicalEntryReload); 
+					return;
+				}
+				
+				tree.dataProvider = dgList.selectedItem;
+				callLater(expandTree);
+				tree.validateNow();
+				FlexGlobals.topLevelApplication.enabled = true;
+				LexusUtil.removeWait();
+			}
+			
+			private function expandTree():void{
+				tree.expandChildrenOf( dgList.selectedItem, true);
+			}
+			
+			private function transformListView(listViewHTML:String):String{
+				if( listViewHTML == null)
+					return "";
+				
+				var txt:String = listViewHTML;
+				
+				/** AAM: Here, we need to do a replace the matching regular expressions as many times as needed. 
+				 * e.g. the 1st replace can generate new '&amp;' regular expresions if we have: '&amp;amp'
+				 * on the original 'txt' string.
+				 * */
+				
+				var ampPattern:String = "\&amp;";
+				var ltPattern:String = "\&lt;";
+				var gtPattern:String = "\&gt;";
+				var qtPattern:String = "\&quot;";
+				
+				while (txt.indexOf(ampPattern) != -1)
+					txt  =txt.replace(ampPattern, "&");
+				while (txt.indexOf(ltPattern) != -1)
+					txt = txt.replace(ltPattern, "<");
+				while (txt.indexOf(gtPattern) != -1)
+					txt  =txt.replace(gtPattern, ">");
+				while (txt.indexOf(qtPattern) != -1)
+					txt  =txt.replace(qtPattern, "'");
+				
+				return txt;
+			}
+			
+			private function resetTreeAndEditor():void{
+				this.tree.dataProvider = null;
+			}
+			private function _init():void{
+				initializePageList();
+				if( (dgList.dataProvider as ArrayCollection).length >0){
+					doSwitchEntry();           			
+				}
+				this.initializePageNavigation();
+				dgList.validateNow();
+				dgList.validateDisplayList();
+				
+			}
+			
+			private function initializePageNavigation():void{
+				var startPage:int = this.operatingData.result.myResult.startPage;
+				if( startPage == 0){
+					this.navPrevPage.enabled = false;
+					this.navFirstPage.enabled = false;
+					this.navPrevPage.source = this.application.leftIconGrayed;
+					this.navFirstPage.source = this.application.firstIconGrayed;
+					this.navPrevPage.toolTip = this.navFirstPage.toolTip = "There are no pages preceding the current one.";
+				}
+				else{
+					this.navPrevPage.enabled = true;
+					this.navFirstPage.enabled = true;
+					this.navPrevPage.source = this.application.leftIcon;
+					this.navFirstPage.source = this.application.firstIcon;
+					this.navPrevPage.toolTip =  "Go to previous page";
+					this.navFirstPage.toolTip = "Go to first page";
+				}
+		//		this.initializePageList();
+				var count:int = this.operatingData.result.myResult.count;
+				var total:int = this.operatingData.result.myResult.total != 0 ? this.operatingData.result.myResult.total : this.operatingData.result.myResult.total + 1;
+				var totalPages:int = Math.ceil( total/count);
+				if( startPage == (totalPages - 1)){
+					this.navNextPage.enabled = false;
+					this.navLastPage.enabled = false;
+					this.navNextPage.source = this.application.rightIconGrayed;
+					this.navLastPage.source = this.application.lastIconGrayed;
+					this.navNextPage.toolTip = this.navLastPage.toolTip = "There are no pages succeeding the current one.";
+				}
+				else{
+					this.navNextPage.enabled = true;
+					this.navLastPage.enabled = true;
+					this.navNextPage.source = this.application.rightIcon;
+					this.navLastPage.source = this.application.lastIcon;
+					this.navNextPage.toolTip =  "Go to next page";
+					this.navLastPage.toolTip = "Go to last page";
+				}
+				if(!this.navFirstPage.enabled && !this.navPrevPage.enabled && !this.navLastPage.enabled && !this.navNextPage.enabled)
+					this.navPane.visible = false;
+				else
+					this.navPane.visible = true;
+				
+			}
+			
+			
+			
+			private function initializePageList():void {
+				var startPage:int = this.operatingData.result.myResult.startPage;
+				var count:int = this.operatingData.result.myResult.count;
+				var total:int = this.operatingData.result.myResult.total;
+				var totalPages:int = Math.ceil( total/count);
+				var pageList:ArrayCollection = new ArrayCollection();
+				var index:int = 0;
+				for( var i:int = 0; i < totalPages; i++){
+					var page:Object = new Object();
+					page.label = "" + (i+1);
+					page.value = i;
+					pageList.addItem( page);
+					if( page.value == startPage)
+						index = i;
+				}
+				this.pageList.dataProvider = pageList;
+				this.pageList.selectedIndex = index;
+			}
+			
+			
+		
+			private function onJSONLoad2(event:ResultEvent):void
+			{
+				LexusUtil.parseJSON(String(event.result),
+					function(data:Object):void {
+						LexusUtil.removeWait();
+//						FlexGlobals.topLevelApplication.enabled = true;
+						if (null != data.status) {
+							if (null != data.status.success) {
+								if (data.status.success == true) {
+							
+									
+									operatingData =  new ObjectProxy(data);
+									
+									//AAM: save original data in a different object for further reference
+							
+									resetTreeAndEditor();
+									_init();
+									dgList.validateNow();
+									dgList.validateDisplayList();
+								}
+								else if (null != data.status.message) {
+									YesNo.alert("Oops... an error occurred. Server says: " + data.status.message);
+								}
+								else {
+									YesNo.alert("Oops... server flagged an error but did not return a message to explain the error. That sucks.");
+								}
+							}
+							else {
+								YesNo.alert("Oops... server did not indicate success or failure of the last operation. Bummer. That's no good. Sorry about that. Assume your last action failed.");
+							}
+						}		
+						else {
+							YesNo.alert("Oops... server returned no status! This can't be good. Assume your last action failed.");
+						}
+					}
+				);
+			}
+			
+			private function onLexicalEntryReload(event:ResultEvent):void {
+				LexusUtil.parseJSON(String(event.result),
+					function(data:Object):void {
+						if (data.status.success == false) {
+							YesNo.alert(data.status.message);					
+						}
+						else if (data.status.success == true) {
+					//		saveLexicalEntryTarget = null;
+							data.result.lexicalEntry.listView.value = transformListView(data.result.lexicalEntry.listView.value);
+							var coll:ICollectionView = (dgList.dataProvider as ICollectionView);
+							var cursor:IViewCursor = coll.createCursor();
+							var refresh:Boolean = (data.result.lexicalEntry.id == dgList.selectedItem.id);
+							while (!cursor.afterLast){
+								if (cursor.current.id == data.result.lexicalEntry.id){
+									cursor.remove();
+									cursor.insert( data.result.lexicalEntry);
+									if (refresh){
+										dgList.selectedItem = data.result.lexicalEntry;
+									}
+									break;
+								}
+								cursor.moveNext();
+							}
+						}
+						showSelectedEntry();
+						//AAM: update local copy of the server data
+						//serverData = ObjectUtil.copy(operatingData);
+						LexusUtil.removeWait();
+						callLater(dgList.setFocus);
+						//process_original_event();
+						//FlexGlobals.topLevelApplication.enabled = true;
+					}
+				);
+				//lexicalEntryView.enabled = true;
+				//editor.enabled = true;
+			}
+			
+			
+			public function getSchemaNodeById(id:String):Object {
+				return schemaIndex[id];
+			}
+
+			
+			/**
+			 * Returns the icon class for the specified schemaElement. This method is used by the List 
+			 * of currently active schema elements to determine the icons associated with the schema elements
+			 **/
+			private function getElementIconClass( schemaElement:Object):Class{
+				if( (this.getSchemaNodeById(schemaElement.schemaElementId) != null && this.getSchemaNodeById(schemaElement.schemaElementId).type == "data category") || schemaElement.type == "data category")
+					return FlexGlobals.topLevelApplication.dataCategoryIcon;
+				else
+					return FlexGlobals.topLevelApplication.containerIcon;
+				
+				return null;
+			}
+			
+			/**
+			 * Handles the event for navigating to the first page
+			 **/
+			public function navigateToFirstPage( evt:MouseEvent):void{
+		//		FlexGlobals.topLevelApplication.enabled  = false;
+//				iFrame.visible = false;
+				var startLetter:String = this.operatingData.result.myResult.startLetter;
+				LexusUtil.showWait(this, "Loading entries");
+				_startLetterSearch(0, LEXICAL_ENTRIES_PER_PAGE);
+				dgList.setFocus();
+				refTabState = "page change";
+			}
+			
+			/**
+			 * Handles the event for navigating to the last page
+			 **/
+			public function navigateToLastPage( evt:MouseEvent):void{
+			//	FlexGlobals.topLevelApplication.enabled  = false;
+				var startLetter:String = this.operatingData.result.myResult.startLetter;
+				var count:int = this.operatingData.result.myResult.count;
+				var total:int = this.operatingData.result.myResult.total;
+				var totalPages:int = Math.ceil( total/count);
+				LexusUtil.showWait(this, "Loading entries");
+				_startLetterSearch(totalPages-1, LEXICAL_ENTRIES_PER_PAGE);
+				dgList.setFocus();
+				refTabState = "page change";
+			}
+			/**
+			 * Handles the event for navigating to the previous page
+			 **/
+			public function navigateToPreviousPage( evt:MouseEvent):void{
+				var startPage:int = this.operatingData.result.myResult.startPage;
+				if( startPage >0){
+				//	FlexGlobals.topLevelApplication.enabled  = false;
+//					iFrame.visible = false;
+					var startLetter:String = this.operatingData.result.myResult.startLetter;
+					LexusUtil.showWait(this, "Loading entries");					
+					_startLetterSearch(startPage-1, LEXICAL_ENTRIES_PER_PAGE);
+					dgList.setFocus();
+					refTabState = "page change";
+				}
+			} 
+			/**
+			 * Handles the event for navigating to the next page
+			 **/
+			public function navigateToNextPage( evt:MouseEvent):void{
+				var startPage:int = this.operatingData.result.myResult.startPage;
+				var count:int = this.operatingData.result.myResult.count;
+				var total:int = this.operatingData.result.myResult.total;
+				var totalPages:int = Math.ceil( total/count);
+				if( startPage < totalPages){
+				//	FlexGlobals.topLevelApplication.enabled  = false;
+				//	iFrame.visible = false;
+					var startLetter:String = this.operatingData.result.myResult.startLetter;
+					LexusUtil.showWait(this, "Loading entries");					
+					_startLetterSearch(startPage + 1, LEXICAL_ENTRIES_PER_PAGE);
+					dgList.setFocus();
+					refTabState = "page change";
+				}
+			}
+			
+			/**
+			 * Handles the event for navigating to another result page
+			 **/
+			
+			public function changePage( evt: ListEvent):void{
+				
+//				FlexGlobals.topLevelApplication.enabled  = false;
+//				iFrame.visible = false;
+				var startLetter:String = this.operatingData.result.myResult.startLetter;
+				LexusUtil.showWait(this, "Loading entries");					
+				_startLetterSearch(this.pageList.selectedItem.value, LEXICAL_ENTRIES_PER_PAGE);
+				dgList.setFocus();
+				refTabState = "page change";
+			}
+			
+			private function _startLetterSearch(a_startPage:int, a_pageSize:int, lexiconId:String = ""):void {
+				var startLetter:String;
+				var parameter:Object = new Object();
+				parameter.lexicon = lexiconId == "" ? this.operatingData.result.myResult.lexicon.id : lexiconId;
+		//		if (this.startLetterList && this.startLetterList.selectedIndex > 0)
+		//			startLetter = this.startLetterList.selectedItem.label;
+		//		else 
+					startLetter = '';
+				
+				var refinerObj:Object = new Object();
+				refinerObj.startPage = a_startPage;
+				refinerObj.pageSize = a_pageSize;
+				refinerObj.startLetter = startLetter;
+				refinerObj.searchTerm = "";
+				refinerObj.caseSensitive = false;
+				
+		//		if (querySelect != null)
+		//			if (querySelect.selectedItem.id != null)
+		//				parameter.query = querySelect.selectedItem;
+				parameter.refiner = refinerObj;
+				lexusService.send("LexusLexicalEntryEditor/startLetterSearch.json", parameter, this.name, onJSONLoad2);
+			}
+			private function selectionComplete():void{
+				
+				if (this.tree.selectedItem !=null)
+				{ 	okBtn.enabled=true;
+					var schemaElement:Object = this.getSchemaNodeById( tree.selectedItem.schemaElementId);
+					this.displayDataCategory(schemaElement);
+					if (this.tree.selectedItem.hasOwnProperty("value")){
+						dc_value.text = this.tree.selectedItem.value;
+						
+					}
+					desgrid.visible=true;
+				//	this.localResourceTab.enabled=false;
+				//	this.archiveTab.enabled=false;
+					
+				}		
+			}
+			
+			private function displayDataCategory( data:Object):void{
+				dc_name.text = data.name;
+				dc_description.text = data.description;
+				dc_adminInfo.text = data.adminInfo;
+				var mandatory:Boolean = (data.min=="0"?false:true);
+				dc_mandatory.selected = mandatory;
+				var multiples:Boolean = (data.max=="1"?false:true);
+				dc_multiples.selected = multiples;
+			}
+			
+			private function switchLabels(item:Object):String{
+				return (item.hasOwnProperty("value") && item.value !="") ? (item.value as String).slice(0,30): item.label;
+			}
+			
+			private function showTips(item:Object):String{
+				return (item.hasOwnProperty("label")) ? item.label: "";
+			
+			}
+			
+			
+			
+			
             private function importResource():void{
             	resourceReference = new FileReference();
             	resourceReference.addEventListener(Event.SELECT, resourceSelectHandler);
@@ -172,9 +604,42 @@
 				return milliSecs;
 				
 			}
+			
+			private function tabChanged(event:IndexChangedEvent):void{
+				if (event.oldIndex == 0 && this.resourceFileStagingID != null)
+				{	this.resourceFileStagingID = null;}
+				else if	(event.oldIndex == 1 && this.archiveData != null)
+					{this.archiveData = null;
+					archive_metadata.text = "";
+					archive_mimeType.text = "";
+					archive_url.text = "";
+					archiveHandle.text="";
+					archiveTab.removeAllChildren();
+					archiveTab.addChild( archiveCanvas);
+					currentState = "";
+					getResource.enabled=true;
+					}
+				else if ((event.oldIndex == 2) && (this.tree.selectedItem != null || this.dgList.selectedItem != null || refTabState == "page change"))
+				{	desgrid.visible=false;
+					var startLetter:String = this.operatingData.result.myResult.startLetter;
+					LexusUtil.showWait(this, "Loading entries");
+					_startLetterSearch(0, LEXICAL_ENTRIES_PER_PAGE);
+					dgList.setFocus();	
+					refTabState = "";
+					this.dgList.selectedItem =null;
+					this.tree.dataProvider = null;
+					okBtn.enabled=false;
+					
+				}
+			
+				
+			}
+			
+			
 			private function doSubmit():void{
 				var archive:String = null;
 				var resourceId:String = null;
+				var referenceId:String = null;
 				var fragmentIdentifier:String = null;
 				var url:String = null;
 				if( this.archiveData != null){
@@ -192,11 +657,17 @@
 					archive="local";
 					resourceId = this.resourceFileStagingID;
 				}
+				else if(this.tree.selectedItem !=null){
+					archive="lexicon";
+					resourceId = this.tree.selectedItem.id;
+					referenceId = this.dgList.selectedItem.id;
+				
+				}
 				else{
 					YesNo.alert("We have encountered an unknown problem here and are unable to process your request");
 					return;
 				}
-				var event:ImportCompleteEvent = new ImportCompleteEvent("complete", resourceId, archive, fragmentIdentifier, url, this.source);
+				var event:ImportCompleteEvent = new ImportCompleteEvent("complete", resourceId, referenceId, archive, fragmentIdentifier, url, this.source);
 				dispatchEvent(event);
 				PopUpManager.removePopUp(this)
 			}
@@ -254,7 +725,8 @@
             	</mx:Panel>
 				
             </mx:AddChild>
-            <mx:SetProperty target="{this.localResourceTab}" name="enabled" value="false"/>
+            <!--mx:SetProperty target="{this.localResourceTab}" name="enabled" value="false"/>
+			<mx:SetProperty target="{this.EntryResourceTab}" name="enabled" value="false"/-->
             
             
         </mx:State>
@@ -310,15 +782,15 @@
             	</mx:Canvas>
 				
             </mx:AddChild>
-            <mx:SetProperty target="{this.archiveTab}" name="enabled" value="false"/>
+            <!--mx:SetProperty target="{this.archiveTab}" name="enabled" value="false"/-->
             <mx:SetProperty target="{this.importBtn}" name="visible" value="false"/>
             <mx:SetProperty target="{this.okBtn}" name="enabled" value="true"/>
             
         </mx:State>
     </mx:states>
     <mx:Canvas width="100%" height="100%">
-    	<mx:TabNavigator id="tabNav" width="100%" height="100%" creationPolicy="all" >
-    		<mx:VBox id="localResourceTab" label="Local resource" width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+    	<mx:TabNavigator id="tabNav" width="100%" height="100%" creationPolicy="all" change="tabChanged(event)">
+    		<mx:VBox id="localResourceTab" label="Local resource" width="100%" height="100%" horizontalAlign="center" verticalAlign="middle" >
     			<mx:Button id="importBtn" label="Select resource" click="importResource()"/>
     		</mx:VBox>
     		<mx:VBox id="archiveTab" label="Archive" width="100%" height="100%">
@@ -330,10 +802,130 @@
 		    			<mx:TextInput id="archiveHandle" focusOut="trimStr(event)"/>
 		    			<mx:Label text=" (e.g. MPI600399#)"/>
 		    		</mx:HBox>
-	    			<mx:Button id="getResource" label="Get resource" click="getArchiveObject()"/>
-	    		</mx:VBox>
+					<mx:VBox width="100%" height="50%" horizontalAlign="center" verticalAlign="top">
+						<mx:Button id="getResource" label="Get resource" click="getArchiveObject()" />
+					</mx:VBox>
+				</mx:VBox>
     			
     		</mx:VBox>
+			<mx:VBox id="EntryResourceTab" label="Entry reference" width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+			 	<mx:HBox width="100%" height="100%" paddingRight="0" paddingLeft="0">
+				<mx:Panel id="latList" width="30%" height="100%" >
+					<mx:DataGrid variableRowHeight="true" id="dgList" width="100%" height="100%" includeInLayout="true" 
+								 dataProvider="{_operatingData.result.myResult.lexicalEntries}"
+								 click="switchEntry(event)" keyDown="keyHandler(event)" keyUp="keyHandler(event)" dragMoveEnabled="false" sortableColumns="false">
+						<mx:columns>
+							<mx:DataGridColumn headerText="">
+								<mx:itemRenderer>
+									<mx:Component>
+										<mx:Text maxWidth="300" cachePolicy="off" condenseWhite="true" styleSheet="{this.outerDocument.styleSheet}" htmlText="{data.listView.value}"/>															
+									</mx:Component>
+								</mx:itemRenderer>
+							</mx:DataGridColumn>
+						</mx:columns>
+					</mx:DataGrid>
+					
+					<mx:ControlBar width="100%" horizontalAlign="left">
+						<mx:HBox width="90%" id="navPane" horizontalAlign="right">
+							<mx:Image id="navFirstPage"
+									  source="{application.firstIcon}"
+									  click="navigateToFirstPage(event)"
+									  toolTip="Go to first page"/>
+							<mx:Image id="navPrevPage"
+									  source="{application.leftIcon}"
+									  click="navigateToPreviousPage(event)"
+									  toolTip="Go to previous page"/>
+							<!-- <mx:Label text="Page"/> -->
+							<mx:ComboBox id="pageList" labelField="label"
+										 change="changePage( event)"/>
+							<mx:Image id="navNextPage"
+									  source="{application.rightIcon}"
+									  click="navigateToNextPage(event)" toolTip="Go to next page"/>
+							<mx:Image id="navLastPage"
+									  source="{application.lastIcon}"
+									  click="navigateToLastPage(event)" toolTip="Go to last page"
+									  />
+						</mx:HBox>
+					</mx:ControlBar>
+				</mx:Panel>
+				<mx:Panel id="latTree" width="30%" height="100%"  paddingBottom="4" >
+					<mpi:AutoSizeTree id="tree" width="100%" height="100%" horizontalScrollPolicy="auto" 
+									  iconFunction="getElementIconClass"
+									  showDataTips="true"
+									  dataTipFunction="showTips"
+									  labelFunction="switchLabels"
+									  dragEnabled= "false"
+									  dropEnabled="false"
+									  dragMoveEnabled="false"
+									  itemRenderer="nl.mpi.lexus.LexiconTreeItemRenderer" 
+									  click="selectionComplete()"
+									  />
+					
+				</mx:Panel>
+				<mx:Panel id="description"  width="40%" height="100%" >
+						<mx:Grid id="desgrid" width="400" height="100%" visible="false" label="Schema Element Description" >
+							<mx:GridRow>
+								<mx:GridItem>
+									<mx:Label text="Name:"/>
+								</mx:GridItem>
+								<mx:GridItem>
+									<mx:Text id="dc_name"/>
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow>
+								<mx:GridItem>
+									<mx:Label text="Description:"/>
+								</mx:GridItem>
+								<mx:GridItem>
+									<mx:Text id="dc_description" maxWidth="250"/>
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow>
+								<mx:GridItem>
+									<mx:Label text="Value:" />
+								</mx:GridItem>
+								<mx:GridItem>
+									<mx:Text id="dc_value"  maxWidth="250"/>
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow>
+								<mx:GridItem>
+									<mx:Label text="Admin Info:"/>
+								</mx:GridItem>
+								<mx:GridItem>
+									<mx:Text id="dc_adminInfo"/>
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow>
+								<mx:GridItem>
+									<mx:Label text="Mandatory:"/>
+								</mx:GridItem>
+								<mx:GridItem>
+									<mx:CheckBox id="dc_mandatory" enabled="false"/>
+								</mx:GridItem>
+							</mx:GridRow>
+							<mx:GridRow>
+								<mx:GridItem>
+									<mx:Label text="Multiples allowed:"/>
+								</mx:GridItem>
+								<mx:GridItem>
+									<mx:CheckBox id="dc_multiples" enabled="false"/>
+								</mx:GridItem>
+							</mx:GridRow>
+							<!-- HHV: temporarily removed as requested by Menzo, since it's not really supported yet.
+							<mx:GridRow>
+							<mx:GridItem>
+							<mx:Label text="Value domain:"/>
+							</mx:GridItem>
+							<mx:GridItem>
+							<mx:Text id="dc_valuedomain"/>
+							</mx:GridItem>
+							</mx:GridRow>
+							-->
+						</mx:Grid>
+				</mx:Panel>
+				</mx:HBox>
+			</mx:VBox>
     	</mx:TabNavigator>
 
      	
