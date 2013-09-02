@@ -331,28 +331,29 @@
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-xe-1.xml"/>
                 <!--        <map:transform type="saxon" src="export/createLexiconAndSchemaZipEntries.xslt"/>-->
-                <map:transform type="saxon" src="export/createRELISHExportZip.xslt"/>
+                <map:transform type="saxon" src="export/createRELISHExportZip.xslt">
+                	<map:parameter name="format" value="{request-param:format}"/>
+                </map:transform>
+                
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/front-xe-2.xml"/>
                 <map:transform src="export/prepareZipForSerialisation.xslt"/>
                 <map:serialize type="zip"/>
             </map:match>
 
-
-
-            <map:match pattern="PDFexport.pdf">
+          <map:match pattern="PDFexport.pdf">
                 <map:aggregate element="data">
                     <map:part src="export/basePDF.xml"/>
                     <map:part src="cocoon://user"/>
                 </map:aggregate>
-                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-1.xml"/>
+                                <!--  map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-1.xml"/-->
 
                 <map:transform type="saxon" src="export/fillInLexiconIDForPDFExport.xslt">
                     <map:parameter name="id" value="{request-param:id}"/>
                 </map:transform>
-                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-2.xml"/>
+                                <!--  map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-2.xml"/-->
                 <map:transform type="saxon" src="prepareStartLetterSearch.xslt"/>
-                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-3.xml"/>
+                                <!--  map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-3.xml"/-->
                 <map:transform type="servletService">
                     <map:parameter name="service" value="servlet:lexus-db:/lexicon/startLetterSearch.xml"/>
                 </map:transform>
@@ -387,8 +388,8 @@
                 <map:transform type="saxon"
                     src="views/move-resource-url-to-src-attribute-in-xsl-fo.xslt"/>
 
-                <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-8.xml"/>
+                <!--   map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/front-pdf-8.xml"/-->
 
                 <map:transform type="saxon" src="views/xsl-fo-document.xslt"/>
                 <map:transform type="${tee}"
