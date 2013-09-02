@@ -11,6 +11,7 @@
         <!-- 
                     <multimedia>
                     <value>38d44d77-e357-463a-9fa0-9d4f7694d331</value>
+                    <referenceId>uuid:2a5228a2-f11e-46bd-8e5d-6a2bb62e10a4</referenceId>
                     <archive>local</archive>
                     <type>upload</type>
                     <fragmentIdentifier>null</fragmentIdentifier> (used for ANNEX eaf resources)
@@ -30,7 +31,7 @@
         Convert a resource that was already present, e.g. not just uploaded.
         -->
     <xsl:template match="multimedia">
-        <resource archive="{archive}" mimetype="{mimetype}" type="{type}" value="{value}">
+        <resource archive="{archive}" mimetype="{mimetype}" type="{type}" value="{value}" id="{referenceId}">
             <url><xsl:value-of select="url"/></url>
         </resource>
     </xsl:template>
