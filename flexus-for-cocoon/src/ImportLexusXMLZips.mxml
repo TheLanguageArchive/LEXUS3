@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+				layout="vertical"
+				creationComplete="init()"
+				title="Import Lexus XML files"
+				showCloseButton="true"
+				width="800" height="370" y="50"
+				close="close();" xmlns:local="*">
+<mx:Script>
+	<![CDATA[
+		import com.adobe.net.URI;
+		import com.adobe.serialization.json.JSON;
+		
+		import mx.collections.ArrayCollection;
+		import mx.managers.PopUpManager;
+		import mx.rpc.events.ResultEvent;
+		import mx.utils.ArrayUtil;
+		
+		import nl.mpi.lexus.LexusUtil;
+		import nl.mpi.lexus.YesNo;
+		import nl.mpi.lexus.event.NewLexiconEvent;
+		import nl.mpi.lexus.service.LexusService;
+		
+		private var urlRequest:URLRequest;
+		[Bindable] private var typFileReference:FileReference;
+		[Bindable] private var dataFileReference:FileReference;
+
+		private var params:Object; // For sending the remote IDs to the converter
+		private var popupDownloadConverted:FileDownloadBoxWithStartButton; // Used to download the converted toolbox files, after uploads are done.
+		private var _importFormat:String;
+		[Bindable] public var sessionId:String;
+		
+		
+		
+				
+		public function get importFormat():String
+		{
+			return _importFormat;
+		}
+
+		public function set importFormat(value:String):void
+		{
+			_importFormat = value;
+		}
+
+		private function init():void {
+			params = new Object();
+		}
+		
+		private function close():void {
+			PopUpManager.removePopUp(this);
+		}
+		
+		/*
+		 * Delegate methods for UploadTwoFiles.
+		 */
+		
+		public function getTitle(uzf:UploadZipFile):String {
+			return  "Select the zipfile containing the two xml files";
+				
+		}
+		
+		public function getBrowseTitle(uzf:UploadZipFile):String {
+			return  "Browse for the zip file";
+				
+		}
+		
+
+		/*
+		 * Get filefilter for browsing first file.
+		 */
+		public function getFilter(uzf:UploadZipFile):FileFilter
+		{
+			return new FileFilter("Toolbox", "*.zip");
+		}
+		/*
+		 * Get filefilter for browsing second file.
+		
+		public function getFilter2(utf:UploadTwoFiles):FileFilter
+		{
+			return new FileFilter("Toolbox", "*.xml");
+		}
+		*/
+		
+		/*
+ 		 * Return false if upload cannot start, true otherwise.
+		 * Additional actions can be taken.
+		 */
+		public function uploadCanStart(uzf:UploadZipFile, file_Reference:FileReference):Boolean
+		{
+			try {
+				if (file_Reference.name) {
+					//popupDownloadConverted = FileDownloadBoxWithStartButton(PopUpManager.createPopUp(this, FileDownloadBoxWithStartButton, false));
+					//PopUpManager.centerPopUp(popupDownloadConverted);
+					return true;
+				}
+			} catch (error:Error) { // Skipping this 'cos both files must be selected first.
+				YesNo.alert("Please select the .zip file first.");
+				return false;
+			}
+			return false;
+		}
+		
+		/*
+		 * Get URLRequest object for specified file.
+		 */
+		public function getURLRequest(uzf:UploadZipFile, fileNumber:int, file_Reference:FileReference):URLRequest {
+			return new URLRequest(LexusService.getAbsoluteURL("StagingFileHandler/uploadFile.xml;jsessionid=" + this.sessionId));
+		}
+		
+		public function uploadFileCompleted(uzf:UploadZipFile, data:XML):void {
+			params.FileId = data.Filedata;
+		}
+		
+		public function finished(utf:UploadZipFile):void {
+			//this.parent.removeChild(this);
+			LexusUtil.showWait(this, "Importing lexicon");
+			var lexicon:Object = new Object;
+			lexicon.importingName = "Importing lexicon...";
+			var owner:Object = new Object;
+			owner.name = "?";
+			lexicon.owner = owner;
+			lexicon.id = "_tmp";
+			lexicon.description = "This lexicon is currently being imported.\nWe do not recommend to open it while the import process is still running."; 
+			lexicon.note = "";
+			lexicon.size = "?";
+			var evt:Event = new NewLexiconEvent("new", lexicon);
+			dispatchEvent(evt);
+			var ls:LexusService = new LexusService();
+			var temp:String = params.FileId[0]; 
+			ls.send("LexusWorkspaceEditor/ImportLexusZip.xml?format="+importFormat+"&&fileId="+temp, temp ,this.name,importFinished);
+			//		ls.getXML("LexusWorkspaceEditor/import/"+params.FileId+"/ImportLexusZip.xml", importFinished);
+		}
+		
+		private function importFinished(event:ResultEvent):void {
+			LexusUtil.parseXML(String(event.result),
+				function(data:XML):void {
+					if (data.success == 'true') {
+						var successString:String = "Import succeeded.\n\n";
+						successString += "Lexicon\n    Name: \'" + data.lexicon.name + "\'\n\n";
+						
+						if (data.lexicon.description.toString() != "")
+							successString += "    Description: \'" + data.lexicon.description + "\'\n\n";
+						if (data.lexicon.note.toString() != "")
+						successString += "    Notes: \'" + data.lexicon.note + "\'\n";
+						
+						successString += "    Number of entries: " + data.lexicon.numberOfEntries + "\n\n";
+						if (data.sortorder.name.toString() != ""){
+							successString += "Sort Order\n    Name: \'" + data.sortorder.name + "\'\n\n";
+							if (data.sortorder.description.toString() != "")
+								successString += "    Description: \'" + data.sortorder.description + "\'";
+						}
+						YesNo.info(successString);
+					}
+					else {
+						YesNo.alert("Import failed!\n\nServer reports:\n" + data.message);
+					}
+					var evt:Event = new NewLexiconEvent("finish", data.lexicon);
+					dispatchEvent(evt);
+					LexusUtil.removeWait();
+					close();
+				}
+			);
+		}
+	]]>
+</mx:Script>
+	<local:UploadZipFile id="uzf" delegate="{this}" />
+</mx:TitleWindow>
