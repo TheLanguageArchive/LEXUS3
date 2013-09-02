@@ -83,6 +83,17 @@
             lexus:canWrite($lexusMeta, $user)
         };
     </xsl:template>
+    <!--
+        XQuery functions for checking template management permissions.
+    -->
+    
+    <xsl:template name="template-permissions">
+        declare function lexus:canUpdateTemplate($lexusMeta as node()*, $user as node()) as xs:boolean {
+            lexus:canWrite($lexusMeta, $user)
+        };
+    </xsl:template>
+    
+    
     
     <!--
         XQuery functions for checking lexicon management permissions.
