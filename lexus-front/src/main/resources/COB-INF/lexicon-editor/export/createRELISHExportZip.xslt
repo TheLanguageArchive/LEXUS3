@@ -6,10 +6,10 @@
     <xsl:include href="createRelaxNGForLexicon.xslt"/>
     <xsl:include href="createAltFormatForLexicon.xslt"/>
     <xsl:include href="../../util/identity.xslt"/>
-
-    <xsl:output method="xml" indent="yes"/>
+    <xsl:include href="formats/LEXUS-to-RELISH-LL-LMF.xsl"/>
+	<xsl:output method="xml" indent="yes"/>
     <xsl:strip-space elements="*"/>
-
+	<xsl:param name="format" select="''"/>
     <!-- 
         Separate the data from the backend in separate files:
         1   the lexicon.
@@ -18,6 +18,7 @@
 
     <xsl:key name="schemaIds" match="//lexus/meta/schema//container" use="@id"/>
 
+	<xsl:variable name="templates" select="document('../../workspace/lexicon/templates.xml')"/>
     <xsl:variable name="lexusNamespace" select="'http://www.mpi.nl/lexus'"/>
 
     <!--
@@ -70,6 +71,11 @@
         -->
     <xsl:template match="lexus">
         <xsl:variable name="id" select="substring-after(@id, 'uuid:')"/>
+        <xsl:variable name="formatid" select="@id"/>
+      
+      
+     <xsl:choose>  
+       <xsl:when test="$format = 'Lexus3XML'">
         <zip:entry name="{$id}.xml" serializer="xml">
             <xsl:apply-templates select="lexicon"/>
         </zip:entry>
@@ -84,8 +90,23 @@
         <!--<zip:entry name="{$id}_alt.xml" serializer="xml">
             <xsl:apply-templates select="lexicon" mode="alt"/>
         </zip:entry>-->
+       </xsl:when>
+       <xsl:when test="$format = 'relish-ll-lmf'">
+         <zip:entry name="{$id}.lmf" serializer="xml">
+           <xsl:apply-templates select="lexicon" mode="relish-ll-lmf"/>
+         </zip:entry>
+       </xsl:when>
+       <xsl:otherwise >
+     	<zip:entry name="{$id}.xml" serializer="xml">
+     	    <xsl:element name="lexus" namespace="{$lexusNamespace}">
+                <xsl:apply-templates select="lexicon"/>
+                <xsl:apply-templates select="meta"/>
+            </xsl:element>
+   		</zip:entry>
+   		</xsl:otherwise> 
+      
+      </xsl:choose> 
     </xsl:template>
-
     <!--
         Add a namespace and copy children.
         -->
