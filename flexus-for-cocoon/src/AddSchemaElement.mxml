@@ -54,6 +54,7 @@
 						schemaElement.min = _mandatory.selected?"1":"0";
 						schemaElement.max = _multiples.selected?null:"1";
 						schemaElement.type= _type.selectedValue;
+						schemaElement.src="user";
 						
 						switch( schemaElement.type){
 							case "container":
