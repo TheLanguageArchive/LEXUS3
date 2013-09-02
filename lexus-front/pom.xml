@@ -177,6 +177,16 @@
             <artifactId>lexus-display</artifactId>
             <version>3.0.1-RELEASE</version>
         </dependency>
+        <dependency>
+            <groupId>org.expath</groupId>
+            <artifactId>expath-saxonb</artifactId>
+            <version>1.0</version>
+        </dependency>
+         <dependency>
+            <groupId>org.expath</groupId>
+            <artifactId>expath-zip</artifactId>
+            <version>1.0</version>
+        </dependency>
 		<!--<dependency>
             <groupId>nl.mpi.lexus</groupId>
             <artifactId>flexus</artifactId>
