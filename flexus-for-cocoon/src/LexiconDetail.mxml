@@ -3,7 +3,7 @@
 				title="Create a new lexicon"
 				showCloseButton="true"
 				creationComplete="init()"
-				close="PopUpManager.removePopUp(this);" width="462" height="340">
+				close="PopUpManager.removePopUp(this);" width="470" height="470">
 	
 	
 	<mx:Metadata>
@@ -24,6 +24,7 @@
 			import nl.mpi.lexus.service.LexusService;
 			
 			[Bindable][Embed(source="../assets/images/iconza_24x24/warning_24x24.png")] private var warnIcon:Class;
+			[Bindable][Embed(source="../assets/images/iconza_24x24/info_24x24.png")] private var infoIcon:Class;
 
 			
 			[Bindable]
@@ -155,9 +156,31 @@
 				if (tmplates != null)
 					template_description.text =  tmplates.selectedItem.description;
 				   	description_label.visible = true;
+					if (tmplates.selectedItem.export != null)
+					{	exportLabel.visible = true;
+						exportData.visible = true;
+						exportData.dataProvider = getTheExportData();
+						exportDescription.visible = true;
+						//exportDescription.text = getTheDescription();
+					}
+					else
+					{	exportLabel.visible = false;
+						exportData.visible = false;
+						exportData.dataProvider = null;
+						exportDescription.visible = false;
+						//exportDescription.text = getTheDescription();
 					
+					}	
 			}
-			
+		
+			private function getTheExportData():ArrayCollection {
+				var exportNames: ArrayCollection = new ArrayCollection();
+				if (tmplates.selectedItem.export != null)
+					for each (var item in tmplates.selectedItem.export)
+						exportNames.addItem({name:item.name,label:infoIcon, description:item.description})
+				return exportNames;			
+				
+			}
 			
 			protected function checkNewLexiconData():int
 			{
@@ -218,14 +241,38 @@
 			</mx:GridRow>
 			<mx:GridRow width="100%">
 				<mx:GridItem>
-					<mx:Label id="description_label" text="Description: " visible="false" />
+					<mx:Label id="description_label" text="Template Description: " visible="false" />
 				</mx:GridItem>
 				<mx:GridItem>
-					<mx:Label id="template_description" text=""/>
+					<mx:Text id="template_description" text="" width="100%"/>
+				</mx:GridItem>
+			</mx:GridRow>
+			<mx:GridRow id="exportInfo" width="100%"  autoLayout="true" >
+				<mx:GridItem id="exportLabel" visible="false">
+					<mx:Label text="Export Foramts:"/>
+				</mx:GridItem>
+				<mx:GridItem width="100%">
+					<mx:List id="exportData" dataProvider="{getTheExportData()}" width="100%" height="100"  dataTipField="description" showDataTips="true" >
+						<mx:itemRenderer>
+							<mx:Component>
+								<mx:HBox>
+									<mx:Script>
+										<![CDATA[            
+											import nl.mpi.lexus.YesNo;
+										]]>
+									</mx:Script>
+									<mx:Text  text="{data.name}"/>
+									<mx:Image source="{data.label}" scaleX=".7" scaleY=".7"  horizontalAlign="right" toolTip="{data.description}" click="{YesNo.info(data.description)}"/>
+								</mx:HBox>
+							</mx:Component>
+						</mx:itemRenderer>
+					</mx:List>
+				</mx:GridItem>
+				<mx:GridItem  width="40%" >
+					<mx:Text id="exportDescription" text="" visible="false"/>
 				</mx:GridItem>
 				
 			</mx:GridRow>
-			
 			
 		</mx:Grid>
 		
