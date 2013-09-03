@@ -1,7 +1,9 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:lexus="http://www.mpi.nl/lexus"
     xmlns:zip="http://expath.org/ns/zip" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:saxon="http://saxon.sf.net/"
     xmlns:java="java:org.expath.saxon.Zip" version="2.0">
-    <xsl:param name="zipFile"/>
+    <xsl:param name="tempfolder" select="''"/>
+    <xsl:param name="format" select="''"/>
+    <xsl:output indent="yes"/>
     <xsl:function name="zip:entries" as="element(zip:file)">
         <xsl:param name="href" as="xs:string"/>
         <xsl:sequence select="java:entries($href)"/>
@@ -44,14 +46,10 @@
         <xsl:sequence select="java:update-entries($zip, $output)"/>
     </xsl:function>
 
-    <xsl:output indent="yes"/>
-
     <xsl:variable name="zipFileId" select="/data/json/parameters"/>
-    <xsl:variable name="zip" select="concat('file:/tmp/',$zipFileId,'.zip')"/>
+    <xsl:variable name="zip" select="concat('file:', $tempfolder, $zipFileId,'.zip')" />
     <xsl:variable name="zipDir" select="zip:entries(resolve-uri($zip))"/>
-    <xsl:param name="format" select="''"/>
-    
-     <!-- <xsl:include href="formats/RELISH-LL-LMF-to-LEXUS.xsl"/> -->
+    <!-- <xsl:include href="formats/RELISH-LL-LMF-to-LEXUS.xsl"/> -->
 	 <xsl:template match="/" >
     
      <xsl:element name="data">
