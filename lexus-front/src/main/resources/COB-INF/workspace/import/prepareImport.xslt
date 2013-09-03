@@ -3,7 +3,7 @@
     xmlns:java="java:org.expath.saxon.Zip" version="2.0">
     <xsl:param name="tempfolder" select="''"/>
     <xsl:param name="format" select="''"/>
-    <xsl:output indent="yes"/>
+<!--     <xsl:output indent="yes"/> -->
     <xsl:function name="zip:entries" as="element(zip:file)">
         <xsl:param name="href" as="xs:string"/>
         <xsl:sequence select="java:entries($href)"/>
