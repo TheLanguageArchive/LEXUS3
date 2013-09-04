@@ -69,7 +69,7 @@
     <!--  LEXUS3XML -->
     
    <xsl:template match="zip:file" mode="LEXUS3XML">
-          <xsl:variable name="schema_file" select="zip:entry[ends-with(@name, 'internal_schema.xml')]"/>
+   		  <xsl:variable name="schema_file" select="zip:entry[ends-with(@name, 'internal_schema.xml')]"/>
           <xsl:variable name="data_file" select="(zip:entry except $schema_file)[1]"/>
           <xsl:apply-templates select="zip:xml-entry($zip,$schema_file/@name)//lexus:meta" mode="LEXUS3XML"/> 
           <xsl:apply-templates select="zip:xml-entry($zip,$data_file/@name)//lexus:lexicon" mode="LEXUS3XML"/>
@@ -86,22 +86,22 @@
     <!-- relish-ll-lmf -->
     
     <xsl:template match="zip:file" mode="relish-ll-lmf">
-    	<xsl:message>DBG: zip:file[<xsl:value-of select="string-join(zip:entry/@name,', ')"/>][<xsl:value-of select="string-join(zip:entry/zip:xml-entry($zip,@name)/name(*),', ')"/>]</xsl:message>
+<!--     	<xsl:message>DBG: zip:file[<xsl:value-of select="string-join(zip:entry/@name,', ')"/>][<xsl:value-of select="string-join(zip:entry/zip:xml-entry($zip,@name)/name(*),', ')"/>]</xsl:message> -->
     	<xsl:variable name="xsl" select="saxon:compile-stylesheet(doc('format/RELISH-LL-LMF-to-LEXUS.xsl'))"/>
-    	<xsl:message>DBG: compiled stylesheet</xsl:message>
+<!--     	<xsl:message>DBG: compiled stylesheet</xsl:message> -->
     	<xsl:variable name="paramTemplateId">
     		<import-id>
     			<xsl:value-of select="$format"/>
     		</import-id>
     	</xsl:variable>
     	<xsl:for-each select="zip:entry">
-    	    <xsl:message>DBG: entry[<xsl:value-of select="@name"/>]</xsl:message>
+<!--     	    <xsl:message>DBG: entry[<xsl:value-of select="@name"/>]</xsl:message> -->
     	    <xsl:variable name="doc" select="zip:xml-entry($zip,@name)"/>
-    	    <xsl:message>DBG: root[<xsl:value-of select="$doc/name(*)"/>]</xsl:message>
+<!--     	    <xsl:message>DBG: root[<xsl:value-of select="$doc/name(*)"/>]</xsl:message> -->
     		<xsl:if test="$doc/name(*)='lmf:LexicalResource'">
-    			<xsl:message>DBG: found a RELISH-LL-LMF lexicon</xsl:message>
+<!--     			<xsl:message>DBG: found a RELISH-LL-LMF lexicon</xsl:message> -->
     			<xsl:copy-of select="saxon:transform($xsl,$doc/*)/data/*"/>
-    			<xsl:message>DBG: converted a RELISH-LL-LMF lexicon</xsl:message>
+<!--     			<xsl:message>DBG: converted a RELISH-LL-LMF lexicon</xsl:message> -->
    			</xsl:if>
     	</xsl:for-each>
     </xsl:template>
