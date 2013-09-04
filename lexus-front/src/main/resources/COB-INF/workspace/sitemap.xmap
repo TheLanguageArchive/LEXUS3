@@ -428,7 +428,7 @@
 			<map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/import-zip-pre.xml"/>             
 			<map:transform type="saxon" src="import/prepareImport.xslt">
 				<map:parameter name="format" value="{request-param:format}"/>
-				<map:parameter name="tempfolder" value="{naming:java:comp/env/LEXUS/tempDir}"/>
+				<map:parameter name="tempfolder" value="{naming:java:comp/env/LEXUS/tempDir}/"/>
 		   </map:transform>
         <!--  <map:transform type="${tee}"
                    src="{naming:java:comp/env/tee-folder}debug-info/import-0.xml"/> -->
