@@ -7,57 +7,6 @@
     exclude-result-prefixes="#all" version="2.0">
 
 
-    <xsl:param name="zipFile"/>
-    <xsl:function name="zip:entries" as="element(zip:file)">
-        <xsl:param name="href" as="xs:string"/>
-        <xsl:sequence select="java:entries($href)"/>
-    </xsl:function>
-
-    <xsl:function name="zip:xml-entry" as="document-node()">
-        <xsl:param name="href" as="xs:string"/>
-        <xsl:param name="path" as="xs:string"/>
-        <xsl:sequence select="java:xml-entry($href, $path)"/>
-    </xsl:function>
-
-    <xsl:function name="zip:html-entry" as="document-node()">
-        <xsl:param name="href" as="xs:string"/>
-        <xsl:param name="path" as="xs:string"/>
-        <xsl:sequence select="java:html-entry($href, $path)"/>
-    </xsl:function>
-
-    <xsl:function name="zip:text-entry" as="xs:string">
-        <xsl:param name="href" as="xs:string"/>
-        <xsl:param name="path" as="xs:string"/>
-        <xsl:sequence select="java:text-entry($href, $path)"/>
-    </xsl:function>
-
-    <xsl:function name="zip:binary-entry" as="xs:base64Binary">
-        <xsl:param name="href" as="xs:string"/>
-        <xsl:param name="path" as="xs:string"/>
-        <xsl:sequence select="java:binary-entry($href, $path)"/>
-    </xsl:function>
-
-    <xsl:function name="zip:zip-file">
-        <!-- as="empty()" -->
-        <xsl:param name="zip" as="element(zip:file)"/>
-        <xsl:sequence select="java:zip-file($zip)"/>
-    </xsl:function>
-
-    <xsl:function name="zip:update-entries">
-        <!-- as="empty()" -->
-        <xsl:param name="zip" as="element(zip:file)"/>
-        <xsl:param name="output" as="xs:string"/>
-        <xsl:sequence select="java:update-entries($zip, $output)"/>
-    </xsl:function>
-
-    <xsl:output indent="yes"/>
-
-    <xsl:variable name="zipFileId" select="''"/>
-    <xsl:variable name="zip" select="concat('file:/tmp/',$zipFileId,'.zip')"/>
-    <xsl:variable name="zipDir" select="zip:entries(resolve-uri($zip))"/>
-
-
-
     <xd:doc scope="stylesheet">
         <xd:desc>
             <xd:p><xd:b>Created on:</xd:b> Aug 18, 2012</xd:p>
@@ -66,72 +15,21 @@
             <xd:p>Reports information about a finished import operation: success -> lexicon information. Failure -> failure errors.</xd:p>
         </xd:desc>
     </xd:doc>
-   <xsl:param name="schemaFile"  select="zip:entry[ends-with(@name, 'internal_schema.xml')]"/>
-   <xsl:param name="lexiconFile" select="(zip:entry except $schema_file)[1]"/>
+
     
     <!--
         If success eq 'true' (and there really really really were no errors), report success, otherwise failure.
     -->
     <xsl:template match="/data">
-        <xsl:choose>
-            <xsl:when test="//lexus:result[@success eq 'true'] and not(//ex:exception-report)">
+  
+            <xsl:if test="//lexus:result[@success eq 'true'] and not(//ex:exception-report)">
                 <result xmlns:lexus="http://www.mpi.nl/lexus" success="true">
                     <success>true</success>
                     <xsl:apply-templates select="//lexus:result[@success eq 'true']/parent::node()"/>
                 </result>
-            </xsl:when>
-            <xsl:otherwise>
-                <result xmlns:lexus="http://www.mpi.nl/lexus" success="false">
-                    <success>false</success>
-                    <xsl:apply-templates select="//lexus:result[@success = false()]"/>
-                    <message>
-                        <xsl:for-each select="./ex:exception-report">
-                        <xsl:value-of select="concat(position(), '. ')"/>
-                        <xsl:choose>
-                            <xsl:when test="exists(./ex:cocoon-stacktrace/ex:exception/ex:locations/ex:location/contains(., 'validate'))">
-                                <xsl:choose>
-                                    <xsl:when test="ends-with(./ex:location/@uri, $schemaFile)">
-                                        <xsl:text>Error validating lexicon file:
-</xsl:text>
-                                    </xsl:when>
-                                    <xsl:when test="ends-with(./ex:location/@uri, $lexiconFile)">
-                                        <xsl:text>Error validating structure file:
-</xsl:text>
-                                    </xsl:when>
-                                    <xsl:when test="ends-with(./ex:location/@uri, 'lexusMeta.rng')">
-                                        <xsl:text>Error processing internal schema validation file:
-</xsl:text>
-                                    </xsl:when>
-                                    <xsl:when test="ends-with(./ex:location/@uri, 'lexusLexicon.rng')">
-                                            <xsl:text>Error processing internal lexicon validation file:
-</xsl:text>
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:text>Unknown validation error!
-</xsl:text>
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                        <xsl:text>Unknown error!
-</xsl:text>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                            <xsl:apply-templates select="."/>
-                        </xsl:for-each>
-                    </message>
-                    <xsl:choose>
-                        <xsl:when test="exists(/data/lexus:create-lexicon/lexus:result[@success = true()])">
-                            <lexus:delete-lexicon>
-                                <lexicon id="{@new-lexicon-id}"/>
-                            </lexus:delete-lexicon>
-                            <lexicon id="{@new-lexicon-id}"/>
-                            <xsl:copy-of select="user"/>
-                        </xsl:when>
-                    </xsl:choose>               
-                </result>
-            </xsl:otherwise>
-        </xsl:choose>
+            </xsl:if>
+            
+   
     </xsl:template>
     
     <xsl:template match="lexus:create-lexicon[lexus:result[@success eq 'false']]">
@@ -156,12 +54,21 @@
     </xsl:template>
     
     <xsl:template match="ex:exception-report">
-        <xsl:value-of select="ex:message"/>
-        <xsl:text>: at line </xsl:text>
-        <xsl:value-of select="ex:location/@line"/>
-        <xsl:text>, column </xsl:text><xsl:value-of select="ex:location/@column"/>
-        <xsl:text>.
-</xsl:text>
+       <result xmlns:lexus="http://www.mpi.nl/lexus" success="false">
+       		<success>false</success> 
+       		<xsl:choose>
+	       		<xsl:when test="contains(ex:message, 'ERROR')">
+	       			<message><xsl:value-of select="ex:message"/></message>
+	       		
+	       		</xsl:when>
+	       		<xsl:otherwise>
+	       			<message><xsl:text>Unknown error, you may have selected the wrong file foramt for import</xsl:text></message>
+	       		</xsl:otherwise>	
+	       	</xsl:choose>
+       		
+       
+       </result>
+        
     </xsl:template>
     
     

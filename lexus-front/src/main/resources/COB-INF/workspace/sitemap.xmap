@@ -416,23 +416,15 @@
             </map:handle-errors>
         </map:pipeline>
 
+
 <map:pipeline type="noncaching">
-			<map:parameter name="expires" value="access plus 1 minutes"/>
-			<map:parameter name="outputBufferSize" value="0"/>
-			<map:match pattern="ImportLexusZip.xml">
-			   <map:aggregate element="data">
-	  			    <map:part src="cocoon://user"/>
-					<map:part src="cocoon://json"/> 
-                </map:aggregate>
-   
-			<map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/import-zip-pre.xml"/>             
-			<map:transform type="saxon" src="import/prepareImport.xslt">
-				<map:parameter name="format" value="{request-param:format}"/>
-				<map:parameter name="tempfolder" value="{naming:java:comp/env/LEXUS/tempDir}/"/>
-		   </map:transform>
-        <!--  <map:transform type="${tee}"
-                   src="{naming:java:comp/env/tee-folder}debug-info/import-0.xml"/> -->
-            <map:transform type="stx" src="import/add-lexicon-id.stx"/>
+		<map:parameter name="expires" value="access plus 1 minutes"/>
+		<map:parameter name="outputBufferSize" value="0"/>
+		<map:match pattern="ImportLexusZip.xml">
+		<map:generate src="cocoon:/errhandle"/>
+	         
+		<map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/import-zip-pre.xml"/>     
+	    <map:transform type="stx" src="import/add-lexicon-id.stx"/>
                 
                 <map:transform type="${tee}"
                     src="{naming:java:comp/env/tee-folder}debug-info/import-1.xml"/>   
@@ -521,7 +513,27 @@
            <map:serialize type="xml"/>
            </map:match>
   </map:pipeline>   
-  
+  <map:pipeline type="noncaching">
+			<map:parameter name="outputBufferSize" value="0"/>
+			<map:match pattern="errhandle">
+			  <map:aggregate element="data">
+		  			    <map:part src="cocoon://user"/>
+						<map:part src="cocoon://json"/> 
+			  </map:aggregate>  	
+				<map:transform type="saxon" src="import/prepareImport.xslt">
+					<map:parameter name="format" value="{request-param:format}"/>
+					<map:parameter name="tempfolder" value="{naming:java:comp/env/LEXUS/tempDir}/"/>
+			   </map:transform>
+			<map:serialize/> 
+			</map:match>
+		   <map:handle-errors when="always">
+                <map:generate type="exception"/>
+        		<map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-err.xml"/>    
+				
+                <map:serialize/>
+            </map:handle-errors>
+	</map:pipeline>
        	<map:pipeline type="noncaching">
 			<map:parameter name="expires" value="access plus 1 minutes"/>
 			<map:parameter name="outputBufferSize" value="0"/>

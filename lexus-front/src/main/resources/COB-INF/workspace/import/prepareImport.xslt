@@ -59,7 +59,7 @@
 	        <xsl:apply-templates select="$zipDir" mode="LEXUS3XML"/>
 		</xsl:when>
 		<xsl:when test="$format = 'relish-ll-lmf-to-lexus'">
-			<xsl:message>DBG: welcome to RELISH-LL-LMF to LEXUS</xsl:message>
+<!-- 			<xsl:message>DBG: welcome to RELISH-LL-LMF to LEXUS</xsl:message> -->
 			<xsl:apply-templates select="$zipDir" mode="relish-ll-lmf"/>
 		</xsl:when>
     </xsl:choose>
@@ -70,9 +70,35 @@
     
    <xsl:template match="zip:file" mode="LEXUS3XML">
    		  <xsl:variable name="schema_file" select="zip:entry[ends-with(@name, 'internal_schema.xml')]"/>
-          <xsl:variable name="data_file" select="(zip:entry except $schema_file)[1]"/>
-          <xsl:apply-templates select="zip:xml-entry($zip,$schema_file/@name)//lexus:meta" mode="LEXUS3XML"/> 
-          <xsl:apply-templates select="zip:xml-entry($zip,$data_file/@name)//lexus:lexicon" mode="LEXUS3XML"/>
+          <xsl:variable name="data_file" select="(zip:entry except $schema_file)"/>
+          <xsl:choose>
+          	<xsl:when test="empty($schema_file)">
+       		   	<xsl:value-of select="error((),'ERROR: no Lexus schema file has been found!')"/> 
+          		
+       		</xsl:when>
+       		<xsl:when test="empty($data_file)">
+          		<xsl:value-of select="error((),'ERROR: no Lexus data file has been found!')"/> ')"/>
+       		</xsl:when>
+       		<xsl:when test="count($data_file) ne 1">
+       			<xsl:value-of select="error((),'ERROR: more then one LEXUS 3 data files were found!')"/> ')"/>
+          	</xsl:when>
+       		<xsl:otherwise>
+       			<xsl:variable name="schema" select="zip:xml-entry($zip,$schema_file/@name)//lexus:meta"/>
+       			<xsl:variable name="data"   select="zip:xml-entry($zip,$data_file/@name)//lexus:lexicon"/>
+       			<xsl:choose>
+       				<xsl:when test="empty($schema)">
+		          		<xsl:value-of select="error((),'ERROR: the LEXUS 3 schema was not found inthe scheme file!')"/> ')"/>
+       				</xsl:when>
+       				<xsl:when test="empty($data)"> 
+    					<xsl:value-of select="error((),'ERROR: the LEXUS 3 data was not found in the data file!')"/> ')"/>
+		          	</xsl:when>
+       				<xsl:otherwise>
+				    	<xsl:apply-templates select="$schema" mode="LEXUS3XML"/> 
+          				<xsl:apply-templates select="$data" mode="LEXUS3XML"/>
+       				</xsl:otherwise>
+       			</xsl:choose>
+       		</xsl:otherwise>
+          </xsl:choose>
     </xsl:template>
 
     <xsl:template match="lexus:lexicon" mode="LEXUS3XML">
@@ -94,16 +120,30 @@
     			<xsl:value-of select="$format"/>
     		</import-id>
     	</xsl:variable>
-    	<xsl:for-each select="zip:entry">
-<!--     	    <xsl:message>DBG: entry[<xsl:value-of select="@name"/>]</xsl:message> -->
-    	    <xsl:variable name="doc" select="zip:xml-entry($zip,@name)"/>
-<!--     	    <xsl:message>DBG: root[<xsl:value-of select="$doc/name(*)"/>]</xsl:message> -->
-    		<xsl:if test="$doc/name(*)='lmf:LexicalResource'">
-<!--     			<xsl:message>DBG: found a RELISH-LL-LMF lexicon</xsl:message> -->
-    			<xsl:copy-of select="saxon:transform($xsl,$doc/*)/data/*"/>
+    	<xsl:variable name="lmf">
+	    	<xsl:for-each select="zip:entry">
+    	    	<xsl:message>DBG: entry[<xsl:value-of select="@name"/>]</xsl:message>
+    		    <xsl:variable name="doc" select="zip:xml-entry($zip,@name)"/>
+<!--     		 <xsl:message>DBG: root[<xsl:value-of select="$doc/name(*)"/>]</xsl:message> -->
+    			<xsl:if test="$doc/name(*)='lmf:LexicalResource'">
+<!--      			<xsl:message>DBG: found a RELISH-LL-LMF lexicon</xsl:message>  -->
+					<xsl:sequence select="$doc"/>
 <!--     			<xsl:message>DBG: converted a RELISH-LL-LMF lexicon</xsl:message> -->
-   			</xsl:if>
-    	</xsl:for-each>
+   				</xsl:if>
+    		</xsl:for-each>
+    	</xsl:variable>
+    	<xsl:choose>
+    		<xsl:when test="count($lmf) eq 1">
+    			<xsl:copy-of select="saxon:transform($xsl,$lmf/*)/data/*"/>
+    		</xsl:when>
+    		<xsl:when test="count($lmf) gt 1">
+    			<!--  ERROR: multiple RELISH LL LMF documents have been found! -->
+    			<xsl:value-of select="error((),'ERROR: multiple RELISH LL LMF documents have been found!')"/> ')"/>
+    		</xsl:when>
+    		<xsl:otherwise>
+    			<xsl:value-of select="error((),'ERROR: no RELISH LL LMF document has been found!')"/> ')"/>
+    		</xsl:otherwise>
+    	</xsl:choose>
     </xsl:template>
    
 </xsl:stylesheet>
