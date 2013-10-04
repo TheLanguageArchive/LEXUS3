@@ -1888,7 +1888,7 @@
 			private function fetchValidExports():Array{
 				
 				var valexp:Array = new Array();
-				if (this.operatingData.result.myResult.lexicon.template.export != null)
+				if (this.operatingData.result.myResult.lexicon.hasOwnProperty('template') && this.operatingData.result.myResult.lexicon.template.hasOwnProperty('export'))
 				{	for each (var exp in operatingData.result.myResult.lexicon.template.export)
 					{if (exp.valid)
 						valexp.push(exp);
