@@ -14,7 +14,7 @@
 	
 	<mx:Script>
 		<![CDATA[
-			import mx.collections.ArrayCollection;
+			//import mx.collections.ArrayCollection;
 			import mx.containers.Panel;
 			import mx.controls.Alert;
 			import mx.controls.DataGrid;
@@ -51,6 +51,7 @@
 			public function set crossRefElementID(value:String):void
 			{
 				_crossRefElementID = value;
+				editor.crossRefElementID = crossRefElementID;
 			}
 			
 			
@@ -67,10 +68,8 @@
 			public function set entryId(a_entryId:String):void{
 				var param:Object = new Object();
 				param.id = a_entryId;
-				initiator = this.parentDocument.modules.current ;
-				editor.crossRefElementID = crossRefElementID;
 				this.lexusService.send("LexusLexicalEntryEditor/loadLexicalEntry.json", param, this.name, this.onJSONLoad);
-				this.tabNav.selectedIndex = 1;
+				
 			}
 			
 			/**
@@ -92,14 +91,15 @@
 						
 						serverData = data;
 						
-						if (initiator != "lexicon_browser")
-						{		
-							if(_parentGrid != null){
+						if(_parentGrid != null && crossRefElementID == null){
 								_parentGrid.selectedItem.listView.value = data.result.lexicalEntry.listView.value;
 								_parentGrid.invalidateList();
-							}}
-					
-						if(tabNav.selectedChild == null)
+							}
+											
+						if( crossRefElementID != null)
+							tabNav.selectedChild = treeTab;
+						
+						if(tabNav.selectedChild == null) 
 							tabNav.selectedChild = entryTab;
 						iFrame.source = serverData.result.lexicalEntry.entryView;
 						if(tabNav.selectedChild == entryTab)
@@ -136,7 +136,7 @@
 				//txt = "<![CDATA[" + txt + "]]" + ">";
 				
 				//AAM:change name after save
-				if(this.saveBtn.enabled == true && !(listViewHTML.indexOf("(Modified!)  ") < 1 && listViewHTML.indexOf("(Modified!)  ") != -1) && (initiator != "lexicon_browser"))
+				if(this.saveBtn.enabled == true && !(listViewHTML.indexOf("(Modified!)  ") < 1 && listViewHTML.indexOf("(Modified!)  ") != -1))
 						
 					txt = "(Modified!)  "+ txt;
 				
@@ -154,8 +154,7 @@
 				else if( tabNav.selectedChild == treeTab){
 					
 					iFrame.visible = false;
-					if (this.serverData != null)
-						editor.initializeEditor( this.serverData.result.lexicalEntry, this.detailPanel, this.serverData.result.isEditable, 170);
+					editor.initializeEditor( this.serverData.result.lexicalEntry, this.detailPanel, this.serverData.result.isEditable, 170);
 				}
 			}
 			
@@ -165,7 +164,7 @@
 						"Do you want to save them?", saveEntryOnClose);
 				iFrame.visible= false;   
 				_parentGrid.invalidateList();
-				if (initiator == "lexicon_browser" && this.tree.selectedItem != null)
+				if (crossRefElementID != null && this.tree.selectedItem != null)
 					{	var event:ReferenceAttachCompleteEvent = new ReferenceAttachCompleteEvent("complete",this.tree.selectedItem.id);
 						dispatchEvent(event);}
 				PopUpManager.removePopUp(this);
