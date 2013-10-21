@@ -56,23 +56,29 @@
 	    <plugins>
 	    	<plugin>
 	        	<artifactId>maven-clean-plugin</artifactId>
-	            <version>2.4.1</version>
+	            <version>2.5</version>
 	            <configuration>
 	            	<filesets>
 	                    <fileset>
 	                    	<directory>../lexus-front/debug-info</directory>
-	                    	<excludes>
-	                        	<exclude>.svn</exclude>
-	                        	<exclude>.svn/*</exclude>
-	                        </excludes>
+                            <includes>
+                            	<include>**/*</include>
+                        	</includes>
+                            <excludes>
+                                <exclude>**/.svn</exclude>
+                                <exclude>**/.svn/*</exclude>
+                            </excludes>
 	                        <followSymlinks>false</followSymlinks>
 	                    </fileset>
 	                    <fileset>
 	                    	<directory>${basedir}/src/main/webapp/WEB-INF/lib</directory>
-	                    	<excludes>
-	                        	<exclude>.svn</exclude>
-	                        	<exclude>.svn/*</exclude>
-	                        </excludes>
+                            <includes>
+                            	<include>**/*</include>
+                        	</includes>
+                            <excludes>
+                                <exclude>**/.svn</exclude>
+                                <exclude>**/.svn/*</exclude>
+                            </excludes>
 	                        <followSymlinks>false</followSymlinks>
 	                    </fileset>
 	                </filesets>
