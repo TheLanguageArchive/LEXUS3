@@ -128,21 +128,21 @@
         <xsl:text>
             (</xsl:text>
                 <xsl:text>
-                let $les := collection('</xsl:text>
+                let $les := collection("</xsl:text>
                 <xsl:value-of select="$lexica-collection"/>
-                <xsl:text>')/lexus[@id = "</xsl:text><xsl:value-of select="@id"/>
+                <xsl:text>")/lexus[@id = "</xsl:text><xsl:value-of select="@id"/>
                 <xsl:text>"]/lexicon/lexical-entry</xsl:text>
                     <xsl:if test="ancestor::query/../refiner/searchTerm ne ''">
                           <xsl:choose>
 	           		     <xsl:when test="ancestor::query/../refiner/caseSensitive eq 'true'">
-	                 		 <xsl:text>[.//value[contains(text(),'</xsl:text>
+	                 		 <xsl:text>[.//value[contains(text(),"</xsl:text>
    							 <xsl:value-of select="replace(replace(replace(ancestor::query/../refiner/searchTerm, '&amp;', '&amp;amp;'), '&quot;', '&amp;quot;'), '''', '''''')" />
-							 <xsl:text>')]]</xsl:text> 
+							 <xsl:text>")]]</xsl:text> 
 				    	</xsl:when> 
 				    	<xsl:when test="ancestor::query/../refiner/caseSensitive eq 'false'">
-	                 		 <xsl:text>[.//value[contains(upper-case(text()),upper-case('</xsl:text>
+	                 		 <xsl:text>[.//value[contains(upper-case(text()),upper-case("</xsl:text>
 					   		 <xsl:value-of select="replace(replace(replace(ancestor::query/../refiner/searchTerm, '&amp;', '&amp;amp;'), '&quot;', '&amp;quot;'), '''', '''''')" />
-				    	     <xsl:text>'))]]</xsl:text> 
+				    	     <xsl:text>"))]]</xsl:text> 
 				    	</xsl:when> 
 				    </xsl:choose>
                     </xsl:if>
@@ -209,7 +209,8 @@
         Generate eq, not(eq), contains(), not(contains()) etc.
     -->
     <xsl:template match="datacategory" mode="build-query">
-        <xsl:variable name="uc" select="replace(upper-case(@value), '&quot;', '&amp;quot;')"/>
+        <xsl:variable name="uc" select="replace(replace(upper-case(@value), '&quot;', '&amp;quot;'), '&amp;', '&amp;amp;')"/>
+        <xsl:variable name="lc" select="replace(replace(@value, '&quot;', '&amp;quot;'), '&amp;', '&amp;amp;')"/>
             
             <xsl:if test="@caseSensitive eq 'true'">
            		<xsl:choose>
@@ -218,9 +219,9 @@
 	                	<xsl:value-of select="@schema-ref"/>
 	                	<xsl:text>"]/value[</xsl:text>
 	                	<xsl:if test="@negation eq 'true'"><xsl:text>not(</xsl:text></xsl:if>
-	                	<xsl:text>. = '</xsl:text>                           
-						<xsl:value-of select="replace(@value, '&quot;', '&amp;quot;')"/>
-                    	<xsl:text>'</xsl:text>
+	                	<xsl:text>. = "</xsl:text>
+	                	<xsl:value-of select="$lc"/>
+                    	<xsl:text>"</xsl:text>
                     	<xsl:if test="@negation eq 'true'"><xsl:text>)</xsl:text></xsl:if>
                     	<xsl:text>]</xsl:text>
 	                </xsl:when>
@@ -233,9 +234,9 @@
 			                	<xsl:text>.//data[@schema-ref = "</xsl:text> 
 			                	<xsl:value-of select="@schema-ref"/>
 			                	<xsl:text>"]/value[</xsl:text>
-			                	<xsl:text>contains(., '</xsl:text>                           
-								<xsl:value-of select="replace(@value, '&quot;', '&amp;quot;')"/>
-		                    	<xsl:text>')</xsl:text>
+			                	<xsl:text>contains(., "</xsl:text>                           
+								<xsl:value-of select="$lc"/>
+		                    	<xsl:text>")</xsl:text>
 		                    	<xsl:text>]</xsl:text>
 		                    	<xsl:if test="@negation eq 'true'"><xsl:text>)</xsl:text></xsl:if>
 		                	</xsl:when>
@@ -244,9 +245,9 @@
 			                	<xsl:value-of select="@schema-ref"/>
 			                	<xsl:text>"]/value[</xsl:text> 
 			                	<xsl:if test="@negation eq 'true'"><xsl:text>not(</xsl:text></xsl:if>
-			                	<xsl:text>contains(., '</xsl:text>                           
-								<xsl:value-of select="replace(@value, '&quot;', '&amp;quot;')"/>
-		                    	<xsl:text>')</xsl:text>
+			                	<xsl:text>contains(., "</xsl:text>                           
+								<xsl:value-of select="$lc"/>
+		                    	<xsl:text>")</xsl:text>
 		                    	<xsl:if test="@negation eq 'true'"><xsl:text>)</xsl:text></xsl:if>
 		                    	<xsl:text>]</xsl:text>
 	                    	</xsl:otherwise>
@@ -257,9 +258,9 @@
 	                	<xsl:value-of select="@schema-ref"/>
 	                	<xsl:text>"]/value[</xsl:text>
 	                	<xsl:if test="@negation eq 'true'"><xsl:text>not(</xsl:text></xsl:if>
-	                	<xsl:text>starts-with(., '</xsl:text>                           
-						<xsl:value-of select="replace(@value, '&quot;', '&amp;quot;')"/>
-                    	<xsl:text>')</xsl:text>
+	                	<xsl:text>starts-with(., "</xsl:text>                           
+						<xsl:value-of select="$lc"/>
+                    	<xsl:text>")</xsl:text>
                     	<xsl:if test="@negation eq 'true'"><xsl:text>)</xsl:text></xsl:if>
                     	<xsl:text>]</xsl:text>
 	               	</xsl:when>
@@ -268,9 +269,9 @@
 	                	<xsl:value-of select="@schema-ref"/>
 	                	<xsl:text>"]/value[</xsl:text>
 	                	<xsl:if test="@negation eq 'true'"><xsl:text>not(</xsl:text></xsl:if>
-	                	<xsl:text>ends-with(., '</xsl:text>                           
-						<xsl:value-of select="replace(@value, '&quot;', '&amp;quot;')"/>
-                    	<xsl:text>')</xsl:text>
+	                	<xsl:text>ends-with(., "</xsl:text>                           
+						<xsl:value-of select="$lc"/>
+                    	<xsl:text>")</xsl:text>
                     	<xsl:if test="@negation eq 'true'"><xsl:text>)</xsl:text></xsl:if>
                     	<xsl:text>]</xsl:text>
 	                </xsl:when>
@@ -283,9 +284,9 @@
 	                	<xsl:value-of select="@schema-ref"/>
 	                	<xsl:text>&quot;]/value[</xsl:text>
 	                	<xsl:if test="@negation eq 'true'"><xsl:text>not(</xsl:text></xsl:if>
-	                	<xsl:text>upper-case(.) = '</xsl:text>                           
+	                	<xsl:text>upper-case(.) = "</xsl:text>                           
                     	<xsl:value-of select="$uc"/>
-                    	<xsl:text>'</xsl:text>
+                    	<xsl:text>"</xsl:text>
                     	<xsl:if test="@negation eq 'true'"><xsl:text>)</xsl:text></xsl:if>
                     	<xsl:text>]</xsl:text>
 	                </xsl:when>
@@ -298,9 +299,9 @@
 			                	<xsl:text>.//data[@schema-ref = "</xsl:text> 
 			                	<xsl:value-of select="@schema-ref"/>
 			                	<xsl:text>&quot;]/value[</xsl:text>
-			                	<xsl:text>contains(upper-case(.), '</xsl:text>                           
+			                	<xsl:text>contains(upper-case(.), "</xsl:text>                           
 		                    	<xsl:value-of select="$uc"/>
-		                    	<xsl:text>')</xsl:text>
+		                    	<xsl:text>")</xsl:text>
 		                    	<xsl:text>]</xsl:text>
 		                    	<xsl:if test="@negation eq 'true'"><xsl:text>)</xsl:text></xsl:if>
 		                	</xsl:when>
@@ -309,9 +310,9 @@
 			                	<xsl:value-of select="@schema-ref"/>
 			                	<xsl:text>&quot;]/value[</xsl:text>
 			                	<xsl:if test="@negation eq 'true'"><xsl:text>not(</xsl:text></xsl:if>
-			                	<xsl:text>contains(upper-case(.), '</xsl:text>                           
+			                	<xsl:text>contains(upper-case(.), "</xsl:text>                           
 		                    	<xsl:value-of select="$uc"/>
-		                    	<xsl:text>')</xsl:text>
+		                    	<xsl:text>")</xsl:text>
 		                    	<xsl:if test="@negation eq 'true'"><xsl:text>)</xsl:text></xsl:if>
 		                    	<xsl:text>]</xsl:text>
 		                	</xsl:otherwise>
@@ -322,9 +323,9 @@
 	                	<xsl:value-of select="@schema-ref"/>
 	                	<xsl:text>&quot;]/value[</xsl:text>
 	                	<xsl:if test="@negation eq 'true'"><xsl:text>not(</xsl:text></xsl:if>
-	                	<xsl:text>starts-with(upper-case(.), '</xsl:text>                           
+	                	<xsl:text>starts-with(upper-case(.), "</xsl:text>                           
                     	<xsl:value-of select="$uc"/>
-                    	<xsl:text>')</xsl:text>
+                    	<xsl:text>")</xsl:text>
                     	<xsl:if test="@negation eq 'true'"><xsl:text>)</xsl:text></xsl:if>
                     	<xsl:text>]</xsl:text>	                
 	                </xsl:when>
@@ -333,9 +334,9 @@
 	                	<xsl:value-of select="@schema-ref"/>
 	                	<xsl:text>&quot;]/value[</xsl:text>
 	                	<xsl:if test="@negation eq 'true'"><xsl:text>not(</xsl:text></xsl:if>
-	                	<xsl:text>ends-with(upper-case(.), '</xsl:text>                           
+	                	<xsl:text>ends-with(upper-case(.), "</xsl:text>                           
                     	<xsl:value-of select="$uc"/>
-                    	<xsl:text>')</xsl:text>
+                    	<xsl:text>")</xsl:text>
                     	<xsl:if test="@negation eq 'true'"><xsl:text>)</xsl:text></xsl:if>
                     	<xsl:text>]</xsl:text>
 	                </xsl:when>
