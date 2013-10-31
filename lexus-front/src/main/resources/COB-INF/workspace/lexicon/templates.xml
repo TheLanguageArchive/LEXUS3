@@ -42,7 +42,7 @@
                                             <warning>The LMF core model requires a Form subclass, i.e., Lemma. Changing this data category will disable the RELISH LMF export.</warning>
                                         </update>
                                         <delete>
-                                            <warning>The LMF core model requires a Form subclass, i.e., Lemma,Word Form or Stem. These are all defined in the Morphology extension where Lemma is mandatory.</warning>
+                                            <warning>The LMF core model requires a Form subclass, i.e., Lemma, Word Form or Stem. These are all defined in the Morphology extension where Lemma is mandatory.</warning>
                                         </delete>
                                     </restriction>
                     </editor>
@@ -940,12 +940,48 @@
             <container id="schema-l-id" admin-info="" mandatory="true" multiple="false"
                 description="The container for all the lexical entries of a source language within the database. A Lexicon must contain at least one lexical entry"
                 name="Lexicon" type="lexicon">
+                <editor>
+                    <restriction exports="relish-to-lego-lift-lmf" scope="self">
+                        <update>
+                            <info>Updating this container will make it a lexicon specific extension of the LMF model.</info>
+                        </update>
+                    </restriction>
+                    <restriction exports="relish-to-lego-lift-lmf" scope="container">
+                        <create>
+                            <warning>Creating a container will disable the RELISH-LL-LMF export for this lexicon.</warning>
+                        </create>
+                        <update>
+                            <warning>Updating this container will disable the RELISH-LL-LMF export for this lexicon.</warning>
+                        </update>
+                        <delete>
+                            <warning>Deleting this container will disable the RELISH-LL-LMF export for this lexicon.</warning>
+                        </delete>
+                    </restriction>
+                    <restriction exports="relish-to-lego-lift-lmf" scope="data category">
+                        <update>
+                            <warning>Updating this data category will disable the RELISH-LL-LMF export for this lexicon.</warning>
+                        </update>
+                        <delete>
+                            <warning>Deleting this data category will disable the RELISH-LL-LMF export for this lexicon.</warning>
+                        </delete>
+                    </restriction>
+                </editor>
                 <container id="schema-le-id" admin-info="" mandatory="true" multiple="true"
                     description="Represents a word, a multi-word expression, or an affix in a given language"
                     name="Lexical Entry" type="lexical-entry">
                     <container id="schema-lemma-id" admin-info="" mandatory="true" multiple="true"
                         description="Represents a word form chosen by convention to designate the Lexical Entry"
                         name="Lemma" type="container">
+                        <editor>
+                            <restriction exports="relish-to-lego-lift-lmf" scope="self">
+                                <update>
+                                    <warning>The LMF core model requires a Form subclass, i.e., Lemma. Changing this data category will disable the RELISH LMF export.</warning>
+                                </update>
+                                <delete>
+                                    <warning>The LMF core model requires a Form subclass, i.e., Lemma, Word Form or Stem. These are all defined in the Morphology extension where Lemma is mandatory.</warning>
+                                </delete>
+                            </restriction>
+                        </editor>
                         <container id="schema-lemma-form-representation-id" admin-info=""
                             mandatory="false" multiple="true"
                             description="Represents one variant orthography of a Form for a Lemma"
