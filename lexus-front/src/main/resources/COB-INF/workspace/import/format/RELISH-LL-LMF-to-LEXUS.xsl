@@ -37,6 +37,11 @@
         <xsl:message>DBG: synced data and schema</xsl:message>
         <data>
 	       	<lexus:meta version="1.0">
+	       	    <lexus:template name="{$lex-template/@id}">
+	       	        <xsl:for-each select="$lex-template/lexus:export">
+	       	            <lexus:export name="{@name}" id ="{@id}"  description="{@description}" valid="true"/>
+	       	        </xsl:for-each>
+	       	    </lexus:template>
 	           	<xsl:copy-of select="$schema"/>
 	        </lexus:meta>
 	        <lexus:lexicon version="1.0">
@@ -182,6 +187,8 @@
     
     <xsl:template match="text()" mode="schema"/>
     
+<!--    <xsl:template match=""/>-->
+    
     <xsl:template match="lexus:schema" mode="schema">
         <lexus:schema>
             <xsl:apply-templates mode="#current"/>
@@ -194,6 +201,7 @@
         <xsl:variable name="id" select="@id"/>
         <lexus:container>
             <xsl:copy-of select="@*"/>
+            <xsl:copy-of select="lexus:editor"/>
             <xsl:for-each-group select="$data//(lexus:lexical-entry|lexus:container)[@schema-ref=$id]/lexus:data" group-by="@name">
                 <xsl:variable name="name" select="current-grouping-key()"/>
                 <xsl:variable name="datcat" select="$schema/lexus:datacategory[lower-case(replace(@name,'\s+',''))=lower-case(replace($name,'\s+',''))]"/>
@@ -201,6 +209,7 @@
                     <xsl:when test="count($datcat)=1">
                         <lexus:datacategory>
                             <xsl:copy-of select="$datcat/@*"/>
+                            <xsl:copy-of select="$datcat/lexus:editor"/>
                         </lexus:datacategory>
                     </xsl:when>
                     <xsl:when test="count($datcat)&gt;1">
