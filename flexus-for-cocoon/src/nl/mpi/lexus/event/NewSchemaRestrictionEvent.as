@@ -7,15 +7,17 @@ package nl.mpi.lexus.event
 	public class NewSchemaRestrictionEvent extends Event
 	{
 		public var response:String;
+		public var schemaElement:Object;
 		
-		public function NewSchemaRestrictionEvent( type:String, response:String)
+		public function NewSchemaRestrictionEvent( type:String, response:String, schElm:Object)
 		{
 			super(type);
 			this.response=response;
+			this.schemaElement = schElm;
 		}
 		
 		override public function clone():Event {
-            return new NewSchemaRestrictionEvent("new", this.response);
+            return new NewSchemaRestrictionEvent("proceed", this.response,this.schemaElement);
         }
 
 
