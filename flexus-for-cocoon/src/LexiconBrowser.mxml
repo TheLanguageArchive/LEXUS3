@@ -1889,7 +1889,7 @@
 				
 				var valexp:Array = new Array();
 				if (this.operatingData.result.myResult.lexicon.hasOwnProperty('template') && this.operatingData.result.myResult.lexicon.template.hasOwnProperty('export'))
-				{	for each (var exp in operatingData.result.myResult.lexicon.template.export)
+				{	for each (var exp:Object in operatingData.result.myResult.lexicon.template.export)
 					{if (exp.valid)
 						valexp.push(exp);
 					} 
@@ -1898,7 +1898,7 @@
 			}
 			
 			private function prepareExportXML():void{
-					var validExports = fetchValidExports();
+					var validExports:Array = fetchValidExports();
 					var pop:ExportDetail = ExportDetail(PopUpManager.createPopUp(application as DisplayObject,ExportDetail,true));
 						
 						pop.exports = new ArrayCollection(validExports);
