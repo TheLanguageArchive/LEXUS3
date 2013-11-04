@@ -7,7 +7,7 @@
 	
 	
 	<mx:Metadata>
-		[Event(name="updateLexicon", type="flash.event.Event")]
+		[Event(name="restrictedLexicon", type="flash.event.Event")]
 	</mx:Metadata>
 	
 	<mx:Script>
@@ -39,6 +39,19 @@
 			[Bindable]
 			private var _restrictions:ArrayCollection;	
 			
+			[Bindable]
+			private var _schemaElement:Object;
+			
+			public function get schemaElement():Object
+			{
+				return _schemaElement;
+			}
+
+			public function set schemaElement(value:Object):void
+			{
+				_schemaElement = value;
+			}
+
 			public function get restrictions():ArrayCollection
 			{
 				return _restrictions;
@@ -71,10 +84,17 @@
 			}
 			
 			private function proceed():void
-			{	var event:Event = new NewSchemaRestrictionEvent("proceed", "yes");
+			{	var event:Event = new NewSchemaRestrictionEvent("proceed", "yes", schemaElement);
 				dispatchEvent(event);	
 				PopUpManager.removePopUp(this);
 			}
+			
+			private function cancel():void
+			{	var event:Event = new NewSchemaRestrictionEvent("proceed", "no",schemaElement);
+				dispatchEvent(event);	
+				PopUpManager.removePopUp(this);
+			}
+			
 			/**
 			 * Key event handler for the cancel button
 			 **/ 
@@ -127,6 +147,6 @@
 	<mx:ControlBar horizontalAlign="center" width="100%">
 		
 		<mx:Button id="Yes" label="Yes" click="proceed()" keyUp="onKeyUpSave(event)" enabled="true"/>
-		<mx:Button id="No" label="No" click="PopUpManager.removePopUp(this);"  keyUp="onKeyUpCancel(event)" enabled="true"/>
+		<mx:Button id="No" label="No" click="cancel()"  keyUp="onKeyUpCancel(event)" enabled="true"/>
 	</mx:ControlBar>
 </mx:TitleWindow>
