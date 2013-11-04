@@ -238,20 +238,9 @@
 				}
 				
 				switch (evtName) {
-					case "import_xmlx":
-						// var popXMLImport:XMLImport = XMLImport(PopUpManager.createPopUp(this,XMLImport,true));
-						var popXMLImport:ImportLexusXML = ImportLexusXML(PopUpManager.createPopUp(application as DisplayObject,ImportLexusXML,true));
-						popXMLImport.sessionId = serverData.result.sessionId;
-						popXMLImport.addEventListener("new", handleLexiconImport);
-						popXMLImport.addEventListener("finish", handleLexiconImportFinished);
-						PopUpManager.centerPopUp(popXMLImport);
-						break;
 					case "import_xml":
-						
-						
 						if( imports.length == 0)
 						{	
-							// var popXMLImport:XMLImport = XMLImport(PopUpManager.createPopUp(this,XMLImport,true));
 							var popZIPImport:ImportLexusXMLZips = ImportLexusXMLZips(PopUpManager.createPopUp(application as DisplayObject,ImportLexusXMLZips,true));
 							popZIPImport.sessionId = serverData.result.sessionId;
 							popZIPImport.addEventListener("new", handleLexiconImport);
@@ -320,12 +309,9 @@
 			private function prepareFormattedImport():void{
 				
 				var pop:ImportDetail = ImportDetail(PopUpManager.createPopUp(application as DisplayObject,ImportDetail,true));
-				
-				//	pop.lexica = new ArrayCollection(this.lexicaList.dataProvider.toArray());
-				pop.imports = new ArrayCollection(imports);
-				pop.sessionId=serverData.result.sessionId;
-				//pop.addEventListener("export",);
-				PopUpManager.centerPopUp(pop);
+					pop.imports = new ArrayCollection(imports);
+					pop.sessionId=serverData.result.sessionId;
+					PopUpManager.centerPopUp(pop);
 			}
 			
 			
@@ -340,10 +326,6 @@
 					}
 				);   
 				}}
-			
-			
-			
-			
 			
 			
 			/* Save unsaved data, called from menu event handler or keyboard handler */
@@ -1103,7 +1085,7 @@
 			
 			private function getTheValidExportData(): ArrayCollection{
 				var data : ArrayCollection = new ArrayCollection();
-					for each (var item in lexicaList.dataProvider[lexicaList.selectedIndex].template.export)
+					for each (var item:Object in lexicaList.dataProvider[lexicaList.selectedIndex].template.export)
 						if (item.valid)
 							data.addItem(item);
 					return data;
@@ -1219,7 +1201,7 @@
 														<mx:Label text="Export Foramts:"/>
 													</mx:GridItem>
 													<mx:GridItem width="100%" >
-														<mx:DataGrid id="exportData" visible="false" dataProvider="{getTheValidExportData()}"  width="80%" height="100">
+														<mx:DataGrid id="exportData" visible="false"  width="80%" height="100">
 															<mx:columns>
 																<mx:DataGridColumn headerText="Name" dataField="name"/>
 																<mx:DataGridColumn headerText="Description" dataField="description"/>
