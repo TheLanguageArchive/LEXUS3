@@ -129,6 +129,8 @@
 //					exports = serverData.result.exports;
 					schemaElementViewer.init(serverData.result.schema, editable);
 					schemaElementViewer.addEventListener("change", onChange);
+					schemaElementViewer.addEventListener("update", onSchemaNameUpdate);
+					
 					toggleButtonBar();
 					callLater(expandTree);
 					schemaIsModified = false;
@@ -389,11 +391,82 @@
 			private function onChange(event:Event):void {
 				var idx:int = tree.selectedIndex;
 				var item:Object = tree.selectedItem;
-				this.schemaIsModified = true;
-			//	YesNo.alert("You tried to change somthing in the schema tree");
-				LexusUtil.forceTreeRedraw(tree, tree.dataProvider);
+				if (event.type != "update")
+				{	this.schemaIsModified = true;
+					LexusUtil.forceTreeRedraw(tree, tree.dataProvider);
+				}
 			}
-
+			
+			private function onSchemaNameUpdate(event:Event):void{
+		
+				switch( this.checkNewElementData()){
+				//success
+				case 0:
+					// make it a function setter: this.schemaElementViewer.schemaElement.name = this.schemaElementViewer.se_name.text;
+					this.schemaElementViewer.updateName();
+					break;
+				case 001:
+					this.schemaElementViewer.alertonDuplicate();
+					break;					
+			}
+				
+				
+			}
+			
+			protected function checkNewElementData():int
+			{	
+				var invalid:int = 0;
+				var restrictions:Array ;
+				if (! schemaRestrictionsCheck("update", tree.selectedItem))
+				{	restrictions = this.application.modules.schema_editor.restrictions;
+					var pop:RestrictionAlert = RestrictionAlert(PopUpManager.createPopUp(application as DisplayObject,RestrictionAlert,true));
+					pop.schemaElement = tree.selectedItem;
+					pop.restrictions = new ArrayCollection(restrictions);
+					pop.addEventListener("proceed",confirmUpdateHandler);
+					PopUpManager.centerPopUp(pop);
+					pop.setFocus();
+					invalid = 2; //the case where there is a restriction on update and user is first prompted on it. It is handled in the confirmupdatehandler.
+				}
+				else	
+				{	if (! handleValid())
+					invalid = 001;
+					
+				} 
+				return invalid;	
+			}
+			
+			private function handleValid():Boolean{
+			    var parent:Object =  tree.getParentItem(tree.selectedItem)	
+				var siblings:Object;
+				
+				if (parent != null)
+				{	siblings = parent.children ;	
+						for each (var item:Object in siblings)
+							if (item.name.toString().toUpperCase() == this.schemaElementViewer.newName().toUpperCase() && item.type == tree.selectedItem.type && tree.selectedItem != item)
+							return false;
+					return true;	
+				}
+				else
+					return true;
+			}
+			
+			
+			private function confirmUpdateHandler(event:NewSchemaRestrictionEvent):void {
+				if (event.response == "yes") {
+					if (! handleValid())
+						this.schemaElementViewer.alertonDuplicate();	
+					else
+					{	this.schemaElementViewer.updateName();
+						this.schemaElementViewer.changeSource();
+						//invalidate export
+						invalidateExport();
+					}
+				}
+				else 
+					this.schemaElementViewer.reverseName();
+				
+			}
+			
 			private function addSchemaElement():void {
 				var item:Object = tree.selectedItem;
 				//AAM: do  nothing if selected item is a datacategory.
@@ -405,29 +478,19 @@
 					return;
 				}
 				
-				if (schemaRestrictionsCheck("create", tree.selectedItem))
-				{
-					var popAdd:AddSchemaElement = AddSchemaElement(PopUpManager.createPopUp(this, AddSchemaElement, true));
+				var popAdd:AddSchemaElement = AddSchemaElement(PopUpManager.createPopUp(this, AddSchemaElement, true));
 					popAdd.futureSibblings = new ArrayCollection(tree.selectedItem.children);
 					popAdd.addEventListener("new", this.handleNewSchemaElement);
 					PopUpManager.centerPopUp(popAdd);
-				}else
-				{
-					var pop:RestrictionAlert = RestrictionAlert(PopUpManager.createPopUp(application as DisplayObject,RestrictionAlert,true));
-					
-					pop.restrictions = new ArrayCollection(restrictions);
-					pop.addEventListener("proceed",confirmCreateHandler);
-					PopUpManager.centerPopUp(pop);
-				
-				
-				}
+					popAdd.setFocus();
 			}
 			
 			private function fetchValidExports():Array{
 			
 				var valexp:Array = new Array;
 			if (this.serverData.result.lexicon.template.export != null)
-			{	for each (var exp in this.serverData.result.lexicon.template.export)
+			{	for each (var exp:Object in this.serverData.result.lexicon.template.export)
+				//hack: once the value is saved it becomes boolean, but during the process and in between saves, it might still be checked and it's value is still string
 					{if (exp.valid)
 								valexp.push(exp.id);
 					} 
@@ -436,7 +499,7 @@
 			}
 			
 			
-			public function schemaRestrictionsCheck(action:String, node:Object):Boolean{
+			public function schemaRestrictionsCheck(action:String, targetNode:Object):Boolean{
 				
 				restrictionFound = false;
 				
@@ -445,59 +508,65 @@
 				var status:String;
 				restrictions = new Array();
 				invalidExports = new Array();
+				var node:Object;
+				if (action == "create")
+					node = tree.selectedItem;
+				else
+					node = targetNode;
+				
 				if (node.src == "template")
-				for each (var item in validExports)
-				{	if (node.editor != null){
-						for each (var rest in node.editor.restriction)
+				for each (var item:Object in validExports)
+				{	restriction = null;
+					if (node.editor != null)
+					{	for each (var rest:Object in node.editor.restriction)
 						{ if (item == rest.exports && rest.scope=="self" )
-							for each (var act in rest.action) 
-							{ if (act.type == action && act.cause != null)
-							{		restriction = act;
+							for each (var act:Object in rest.action) 
+							{ if (act.type == action) 
+								if (act.cause != null)
+								{	restriction = act;
 									restrictionFound = true;
-									status="restricted";
 									restrictions.push(act);
 									if (act.cause.toUpperCase() == "WARNING")
 										invalidExports.push(item);
-									break;
+								}
+								else
+									//  if cause == null then overwriting is possible, restriction is overwritten and action is allowed
+									return true;
 							}
 						}
-						}
+					}
 						
-						}
-						
-						if (restriction == null)
+					if (restriction == null)
 							{ //nearest ancestor should be checked. 
-						
+						//(restr.scope == "container" && node.type =="LexicalEntry")
 							var ancestor:Object = tree.getParentItem(node);
 							    restrictionFound = false;	
 								
 								while (!restrictionFound && ancestor !=null)
 								{						
 								 if (ancestor.editor != null){
-									for each (var rest in ancestor.editor.restriction)
-									{ if (item == rest.exports && rest.scope == node.type)
-										for each (var act in rest.action) 
-									{ 		if (act.type == action && act.cause != null)
-											{	
-												restriction = act;
-												restrictionFound = true;
-												status="restricted";
-												restrictions.push(act);
-												if (act.cause.toUpperCase() == "WARNING")
-													invalidExports.push(item);
-												break;
+									for each (var restr:Object in ancestor.editor.restriction)
+									{ if (item == restr.exports && (restr.scope == node.type || (action == "create" && restr.scope == targetNode.type)))
+										for each (var actn:Object in restr.action) 
+										{ 	if (actn.type == action )
+											  if (actn.cause != null)
+												{ restriction = actn;
+												  restrictionFound = true;
+												  restrictions.push(actn);
+												  if (actn.cause.toUpperCase() == "WARNING")
+													  invalidExports.push(item);
+											  	} 												
+												else
+													//  if cause == null then overwriting is possible, restriction is overwritten and action is allowed
+													return true;	
+												
+										}
 									}
-									}
-									}}
+								  }
 								 ancestor = tree.getParentItem(ancestor)
 								}
 						
 							}
-						else if (restriction.cause == null || restriction == null)
-								{ //action is explicitally allowd to override an ancestor 
-								
-								status = "allowed";
-								}
 				}	
 			if (restrictions.length >0)	
 				return false;
@@ -507,71 +576,85 @@
 			
 			private function confirmCreateHandler(event:NewSchemaRestrictionEvent):void {
 				if (event.response == "yes") {
-					var popAdd:AddSchemaElement = AddSchemaElement(PopUpManager.createPopUp(this, AddSchemaElement, true));
-					popAdd.futureSibblings = new ArrayCollection(tree.selectedItem.children);
-					popAdd.addEventListener("new", this.handleNewSchemaElement);
-					PopUpManager.centerPopUp(popAdd);
+					
+					tree.selectedItem.src = "user";
 					invalidateExport();
-				
+					createNewSchemaElement(event.schemaElement);
 				}
 			}
 			
 			
 
 			private function handleNewSchemaElement(event:NewSchemaElementEvent):void {
-				var item:Object = tree.selectedItem;
-				if (item.type == "data category")
-					return;
-				if (event.schemaElement.name == ""){
-					YesNo.alert("You must specify a non-empty name for new schema elements!");
-					return;
+				if (!schemaRestrictionsCheck("create", event.schemaElement))
+				{	var pop:RestrictionAlert = RestrictionAlert(PopUpManager.createPopUp(application as DisplayObject,RestrictionAlert,true));
+					pop.restrictions = new ArrayCollection(restrictions);
+					pop.schemaElement = event.schemaElement;
+					pop.addEventListener("proceed",confirmCreateHandler);
+					pop.setFocus();
+					PopUpManager.centerPopUp(pop);
 				}
 				
+				else
+					createNewSchemaElement(event.schemaElement);
+			}
+			
+			
+			private function createNewSchemaElement(schemaElement:Object):void
+			{	var item:Object = tree.selectedItem;
+				/*if (item.type == "data category")
+				return;
+				if (event.schemaElement.name == ""){
+				YesNo.alert("You must specify a non-empty name for new schema elements!");
+				return;
+				}
+				*/
 				var schemaEl:Object;
 				var children:ArrayCollection = new ArrayCollection(item.children);
 				var index:int = -1;
-				//Inserting the data category at the end of the data category list
-				if (event.schemaElement.type == "data category") {
-					for (var i:int = 0; i < children.length; i++) {
-						schemaEl = children.getItemAt(i);
-						
-						if (event.schemaElement.name == schemaEl.name && schemaEl.type == "data category"){
-							YesNo.alert("There is already a data category with the same name you specified! The names of the lexicon schema elements must be unique.");
-							return;
-						}
-						
-						if (schemaEl.type != "data category") {
-							index = i;
-							break;
-						}
-					}
-				} else {
-					for (var j:int = 0; j < children.length; j++) {
-						schemaEl = children.getItemAt(j);
-						
-						if (event.schemaElement.name == schemaEl.name && schemaEl.type == "container"){
-							YesNo.alert("There is already a data container with the same name you specified! The names of the lexicon schema elements must be unique.");
-							return;
-						}
-					}
-				}
-				if (index == -1)
-					children.addItem(event.schemaElement);
-				else
-					children.addItemAt(event.schemaElement, index);
-				//SSha: enhanced feature request update to have a datacategory folder open and unfolded upon creation.
-				tree.expandChildrenOf(event.schemaElement, true);
 				
-				this.schemaIsModified = true;
-				LexusUtil.forceTreeRedraw(tree, tree.dataProvider);
+				//Inserting the data category at the end of the data category list
+				if (schemaElement.type == "data category") {
+				for (var i:int = 0; i < children.length; i++) {
+					schemaEl = children.getItemAt(i);
+					
+					if (schemaElement.name == schemaEl.name && schemaEl.type == "data category"){
+						YesNo.alert("There is already a data category with the same name you specified! The names of the lexicon schema elements must be unique.");
+						return;
+					}
+					
+					if (schemaEl.type != "data category") {
+						index = i;
+						break;
+					}
+					}
+					} else {
+						for (var j:int = 0; j < children.length; j++) {
+							schemaEl = children.getItemAt(j);
+							
+							if (schemaElement.name == schemaEl.name && schemaEl.type == "container"){
+								YesNo.alert("There is already a data container with the same name you specified! The names of the lexicon schema elements must be unique.");
+								return;
+							}
+						}
+					}
+					if (index == -1)
+						children.addItem(schemaElement);
+					else
+						children.addItemAt(schemaElement, index);
+					//SSha: enhanced feature request update to have a datacategory folder open and unfolded upon creation.
+					tree.expandChildrenOf(schemaElement, true);
+					
+					this.schemaIsModified = true;
+					LexusUtil.forceTreeRedraw(tree, tree.dataProvider);
 			}
 
 			private function removeSchemaElement():void {
 				if (! schemaRestrictionsCheck("delete",tree.selectedItem)){
 					var mess:String=new String("Lexical entry information for this " + tree.selectedItem.type + " will be permanently lost!!\n\n Would You Still like to proceed?");
 					var pop:RestrictionAlert = RestrictionAlert(PopUpManager.createPopUp(application as DisplayObject,RestrictionAlert,true));
-					
 					pop.restrictions = new ArrayCollection(restrictions);
+					pop.schemaElement = tree.selectedItem;
 					pop.addEventListener("proceed",confirmProceedWithDeleteHandler);
 					PopUpManager.centerPopUp(pop);
 					
@@ -618,10 +701,10 @@
 	
 			public function invalidateExport():void{
 				
-				for each (var invexp in invalidExports)
-					{	for each (var exp in this.serverData.result.lexicon.template.export)
+				for each (var invexp:Object in invalidExports)
+					{ for each (var exp:Object in this.serverData.result.lexicon.template.export)
 							if (invexp == exp.id)
-								 exp.valid = "false";
+								 exp.valid = false;
 							
 					}
 			}
