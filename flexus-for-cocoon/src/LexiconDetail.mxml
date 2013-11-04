@@ -176,7 +176,7 @@
 			private function getTheExportData():ArrayCollection {
 				var exportNames: ArrayCollection = new ArrayCollection();
 				if (tmplates.selectedItem.export != null)
-					for each (var item in tmplates.selectedItem.export)
+					for each (var item:Object in tmplates.selectedItem.export)
 						exportNames.addItem({name:item.name,label:infoIcon, description:item.description})
 				return exportNames;			
 				
