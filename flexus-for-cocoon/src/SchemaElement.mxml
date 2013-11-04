@@ -9,20 +9,20 @@
 	<mx:Script>
 		<![CDATA[
 			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
 			import mx.core.FlexGlobals;
 			import mx.core.UIComponent;
 			import mx.events.CloseEvent;
 			import mx.events.ListEvent;
+			import mx.events.ValidationResultEvent;
 			import mx.managers.PopUpManager;
 			import mx.rpc.events.ResultEvent;
-			import mx.controls.Alert;
 			
 			import nl.mpi.lexus.LexusUtil;
+			import nl.mpi.lexus.YesNo;
+			//import nl.mpi.lexus.event.NewSchemaRestrictionEvent;
 			import nl.mpi.lexus.event.ValueDomainChangeEvent;
 			import nl.mpi.lexus.service.LexusService;
-			import nl.mpi.lexus.YesNo;
-			import mx.events.ValidationResultEvent;
-			import nl.mpi.lexus.event.NewSchemaRestrictionEvent;
 			
 			[Bindable][Embed(source="../assets/images/iconza_24x24/warning_24x24.png")] private var warnIcon:Class;
 
@@ -240,7 +240,7 @@
 			private function onChange(event:Event):void {
 				switch (event.currentTarget) {
 					case this.se_name:
-						this._name_changeHandler(event);
+						onUpdate(event);
 						break;
 					case this.se_description:
 						this.schemaElement.description = this.se_description.text;
@@ -309,86 +309,43 @@
 				this.schemaElement.sortOrder = selSortOrder;
 				fireChangeEvent();
 			}
-		protected function _name_changeHandler(event:Event):void
+		protected function onUpdate(event:Event):void
 		{
+			var event:Event = new Event("update");
+			dispatchEvent(event);
 			
-			switch( this.checkNewElementData()){
-				//success
-				case 0:
-					this.schemaElement.name = this.se_name.text;
-					warnIco.visible = false;
-					break;
-				case 001:
-					warnIco.visible = true;
-					YesNo.alert("A schema element with the name \"" + se_name.text +"\" already exists!\nPlease choose a different name for the new schema element.");
-					
-					break;					
-			}
 		}
-		
-		protected function checkNewElementData():int
+			
+		public function updateName():void
 		{	
-			var invalid:int = 0;
-			var restrictions:Array ;
-			if (! this.application.modules.schema_editor.schemaRestrictionsCheck("update", this.schemaElement))
-			{	restrictions = this.application.modules.schema_editor.restrictions;
-				var pop:RestrictionAlert = RestrictionAlert(PopUpManager.createPopUp(application as DisplayObject,RestrictionAlert,true));
-				
-				pop.restrictions = new ArrayCollection(restrictions);
-				pop.addEventListener("proceed",confirmUpdateHandler);
-				PopUpManager.centerPopUp(pop);
-				invalid = 2; //the case where there is a restriction on update and user is first prompted on it. It is handled in the updatehandler.
-
-			
-			
-			}
-			else	
-				{	if (! checkDuplicateNames())
-						invalid = 001;
-					
-				} 
-		return invalid;	
+			this.schemaElement.name = this.se_name.text;
+			warnIco.visible = false;
+			fireChangeEvent();
+		
 		}
-			
-		private function checkDuplicateNames():Boolean{
-			var sibblings:Object = this.application.modules.schema_editor.tree.getParentItem(this.schemaElement).children ;	
-			
-			for each (var item:Object in sibblings)
-				if (item.name.toString().toUpperCase() == se_name.text.toUpperCase() && item.type == this.schemaElement.type && this.schemaElement != item)
-					return false;
-			
-			return true;	
-			
-		}
-			
-		private function confirmUpdateHandler(event:NewSchemaRestrictionEvent):void {
-			if (event.response == "yes") {
+		
+		public function alertonDuplicate():void
+		{
+			warnIco.visible = true;
+			YesNo.alert("A schema element with the name \"" + se_name.text +"\" already exists!\nPlease choose a different name for the new schema element.");
 	
+		}
+		
+		public function newName():String
+		{
+			return this.se_name.text ; 
+		}
 			
-			if (! checkDuplicateNames())
-				{	warnIco.visible = true;
-					YesNo.alert("A schema element with the name \"" + se_name.text +"\" already exists!\nPlease choose a different name for the new schema element.");
-					}
-				else
-				{
-				this.schemaElement.name = this.se_name.text;
+		public function changeSource():void
+			{
 				this.schemaElement.src = "user";
-				//invalidate export
-				this.application.modules.schema_editor.invalidateExport();
-				fireChangeEvent();
-				}
 			}
-			else 
-			{		
-			  this.se_name.text = this.schemaElement.name;
-			  warnIco.visible = false;	
-			}
+		public function reverseName():void
+		{
+			this.se_name.text = this.schemaElement.name;
+			warnIco.visible = false;	
+		}
 			
-		
-		}	
-		
-		
-		
         ]]>
 		
 	</mx:Script>
@@ -418,7 +375,7 @@
 						<mx:GridItem>
 							<mx:TextInput id="se_name"
 										  text="{this.schemaElement.name}"
-										  change="onChange(event)"/>
+										  change="onUpdate(event)"/>
 						</mx:GridItem>
 						<mx:GridItem verticalAlign="middle">
 							<mx:Image id="warnIco" source="{warnIcon}" visible="false" 
