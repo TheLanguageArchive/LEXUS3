@@ -8,7 +8,7 @@
 	
 	<mx:Metadata>
 		
-		[Event(name="updateLexicon", type="flash.event.Event")]
+		[Event(name="importLexicon", type="flash.event.Event")]
 		
 	</mx:Metadata>
 	
@@ -87,31 +87,11 @@
 								popZIPImport.addEventListener("finish", this.parentDocument.modules.workspace.handleLexiconImportFinished);
 								PopUpManager.removePopUp(this);
 								PopUpManager.centerPopUp(popZIPImport);
-								
-								//popZIPImport.start();
-								
 							}			
 					
 					
 				}}
 				
-				
-				
-			/**
-			 * Callback method for the server lexicon save response. A new Event is dispatched to signal creation of a new lexicon.
-			 * 
-			 **/ 
-			private function onSaveResult(event:ResultEvent):void {
-			/*	LexusUtil.parseJSON(String(event.result),
-					function(data:Object):void {  
-						lexicon = data.result.lexicon;
-						var evnt:Event = new Event("updateLexicon");
-						dispatchEvent(evnt); 
-						removeMe();
-					}
-				);*/
-			}
-			
 			private function removeMe():void {
 				PopUpManager.removePopUp(this);
 			}
