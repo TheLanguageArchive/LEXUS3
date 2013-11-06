@@ -118,12 +118,7 @@
 			}
 			
 			private function showSelectedEntry():void{
-				/*if( dgList.selectedItem == null){
-					initializeEditor();
-					FlexGlobals.topLevelApplication.enabled = true;
-					return;
-				} */
-				if( !dgList.selectedItem.hasOwnProperty("children")){
+				if( (dgList.selectedItem != null) &&( !dgList.selectedItem.hasOwnProperty("children"))){
 				    LexusUtil.showWait(this, "Loading lexical entry data");					
 					var param:Object = new Object();
 					param.id = dgList.selectedItem.id;
