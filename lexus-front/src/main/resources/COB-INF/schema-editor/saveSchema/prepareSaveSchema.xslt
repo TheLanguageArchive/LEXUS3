@@ -157,8 +157,6 @@
             multiple="{if (number(max) eq 1) then 'false' else 'true'}" note="{note}"
             src="{src}"
             admin-info="{adminInfo}">
-            <xsl:apply-templates select="sortOrder"/>
-            <xsl:apply-templates select="editor" mode="editor"/>
             <xsl:choose>
                 <xsl:when test="children/children">
                     <xsl:apply-templates select="children/children"/>
@@ -167,6 +165,8 @@
                     <xsl:call-template name="processDataCategoryAttributes"/>
                 </xsl:otherwise>
             </xsl:choose>
+            <xsl:apply-templates select="sortOrder"/>
+            <xsl:apply-templates select="editor" mode="editor"/>
             <xsl:if test="valuedomain ne 'null'">
                 <valuedomain>
                     <xsl:apply-templates select="valuedomain/valuedomain"/>
