@@ -49,12 +49,20 @@
         <map:pipeline>
         	<map:match pattern="logout.htm">
         	 	<map:act type="cauth-is-logged-in">
+        	 	    <map:parameter name="application" value="LexusShibb"/>
+            		<map:act type="cauth-logout">
+            			<map:parameter name="application" value="LexusShibb"/>
+           			</map:act>
+           			<map:redirect-to uri="shibb.html"/>
+            	</map:act>
+         	 	<map:act type="cauth-is-logged-in">
         	 	    <map:parameter name="application" value="Lexus"/>
             		<map:act type="cauth-logout">
             			<map:parameter name="application" value="Lexus"/>
            			</map:act>
            			<map:redirect-to uri="index.html?msg=3"/>
-            	</map:act>
+            	</map:act> 	
+            	
         <!-- 
           Logout failed, redirect to Lexus.html
         -->
@@ -73,8 +81,7 @@
                 <!--
             If the user is logged in then logout first,
             then login again.
-            -->
-                <map:act type="cauth-is-logged-in">
+            --> <map:act type="cauth-is-logged-in">
                     <map:parameter name="application" value="Lexus"/>
                     <map:act type="cauth-logout">
                         <map:parameter name="application" value="Lexus"/>
@@ -100,11 +107,49 @@
           Login failed, redirect to index.html.
         -->
             <map:redirect-to uri="index.html?msg=2"/>
+            
+            </map:match>
+
+		<map:match pattern="signonshibb.htm">
+                <!--
+            If the user is logged in then logout first,
+            then login again.
+            --> <map:act type="cauth-is-logged-in">
+                    <map:parameter name="application" value="LexusShibb"/>
+                    <map:act type="cauth-logout">
+                        <map:parameter name="application" value="LexusShibb"/>
+                        <map:act type="cauth-login">
+                            <map:parameter name="application" value="LexusShibb"/>
+                            <map:parameter name="username" value="{request-param:username}"/>
+                            <map:parameter name="password" value="{request-param:password}"/>
+                            <map:redirect-to uri="Lexus.html"/>
+                        </map:act>
+                    </map:act>
+                </map:act>
+                <!-- 
+            Try to login using credentials given
+            -->
+                <map:act type="cauth-login">
+                    <map:parameter name="application" value="LexusShibb"/>
+                    <map:parameter name="username" value="{request-param:username}"/>
+                    <map:parameter name="password" value="{request-param:password}"/>
+                    <map:redirect-to uri="Lexus.html"/>
+                </map:act>
+
+                <!-- 
+          Login failed, redirect to index.html.
+        -->
+            <map:redirect-to uri="index.html?msg=1"/>
             </map:match>
 
 
             <map:handle-errors when="always">
-                <map:read src="flexus/login-failed.html"/>
+            <map:generate type="exception"/>
+        		<map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-err.xml"/>    
+				
+                <map:serialize/>
+              <!--  <map:read src="flexus/login-failed.html"/> -->
             </map:handle-errors>
         </map:pipeline>
 
@@ -114,7 +159,12 @@
           -->
             <map:match pattern="lexus-authuser">
                 <map:generate type="request"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/params.xml"/>
                 <map:transform type="saxon" src="util/login.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/afterlogin.xml"/>
+                
                 <map:transform type="servletService">
                     <map:parameter name="service" value="servlet:lexus-db:/workspace/userLogin.xml"/>
                 </map:transform>
@@ -132,23 +182,6 @@
 
         </map:pipeline>
        <map:pipeline>
-            <!-- 
-          Pipeline for authenticating a user
-          -->
-            <map:match pattern="lexus-testZip">
-                <map:generate type="request"/>
-                <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/testZip-pre.xml"/>
-                <map:transform type="saxon" src="testZip/main.xslt"/>
-                
-                <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/testZip-post.xml"/>
-               <map:serialize type="xml"/>
-            </map:match>
-
-        </map:pipeline>
-        <map:pipeline>
-
             <!-- 
         get user data
       -->
@@ -219,8 +252,21 @@
 
             <!-- Get 1 user -->
             <map:match pattern="user">
-                <map:act type="cauth-is-logged-in">
+               <map:act type="cauth-is-logged-in">
                     <map:parameter name="application" value="Lexus"/>
+                    <map:generate src="resource/internal/user.xml"/>
+                    <!--          <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/session-front-pre.xml"/>-->
+                    <map:transform src="util/create-user-element.xslt">
+                        <map:parameter name="id" value="{user-id}"/>
+                        <map:parameter name="name" value="{user-name}"/>
+                        <map:parameter name="account" value="{user-account}"/>
+                        <map:parameter name="accesslevel" value="{user-accesslevel}"/>
+                    </map:transform>
+                    <!--          <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/session-front-post.xml"/>-->
+                    <map:serialize type="xml"/>
+                </map:act>
+                <map:act type="cauth-is-logged-in">
+                    <map:parameter name="application" value="LexusShibb"/>
                     <map:generate src="resource/internal/user.xml"/>
                     <!--          <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/session-front-pre.xml"/>-->
                     <map:transform src="util/create-user-element.xslt">
@@ -274,9 +320,14 @@
             <map:match pattern="resources/*/*">
                 <!-- HHV: TODO: This does NOT check if the user has read rights on the given lexicon! -->
                 <map:act type="cauth-is-logged-in">
+                    <map:parameter name="application" value="LexusShibb"/>
+                    <map:read src="{naming:java:comp/env/LEXUS/resourceDirectory}/{../2}"/>
+                </map:act>
+                <map:act type="cauth-is-logged-in">
                     <map:parameter name="application" value="Lexus"/>
                     <map:read src="{naming:java:comp/env/LEXUS/resourceDirectory}/{../2}"/>
                 </map:act>
+                
                 <!--                <map:read src="{naming:java:comp/env/LEXUS/resourceDirectory}/{2}"/>-->
                 <map:redirect-to uri="index.html?msg=1"/>
             </map:match>
@@ -310,19 +361,43 @@
             <!-- Serve the flexus files. -->
             <map:match pattern="*.swf">
                 <map:act type="cauth-is-logged-in">
+                    <map:parameter name="application" value="LexusShibb"/>
+                    <map:read src="flexus/{../1}.swf"/>
+                </map:act>
+                <map:act type="cauth-is-logged-in">
                     <map:parameter name="application" value="Lexus"/>
                     <map:read src="flexus/{../1}.swf"/>
                 </map:act>
                 <map:redirect-to uri="index.html?msg=1"/>
             </map:match>
-
+ <!--// another act : condition profile is complete? ( a flag like iscompleteshiboleth -->
+               
             <map:match pattern="Lexus.html">
                 <map:act type="cauth-is-logged-in">
-                    <map:parameter name="application" value="Lexus"/>
+             	    <map:parameter name="application" value="Lexus"/>
                     <map:read src="flexus/Lexus.html"/>
                 </map:act>
-                <map:redirect-to uri="index.html?msg=1"/>
-            </map:match>
+                <map:act type="cauth-is-logged-in">
+             	    <map:parameter name="application" value="LexusShibb"/>
+                    <map:read src="flexus/Lexus.html"/>
+                </map:act>
+                
+                <map:select type="parameter">
+				    <map:parameter name="parameter-selector-test" value="{request:headers[@name='Host']}"/>
+				    <map:when test ="localhost:8888">
+				    <!--         // if the RU is in the header and not in the DB. -->
+                		<map:redirect-to uri="shibb.html?msg=1"/>
+                   
+                	 <!--    //            if not 
+          
+						   -->
+				    </map:when>
+				    <map:otherwise>  <!--         // if the RU is in not the header.-->
+				        <map:redirect-to uri="index.html?msg=1"/>
+				    </map:otherwise>
+				</map:select>
+			<!--	<map:redirect-to uri="index.html?msg=1"/> -->
+           </map:match>
 
             <map:match pattern="aboutLexus.xml">
                 <map:read src="resource/internal/aboutLexus.xml"/>
@@ -331,11 +406,57 @@
 
             <map:match pattern="index.html">
                 <map:generate src="resource/internal/index.xml"/>
-                <map:transform type="saxon" src="stylesheets/index.xslt">
-                    <map:parameter name="msg" value="{request-param:msg}"/>
-                </map:transform>
+                <map:transform type="saxon" src="stylesheets/index.xslt"/>
                 <map:serialize type="html"/>
             </map:match>
+            
+            <map:match pattern="shibb.html">
+                <map:generate src="resource/internal/shib.xml"/>
+        	     <map:transform type="${tee}"
+				            src="{naming:java:comp/env/tee-folder}debug-info/test-shibb.xml"/>
+			<!--	<map:transform type="saxon" src="stylesheets/shibb.xslt">
+                    <map:parameter name="par" value="{request:headers[@name='Host']}"/>
+                </map:transform>
+               <map:select type="parameter">
+				    <map:parameter name="parameter-selector-test" value="{request:headers[@name='Host']}"/>
+		
+				    <map:when test="localhost:8888">
+				        <map:transform type="${tee}"
+				            src="{naming:java:comp/env/tee-folder}debug-info/test-branch-shibb.xml"/>
+				    </map:when>
+				</map:select> 
+                <map:transform type="${tee}"
+           			 src="{naming:java:comp/env/tee-folder}debug-info/test-shibb-2.xml"/>-->
+                <map:serialize type="html"/>
+            </map:match>
+           
+           <map:match pattern="fetchLexus">
+           		<map:generate type="request"/> 
+           		<map:transform type="saxon" src="util/login.xslt">
+           		 <map:parameter name="RemoteUser" value="{request:headers[@name='Host']}"/>
+           		</map:transform> 
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/values.xml"/>
+                <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:lexus-db:/workspace/userShibbLogin.xml"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/shibauthentication-pre.xml">
+                </map:transform>
+                <map:transform type="saxon" src="workspace/users/prepareSaveUserShibb.xslt">
+                	<map:parameter name="RemoteUser" value="{request:headers[@name='Host']}"/>
+           		</map:transform>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/shibb-save-user-2.xml"/>   
+              <map:transform type="servletService">
+                    <map:parameter name="service" value="servlet:lexus-db:/workspace/saveShibbUser.xml"/>
+                </map:transform>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/shibb-save-user-3.xml"/>
+       			<map:transform src="util/createAuthenticationDocument.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/shibbauthentication-post.xml"/>
+                <map:serialize type="xml"/>
+          </map:match>
+          
 
             <map:match pattern="*.html">
                 <map:read src="flexus/{1}.html"/>
@@ -385,6 +506,11 @@
                     <map:mount uri-prefix="LexusLexicalEntryEditor/"
                         src="lexicon-editor/sitemap.xmap"/>
                 </map:act>
+                <map:act type="cauth-is-logged-in">
+                    <map:parameter name="application" value="LexusShibb"/>
+                    <map:mount uri-prefix="LexusLexicalEntryEditor/"
+                        src="lexicon-editor/sitemap.xmap"/>
+                </map:act>
                 <map:redirect-to uri="index.html?msg=1"/>
             </map:match>
             
@@ -413,6 +539,11 @@
                     <map:parameter name="application" value="Lexus"/>
                     <map:mount uri-prefix="" src="lexicon-editor/sitemap.xmap"/>
                 </map:act>
+                <map:act type="cauth-is-logged-in">
+                    <map:parameter name="application" value="LexusShibb"/>
+                    <map:mount uri-prefix="" src="lexicon-editor/sitemap.xmap"/>
+                </map:act>
+                
                 <map:redirect-to uri="index.html?msg=1"/>
             </map:match>
 
@@ -422,12 +553,20 @@
                     <map:parameter name="application" value="Lexus"/>
                     <map:mount uri-prefix="" src="lexicon-editor/sitemap.xmap"/>
                 </map:act>
+                <map:act type="cauth-is-logged-in">
+                    <map:parameter name="application" value="LexusShibb"/>
+                    <map:mount uri-prefix="" src="lexicon-editor/sitemap.xmap"/>
+                </map:act>
                 <map:redirect-to uri="index.html?msg=1"/>
             </map:match>
             
             <map:match pattern="ISOCAT/search.json">
                 <map:act type="cauth-is-logged-in">
                     <map:parameter name="application" value="Lexus"/>
+                    <map:mount uri-prefix="" src="schema-editor/sitemap.xmap"/>
+                </map:act>
+                 <map:act type="cauth-is-logged-in">
+                    <map:parameter name="application" value="LexusShibb"/>
                     <map:mount uri-prefix="" src="schema-editor/sitemap.xmap"/>
                 </map:act>
                 <map:redirect-to uri="index.html?msg=1"/>
@@ -448,12 +587,20 @@
                     <map:parameter name="application" value="Lexus"/>
                     <map:mount uri-prefix="LexusWorkspaceEditor/" src="workspace/sitemap.xmap"/>
                 </map:act>
+                  <map:act type="cauth-is-logged-in">
+                    <map:parameter name="application" value="LexusShibb"/>
+                    <map:mount uri-prefix="LexusWorkspaceEditor/" src="workspace/sitemap.xmap"/>
+                </map:act>
                 <map:redirect-to uri="index.html?msg=1"/>
             </map:match>
 
             <map:match pattern="SortOrderEditor/**">
                 <map:act type="cauth-is-logged-in">
                     <map:parameter name="application" value="Lexus"/>
+                    <map:mount uri-prefix="SortOrderEditor/" src="workspace/sitemap.xmap"/>
+                </map:act>
+                <map:act type="cauth-is-logged-in">
+                    <map:parameter name="application" value="LexusShibb"/>
                     <map:mount uri-prefix="SortOrderEditor/" src="workspace/sitemap.xmap"/>
                 </map:act>
                 <map:redirect-to uri="index.html?msg=1"/>
@@ -465,10 +612,18 @@
                     <map:parameter name="application" value="Lexus"/>
                     <map:mount uri-prefix="" src="workspace/sitemap.xmap"/>
                 </map:act>
+                 <map:act type="cauth-is-logged-in">
+                    <map:parameter name="application" value="LexusShibb"/>
+                    <map:mount uri-prefix="" src="workspace/sitemap.xmap"/>
+                </map:act>
                 <map:redirect-to uri="index.html?msg=1"/>
             </map:match>
 
             <map:match pattern="LexusSchemaEditor/**">
+                <map:act type="cauth-is-logged-in">
+                    <map:parameter name="application" value="LexusShibb"/>
+                    <map:mount uri-prefix="LexusSchemaEditor/" src="schema-editor/sitemap.xmap"/>
+                </map:act>
                 <map:act type="cauth-is-logged-in">
                     <map:parameter name="application" value="Lexus"/>
                     <map:mount uri-prefix="LexusSchemaEditor/" src="schema-editor/sitemap.xmap"/>
@@ -478,7 +633,7 @@
 
             <map:match pattern="toolbox/**">
                 <!--        <map:act type="cauth-is-logged-in">
-          <map:parameter name="application" value="Lexus"/> -->
+          <map:parameter name="application" value="LexusShibb"/> -->
                 <map:mount uri-prefix="toolbox/" src="toolbox/sitemap.xmap"/>
                 <!--         </map:act>
         <map:redirect-to uri="index.html?msg=1"/> -->
@@ -486,6 +641,10 @@
 
             <map:match pattern="vicos/**">
                 <map:act type="cauth-is-logged-in">
+                    <map:parameter name="application" value="LexusShibb"/>
+                    <map:mount uri-prefix="vicos/" src="vicos/sitemap.xmap"/>
+                </map:act>
+                  <map:act type="cauth-is-logged-in">
                     <map:parameter name="application" value="Lexus"/>
                     <map:mount uri-prefix="vicos/" src="vicos/sitemap.xmap"/>
                 </map:act>
@@ -504,6 +663,17 @@
 
             <map:match pattern="StagingFileHandler/uploadFile.xml">
                 <map:act type="cauth-is-logged-in">
+                    <map:parameter name="application" value="LexusShibb"/>
+                    <map:generate type="fileupload">
+                        <map:parameter name="uploadDir" value="{naming:java:comp/env/LEXUS/tempDir}"
+                        />
+                    </map:generate>
+
+                    <!--<map:transform type="${tee}"
+                        src="{naming:java:comp/env/tee-folder}debug-info/front-upload-pre.xml"/>-->
+                    <map:serialize type="xml"/>
+                </map:act>
+                 <map:act type="cauth-is-logged-in">
                     <map:parameter name="application" value="Lexus"/>
                     <map:generate type="fileupload">
                         <map:parameter name="uploadDir" value="{naming:java:comp/env/LEXUS/tempDir}"
