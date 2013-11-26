@@ -41,12 +41,15 @@
         
         <add-first-user><username>admin</username><password>xxx</password></add-first-user>
     -->
-    <xsl:template match="/">
-        <login>
+    
+ <xsl:param name="RemoteUser" select="''"/>   
+   <xsl:template match="/">
+   	  <login>
             <username>
                 <xsl:value-of select="//h:parameter[@name='username']/h:value[1]"/>
             </username>
             <password><xsl:value-of select="//h:parameter[@name='password']/h:value[1]"/></password>
+            <shiblog><xsl:value-of select="$RemoteUser"/></shiblog>
         </login>
     </xsl:template>
     

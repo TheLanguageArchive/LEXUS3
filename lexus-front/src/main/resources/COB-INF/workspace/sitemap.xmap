@@ -75,6 +75,9 @@
                     <map:part src="cocoon://json"/>
                     <map:part src="cocoon://user"/>
                 </map:aggregate>
+                 <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/check-lexica-user.xml"/>
+               
                 <map:transform type="saxon" src="getPage/prepareGetPage.xslt"/>
                 <map:transform type="servletService">
                     <map:parameter name="service" value="servlet:lexus-db:/workspace/getPage.xml"/>

@@ -40,6 +40,18 @@
         <property name="securityHandler" ref="org.apache.cocoon.auth.SecurityHandler/lexusHandler"/>
     </bean>
 
+	<bean name="org.apache.cocoon.auth.SecurityHandler/lexusShibbHandler"
+        class="org.apache.cocoon.auth.impl.PipelineSecurityHandler" scope="singleton">
+        <property name="authenticationResource" value="cocoon://fetchLexus"/>
+        <property name="sourceResolver" ref="org.apache.excalibur.source.SourceResolver"/>
+    </bean>
+
+    <bean name="org.apache.cocoon.auth.Application/LexusShibb"
+        class="org.apache.cocoon.auth.impl.StandardApplication" scope="singleton">
+        <property name="securityHandler" ref="org.apache.cocoon.auth.SecurityHandler/lexusShibbHandler"/>
+    </bean>
+
+
     <bean name="org.apache.cocoon.serialization.Serializer/json"
         class="org.apache.cocoon.serialization.JSONSerializer" scope="prototype"
         parent="org.apache.cocoon.serialization.Serializer/text">

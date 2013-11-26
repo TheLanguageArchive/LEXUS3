@@ -31,7 +31,13 @@
         <description>A link to the users' resources.</description>
         <param-name>LEXUS/resourceDirectory</param-name>
         <param-value>/lexus/user-resources/</param-value>
-    </context-param>-->
+        </context-param>-->
+    
+    <context-param> <!-- used when shibboleth is enabled ignored otherwise -->
+        <param-name>ShhaaConfigLocation</param-name>
+        <param-value>/WEB-INF/shhaa.xml</param-value>
+    </context-param>
+    
     <filter>
         <description>Multipart MIME handling filter for Cocoon</description>
         <display-name>Cocoon multipart filter</display-name>

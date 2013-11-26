@@ -13,7 +13,9 @@
 
 
     <xsl:param name="msg" select="'0'"/>
-	
+	<xsl:param name="par" select="'0'"/>
+   
+
     <!--
         Hide or show the <div id="msg"/> element.
         The javascript function looks like this:
@@ -23,6 +25,9 @@
         }
     -->
     <xsl:template match="display-msg">
+    <xsl:message>msg <xsl:value-of select="$msg" /></xsl:message>
+    <xsl:message>param <xsl:value-of select="$par" /></xsl:message>
+    
         <xsl:choose>
             <xsl:when test="$msg eq '0' or $msg eq ''">
                 <xsl:text>none</xsl:text>
