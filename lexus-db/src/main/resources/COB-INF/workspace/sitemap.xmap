@@ -56,10 +56,14 @@
       -->
             <map:match pattern="getPage.xml">
                 <map:generate src="service-consumer:"/>
-                <map:transform type="saxon" src="getPage/getWorkspace.xslt">
+               <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/pre-back-lexica-user.xml"/>
+               <map:transform type="saxon" src="getPage/getWorkspace.xslt">
                     <map:parameter name="lexica-collection" value="{naming:java:comp/env/LEXUS/db-lexica-collection}"/>
                     <map:parameter name="users-collection" value="{naming:java:comp/env/LEXUS/db-users-collection}"/>
                 </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-lexica-user.xml"/>
                 <map:call resource="rest"/>
                 <!--        <map:transform type="validate" src="getPage/getPage.xsd"/>-->
                 <map:transform type="${tee}"
@@ -132,6 +136,20 @@
                 <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-saveUser-3.xml"/>
                 <map:serialize type="xml"/>
             </map:match>
+ <!-- save user with shibboleth -->
+
+			<map:match pattern="saveShibbUser.xml">
+                <map:generate src="service-consumer:"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-saveShibbUser-1.xml"/>
+                <map:transform type="saxon" src="users/saveShibbUser.xslt">
+                    <map:parameter name="users-collection" value="{naming:java:comp/env/LEXUS/db-users-collection}"/>
+                </map:transform>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-saveShibbUser-2.xml"/>
+                <map:call resource="rest"/>
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-saveShibbUser-3.xml"/>
+                <map:serialize type="xml"/>
+            </map:match>
+
 
 
             <!-- 
@@ -150,7 +168,22 @@
                 <map:serialize type="xml"/>
             </map:match>
 
-
+	  <!-- 
+                Create Shibb user
+            -->
+           
+			<map:match pattern="createShibbOnlyUser.xml">
+                <map:generate src="service-consumer:"/>
+                <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-createUser-1.xml"/>-->
+                <map:transform type="saxon" src="users/createShibbUserPUT.xslt">
+                    <map:parameter name="endpoint" value="{naming:java:comp/env/LEXUS/db-rest-endpoint}"/>
+                    <map:parameter name="users-collection" value="{naming:java:comp/env/LEXUS/db-users-collection}"/>
+                </map:transform>
+                <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-createUser-2.xml"/>-->
+                <map:call resource="rest"/>
+                <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-createUser-3.xml"/>-->
+                <map:serialize type="xml"/>
+            </map:match>  
             <!-- 
                 Get user document using the account name.
             -->
@@ -363,7 +396,24 @@
                     src="{naming:java:comp/env/tee-folder}debug-info/back-userLogin-4.xml"/>
                 <map:serialize type="xml"/>
             </map:match>
-
+            
+			<map:match pattern="userShibbLogin.xml">
+                <map:generate src="service-consumer:"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-userShibbLogin-1.xml"/>
+                <map:transform type="saxon" src="users/loginShibb.xslt">
+                    <map:parameter name="users-collection" value="{naming:java:comp/env/LEXUS/db-users-collection}"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-userShibbLogin-2.xml"/>
+                <map:call resource="rest"/>
+                                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-userShibbLogin-3.xml"/>
+                <map:transform type="saxon" src="users/returnUserLoginInfo.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-userShibbLogin-4.xml"/>
+                <map:serialize type="xml"/>
+            </map:match>
         </map:pipeline>
 
     </map:pipelines>
