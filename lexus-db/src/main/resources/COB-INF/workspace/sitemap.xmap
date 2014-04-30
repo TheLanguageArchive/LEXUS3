@@ -157,14 +157,14 @@
             -->
             <map:match pattern="createUser.xml">
                 <map:generate src="service-consumer:"/>
-                <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-createUser-1.xml"/>-->
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-createUser-1.xml"/>
                 <map:transform type="saxon" src="users/createUserPUT.xslt">
                     <map:parameter name="endpoint" value="{naming:java:comp/env/LEXUS/db-rest-endpoint}"/>
                     <map:parameter name="users-collection" value="{naming:java:comp/env/LEXUS/db-users-collection}"/>
                 </map:transform>
-                <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-createUser-2.xml"/>-->
+          		<map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-createUser-2.xml"/>
                 <map:call resource="rest"/>
-                <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-createUser-3.xml"/>-->
+                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-createUser-3.xml"/>
                 <map:serialize type="xml"/>
             </map:match>
 
@@ -174,14 +174,14 @@
            
 			<map:match pattern="createShibbOnlyUser.xml">
                 <map:generate src="service-consumer:"/>
-                <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-createUser-1.xml"/>-->
+                    <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-createshibbUser-1.xml"/>
                 <map:transform type="saxon" src="users/createShibbUserPUT.xslt">
                     <map:parameter name="endpoint" value="{naming:java:comp/env/LEXUS/db-rest-endpoint}"/>
                     <map:parameter name="users-collection" value="{naming:java:comp/env/LEXUS/db-users-collection}"/>
                 </map:transform>
-                <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-createUser-2.xml"/>-->
+                         <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-createshibbUser-2.xml"/>
                 <map:call resource="rest"/>
-                <!--                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-createUser-3.xml"/>-->
+                            <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/back-createshibbUser-3.xml"/>
                 <map:serialize type="xml"/>
             </map:match>  
             <!-- 
@@ -414,7 +414,27 @@
                     src="{naming:java:comp/env/tee-folder}debug-info/back-userShibbLogin-4.xml"/>
                 <map:serialize type="xml"/>
             </map:match>
+       <map:match pattern="userShibbOnlyQuery.xml">
+                <map:generate src="service-consumer:"/>
+                
+                 <map:transform type="saxon" src="users/queryShibbOnlyaccount.xslt">
+                    <map:parameter name="users-collection" value="{naming:java:comp/env/LEXUS/db-users-collection}"/>
+                	<map:parameter name="RemoteUser" value="{request:headers[@name='Host']}"/>
+                </map:transform>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-userShibbquery-1.xml"/>
+                <map:call resource="rest"/>
+                                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-userShibbquery-2.xml"/>
+                <map:transform type="saxon" src="users/returnUserLoginInfo.xslt"/>
+                <map:transform type="${tee}"
+                    src="{naming:java:comp/env/tee-folder}debug-info/back-userShibbquery-3.xml"/>
+                <map:serialize type="xml"/>
+            </map:match>
         </map:pipeline>
+        
+        
+        
 
     </map:pipelines>
 

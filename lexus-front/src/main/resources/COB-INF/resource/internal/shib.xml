@@ -64,9 +64,12 @@
             	
             	}
             	if (document.getElementById("NoCheck").checked)
+            
             	{
-            	
-            	}
+			        document.getElementById('question').action = "signonshibbonly.htm";
+			        document.getElementById('question').submit();
+			    }
+           
             	
             	
             	

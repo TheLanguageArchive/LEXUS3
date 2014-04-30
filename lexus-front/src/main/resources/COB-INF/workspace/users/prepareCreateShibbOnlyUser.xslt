@@ -23,7 +23,7 @@
     <xsl:variable name="id" select="concat('uuid:',util:toString(util:randomUUID()))"/>
 
     <xsl:template match="/">
-        <data>
+    	<data>
          <lexus:create-user>
                         <user>
                             <xsl:attribute name="id" select="$id"/>
@@ -41,6 +41,7 @@
                                 <sortorders/>
                             </workspace>
                         </user>
+           </lexus:create-user>             
         </data>
     </xsl:template>
 </xsl:stylesheet>

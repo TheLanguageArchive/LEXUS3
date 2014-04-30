@@ -217,10 +217,7 @@
                     src="{naming:java:comp/env/tee-folder}debug-info/front-create-user-6.xml"/>
                 <map:serialize type="json"/>
             </map:match>
-
-
-
-            <!-- 
+      <!-- 
         Save a lexicon, just the name and description.
       -->
             <map:match pattern="saveLexicon.json">

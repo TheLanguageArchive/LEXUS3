@@ -53,7 +53,7 @@
             		<map:act type="cauth-logout">
             			<map:parameter name="application" value="LexusShibb"/>
            			</map:act>
-           			<map:redirect-to uri="shibb.html"/>
+           			<map:redirect-to uri="index.html?msg=3"/>
             	</map:act>
          	 	<map:act type="cauth-is-logged-in">
         	 	    <map:parameter name="application" value="Lexus"/>
@@ -141,12 +141,41 @@
         -->
             <map:redirect-to uri="index.html?msg=1"/>
             </map:match>
+		
+			<map:match pattern="signonshibbonly.htm">
+                <!--
+            If the user is logged in then logout first,
+            then login again.
+            --> <map:act type="cauth-is-logged-in">
+                    <map:parameter name="application" value="LexusShibb"/>
+                    <map:act type="cauth-logout">
+                        <map:parameter name="application" value="LexusShibb"/>
+                        <map:act type="cauth-login">
+                            <map:parameter name="application" value="LexusShibb"/>
+                           
+                            <map:redirect-to uri="Lexus.html"/>
+                        </map:act>
+                    </map:act>
+                </map:act>
+                <!-- 
+            Try to login using credentials given
+            -->
+                <map:act type="cauth-login">
+                    <map:parameter name="application" value="LexusShibb"/>
+                     
+                      <map:redirect-to uri="Lexus.html"/>
+                </map:act>
 
+                <!-- 
+          Login failed, redirect to index.html.
+        -->
+            <map:redirect-to uri="index.html?msg=1"/>
+            </map:match>
 
             <map:handle-errors when="always">
             <map:generate type="exception"/>
         		<map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/import-err.xml"/>    
+                    src="{naming:java:comp/env/tee-folder}debug-info/import-on-login.xml"/>    
 				
                 <map:serialize/>
               <!--  <map:read src="flexus/login-failed.html"/> -->
@@ -383,17 +412,15 @@
                 </map:act>
                 
                 <map:select type="parameter">
-				    <map:parameter name="parameter-selector-test" value="{request:headers[@name='Host']}"/>
-				    <map:when test ="localhost:8888">
+				    <map:parameter name="parameter-selector-test" value="{request:headers[@name='REMOTE_USER']}"/>
+				    <map:when test = "" >
 				    <!--         // if the RU is in the header and not in the DB. -->
-                		<map:redirect-to uri="shibb.html?msg=1"/>
-                   
-                	 <!--    //            if not 
-          
-						   -->
+                		
+                    <map:redirect-to uri="index.html?msg=1"/>
+                		 
 				    </map:when>
 				    <map:otherwise>  <!--         // if the RU is in not the header.-->
-				        <map:redirect-to uri="index.html?msg=1"/>
+				       <map:redirect-to uri="shibb.html?msg=1"/>
 				    </map:otherwise>
 				</map:select>
 			<!--	<map:redirect-to uri="index.html?msg=1"/> -->
@@ -414,50 +441,64 @@
                 <map:generate src="resource/internal/shib.xml"/>
         	     <map:transform type="${tee}"
 				            src="{naming:java:comp/env/tee-folder}debug-info/test-shibb.xml"/>
-			<!--	<map:transform type="saxon" src="stylesheets/shibb.xslt">
-                    <map:parameter name="par" value="{request:headers[@name='Host']}"/>
-                </map:transform>
-               <map:select type="parameter">
-				    <map:parameter name="parameter-selector-test" value="{request:headers[@name='Host']}"/>
-		
-				    <map:when test="localhost:8888">
-				        <map:transform type="${tee}"
-				            src="{naming:java:comp/env/tee-folder}debug-info/test-branch-shibb.xml"/>
-				    </map:when>
-				</map:select> 
-                <map:transform type="${tee}"
-           			 src="{naming:java:comp/env/tee-folder}debug-info/test-shibb-2.xml"/>-->
-                <map:serialize type="html"/>
+		     <map:serialize type="html"/>
             </map:match>
            
            <map:match pattern="fetchLexus">
-           		<map:generate type="request"/> 
-           		<map:transform type="saxon" src="util/login.xslt">
-           		 <map:parameter name="RemoteUser" value="{request:headers[@name='Host']}"/>
-           		</map:transform> 
-                <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/values.xml"/>
-                <map:transform type="servletService">
-                    <map:parameter name="service" value="servlet:lexus-db:/workspace/userShibbLogin.xml"/>
-                </map:transform>
-                <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/shibauthentication-pre.xml">
-                </map:transform>
-                <map:transform type="saxon" src="workspace/users/prepareSaveUserShibb.xslt">
-                	<map:parameter name="RemoteUser" value="{request:headers[@name='Host']}"/>
-           		</map:transform>
-                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/shibb-save-user-2.xml"/>   
-              <map:transform type="servletService">
-                    <map:parameter name="service" value="servlet:lexus-db:/workspace/saveShibbUser.xml"/>
-                </map:transform>
-                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/shibb-save-user-3.xml"/>
-       			<map:transform src="util/createAuthenticationDocument.xslt"/>
-                <map:transform type="${tee}"
-                    src="{naming:java:comp/env/tee-folder}debug-info/shibbauthentication-post.xml"/>
-                <map:serialize type="xml"/>
-          </map:match>
-          
-
+           <map:generate type="request"/> 
+           <map:transform type="${tee}"
+		                    src="{naming:java:comp/env/tee-folder}debug-info/values.xml"/>
+		   <map:select type="parameter">
+				    <map:parameter name="parameter-selector-test" value="{request:getParameterValues(.,'linkshib')[1]}"/>
+		
+           		<map:when test="No">
+			          <map:transform type="saxon" src="workspace/users/prepareCreateShibbOnlyUser.xslt">
+				          <map:parameter name="RemoteUser" value="{request:headers[@name='REMOTE_USER']}"/>
+			          </map:transform>
+			          <map:transform type="${tee}"
+			                    src="{naming:java:comp/env/tee-folder}debug-info/front-create-shib-user-1.xml"/>
+			          <map:transform type="servletService">
+			          	<map:parameter name="service" value="servlet:lexus-db:/workspace/createShibbOnlyUser.xml"/>
+			          </map:transform>
+			          <map:transform type="${tee}"
+			                    src="{naming:java:comp/env/tee-folder}debug-info/front-create-shib-user-2.xml"/>
+			           <map:transform type="servletService">
+		                    <map:parameter name="service" value="servlet:lexus-db:/workspace/userShibbOnlyQuery.xml"/>
+		                    <map:parameter name="RemoteUser" value="{request:headers[@name='REMOTE_USER']}"/>
+		                </map:transform>         
+			          <map:transform src="util/createAuthenticationDocument.xslt"/>
+		                <map:transform type="${tee}"
+		                    src="{naming:java:comp/env/tee-folder}debug-info/shibbonlyauthentication-post.xml"/>          
+			          <map:serialize type="xml"/>         
+				</map:when>
+				<map:otherwise>
+		           		
+		           		<map:transform type="saxon" src="util/login.xslt">
+		           		 <map:parameter name="RemoteUser" value="{request:headers[@name='REMOTE_USER']}"/>
+		           		</map:transform> 
+		                
+		                <map:transform type="servletService">
+		                    <map:parameter name="service" value="servlet:lexus-db:/workspace/userShibbLogin.xml"/>
+		                </map:transform>
+		                <map:transform type="${tee}"
+		                    src="{naming:java:comp/env/tee-folder}debug-info/shibauthentication-pre.xml">
+		                </map:transform>
+		                <map:transform type="saxon" src="workspace/users/prepareSaveUserShibb.xslt">
+		                	<map:parameter name="RemoteUser" value="{request:headers[@name='REMOTE_USER']}"/>
+		           		</map:transform>
+		                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/shibb-save-user-2.xml"/>   
+		              <map:transform type="servletService">
+		                    <map:parameter name="service" value="servlet:lexus-db:/workspace/saveShibbUser.xml"/>
+		                </map:transform>
+		                <map:transform type="${tee}" src="{naming:java:comp/env/tee-folder}debug-info/shibb-save-user-3.xml"/>
+		       			<map:transform src="util/createAuthenticationDocument.xslt"/>
+		                <map:transform type="${tee}"
+		                    src="{naming:java:comp/env/tee-folder}debug-info/shibbauthentication-post.xml"/>
+				 <map:serialize type="xml"/>
+				</map:otherwise>
+				</map:select>  
+           </map:match>
+        
             <map:match pattern="*.html">
                 <map:read src="flexus/{1}.html"/>
             </map:match>
