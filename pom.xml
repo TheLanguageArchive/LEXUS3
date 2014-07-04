@@ -159,7 +159,7 @@
 
 	<scm>
 		<connection>scm:svn:https://svn.mpi.nl/LAT/lexus3/trunk/LexusCocoon/</connection>
-		<developerConnection>scm:svn:file:///D:/repos1</developerConnection>
+		<developerConnection>scm:svn:https://svn.mpi.nl/LAT/lexus3/trunk/LexusCocoon/</developerConnection>
 		<url>scm:svn:https://svn.mpi.nl/LAT/lexus3/trunk/LexusCocoon/</url>
 	</scm>
 
