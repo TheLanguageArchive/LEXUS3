@@ -1,269 +1,277 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
+<!-- Copyright 2008 Marvin Herman Froeder Licensed under the Apache License, 
+	Version 2.0 (the "License"); you may not use this file except in compliance 
+	with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+	Unless required by applicable law or agreed to in writing, software distributed 
+	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
+	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
+	the specific language governing permissions and limitations under the License. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    Copyright 2008 Marvin Herman Froeder
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
+	<parent>
+		<groupId>nl.mpi.lexus</groupId>
+		<artifactId>lexus</artifactId>
+		<version>3.0.1-SNAPSHOT</version>
+	</parent>
 
-        http://www.apache.org/licenses/LICENSE-2.0
+	<artifactId>flexus-for-cocoon</artifactId>
+	<packaging>swf</packaging>
 
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+	<name>Lexus Flex interface</name>
 
--->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-  <parent>
-    <groupId>nl.mpi.lexus</groupId>
-    <artifactId>lexus</artifactId>
-    <version>3.0.1-SNAPSHOT</version>
-  </parent>
 
-  <artifactId>flexus</artifactId>
-  <packaging>swf</packaging>
+		<width>100%</width>
+		<height>100%</height>
+		<!-- For Adobe Flex SDK -->
+		<!-- <flex.framework.version>4.5.1.21328</flex.framework.version> -->
+		<!-- For Apache Flex FDK -->
+		<flex.framework.version>4.12.0.20140303</flex.framework.version>
 
-  <name>Lexus Flex interface</name>
+		<flash_version_major>11</flash_version_major>
+		<flash_version_minor>1</flash_version_minor>
+		<flash_version_revision>0</flash_version_revision>
+	</properties>
 
-<properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-</properties>
+	<dependencies>
+		<dependency>
+			<groupId>com.adobe.flex.framework</groupId>
+			<artifactId>flex-framework</artifactId>
+			<version>${flex.framework.version}</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>com.adobe.flash.framework</groupId>
+			<artifactId>playerglobal</artifactId>
+			<version>12.0</version>
+			<type>swc</type>
+		</dependency>
+		<dependency>
+			<groupId>com.adobe.flex.framework.themes</groupId>
+			<artifactId>halo</artifactId>
+			<type>swc</type>
+			<scope>theme</scope>
+			<version>${flex.framework.version}</version>
+		</dependency>
+		<!-- as3corelib.swc -->
+		<dependency>
+			<groupId>com.adobe</groupId>
+			<artifactId>as3corelib</artifactId>
+			<version>0.92.1</version>
+			<type>swc</type>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.flexlib</groupId>
+			<artifactId>flexlib</artifactId>
+			<version>2.6-M3</version>
+			<type>swc</type>
+		</dependency>
+	</dependencies>
 
-<dependencies>
-    <dependency>
-      <groupId>com.adobe.flex.framework</groupId>
-      <artifactId>flex-framework</artifactId>
-      <version>4.6.b.23201</version>
-      <type>pom</type>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe.flex.framework</groupId>
-      <artifactId>halo</artifactId>
-      <version>4.6.b.23201</version>
-      <classifier>theme</classifier>
-      <type>swc</type>
-      <scope>theme</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.adobe.flex.framework</groupId>
-      <artifactId>spark</artifactId>
-      <version>4.6.b.23201</version>
-      <type>swc</type>
-      <scope>theme</scope>
-    </dependency>
-                <!-- as3corelib.swc -->
-    <dependency>
-      <groupId>com.adobe</groupId>
-      <artifactId>as3corelib</artifactId>
-      <version>0.92.1</version>
-      <type>swc</type>
-    </dependency>
-        <dependency>
-      <groupId>com.google.code.flexlib</groupId>
-      <artifactId>flexlib</artifactId>
-      <version>2.6-M3</version>
-      <type>swc</type>
-    </dependency>
-</dependencies>
+	<build>
+		<finalName>Lexus</finalName>
+		<sourceDirectory>src</sourceDirectory>
+		<!-- <directory>bin-debug</directory> -->
+		<outputDirectory>target</outputDirectory>
+		<plugins>
+			<plugin>
+				<groupId>net.flexmojos.oss</groupId>
+				<artifactId>flexmojos-maven-plugin</artifactId>
+				<version>6.0.1</version>
+				<extensions>true</extensions>
+				<executions>
+					<execution>
+						<goals>
+							<goal>wrapper</goal>
+						</goals>
+						<configuration>
+							<templateURI>folder:html-template</templateURI>
+							<parameters>
+								<title>Lexus</title>
+								<application>Lexus</application>
+								<width>100%</width>
+								<height>100%</height>
+							</parameters>
+							<htmlName>Lexus</htmlName>
+						</configuration>
+					</execution>
+				</executions>
+				<configuration>
+					<sourceFile>Lexus.mxml</sourceFile>
+					<swfVersion>12</swfVersion>
+					<strict>true</strict>
+					<accessible>true</accessible>
+					<targetPlayer>11.1.0</targetPlayer>
+					<debug>false</debug>
+					<localesCompiled>
+						<locale>en_US</locale>
+					</localesCompiled>
+					 <compatibilityVersion>3.5.12683</compatibilityVersion>
+					<modules>
+						<module>
+							<sourceFile>Workspace.mxml</sourceFile>
+							<optimize>true</optimize>
+							<finalName>Workspace</finalName>
+						</module>
+						<module>
+							<sourceFile>SchemaEditor.mxml</sourceFile>
+							<optimize>true</optimize>
+							<finalName>SchemaEditor</finalName>
+						</module>
+						<module>
+							<sourceFile>LexiconBrowser.mxml</sourceFile>
+							<optimize>true</optimize>
+							<finalName>LexiconBrowser</finalName>
+						</module>
+					</modules>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>net.flexmojos.oss</groupId>
+						<artifactId>flexmojos-threadlocaltoolkit-wrapper</artifactId>
+						<version>6.0.1</version>
+					</dependency>
+					<dependency>
+						<groupId>com.adobe.flex</groupId>
+						<artifactId>compiler</artifactId>
+						<version>${flex.framework.version}</version>
+						<type>pom</type>
+					</dependency>
+					<dependency>
+						<groupId>net.flexmojos.oss</groupId>
+						<artifactId>flexmojos-flex3-compatibility-layer</artifactId>
+						<version>6.0.1</version>
+					</dependency>
+					<dependency>
+						<groupId>net.flexmojos.oss</groupId>
+						<artifactId>flexmojos-threadlocaltoolkit-wrapper</artifactId>
+						<version>6.0.1</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>net.flexmojos.oss</groupId>
+										<artifactId>flexmojos-maven-plugin</artifactId>
+										<versionRange>[1.0.0,)</versionRange>
+										<goals>
+											<goal>compile-swf</goal>
+											<goal>test-compile</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute>
+											<runOnIncremental>true</runOnIncremental>
+										</execute>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-resources-plugin</artifactId>
+										<goals>
+											<goal>resources</goal>
+											<goal>testResources</goal>
+										</goals>
+										<versionRange>[0.0,)</versionRange>
+									</pluginExecutionFilter>
+									<action>
+										<execute>
+											<runOnIncremental>true</runOnIncremental>
+										</execute>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.codehaus.mojo</groupId>
+										<artifactId>buildnumber-maven-plugin</artifactId>
+										<versionRange>[0.0,)</versionRange>
+										<goals>
+											<goal>create</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute>
+											<runOnConfiguration>true</runOnConfiguration>
+											<runOnIncremental>true</runOnIncremental>
+										</execute>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<resources>
+			<resource>
+				<directory>src/styles</directory>
+				<targetPath>styles/</targetPath>
+				<filtering>false</filtering>
+			</resource>
+			<resource>
+				<directory>src/icons</directory>
+				<targetPath>icons/</targetPath>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
+	</build>
+	<repositories>
+		<repository>
+			<id>forge</id>
+			<url>http://repository.sonatype.org/content/groups/flexgroup</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+		<repository>
+			<!-- repository for as3corelib.swc v0.93 -->
+			<id>ooo-maven-repo</id>
+			<url>http://ooo-maven.googlecode.com/hg/repository</url>
+		</repository>
+	</repositories>
 
-  <build>
-   <finalName>Lexus</finalName>
-    <sourceDirectory>src</sourceDirectory>
-    <directory>bin-debug</directory>
-    <outputDirectory>bin-debug</outputDirectory>
-    <plugins>
-      <plugin>
-        <groupId>org.sonatype.flexmojos</groupId>
-        <artifactId>flexmojos-maven-plugin</artifactId>
-        <version>4.2-beta</version>
-        <extensions>true</extensions>
-        <configuration>
-       <loadConfig>src/config-4.6.b.23201/flex-config.xml</loadConfig>
-                   <locales>
-                       <locale>en_US</locale>
-                   </locales>
-                   <mergeResourceBundle>false</mergeResourceBundle>
-                               <themes>
-                                  <theme>${project.build.directory}/themes/spark.swc</theme>
-                                  <theme>${project.build.directory}/themes/halo-theme.swc</theme>
-                               </themes>
-            <outputDirectory>bin-debug</outputDirectory>
-        	<debug>true</debug>
-          	<sourceFile>Lexus.mxml</sourceFile>
-          	<optimize>true</optimize>
-          	<modules>
-          		<module>
-          			<sourceFile>Workspace.mxml</sourceFile>
-          			<optimize>true</optimize>
-          			<finalName>Workspace</finalName>
-          		</module>
-          		<module>
-          			<sourceFile>LexiconBrowser.mxml</sourceFile>
-          			<optimize>true</optimize>
-          			<finalName>LexiconBrowser</finalName>
-          		</module>
-          		<module>
-          			<sourceFile>SchemaEditor.mxml</sourceFile>
-          			<optimize>true</optimize>
-          			<finalName>SchemaEditor</finalName>
-          		</module>
-          	</modules>
-          	<generateHtmlWrapper>true</generateHtmlWrapper>
-          	<flexBuilderCompatibility>true</flexBuilderCompatibility>
-          	<targetPlayer>11.1.0</targetPlayer>
-          	<definesDeclaration>
-	            <property>
-	              <name>APPINFO::version</name>
-	              <value>"${project.version}"</value>
-	            </property>
-          </definesDeclaration>                    
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>wrapper</goal>
-            </goals>
-                    <configuration>
-                        <templateURI>folder:html-template</templateURI>
-                        <outputDirectory>bin-debug</outputDirectory>
-                        <templateOutputDirectory>bin-debug</templateOutputDirectory>
-                        <parameters>
-                            <swf>Lexus</swf>
-                            <width>100%</width>
-                            <height>100%</height>
-                            <version_major>11.1</version_major>
-                            <version_minor>11.1</version_minor>
-                            <bgcolor>#FFFFFF</bgcolor>
-                        </parameters>
-                        <htmlName>Lexus</htmlName>
-                        <!-- <targetPlayer>${flash.major}.${flash.minor}.${flash.revision}</targetPlayer> -->
-                    </configuration>
-          </execution>
-        </executions>
-        <dependencies>
-          <dependency>
-            <groupId>org.sonatype.flexmojos</groupId>
-            <artifactId>flexmojos-threadlocaltoolkit-wrapper</artifactId>
-            <version>4.2-beta</version>
-          </dependency>
-          <dependency>
-            <groupId>com.adobe.flex</groupId>
-            <artifactId>compiler</artifactId>
-            <version>4.6.b.23201</version>
-            <type>pom</type>
-          </dependency>
-        </dependencies>
-      </plugin>
-      <plugin>
-                          <artifactId>maven-dependency-plugin</artifactId>
-                             <executions>
-                                <execution>
-                                   <id>copy-themes-for-flex4</id>
-                                   <phase>generate-resources</phase>
-                                   <goals>
-                                      <goal>copy-dependencies</goal>
-                                   </goals>
-                                   <configuration>
-                                      <includeTypes>swc</includeTypes>
-                                      <outputDirectory>bin-debug/themes</outputDirectory>
-                                      <overWriteIfNewer>true</overWriteIfNewer>
-                                      <includeGroupIds>com.adobe.flex.framework</includeGroupIds>
-                                      <includeArtifactIds>halo,spark</includeArtifactIds>
-                                      <includeClassifiers>theme</includeClassifiers>
-                                      <stripVersion>true</stripVersion>
-                                   </configuration>
-                              </execution>
-                           </executions>
-                       </plugin>
-</plugins>
-<!--
-      <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>generate-sources</phase>
-            <configuration>
-              <tasks>
-		<echo>Compile: start</echo>
-		<echo>FLEX_HOME: ${FLEX_HOME}</echo>
-
-		<mxmlc file="src/flex/Lexus.mxml"
-			output="bin-debug/Lexus.swf"
-			locale="en_US" debug="false" use-network="true" static-rsls="false">
-			<load-config filename="${FLEX_HOME}/frameworks/flex-config.xml" />
-			<runtime-shared-library-path path-element="${FLEX_HOME}/frameworks/libs/framework.swc">
-				<url rsl-url="${SERVER_PATH}/framework_${FLEX_BUILD}.swz" />
-				<url rsl-url="${SERVER_PATH}/framework_${FLEX_BUILD}.swf" />
-			</runtime-shared-library-path>
-			<compiler.source-path path-element="src" />
-			<compiler.library-path dir="${basedir}" append="true">
-				<include name="lib/scrollbar.swc" />
-			</compiler.library-path>
-		</mxmlc>
-		<echo>Compile: end</echo>
-              </tasks>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      -->
-<!--      <plugin>-->
-<!--        <groupId>net.israfil.mojo</groupId>-->
-<!--        <artifactId>maven-flex2-plugin-support</artifactId>-->
-<!--        <version>1.0</version>-->
-<!--        <extensions>true</extensions>-->
-<!--        <configuration>-->
-<!--          <debug>true</debug>-->
-<!--          <flexHome>${flex.home}</flexHome>-->
-<!--          <useNetwork>false</useNetwork>-->
-<!--          <main>Lexus.mxml</main>-->
-<!--        </configuration>-->
-<!--      </plugin>-->
-<!---->
-<!--    </plugins>-->
-    <resources>
-      <resource>
-        <directory>src/styles</directory>
-        <targetPath>styles/</targetPath>
-        <filtering>false</filtering>
-      </resource>
-      <resource>
-        <directory>src/icons</directory>
-        <targetPath>icons/</targetPath>
-        <filtering>false</filtering>
-      </resource>
-    </resources>
-  </build>
-    <repositories>
-    <repository>
-      <id>forge</id>
-      <url>http://repository.sonatype.org/content/groups/flexgroup</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </repository>
-  </repositories>
-    <pluginRepositories>
-    <pluginRepository>
-      <id>forge</id>
-      <url>http://repository.sonatype.org/content/groups/flexgroup</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </pluginRepository>
-  </pluginRepositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>copyplugin-home</id>
+			<name>evgenyg-releases</name>
+			<url>http://evgenyg.artifactoryonline.com/evgenyg/repo</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>forge</id>
+			<url>http://repository.sonatype.org/content/groups/flexgroup</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</pluginRepository>
+		<!-- For the mxmlc compiler which is not available publicly -->
+		<pluginRepository>
+			<id>MPI</id>
+			<name>MPI Repository</name>
+			<url>http://lux15.mpi.nl/nexus/content/repositories/MPI</url>
+		</pluginRepository>
+	</pluginRepositories>
 
 </project>
