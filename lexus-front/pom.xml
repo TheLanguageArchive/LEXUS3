@@ -328,7 +328,7 @@
                             <overwrite>true</overwrite>
                             <resources>
                                 <resource>
-                                    <directory>${basedir}/../flexus-for-cocoon/bin-debug</directory>
+                                    <directory>${basedir}/../flexus-for-cocoon/target</directory>
                                     <filtering>false</filtering>
                                     <excludes>
                                         <exclude>.*</exclude>

@@ -99,7 +99,7 @@
 	<modules>
 		<module>lexus-db</module>
 		<module>lexus-display</module>
-		<!-- <module>flexus</module> -->
+		<module>flexus-for-cocoon</module>
 		<module>lexus-front</module>
 		<module>lexus-webapp</module>
 		<module>lexus-desktop</module>

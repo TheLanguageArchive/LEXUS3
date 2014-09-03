@@ -1,8 +1,9 @@
+@namespace mx "library://ns.adobe.com/flex/mx";
 /* * {
 	fontFamily: "Arial Unicode MS";
 }
 */
-Panel {
+mx|Panel {
    borderAlpha: 0.55;
    borderThicknessLeft: 6;
    borderThicknessTop: 0;

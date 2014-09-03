@@ -1,6 +1,6 @@
 /* CSS file */
-
-SuperPanel
+@namespace ext "net.brandonmeyer.*";
+ext|SuperPanel
 {
 	resize-grip-skin:          	Embed(source="/../assets/images/resizeHandler.png");
 	
