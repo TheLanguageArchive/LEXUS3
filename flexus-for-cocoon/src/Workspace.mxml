@@ -1198,7 +1198,7 @@
 												</mx:GridRow>
 												<mx:GridRow id="exportInfo" width="80%"  autoLayout="true" >
 													<mx:GridItem id="exportLabel" width="90" visible="false">
-														<mx:Label text="Export Foramts:"/>
+														<mx:Label text="Export Formats:"/>
 													</mx:GridItem>
 													<mx:GridItem width="100%" >
 														<mx:DataGrid id="exportData" visible="false"  width="80%" height="100">

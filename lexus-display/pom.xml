@@ -24,13 +24,13 @@
 
   <modelVersion>4.0.0</modelVersion>
   <packaging>jar</packaging>
-  
+
   <parent>
     <groupId>nl.mpi.lexus</groupId>
     <artifactId>lexus</artifactId>
-      <version>3.0.1-SNAPSHOT</version>
+      <version>3.1.0-RC</version>
   </parent>
-  
+
   <artifactId>lexus-display</artifactId>
   <name>lexus-display</name>
 
@@ -38,10 +38,10 @@
     <dependency>
       <groupId>nl.mpi.lexus</groupId>
       <artifactId>lexus-db</artifactId>
-        <version>3.0.1-SNAPSHOT</version>
+        <version>3.1.0-RC</version>
     </dependency>
   </dependencies>
   <build>
       <finalName>${project.artifactId}-${project.version}-r${buildNumber}</finalName>
-  </build> 
+  </build>
 </project>

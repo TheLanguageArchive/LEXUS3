@@ -28,12 +28,12 @@
     <parent>
         <groupId>nl.mpi.lexus</groupId>
         <artifactId>lexus</artifactId>
-        <version>3.0.1-SNAPSHOT</version>
+        <version>3.1.0-RC</version>
     </parent>
 
     <artifactId>lexus-front</artifactId>
     <name>lexus-front</name>
-    
+
     <properties>
     	<nl.mpi.lex.lexus.log4j.loglevel>info</nl.mpi.lex.lexus.log4j.loglevel>
     </properties>
@@ -170,12 +170,12 @@
         <dependency>
             <groupId>nl.mpi.lexus</groupId>
             <artifactId>lexus-db</artifactId>
-            <version>3.0.1-SNAPSHOT</version>
+            <version>3.1.0-RC</version>
         </dependency>
         <dependency>
             <groupId>nl.mpi.lexus</groupId>
             <artifactId>lexus-display</artifactId>
-            <version>3.0.1-SNAPSHOT</version>
+            <version>3.1.0-RC</version>
         </dependency>
         <dependency>
             <groupId>org.expath</groupId>
@@ -389,7 +389,7 @@
                     <contextPath>/mpi/lexusDojo</contextPath>
                     <classesDirectory>${project.build.directory}/classes</classesDirectory>
                     <systemProperties>
-						<systemProperty> 
+						<systemProperty>
               				<name>org.apache.commons.logging.Log</name>
                				<value>org.apache.commons.logging.impl.Log4JLogger</value>
             			</systemProperty>

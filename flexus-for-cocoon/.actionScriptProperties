@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<actionScriptProperties mainApplicationPath="Lexus.mxml" projectUUID="1d00b31e-c448-442d-bba7-038a6e1f6e5f" version="6">
-  <compiler additionalCompilerArguments="-locale en_US -link-report link-report.xml  -optimize=true -debug=true" autoRSLOrdering="true" copyDependentFiles="true" flex3CompatMode="true" flexSDK="Apache Flex 4.9.0 FP11.1 en_US" fteInMXComponents="false" generateAccessible="true" htmlExpressInstall="true" htmlGenerate="true" htmlHistoryManagement="true" htmlPlayerVersionCheck="true" includeNetmonSwc="false" outputFolderPath="bin-debug" sourceFolderPath="src" strict="true" targetPlayerVersion="11.1.0" useApolloConfig="false" useDebugRSLSwfs="true" verifyDigests="true" warn="true">
+<actionScriptProperties analytics="false" mainApplicationPath="Lexus.mxml" projectUUID="1d00b31e-c448-442d-bba7-038a6e1f6e5f" version="11">
+  <compiler additionalCompilerArguments="-locale en_US -link-report link-report.xml  -optimize=true -debug=true" autoRSLOrdering="true" copyDependentFiles="true" flex3CompatMode="true" flexSDK="Apache Flex 4.9.1 FP 11.0 AIR 3.0 en_US" fteInMXComponents="false" generateAccessible="true" htmlExpressInstall="true" htmlGenerate="true" htmlHistoryManagement="true" htmlPlayerVersionCheck="true" includeNetmonSwc="false" outputFolderPath="bin-debug" removeUnusedRSL="true" sourceFolderPath="src" strict="true" targetPlayerVersion="11.1.0" useApolloConfig="false" useDebugRSLSwfs="true" useFlashSDK="false" verifyDigests="true" warn="true">
     <compilerSourcePath/>
     <libraryPath defaultLinkType="3">
       <libraryPathEntry kind="4" path=""/>
@@ -19,5 +19,7 @@
     <module application="src/Lexus.mxml" destPath="LexiconBrowser.swf" optimize="true" sourcePath="src/LexiconBrowser.mxml"/>
     <module application="src/Lexus.mxml" destPath="Workspace.swf" optimize="true" sourcePath="src/Workspace.mxml"/>
   </modules>
+  <workers/>
   <buildCSSFiles/>
+  <flashCatalyst validateFlashCatalystCompatibility="false"/>
 </actionScriptProperties>
