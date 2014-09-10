@@ -62,7 +62,7 @@
 	       		
 	       		</xsl:when>
 	       		<xsl:otherwise>
-	       			<message><xsl:text>Unknown error, you may have selected the wrong file foramt for import</xsl:text></message>
+	       			<message><xsl:text>Unknown error, you may have selected the wrong file format for import</xsl:text></message>
 	       		</xsl:otherwise>	
 	       	</xsl:choose>
        		
