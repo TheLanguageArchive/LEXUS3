@@ -433,7 +433,9 @@
 
             <map:match pattern="index.html">
                 <map:generate src="resource/internal/index.xml"/>
-                <map:transform type="saxon" src="stylesheets/index.xslt"/>
+                <map:transform type="saxon" src="stylesheets/index.xslt">
+	            	<map:parameter name="msg" value="{request:getParameterValues(.,'msg')[1]}"/>
+                </map:transform>
                 <map:serialize type="html"/>
             </map:match>
             

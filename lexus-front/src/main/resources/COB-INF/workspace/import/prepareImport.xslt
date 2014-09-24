@@ -72,13 +72,13 @@
        <!--<xsl:message>
            DBG:<xsl:copy-of select="."/>
        </xsl:message>-->
-       <xsl:variable name="schema_file" select=".//zip:entry[ends-with(@name, '_internal_schema.xml')][empty(ancestor::zip:dir[@name='__MACOSX'])]"/>
+   	<xsl:variable name="schema_file" select=".//zip:entry[ends-with(@name, '_internal_schema.xml') or @name eq 'typ-generated-schema.xml'][empty(ancestor::zip:dir[@name='__MACOSX'])]"/>
        <!--<xsl:message>
-           DBG:schema[<xsl:copy-of select="$schema_file"/>][<xsl:copy-of select="zip:xml-entry($zip,concat(string-join($schema_file/ancestor::zip:dir/@name,'/'),'/',$schema_file/@name))"/>]
+       	DBG:schema[<xsl:copy-of select="$schema_file"/>][<xsl:copy-of select="zip:xml-entry($zip,concat(string-join($schema_file/ancestor::zip:dir/@name,'/'),if (exists($schema_file/ancestor::zip:dir)) then ('/') else (),$schema_file/@name))"/>]
        </xsl:message>-->
        <xsl:variable name="data_file" select="(.//zip:entry[ends-with(@name, '.xml')][empty(ancestor::zip:dir[@name='__MACOSX'])] except $schema_file)"/>
        <!--<xsl:message>
-           DBG:schema[<xsl:copy-of select="$data_file"/>][<xsl:copy-of select="zip:xml-entry($zip,concat(string-join($data_file/ancestor::zip:dir/@name,'/'),'/',$data_file/@name))"/>]
+       	DBG:data[<xsl:copy-of select="$data_file"/>][<xsl:copy-of select="zip:xml-entry($zip,concat(string-join($data_file/ancestor::zip:dir/@name,'/'),if (exists($data_file/ancestor::zip:dir)) then ('/') else (),$data_file/@name))"/>]
        </xsl:message>-->
        <xsl:choose>
           	<xsl:when test="empty($schema_file)">
@@ -91,8 +91,8 @@
        			<xsl:value-of select="error((),'ERROR: more then one LEXUS 3 data files were found!')"/> ')"/>
           	</xsl:when>
        		<xsl:otherwise>
-       		    <xsl:variable name="schema" select="zip:xml-entry($zip,concat(string-join($schema_file/ancestor::zip:dir/@name,'/'),'/',$schema_file/@name))//lexus:meta"/>
-       		    <xsl:variable name="data"   select="zip:xml-entry($zip,concat(string-join($data_file/ancestor::zip:dir/@name,'/'),'/',$data_file/@name))//lexus:lexicon"/>
+       			<xsl:variable name="schema" select="zip:xml-entry($zip,concat(string-join($schema_file/ancestor::zip:dir/@name,'/'),if (exists($schema_file/ancestor::zip:dir)) then ('/') else (),$schema_file/@name))//lexus:meta"/>
+       			<xsl:variable name="data"   select="zip:xml-entry($zip,concat(string-join($data_file/ancestor::zip:dir/@name,'/'),if (exists($data_file/ancestor::zip:dir)) then ('/') else (),$data_file/@name))//lexus:lexicon"/>
        			<xsl:choose>
        				<xsl:when test="empty($schema)">
 		          		<xsl:value-of select="error((),'ERROR: the LEXUS 3 schema was not found in the scheme file!')"/> ')"/>

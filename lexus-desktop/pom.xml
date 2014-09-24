@@ -6,7 +6,7 @@
     <parent>
         <artifactId>lexus</artifactId>
         <groupId>nl.mpi.lexus</groupId>
-        <version>3.1.0-RC</version>
+        <version>3.1.0-SNAPSHOT</version>
     </parent>
     <artifactId>lexus-desktop</artifactId>
     <name>lexus-desktop</name>
