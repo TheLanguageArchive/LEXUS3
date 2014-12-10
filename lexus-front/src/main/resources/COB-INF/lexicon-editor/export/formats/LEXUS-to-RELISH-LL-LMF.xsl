@@ -10,11 +10,12 @@
     
     <!--<xsl:param name="lexicon"/>
     <xsl:variable name="lex-schema" select="document(concat($lexicon,'-schema.xml'))"/>-->
-
+	
+	<xsl:variable name="debug" select="false()"/>
     <xsl:variable name="relish-ll-lmf-template" select="//lexus/meta/template"/>
     <xsl:variable name="relish-ll-lmf-lex-template" select="(if ($templates instance of node()) then ($templates) else (document($templates)))//lexus:template[@id=$relish-ll-lmf-template]"/>
     
-    <xsl:variable name="relish-ll-lmf-schema" select="'http://lux13.mpi.nl/pub/relish/lmf/schema/RELISH-LL-LMF/RELISH-LL-LMF.rng'"/>
+	<xsl:variable name="relish-ll-lmf-schema" select="'https://raw.githubusercontent.com/TheLanguageArchive/RELISH-LMF/master/schema/RELISH-LL-LMF/RELISH-LL-LMF.rng'"/>
     
     <xsl:variable name="relish-ll-lmf-classes" as="element()*">
         <class name="Lemma" type="Form"/>
@@ -53,8 +54,10 @@
     </xsl:template>
     
     <xsl:template match="lexicon" mode="relish-ll-lmf">
-        <xsl:message>?INFO: template[<xsl:value-of select="$relish-ll-lmf-template"/>][<xsl:value-of select="$relish-ll-lmf-lex-template/descendant-or-self::lexus:template/@id"/>]</xsl:message>
-        <xsl:message>?INFO: templates[<xsl:value-of select="string-join($templates//lexus:template/@id,', ')"/>]</xsl:message>
+    	<xsl:if test="$debug">
+    		<xsl:message>?INFO: template[<xsl:value-of select="$relish-ll-lmf-template"/>][<xsl:value-of select="$relish-ll-lmf-lex-template/descendant-or-self::lexus:template/@id"/>]</xsl:message>
+    		<xsl:message>?INFO: templates[<xsl:value-of select="string-join($templates//lexus:template/@id,', ')"/>]</xsl:message>
+    	</xsl:if>
         <xsl:processing-instruction name="xml-model">href="<xsl:value-of select="$relish-ll-lmf-schema"/>" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:processing-instruction>
         <xsl:value-of select="system-property('line.separator')"/>
         <xsl:processing-instruction name="xml-model">href="<xsl:value-of select="$relish-ll-lmf-schema"/>" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"</xsl:processing-instruction>
@@ -94,14 +97,20 @@
     
     <xsl:template match="container" mode="relish-ll-lmf">
         <xsl:param name="context" tunnel="yes"/>
-        <xsl:message>DBG: context[<xsl:value-of select="$context"/>] container[<xsl:value-of select="@name"/>][<xsl:value-of select="lower-case(replace(current()/@name,'\s+',''))"/>]</xsl:message>
+    	<xsl:if test="$debug">
+    		<xsl:message>DBG: context[<xsl:value-of select="$context"/>] container[<xsl:value-of select="@name"/>][<xsl:value-of select="lower-case(replace(current()/@name,'\s+',''))"/>]</xsl:message>
+    	</xsl:if>
         <xsl:variable name="schema-context" select="$relish-ll-lmf-lex-template//lexus:container[@id=$context]"/>
         <xsl:variable name="schema-entry" select="$schema-context/lexus:container[@type='container'][lower-case(replace(@name,'\s+',''))=lower-case(replace(current()/@name,'\s+',''))]"/>
-        <xsl:message>DBG: schema[<xsl:value-of select="count($schema-context)"/>/<xsl:value-of select="count($schema-entry)"/>]</xsl:message>
+    	<xsl:if test="$debug">
+    		<xsl:message>DBG: schema[<xsl:value-of select="count($schema-context)"/>/<xsl:value-of select="count($schema-entry)"/>]</xsl:message>
+    	</xsl:if>
         <xsl:choose>
             <xsl:when test="exists($schema-entry)">
                 <!-- known LMF class element -->
-                <xsl:message>DBG: classes[<xsl:value-of select="string-join($relish-ll-lmf-classes/@name,', ')"/>] class[<xsl:value-of select="replace($schema-entry/@name,'\s+','')"/>]?[<xsl:value-of select="$relish-ll-lmf-classes[@name=replace($schema-entry/@name,'\s+','')]/@name"/>]</xsl:message>
+            	<xsl:if test="$debug">
+            		<xsl:message>DBG: classes[<xsl:value-of select="string-join($relish-ll-lmf-classes/@name,', ')"/>] class[<xsl:value-of select="replace($schema-entry/@name,'\s+','')"/>]?[<xsl:value-of select="$relish-ll-lmf-classes[@name=replace($schema-entry/@name,'\s+','')]/@name"/>]</xsl:message>
+            	</xsl:if>
                 <xsl:variable name="class" select="$relish-ll-lmf-classes[@name=replace($schema-entry/@name,'\s+','')]"/>
                 <xsl:element name="lmf:{replace($schema-entry/@name,'\s+','')}" namespace="http://www.lexicalmarkupframework.org/">
                     <xsl:copy-of select="$class/@type"/>

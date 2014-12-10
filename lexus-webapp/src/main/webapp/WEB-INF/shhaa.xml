@@ -1,54 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <ROOT>
-    <shhaa>
-	
-	<authentication>
-		<shibheader>
-			<username>oid:eduPersonPrincipalName</username>
-            <username>mace:eduPersonPrincipalName</username>
-			<username>eduPersonPrincipalName</username>
-       </shibheader>
-		<fallback>
-		    <username>oid:eduPersonTargetId</username>
-		    <username>mace:eduPersonTargetId</username>
-		    <username>eduPersonTargetId</username>
-		</fallback>
-        <sso action="lI">https://lux16.mpi.nl/Shibboleth.sso/Login</sso>
-        <slo action="lO">https://lux16.mpi.nl/Shibboleth.sso/Logout</slo>
-	</authentication>
-	
-	
-        <composition action="rF">
-            <shibheader>
-                <attribute>eduPersonAffiliation</attribute>
-                <attribute>eduPersonEntitlement</attribute>
-                <attribute>email</attribute>
-                <attribute>ou</attribute>
-                <attribute>o</attribute>
-            </shibheader>
-        </composition>
+	<shhaa>
 
-	
-        <authorization>
-            <location  target="/protected/*" />
-            <location  target="/corpman/*" />
-        </authorization>
-	
-	
-        <handler>
-            <ignore>
-                <location target="/css/*" />
-                <location target="/img/*" />
-            </ignore>
-		
-		<!-- configures the view-control targets -->
-            <pages>
-            <info action="dI">index.jsp</info>
-                <denied action="dD">pages/noaccess.jsp</denied> 
-            </pages>
-		
-        </handler>
-	
-    </shhaa>
+		<authentication>
+			<shibheader>
+				<username>oid:eduPersonPrincipalName</username>
+				<username>mace:eduPersonPrincipalName</username>
+				<username>eduPersonPrincipalName</username>
+			</shibheader>
+			<fallback>
+				<username>oid:eduPersonTargetId</username>
+				<username>mace:eduPersonTargetId</username>
+				<username>eduPersonTargetId</username>
+			</fallback>
+			<sso action="lI">https://corpus1.mpi.nl/Shibboleth.sso/Login</sso>
+			<slo action="lO">https://corpus1.mpi.nl/Shibboleth.sso/Logout</slo>
+		</authentication>
+
+
+		<composition action="rF">
+			<shibheader>
+				<attribute>eduPersonAffiliation</attribute>
+				<attribute>eduPersonEntitlement</attribute>
+				<attribute>email</attribute>
+				<attribute>ou</attribute>
+				<attribute>o</attribute>
+			</shibheader>
+		</composition>
+
+
+		<authorization>
+			<location target="/protected/*"/>
+			<location target="/corpman/*"/>
+		</authorization>
+
+
+		<handler>
+			<ignore>
+				<location target="/css/*"/>
+				<location target="/img/*"/>
+			</ignore>
+
+			<!-- configures the view-control targets -->
+			<pages>
+				<info action="dI">index.jsp</info>
+				<denied action="dD">pages/noaccess.jsp</denied>
+			</pages>
+
+		</handler>
+
+	</shhaa>
 </ROOT>

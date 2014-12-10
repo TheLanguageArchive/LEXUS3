@@ -35,7 +35,7 @@ Please see the file called CHANGES.TXT
 The documentation available as of the date of this release:
 
 User manual and documentation:
-http://tla.mpi.nl/tools/tla-tools/lexus/
+https://tla.mpi.nl/tools/tla-tools/older-tools/lexus/
 
 Project wiki:
 https://trac.mpi.nl/wiki/Lexus

@@ -1,6 +1,13 @@
 Changes for:
 LEXUS-${project.version}-r${buildNumber}
 
+- functionality to create links within and between (parts of) lexical entries
+
+- an extensive framework for tying lexicon templates and im/export formats
+  together, incl. warnings when changes to schema of a lexicon will break
+  compatibility with an export format
+
+- improved PDF export
 
 - Fixed various UI problems when loading the view editor for a lexicon 
 with 0 views. (occurring with some lexica migrated from LEXUS 2)

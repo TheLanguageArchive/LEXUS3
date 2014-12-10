@@ -72,12 +72,12 @@
 		     	<mx:Image source="{application.lexusIconSmall}" click="fortune_clickHandler(event)" buttonMode="true"/>
 				<mx:Text styleName="aboutLexusName">
 					<mx:htmlText>
-						<![CDATA[<a href="http://tla.mpi.nl/tools/tla-tools/lexus" target="_blank">LEXUS</a>]]>
+						<![CDATA[<a href="https://tla.mpi.nl/tools/tla-tools/older-tools/lexus/" target="_blank">LEXUS</a>]]>
 					</mx:htmlText>
 				</mx:Text>
 				<mx:Text styleName="LexusWSLink">
 					<mx:htmlText>
-						<![CDATA[<a href="http://tla.mpi.nl/tools/tla-tools/lexus" target="_blank">(webpage)</a>]]>
+						<![CDATA[<a href="https://tla.mpi.nl/tools/tla-tools/older-tools/lexus/" target="_blank">(webpage)</a>]]>
 					</mx:htmlText>
 				</mx:Text>
 			</mx:HBox>

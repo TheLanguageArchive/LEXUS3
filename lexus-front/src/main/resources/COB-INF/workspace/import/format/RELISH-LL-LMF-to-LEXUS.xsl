@@ -7,34 +7,46 @@
     xmlns:tei="http://www.tei-c.org/ns/1.0"
     xmlns:relish="http://www.mpi.nl/relish"
     exclude-result-prefixes="lx lmf dcr tei relish">
+	
+	<xsl:variable name="debug" select="false()"/>
     
     <xsl:param name="import-id" select="'relish-ll-lmf-to-lexus'"/>
     <xsl:variable name="templates" select="document('../../lexicon/templates.xml')"/>
     <xsl:variable name="lex-template" select="(if ($templates instance of node()) then ($templates) else (document($templates)))//lexus:template[lexus:import/@id=$import-id]"/>
     
     <xsl:template match="*">
-    	<xsl:message>DBG: import node[<xsl:value-of select="name()"/>]</xsl:message>
+    	<xsl:if test="$debug">
+    		<xsl:message>DBG: import node[<xsl:value-of select="name()"/>]</xsl:message>
+    	</xsl:if>
     </xsl:template>
     
     <!-- main -->
     <xsl:template match="lmf:LexicalResource">
-        <xsl:message>?INFO: import[<xsl:value-of select="$import-id"/>]template[<xsl:value-of select="$lex-template/descendant-or-self::lexus:template/@id"/>]</xsl:message>
+    	<xsl:if test="$debug">
+    		<xsl:message>?INFO: import[<xsl:value-of select="$import-id"/>]template[<xsl:value-of select="$lex-template/descendant-or-self::lexus:template/@id"/>]</xsl:message>
+    	</xsl:if>
         <xsl:variable name="data">
             <xsl:apply-templates mode="data" select="."/>
         </xsl:variable>
-        <xsl:message>DBG: converted data</xsl:message>
+    	<xsl:if test="$debug">
+    		<xsl:message>DBG: converted data</xsl:message>
+    	</xsl:if>
         <xsl:variable name="schema">
             <xsl:apply-templates mode="schema" select="$lex-template//lexus:schema">
                 <xsl:with-param name="data" select="$data" tunnel="yes"/>
             </xsl:apply-templates>
         </xsl:variable>
-        <xsl:message>DBG: completed schema</xsl:message>
+    	<xsl:if test="$debug">
+    		<xsl:message>DBG: completed schema</xsl:message>
+    	</xsl:if>
         <xsl:variable name="sync">
             <xsl:apply-templates  select="$data/lexus:lexicon/*" mode="sync">
                 <xsl:with-param name="schema" select="$schema" tunnel="yes"/>
             </xsl:apply-templates>
         </xsl:variable>
-        <xsl:message>DBG: synced data and schema</xsl:message>
+    	<xsl:if test="$debug">
+    		<xsl:message>DBG: synced data and schema</xsl:message>
+    	</xsl:if>
         <data>
 	       	<lexus:meta version="1.0">
 	       	    <lexus:template name="{$lex-template/@id}">

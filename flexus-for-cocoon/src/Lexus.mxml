@@ -229,7 +229,7 @@
 						logout();
                 		break;
                 	case "help":
-                		ExternalInterface.call("function() {window.open('http://tla.mpi.nl/tools/tla-tools/lexus', 'Lexus help');}");
+                		ExternalInterface.call("function() {window.open('https://tla.mpi.nl/tools/tla-tools/older-tools/lexus/', 'Lexus help');}");
                 		break;
                 }
             }
