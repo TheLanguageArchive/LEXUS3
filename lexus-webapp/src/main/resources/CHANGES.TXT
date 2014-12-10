@@ -1,6 +1,8 @@
-Changes for:
-LEXUS-${project.version}-r${buildNumber}
+Changes for LEXUS-${project.version}-r${buildNumber}:
 
+
+
+Changes for LEXUS 3.1 RELEASE:
 - functionality to create links within and between (parts of) lexical entries
 
 - an extensive framework for tying lexicon templates and im/export formats
