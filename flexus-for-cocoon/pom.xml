@@ -31,6 +31,7 @@
 		<!-- <flex.framework.version>4.5.1.21328</flex.framework.version> -->
 		<!-- For Apache Flex FDK -->
 		<flex.framework.version>4.13.0.20140701</flex.framework.version>
+		<flexmojos.version>7.0.1</flexmojos.version>
 
 		<flash_version_major>11</flash_version_major>
 		<flash_version_minor>1</flash_version_minor>
@@ -81,7 +82,7 @@
 			<plugin>
 				<groupId>net.flexmojos.oss</groupId>
 				<artifactId>flexmojos-maven-plugin</artifactId>
-				<version>7.0.1</version>
+				<version>${flexmojos.version}</version>
 				<extensions>true</extensions>
 				<executions>
 					<execution>
