@@ -30,7 +30,7 @@
 		<!-- For Adobe Flex SDK -->
 		<!-- <flex.framework.version>4.5.1.21328</flex.framework.version> -->
 		<!-- For Apache Flex FDK -->
-		<flex.framework.version>4.12.0.20140303</flex.framework.version>
+		<flex.framework.version>4.13.0.20140701</flex.framework.version>
 
 		<flash_version_major>11</flash_version_major>
 		<flash_version_minor>1</flash_version_minor>
@@ -39,19 +39,13 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.adobe.flex.framework</groupId>
+			<groupId>org.apache.flex.framework</groupId>
 			<artifactId>flex-framework</artifactId>
 			<version>${flex.framework.version}</version>
 			<type>pom</type>
 		</dependency>
 		<dependency>
-			<groupId>com.adobe.flash.framework</groupId>
-			<artifactId>playerglobal</artifactId>
-			<version>12.0</version>
-			<type>swc</type>
-		</dependency>
-		<dependency>
-			<groupId>com.adobe.flex.framework.themes</groupId>
+			<groupId>org.apache.flex.framework.themes</groupId>
 			<artifactId>halo</artifactId>
 			<type>swc</type>
 			<scope>theme</scope>
@@ -69,6 +63,12 @@
 			<artifactId>flexlib</artifactId>
 			<version>2.6-M3</version>
 			<type>swc</type>
+			<exclusions>
+				<exclusion>
+					<groupId>com.adobe.flex.framework</groupId>
+					<artifactId>flex-framework</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 
@@ -81,7 +81,7 @@
 			<plugin>
 				<groupId>net.flexmojos.oss</groupId>
 				<artifactId>flexmojos-maven-plugin</artifactId>
-				<version>6.0.1</version>
+				<version>7.0.1</version>
 				<extensions>true</extensions>
 				<executions>
 					<execution>
@@ -129,29 +129,22 @@
 						</module>
 					</modules>
 				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>net.flexmojos.oss</groupId>
-						<artifactId>flexmojos-threadlocaltoolkit-wrapper</artifactId>
-						<version>6.0.1</version>
-					</dependency>
-					<dependency>
-						<groupId>com.adobe.flex</groupId>
-						<artifactId>compiler</artifactId>
-						<version>${flex.framework.version}</version>
-						<type>pom</type>
-					</dependency>
-					<dependency>
-						<groupId>net.flexmojos.oss</groupId>
-						<artifactId>flexmojos-flex3-compatibility-layer</artifactId>
-						<version>6.0.1</version>
-					</dependency>
-					<dependency>
-						<groupId>net.flexmojos.oss</groupId>
-						<artifactId>flexmojos-threadlocaltoolkit-wrapper</artifactId>
-						<version>6.0.1</version>
-					</dependency>
-				</dependencies>
+				<dependencies> 
+                	<!-- This handles a bug in maven which causes problems with flex resources --> 
+                    <dependency> 
+                        <groupId>net.flexmojos.oss</groupId> 
+                        <artifactId>flexmojos-threadlocaltoolkit-wrapper</artifactId> 
+                        <version>${flexmojos.version}</version> 
+                    </dependency> 
+                    <!-- Without this FM will use the compiler configured in its 
+                    master pom, which will result in version conflicts --> 
+                    <dependency> 
+                        <groupId>org.apache.flex</groupId> 
+                        <artifactId>compiler</artifactId> 
+                        <version>${flex.framework.version}</version> 
+                        <type>pom</type> 
+                    </dependency> 
+                </dependencies> 
 			</plugin>
 		</plugins>
 		<pluginManagement>
@@ -173,6 +166,7 @@
 										<goals>
 											<goal>compile-swf</goal>
 											<goal>test-compile</goal>
+											<goal>wrapper</goal>
 										</goals>
 									</pluginExecutionFilter>
 									<action>
@@ -244,6 +238,11 @@
 			</releases>
 		</repository>
 		<repository>
+			<id>MPIPrivate</id>
+			<name>MPI Private Repository</name>
+			<url>http://lux15.mpi.nl/nexus/content/repositories/MPI-Private</url>
+		</repository>
+		<repository>
 			<!-- repository for as3corelib.swc v0.93 -->
 			<id>ooo-maven-repo</id>
 			<url>http://ooo-maven.googlecode.com/hg/repository</url>
@@ -265,12 +264,6 @@
 			<releases>
 				<enabled>true</enabled>
 			</releases>
-		</pluginRepository>
-		<!-- For the mxmlc compiler which is not available publicly -->
-		<pluginRepository>
-			<id>MPI</id>
-			<name>MPI Repository</name>
-			<url>http://lux15.mpi.nl/nexus/content/repositories/MPI</url>
 		</pluginRepository>
 	</pluginRepositories>
 
