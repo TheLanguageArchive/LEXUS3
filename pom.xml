@@ -150,6 +150,11 @@
 	</distributionManagement>
 
 	<repositories>
+		<repository>
+	    	<id>MPI</id>
+	    	<name>MPI Repository</name>
+	    	<url>http://lux15.mpi.nl/nexus/content/repositories/MPI</url>
+		</repository>
 		<repository> <!-- for saxon 9.1.0.8 -->
 			<id>JBoss</id>
 			<name>JBoss deprecated repository</name>
